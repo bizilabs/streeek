@@ -10,6 +10,7 @@
 
 # Build
 */build/*
+/build/
 /build
 modules-conventions/conventions/build
 modules-conventions/conventions/build/*
