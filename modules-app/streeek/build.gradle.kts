@@ -1,6 +1,9 @@
 plugins {
     id("bizilabs.convention.application")
+    id("bizilabs.convention.koin")
     id("bizilabs.convention.compose.application")
+    alias(libs.plugins.google.services)
+    alias(libs.plugins.firebase.crashlytics)
 }
 
 android {

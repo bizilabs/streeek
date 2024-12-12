@@ -16,6 +16,9 @@ dependencies {
     implementation(projects.modulesData.domain)
 
     // features
+    implementation(projects.modulesFeatures.landing)
+    implementation(projects.modulesFeatures.authentication)
+    implementation(projects.modulesFeatures.tabs)
 
     // splash screen
     implementation(libs.androidx.core.splashscreen)

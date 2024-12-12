@@ -59,6 +59,7 @@ compose-qr = "1.0.1"
 bcrypt = "0.10.2"
 realm = "1.11.0"
 startup-runtime = "1.2.0"
+openid-appauth="0.11.1"
 
 [libraries]
 # androidx
@@ -76,6 +77,7 @@ androidx-security-crypto = { module = "androidx.security:security-crypto", versi
 koin-bom = { module = "io.insert-koin:koin-bom", version.ref = "koin-bom" }
 koin-core = { module = "io.insert-koin:koin-core" }
 koin-core-coroutines = { module = "io.insert-koin:koin-core-coroutines" }
+koin-android = { module = "io.insert-koin:koin-android" }
 koin-test = { module = "io.insert-koin:koin-test" }
 koin-test-junit4 = { module = "io.insert-koin:koin-test-junit4" }
 
@@ -176,6 +178,7 @@ junit = { group = "junit", name = "junit", version.ref = "junit" }
 bcrypt = { module = "at.favre.lib:bcrypt", version.ref = "bcrypt" }
 realm = { module = "io.realm.kotlin:library-base", version.ref = "realm" }
 androidx-startup-runtime = { group = "androidx.startup", name = "startup-runtime", version.ref = "startup-runtime" }
+openid-appauth = { module = "net.openid:appauth", version.ref = "openid-appauth" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "gradle-plugin-android" }
@@ -200,7 +203,7 @@ compose = [
     "compose-lifecycle-livedata-ktx", "compose-lifecycle-runtime", "compose-lifecycle-viewModel",
     "compose-qr-code"
 ]
-koin = ["koin-core", "koin-core-coroutines"]
+koin = ["koin-core", "koin-core-coroutines", "koin-android"]
 firebase = [
     "firebase-messaging", "firebase-crashlytics", "firebase-analytics",
     "firebase-performance", "firebase-config", "firebase-inappmessagging",

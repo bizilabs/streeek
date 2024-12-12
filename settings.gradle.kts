@@ -45,3 +45,6 @@ include(":modules-ui:design")
 include(":modules-ui:common")
 
 include(":modules-app:streeek")
+include(":modules-features:landing")
+include(":modules-features:authentication")
+include(":modules-features:tabs")

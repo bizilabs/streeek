@@ -1,16 +1,16 @@
 -- Merging decision tree log ---
 manifest
-ADDED from /Users/mambo/Desktop/bizilabs/streeek/modules-ui/design/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest13083902291243427249.xml:2:13-83
-INJECTED from /Users/mambo/Desktop/bizilabs/streeek/modules-ui/design/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest13083902291243427249.xml:2:13-83
+ADDED from /Users/mambo/Desktop/bizilabs/streeek/modules-ui/design/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest14517498645417099914.xml:2:13-83
+INJECTED from /Users/mambo/Desktop/bizilabs/streeek/modules-ui/design/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest14517498645417099914.xml:2:13-83
 	package
-		INJECTED from /Users/mambo/Desktop/bizilabs/streeek/modules-ui/design/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest13083902291243427249.xml
+		INJECTED from /Users/mambo/Desktop/bizilabs/streeek/modules-ui/design/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest14517498645417099914.xml
 	xmlns:android
-		ADDED from /Users/mambo/Desktop/bizilabs/streeek/modules-ui/design/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest13083902291243427249.xml:2:23-81
+		ADDED from /Users/mambo/Desktop/bizilabs/streeek/modules-ui/design/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest14517498645417099914.xml:2:23-81
 uses-sdk
-INJECTED from /Users/mambo/Desktop/bizilabs/streeek/modules-ui/design/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest13083902291243427249.xml reason: use-sdk injection requested
-INJECTED from /Users/mambo/Desktop/bizilabs/streeek/modules-ui/design/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest13083902291243427249.xml
-INJECTED from /Users/mambo/Desktop/bizilabs/streeek/modules-ui/design/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest13083902291243427249.xml
+INJECTED from /Users/mambo/Desktop/bizilabs/streeek/modules-ui/design/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest14517498645417099914.xml reason: use-sdk injection requested
+INJECTED from /Users/mambo/Desktop/bizilabs/streeek/modules-ui/design/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest14517498645417099914.xml
+INJECTED from /Users/mambo/Desktop/bizilabs/streeek/modules-ui/design/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest14517498645417099914.xml
 	android:targetSdkVersion
-		INJECTED from /Users/mambo/Desktop/bizilabs/streeek/modules-ui/design/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest13083902291243427249.xml
+		INJECTED from /Users/mambo/Desktop/bizilabs/streeek/modules-ui/design/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest14517498645417099914.xml
 	android:minSdkVersion
-		INJECTED from /Users/mambo/Desktop/bizilabs/streeek/modules-ui/design/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest13083902291243427249.xml
+		INJECTED from /Users/mambo/Desktop/bizilabs/streeek/modules-ui/design/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest14517498645417099914.xml

@@ -35,6 +35,9 @@ class FeatureConventionPlugin : Plugin<Project> {
                 // modules
                 implementation(project(AndroidModules.Ui.common))
                 implementation(project(AndroidModules.Data.domain))
+                // androidx
+                implementation(libs.getLibrary("androidx-core-ktx"))
+                implementation(libs.getLibrary("androidx-appcompat"))
                 // coroutines
                 implementation(libs.getLibrary("kotlinx-coroutines"))
                 testImplementation(libs.getLibrary("kotlinx-coroutines-test"))
