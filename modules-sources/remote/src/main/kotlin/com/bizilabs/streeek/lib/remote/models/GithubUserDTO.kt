@@ -12,3 +12,12 @@ data class GithubUserDTO(
     @SerialName("avatar_url")
     val url: String
 )
+
+@Serializable
+data class GithubActorDTO(
+    val id: String,
+    @SerialName("login")
+    val name: String,
+    @SerialName("avatar_url")
+    val url: String
+)

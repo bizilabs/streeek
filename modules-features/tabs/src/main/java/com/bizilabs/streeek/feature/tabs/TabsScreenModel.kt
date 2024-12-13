@@ -5,6 +5,7 @@ import cafe.adriel.voyager.core.model.screenModelScope
 import com.bizilabs.streeek.lib.common.models.FetchState
 import com.bizilabs.streeek.lib.domain.helpers.DataResult
 import com.bizilabs.streeek.lib.domain.models.UserDomain
+import com.bizilabs.streeek.lib.domain.models.UserEventDomain
 import com.bizilabs.streeek.lib.domain.repositories.UserRepository
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -15,7 +16,8 @@ val tabsModule = module {
 }
 
 data class TabsScreenState(
-    val userState: FetchState<UserDomain> = FetchState.Loading
+    val userState: FetchState<UserDomain> = FetchState.Loading,
+    val eventsState: FetchState<List<UserEventDomain>> = FetchState.Loading
 )
 
 class TabsScreenModel(
@@ -33,6 +35,19 @@ class TabsScreenModel(
                 is DataResult.Success -> FetchState.Success(value = result.data)
             }
             mutableState.update { it.copy(userState = update) }
+            if (update is FetchState.Success) getUserEvents(update.value.name)
         }
     }
+
+    private fun getUserEvents(username: String){
+        screenModelScope.launch {
+            mutableState.update { it.copy(eventsState = FetchState.Loading) }
+            val update = when (val result = repository.getUserEvents(username = username)) {
+                is DataResult.Error -> FetchState.Error(message = result.message)
+                is DataResult.Success -> FetchState.Success(value = result.data)
+            }
+            mutableState.update { it.copy(eventsState = update) }
+        }
+    }
+
 }
