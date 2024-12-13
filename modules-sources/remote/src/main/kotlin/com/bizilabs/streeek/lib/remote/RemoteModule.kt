@@ -10,6 +10,8 @@ import com.bizilabs.streeek.lib.remote.sources.auth.AuthenticationRemoteSource
 import com.bizilabs.streeek.lib.remote.sources.auth.AuthenticationRemoteSourceImpl
 import com.bizilabs.streeek.lib.remote.sources.preferences.RemotePreferencesSource
 import com.bizilabs.streeek.lib.remote.sources.preferences.RemotePreferencesSourceImpl
+import com.bizilabs.streeek.lib.remote.sources.user.UserRemoteSource
+import com.bizilabs.streeek.lib.remote.sources.user.UserRemoteSourceImpl
 import io.ktor.client.HttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.koin.core.qualifier.named
@@ -24,13 +26,20 @@ val remoteModule = module {
         }
     }
     single<AuthorizationInterceptor> { AuthorizationInterceptor(remotePreferencesSource = get()) }
-    single<HttpClient> { createHttpClient(loggingInterceptor = get()) }
+    single<HttpClient> {
+        createHttpClient(
+            loggingInterceptor = get(),
+            authorizationInterceptor = get()
+        )
+    }
     single<DataStore<Preferences>>(named("remote")) { get<Context>().dataStore }
+    // sources
     single<RemotePreferencesSource> { RemotePreferencesSourceImpl(dataStore = get(named("remote"))) }
     single<AuthenticationRemoteSource> {
         AuthenticationRemoteSourceImpl(
             client = get(),
-            preferencesSource = get()
+            preferences = get()
         )
     }
+    single<UserRemoteSource> { UserRemoteSourceImpl(client = get()) }
 }

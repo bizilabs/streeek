@@ -22,10 +22,10 @@ interface AuthenticationRemoteSource {
 
 class AuthenticationRemoteSourceImpl(
     private val client: HttpClient,
-    private val preferencesSource: RemotePreferencesSource
+    private val preferences: RemotePreferencesSource
 ) : AuthenticationRemoteSource {
     override val authenticated: Flow<Boolean>
-        get() = preferencesSource.accessToken.map { it != null }
+        get() = preferences.accessToken.map { it != null }
     override suspend fun getAuthenticationIntent(): Intent {
         val url = buildString {
             append("https://github.com/login/oauth/authorize")
@@ -55,6 +55,6 @@ class AuthenticationRemoteSourceImpl(
     }
 
     override suspend fun updateAccessToken(token: String) {
-        preferencesSource.updateAccessToken(token = token)
+        preferences.updateAccessToken(token = token)
     }
 }

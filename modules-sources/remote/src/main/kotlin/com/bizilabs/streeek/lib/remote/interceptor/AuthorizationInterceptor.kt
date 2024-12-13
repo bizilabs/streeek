@@ -14,6 +14,8 @@ class AuthorizationInterceptor(
         val token = runBlocking { remotePreferencesSource.accessToken.first() }
         if (token.isNullOrBlank()) return
         addHeader("Authorization", "Bearer $token")
+        addHeader("Accept", "application/vnd.github+json")
+        addHeader("X-GitHub-Api-Version", "2022-11-28")
     }
     override fun intercept(chain: Interceptor.Chain): Response {
         val builder = chain.request().newBuilder()

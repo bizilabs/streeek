@@ -3,6 +3,7 @@ package com.bizilabs.streeek.lib.presentation.helpers
 import android.app.Application
 import com.bizilabs.streeek.feature.authentication.authenticationModule
 import com.bizilabs.streeek.feature.landing.landingModule
+import com.bizilabs.streeek.feature.tabs.tabsModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.loadKoinModules
 import org.koin.core.context.startKoin
@@ -18,5 +19,5 @@ fun Application.initKoin(vararg modules: Module) {
 }
 
 val presentationModule = module {
-    includes(landingModule, authenticationModule)
+    includes(landingModule, authenticationModule, tabsModule)
 }

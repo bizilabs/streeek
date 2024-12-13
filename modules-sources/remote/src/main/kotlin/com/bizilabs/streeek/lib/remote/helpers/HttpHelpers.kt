@@ -1,5 +1,6 @@
 package com.bizilabs.streeek.lib.remote.helpers
 
+import com.bizilabs.streeek.lib.remote.interceptor.AuthorizationInterceptor
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.okhttp.OkHttp
 import io.ktor.client.plugins.DefaultRequest
@@ -63,9 +64,13 @@ private fun DefaultRequest.DefaultRequestBuilder.addStandardHeaders() {
     addHeader(Header.ContentType.Json)
 }
 
-fun createHttpClient(loggingInterceptor: HttpLoggingInterceptor) = HttpClient(OkHttp) {
+fun createHttpClient(
+    loggingInterceptor: HttpLoggingInterceptor,
+    authorizationInterceptor: AuthorizationInterceptor
+) = HttpClient(OkHttp) {
     engine {
         addInterceptor(loggingInterceptor)
+        addInterceptor(authorizationInterceptor)
     }
     install(DefaultRequest) {
         addStandardHeaders()
