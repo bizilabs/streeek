@@ -1,5 +1,0 @@
-R_DEF: Internal format may change without notice
-local
-string app_name
-string label_network_connection_no
-string label_network_connection_yes

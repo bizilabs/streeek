@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="app_name">Streeek</string>
-    <string name="label_network_connection_no">No Network Connection</string>
-    <string name="label_network_connection_yes">Network Connected</string>
-</resources>

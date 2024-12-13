@@ -1,3 +1,0 @@
-int string app_name 0x0
-int string label_network_connection_no 0x0
-int string label_network_connection_yes 0x0

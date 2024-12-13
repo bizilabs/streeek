@@ -1,4 +1,0 @@
-com.bizilabs.streeek.lib.resources
-string app_name
-string label_network_connection_no
-string label_network_connection_yes

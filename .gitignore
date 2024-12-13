@@ -9,10 +9,9 @@
 /.idea
 
 # Build
-*/build/*
-/build/
-modules-conventions/conventions/build
-modules-conventions/conventions/build/*
+**/.build
+**/build
+**/build/**
 
 # Properties
 local.properties
