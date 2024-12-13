@@ -6,10 +6,12 @@ jobs:
     steps:
       - name: Checkout project sources
         uses: actions/checkout@v2
-      - name: Create local.properties file
+      - name: Create local.properties
         run: |
-          touch local.properties
-          echo "add things you want in your local file here"
+          echo "github.client.id=id" >> local.properties
+          echo "github.client.name=name" >> local.properties
+          echo "github.client.secret=secret" >> local.properties
+          echo "github.client.redirect.url=url" >> local.properties
       - name: TODO to Issue
         uses: alstr/todo-to-issue-action@v4.6.8
         id: todo
