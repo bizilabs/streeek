@@ -1,15 +1,13 @@
 package com.bizilabs.streeek.feature.landing
 
-import android.R.attr.text
-import android.R.attr.top
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.material3.Button
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -21,7 +19,6 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.bizilabs.streeek.lib.common.navigation.SharedScreen
 import com.bizilabs.streeek.lib.design.components.SafiCenteredColumn
-import androidx.compose.runtime.getValue
 
 val featureLanding = screenModule {
     register<SharedScreen.Landing> { LandingScreen }
@@ -33,6 +30,7 @@ object LandingScreen : Screen {
         val navigator = LocalNavigator.currentOrThrow
 
         val authenticationScreen = rememberScreen(SharedScreen.Authentication)
+        val setupScreen = rememberScreen(SharedScreen.Setup)
         val tabsScreen = rememberScreen(SharedScreen.Tabs)
 
         val screenModel : LandingScreenModel = getScreenModel()
@@ -43,6 +41,7 @@ object LandingScreen : Screen {
                 LandingScreenDestination.CURRENT -> Unit
                 LandingScreenDestination.AUTHENTICATE -> navigator.replace(authenticationScreen)
                 LandingScreenDestination.TABS -> navigator.replace(tabsScreen)
+                LandingScreenDestination.SETUP -> navigator.replace(setupScreen)
             }
         }
     }

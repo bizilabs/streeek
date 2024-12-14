@@ -6,5 +6,5 @@ import com.bizilabs.streeek.lib.domain.models.UserEventDomain
 
 interface UserRepository {
     suspend fun getUser(): DataResult<UserDomain>
-    suspend fun getUserEvents(username: String): DataResult<List<UserEventDomain>>
+    suspend fun getUserEvents(): DataResult<List<UserEventDomain>>
 }

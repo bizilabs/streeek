@@ -2,6 +2,7 @@ package com.bizilabs.streeek.feature.landing
 
 import cafe.adriel.voyager.core.model.StateScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
+import com.bizilabs.streeek.lib.domain.repositories.AccountRepository
 import com.bizilabs.streeek.lib.domain.repositories.AuthenticationRepository
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
@@ -9,7 +10,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 enum class LandingScreenDestination {
-    CURRENT, AUTHENTICATE, TABS
+    CURRENT, AUTHENTICATE, SETUP, TABS
 }
 
 data class LandingScreenState(
@@ -17,7 +18,8 @@ data class LandingScreenState(
 )
 
 class LandingScreenModel(
-    private val repository: AuthenticationRepository
+    private val authenticationRepository: AuthenticationRepository,
+    private val accountRepository: AccountRepository
 ) : StateScreenModel<LandingScreenState>(LandingScreenState()) {
 
     init {
@@ -26,13 +28,12 @@ class LandingScreenModel(
 
     private fun checkNavigation() {
         screenModelScope.launch {
-            delay(2500)
-            val authenticated = repository.authenticated.first()
-            if (authenticated.not()) {
-                mutableState.update { it.copy(destination = LandingScreenDestination.AUTHENTICATE) }
-            }
+            delay(1500)
+            val authenticated = authenticationRepository.authenticated.first()
+            val account = accountRepository.account.first()
             val destination = when {
                 !authenticated -> LandingScreenDestination.AUTHENTICATE
+                account == null -> LandingScreenDestination.SETUP
                 else -> LandingScreenDestination.TABS
             }
             mutableState.update { it.copy(destination = destination) }

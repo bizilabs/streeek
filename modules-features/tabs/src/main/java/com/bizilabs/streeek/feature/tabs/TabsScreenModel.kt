@@ -19,76 +19,40 @@ val tabsModule = module {
 }
 
 data class TabsScreenState(
-    val userState: FetchState<UserDomain> = FetchState.Loading,
+    val accountState: FetchState<AccountDomain> = FetchState.Loading,
     val eventsState: FetchState<List<UserEventDomain>> = FetchState.Loading,
-    val accountState: FetchState<AccountDomain> = FetchState.Loading
 )
 
 class TabsScreenModel(
     private val userRepository: UserRepository,
     private val accountRepository: AccountRepository
 ) : StateScreenModel<TabsScreenState>(TabsScreenState()) {
+
     init {
-        getUser()
+        observeAccount()
+        getUserEvents()
     }
 
-    private fun getUser() {
+    private fun observeAccount() {
         screenModelScope.launch {
-            mutableState.update { it.copy(userState = FetchState.Loading) }
-            val update = when (val result = userRepository.getUser()) {
-                is DataResult.Error -> FetchState.Error(message = result.message)
-                is DataResult.Success -> FetchState.Success(value = result.data)
+            accountRepository.account.collect { account ->
+                val update = when (account) {
+                    null -> FetchState.Error("No account found")
+                    else -> FetchState.Success(value = account)
+                }
+                mutableState.update { it.copy(accountState = update) }
             }
-            mutableState.update { it.copy(userState = update) }
-            if (update is FetchState.Success) getAccount(update.value)
         }
     }
 
-    private fun getUserEvents(username: String) {
+    private fun getUserEvents() {
         screenModelScope.launch {
             mutableState.update { it.copy(eventsState = FetchState.Loading) }
-            val update = when (val result = userRepository.getUserEvents(username = username)) {
+            val update = when (val result = userRepository.getUserEvents()) {
                 is DataResult.Error -> FetchState.Error(message = result.message)
                 is DataResult.Success -> FetchState.Success(value = result.data)
             }
             mutableState.update { it.copy(eventsState = update) }
-        }
-    }
-
-    private fun getAccount(user: UserDomain) {
-        screenModelScope.launch {
-            mutableState.update { it.copy(accountState = FetchState.Loading) }
-            when (val result = accountRepository.getAccountWithGithubId(id = user.id)) {
-                is DataResult.Error -> {
-                    mutableState.update { it.copy(accountState = FetchState.Error(message = result.message)) }
-                }
-
-                is DataResult.Success -> {
-                    val account = result.data
-                    if (account == null)
-                        createAccount(user = user)
-                    else
-                        mutableState.update { it.copy(accountState = FetchState.Success(value = account)) }
-                }
-            }
-
-        }
-    }
-
-    private fun createAccount(user: UserDomain) {
-        screenModelScope.launch {
-            mutableState.update { it.copy(accountState = FetchState.Loading) }
-            val update = when (val result = accountRepository.createAccount(
-                githubId = user.id,
-                username = user.name,
-                email = user.email,
-                bio = user.bio,
-                avatarUrl = user.url
-            )) {
-                is DataResult.Error -> FetchState.Error(message = result.message)
-                is DataResult.Success -> FetchState.Success(value = result.data)
-            }
-            mutableState.update { it.copy(accountState = update) }
         }
     }
 

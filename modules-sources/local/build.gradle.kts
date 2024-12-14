@@ -8,7 +8,6 @@ android {
 }
 
 dependencies {
-
-
-
+    // datastore
+    implementation(libs.androidx.datastore)
 }
