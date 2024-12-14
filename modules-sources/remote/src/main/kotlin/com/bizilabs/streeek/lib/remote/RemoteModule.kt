@@ -5,7 +5,10 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
 import com.bizilabs.streeek.lib.remote.helpers.createHttpClient
+import com.bizilabs.streeek.lib.remote.helpers.createSupabase
 import com.bizilabs.streeek.lib.remote.interceptor.AuthorizationInterceptor
+import com.bizilabs.streeek.lib.remote.sources.account.AccountRemoteSource
+import com.bizilabs.streeek.lib.remote.sources.account.AccountRemoteSourceImpl
 import com.bizilabs.streeek.lib.remote.sources.auth.AuthenticationRemoteSource
 import com.bizilabs.streeek.lib.remote.sources.auth.AuthenticationRemoteSourceImpl
 import com.bizilabs.streeek.lib.remote.sources.preferences.RemotePreferencesSource
@@ -33,6 +36,8 @@ val remoteModule = module {
         )
     }
     single<DataStore<Preferences>>(named("remote")) { get<Context>().dataStore }
+    // supabase
+    single { createSupabase() }
     // sources
     single<RemotePreferencesSource> { RemotePreferencesSourceImpl(dataStore = get(named("remote"))) }
     single<AuthenticationRemoteSource> {
@@ -42,4 +47,5 @@ val remoteModule = module {
         )
     }
     single<UserRemoteSource> { UserRemoteSourceImpl(client = get()) }
+    single<AccountRemoteSource> { AccountRemoteSourceImpl(supabase = get()) }
 }

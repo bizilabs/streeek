@@ -59,7 +59,7 @@ compose-qr = "1.0.1"
 bcrypt = "0.10.2"
 realm = "1.11.0"
 startup-runtime = "1.2.0"
-openid-appauth="0.11.1"
+supabase-bom = "3.0.3"
 
 [libraries]
 # androidx
@@ -131,6 +131,14 @@ okhttp-bom = { module = "com.squareup.okhttp3:okhttp-bom", version.ref = "okhttp
 okhttp = { module = "com.squareup.okhttp3:okhttp" }
 okhttp-logging = { module = "com.squareup.okhttp3:logging-interceptor" }
 
+# supabase
+supabase-bom = { module = "io.github.jan-tennert.supabase:bom", version.ref = "supabase-bom" }
+supabase-auth = { module = "io.github.jan-tennert.supabase:auth-kt" }
+supabase-storage = { module = "io.github.jan-tennert.supabase:storage-kt" }
+supabase-realtime = { module = "io.github.jan-tennert.supabase:realtime-kt" }
+supabase-postgrest = { module = "io.github.jan-tennert.supabase:postgrest-kt" }
+supabase-functions = { module = "io.github.jan-tennert.supabase:functions-kt" }
+
 # firebase
 firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebase_bom" }
 firebase-messaging = { module = "com.google.firebase:firebase-messaging-ktx" }
@@ -178,7 +186,6 @@ junit = { group = "junit", name = "junit", version.ref = "junit" }
 bcrypt = { module = "at.favre.lib:bcrypt", version.ref = "bcrypt" }
 realm = { module = "io.realm.kotlin:library-base", version.ref = "realm" }
 androidx-startup-runtime = { group = "androidx.startup", name = "startup-runtime", version.ref = "startup-runtime" }
-openid-appauth = { module = "net.openid:appauth", version.ref = "openid-appauth" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "gradle-plugin-android" }
@@ -221,3 +228,7 @@ okhttp = ["okhttp", "okhttp-logging"]
 coil = ["coil-kt-compose", "coil-kt-svg", "coil-kt"]
 media3 = ["media3-exoplayer", "media3-ui", "media3-exoplayer-dash", "media3-exoplayer-hls"]
 saket = ["saket-swipe", "saket-cascade"]
+supabase = [
+    "supabase-auth", "supabase-realtime", "supabase-postgrest",
+    "supabase-storage", "supabase-functions"
+]

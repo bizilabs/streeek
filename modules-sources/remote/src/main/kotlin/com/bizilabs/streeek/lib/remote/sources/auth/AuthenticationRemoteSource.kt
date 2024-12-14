@@ -7,6 +7,7 @@ import com.bizilabs.streeek.lib.remote.helpers.NetworkResult
 import com.bizilabs.streeek.lib.remote.helpers.safeApiCall
 import com.bizilabs.streeek.lib.remote.models.AccessTokenDTO
 import com.bizilabs.streeek.lib.remote.sources.preferences.RemotePreferencesSource
+import io.github.jan.supabase.SupabaseClient
 import io.ktor.client.HttpClient
 import io.ktor.client.request.forms.submitForm
 import io.ktor.http.Parameters
