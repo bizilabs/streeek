@@ -12,6 +12,8 @@ jobs:
           echo "github.client.name=name" >> local.properties
           echo "github.client.secret=secret" >> local.properties
           echo "github.client.redirect.url=url" >> local.properties
+          echo "supabase.url=url" >> local.properties
+          echo "supabase.key=key" >> local.properties
       - name: TODO to Issue
         uses: alstr/todo-to-issue-action@v4.6.8
         id: todo

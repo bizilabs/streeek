@@ -4,6 +4,7 @@ import android.app.Application
 import cafe.adriel.voyager.core.registry.ScreenRegistry
 import com.bizilabs.streeek.feature.authentication.featureAuthentication
 import com.bizilabs.streeek.feature.landing.featureLanding
+import com.bizilabs.streeek.feature.setup.featureSetup
 import com.bizilabs.streeek.feature.tabs.featureTabs
 import timber.log.Timber
 
@@ -22,6 +23,7 @@ abstract class MainApplication : Application() {
         ScreenRegistry {
             featureLanding()
             featureAuthentication()
+            featureSetup()
             featureTabs()
         }
     }
