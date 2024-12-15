@@ -4,7 +4,7 @@ import java.util.Date
 
 data class ContributionDomain(
     val id: Long,
-    val createdAt: String,
+    val createdAt: Date,
     val accountId: Long,
     val githubEventId: String,
     val githubEventType: String,

@@ -21,7 +21,7 @@ private fun String.asEventPayload(): EventPayloadDTO =
 
 fun ContributionDTO.toDomain() = ContributionDomain(
     id = id,
-    createdAt = createdAt,
+    createdAt = createdAt.asDate()?.time ?: Date(),
     accountId = accountId,
     githubEventId = githubEventId,
     githubEventType = githubEventType,
@@ -34,7 +34,7 @@ fun ContributionDTO.toDomain() = ContributionDomain(
 
 fun ContributionDomain.toCache() = ContributionCache(
     id = id,
-    createdAt = createdAt,
+    createdAt = createdAt.asString(DateFormats.ISO_8601) ?: "",
     accountId = accountId,
     githubEventId = githubEventId,
     githubEventType = githubEventType,
@@ -47,7 +47,7 @@ fun ContributionDomain.toCache() = ContributionCache(
 
 fun ContributionCache.toDomain() = ContributionDomain(
     id = id,
-    createdAt = createdAt,
+    createdAt = createdAt.asDate()?.time ?: Date(),
     accountId = accountId,
     githubEventId = githubEventId,
     githubEventType = githubEventType,

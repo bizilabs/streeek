@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.PushPin
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
@@ -34,6 +36,7 @@ import com.bizilabs.streeek.lib.common.models.FetchState
 import com.bizilabs.streeek.lib.common.navigation.SharedScreen
 import com.bizilabs.streeek.lib.design.components.SafiCenteredColumn
 import com.bizilabs.streeek.lib.design.components.SafiCenteredRow
+import com.bizilabs.streeek.lib.design.components.SafiInfoSection
 import com.bizilabs.streeek.lib.domain.helpers.asString
 
 val featureTabs = screenModule {
@@ -113,10 +116,10 @@ fun TabsScreenContent(state: TabsScreenState) {
                 modifier = Modifier
                     .weight(1f)
                     .fillMaxSize(),
-                targetState = state.eventsState,
+                targetState = state.contributions,
                 label = "events_animation"
-            ) { events ->
-                when (events) {
+            ) { contributions ->
+                when (contributions) {
                     FetchState.Loading -> {
                         SafiCenteredColumn(modifier = Modifier.fillMaxSize()) { CircularProgressIndicator() }
                     }
@@ -124,47 +127,68 @@ fun TabsScreenContent(state: TabsScreenState) {
                     is FetchState.Error -> {
                         SafiCenteredColumn(modifier = Modifier.fillMaxSize()) {
                             Text(text = "Error")
-                            Text(text = events.message)
+                            Text(text = contributions.message)
                         }
 
                     }
 
                     is FetchState.Success -> {
                         val context = LocalContext.current
-                        LazyColumn(modifier = Modifier.fillMaxSize()) {
-                            items(events.value) {
-                                Card(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(8.dp),
-                                    onClick = {
-                                        Toast.makeText(
-                                            context,
-                                            it.type,
-                                            Toast.LENGTH_SHORT
-                                        ).show()
-                                    },
-                                    border = BorderStroke(
-                                        1.dp,
-                                        MaterialTheme.colorScheme.onBackground.copy(
-                                            0.2f
+                        val list = contributions.value
+                        AnimatedContent(
+                            modifier = Modifier.fillMaxSize(),
+                            targetState = list,
+                            label = "list_animation"
+                        ) {
+                            when {
+                                it.isEmpty() -> {
+                                    SafiCenteredColumn(modifier = Modifier.fillMaxSize()) {
+                                        SafiInfoSection(
+                                            icon = Icons.Rounded.PushPin,
+                                            title = "No Contributions Found",
+                                            description = "You haven't been busy today... Push some few commits!"
                                         )
-                                    ),
-                                ) {
-                                    Column(
-                                        modifier = Modifier
-                                            .padding(16.dp)
-                                            .fillMaxWidth()
-                                    ) {
-                                        Text(
-                                            text = it.createdAt.asString()
-                                                ?: "Some Date..."
-                                        )
-                                        Text(text = it.id)
-                                        SafiCenteredRow {
-                                            Text(text = it.type)
-                                            Text(text = " > ", fontSize = 24.sp)
-                                            Text(text = it.repo.name)
+                                    }
+                                }
+
+                                else -> {
+                                    LazyColumn(modifier = Modifier.fillMaxSize()) {
+                                        items(it) {
+                                            Card(
+                                                modifier = Modifier
+                                                    .fillMaxWidth()
+                                                    .padding(8.dp),
+                                                onClick = {
+                                                    Toast.makeText(
+                                                        context,
+                                                        it.githubEventType,
+                                                        Toast.LENGTH_SHORT
+                                                    ).show()
+                                                },
+                                                border = BorderStroke(
+                                                    1.dp,
+                                                    MaterialTheme.colorScheme.onBackground.copy(
+                                                        0.2f
+                                                    )
+                                                ),
+                                            ) {
+                                                Column(
+                                                    modifier = Modifier
+                                                        .padding(16.dp)
+                                                        .fillMaxWidth()
+                                                ) {
+                                                    Text(
+                                                        text = it.createdAt.asString()
+                                                            ?: "Some Date..."
+                                                    )
+                                                    Text(text = "ID : ${it.id} > git : ${it.githubEventId}")
+                                                    SafiCenteredRow {
+                                                        Text(text = it.githubEventType)
+                                                        Text(text = " > ", fontSize = 24.sp)
+                                                        Text(text = it.githubEventRepo.name)
+                                                    }
+                                                }
+                                            }
                                         }
                                     }
                                 }
