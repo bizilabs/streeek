@@ -15,6 +15,7 @@ import timber.log.Timber
 object Supabase {
     object Tables {
         const val Accounts = "accounts"
+        const val Contributions = "contributions"
     }
 }
 

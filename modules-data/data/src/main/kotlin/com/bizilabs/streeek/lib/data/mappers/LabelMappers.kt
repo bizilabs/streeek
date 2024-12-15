@@ -9,3 +9,10 @@ fun GithubLabelDTO.toDomain() = LabelDomain(
     color = color,
     description = description
 )
+
+fun LabelDomain.toDTO() = GithubLabelDTO(
+    id = id,
+    name = name,
+    color = color,
+    description = description
+)

@@ -9,6 +9,7 @@ import io.ktor.client.HttpClient
 import io.ktor.client.request.get
 import io.ktor.client.request.url
 
+
 interface UserRemoteSource {
     suspend fun getUser(): NetworkResult<GithubUserDTO>
     suspend fun getUserEvents(username: String): NetworkResult<List<GithubUserEventDTO>>

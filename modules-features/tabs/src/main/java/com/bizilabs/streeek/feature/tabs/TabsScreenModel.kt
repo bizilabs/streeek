@@ -9,6 +9,7 @@ import com.bizilabs.streeek.lib.domain.models.AccountDomain
 import com.bizilabs.streeek.lib.domain.models.UserDomain
 import com.bizilabs.streeek.lib.domain.models.UserEventDomain
 import com.bizilabs.streeek.lib.domain.repositories.AccountRepository
+import com.bizilabs.streeek.lib.domain.repositories.ContributionRepository
 import com.bizilabs.streeek.lib.domain.repositories.UserRepository
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -16,7 +17,7 @@ import org.koin.dsl.module
 import timber.log.Timber
 
 val tabsModule = module {
-    factory { TabsScreenModel(userRepository = get(), accountRepository = get()) }
+    factory { TabsScreenModel(contributionRepository = get(), accountRepository = get()) }
 }
 
 data class TabsScreenState(
@@ -25,7 +26,7 @@ data class TabsScreenState(
 )
 
 class TabsScreenModel(
-    private val userRepository: UserRepository,
+    private val contributionRepository: ContributionRepository,
     private val accountRepository: AccountRepository
 ) : StateScreenModel<TabsScreenState>(TabsScreenState()) {
 
@@ -49,16 +50,17 @@ class TabsScreenModel(
     private fun getUserEvents() {
         screenModelScope.launch {
             mutableState.update { it.copy(eventsState = FetchState.Loading) }
-            val update = when (val result = userRepository.getUserEvents()) {
+            val update = when (val result = contributionRepository.getEvents(page = 1)) {
                 is DataResult.Error -> FetchState.Error(message = result.message)
                 is DataResult.Success -> {
                     Timber.d(
                         "Events: \n${
                             result.data.map {
                                 mapOf(
+                                    "z---" to "\n",
                                     "id" to it.id,
                                     "type" to it.type,
-                                    "createdAt" to it.createdAt
+                                    "createdAt" to it.createdAt,
                                 )
                             }
                         }"

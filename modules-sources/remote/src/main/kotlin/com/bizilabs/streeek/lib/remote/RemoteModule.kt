@@ -11,6 +11,8 @@ import com.bizilabs.streeek.lib.remote.sources.account.AccountRemoteSource
 import com.bizilabs.streeek.lib.remote.sources.account.AccountRemoteSourceImpl
 import com.bizilabs.streeek.lib.remote.sources.auth.AuthenticationRemoteSource
 import com.bizilabs.streeek.lib.remote.sources.auth.AuthenticationRemoteSourceImpl
+import com.bizilabs.streeek.lib.remote.sources.contributions.ContributionsRemoteSource
+import com.bizilabs.streeek.lib.remote.sources.contributions.ContributionsRemoteSourceImpl
 import com.bizilabs.streeek.lib.remote.sources.preferences.RemotePreferencesSource
 import com.bizilabs.streeek.lib.remote.sources.preferences.RemotePreferencesSourceImpl
 import com.bizilabs.streeek.lib.remote.sources.user.UserRemoteSource
@@ -22,7 +24,7 @@ import org.koin.dsl.module
 
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "streeek.remote")
 
-val remoteModule = module {
+val RemoteModule = module {
     single<HttpLoggingInterceptor> {
         HttpLoggingInterceptor().apply {
             setLevel(HttpLoggingInterceptor.Level.BODY)
@@ -48,4 +50,10 @@ val remoteModule = module {
     }
     single<UserRemoteSource> { UserRemoteSourceImpl(client = get()) }
     single<AccountRemoteSource> { AccountRemoteSourceImpl(supabase = get()) }
+    single<ContributionsRemoteSource> {
+        ContributionsRemoteSourceImpl(
+            supabase = get(),
+            client = get()
+        )
+    }
 }

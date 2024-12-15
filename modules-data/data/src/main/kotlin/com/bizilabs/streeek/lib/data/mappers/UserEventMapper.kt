@@ -21,3 +21,9 @@ fun GithubEventRepositoryDTO.toDomain() = EventRepositoryDomain(
     url = url,
     name = name
 )
+
+fun EventRepositoryDomain.toDTO() = GithubEventRepositoryDTO(
+    id = id,
+    url = url,
+    name = name
+)

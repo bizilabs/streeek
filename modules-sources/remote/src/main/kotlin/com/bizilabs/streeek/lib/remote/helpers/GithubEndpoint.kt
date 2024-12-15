@@ -8,6 +8,9 @@ sealed class GithubEndpoint(private val route: String) {
         }
 
     object User : GithubEndpoint(route = "/user")
+    data class Event(val username: String, val id: String) :
+        GithubEndpoint(route = "/users/$username/events/$id")
+
     data class Events(val username: String) :
         GithubEndpoint(route = "/users/$username/events")
 }

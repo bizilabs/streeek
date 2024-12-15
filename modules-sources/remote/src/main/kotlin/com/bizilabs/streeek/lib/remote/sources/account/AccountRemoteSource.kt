@@ -32,9 +32,7 @@ class AccountRemoteSourceImpl(
         safeSupabaseCall {
             supabase
                 .from(Supabase.Tables.Accounts)
-                .insert(request) {
-                    select()
-                }
+                .insert(request) { select() }
                 .decodeSingle()
         }
 }
