@@ -12,7 +12,8 @@ fun GithubUserEventDTO.toDomain() = UserEventDomain(
     type = type,
     createdAt = createdAt.asDate()?.time ?: Date.valueOf(createdAt),
     actor = actor.toDomain(),
-    repo = repo.toDomain()
+    repo = repo.toDomain(),
+    payload = payload.toDomain()
 )
 
 fun GithubEventRepositoryDTO.toDomain() = EventRepositoryDomain(

@@ -76,15 +76,7 @@ fun createHttpClient(
         addStandardHeaders()
     }
     install(ContentNegotiation) {
-        json(
-            json = Json {
-                encodeDefaults = true
-                ignoreUnknownKeys = true
-                prettyPrint = true
-                isLenient = true
-                explicitNulls = false
-            }
-        )
+        json(json = createJson())
     }
 
 }

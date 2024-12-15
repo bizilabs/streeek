@@ -17,5 +17,6 @@ data class GithubUserEventDTO(
     @SerialName("created_at")
     val createdAt: String,
     val actor: GithubActorDTO,
-    val repo: GithubEventRepositoryDTO
+    val repo: GithubEventRepositoryDTO,
+    val payload: EventPayloadDTO
 )

@@ -9,7 +9,9 @@ data class UserDomain(
 )
 
 data class ActorDomain(
-    val id: String,
+    val id: Long,
     val name: String,
     val url: String
 )
+
+data class ActorMinimalDomain(val name: String)

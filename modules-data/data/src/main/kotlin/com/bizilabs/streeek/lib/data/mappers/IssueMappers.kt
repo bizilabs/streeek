@@ -1,0 +1,19 @@
+package com.bizilabs.streeek.lib.data.mappers
+
+import com.bizilabs.streeek.lib.domain.helpers.asDate
+import com.bizilabs.streeek.lib.domain.models.IssueDomain
+import com.bizilabs.streeek.lib.remote.models.GithubIssueDTO
+import java.util.Date
+
+fun GithubIssueDTO.toDomain() = IssueDomain(
+    id = id,
+    url = url,
+    number = number,
+    title = title,
+    body = body,
+    user = user.toDomain(),
+    labels = labels.map { it.toDomain() },
+    createdAt = createdAt.asDate()?.time ?: Date(),
+    updatedAt = updatedAt.asDate()?.time ?: Date(),
+    closedAt = closedAt?.asDate()?.time
+)

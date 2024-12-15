@@ -13,6 +13,7 @@ import com.bizilabs.streeek.lib.domain.repositories.UserRepository
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.koin.dsl.module
+import timber.log.Timber
 
 val tabsModule = module {
     factory { TabsScreenModel(userRepository = get(), accountRepository = get()) }
@@ -50,7 +51,20 @@ class TabsScreenModel(
             mutableState.update { it.copy(eventsState = FetchState.Loading) }
             val update = when (val result = userRepository.getUserEvents()) {
                 is DataResult.Error -> FetchState.Error(message = result.message)
-                is DataResult.Success -> FetchState.Success(value = result.data)
+                is DataResult.Success -> {
+                    Timber.d(
+                        "Events: \n${
+                            result.data.map {
+                                mapOf(
+                                    "id" to it.id,
+                                    "type" to it.type,
+                                    "createdAt" to it.createdAt
+                                )
+                            }
+                        }"
+                    )
+                    FetchState.Success(value = result.data)
+                }
             }
             mutableState.update { it.copy(eventsState = update) }
         }
