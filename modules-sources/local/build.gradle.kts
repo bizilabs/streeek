@@ -10,4 +10,7 @@ android {
 dependencies {
     // datastore
     implementation(libs.androidx.datastore)
+    // room
+    implementation(libs.androidx.room)
+    ksp(libs.androidx.room.compiler)
 }

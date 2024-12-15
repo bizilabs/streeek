@@ -19,6 +19,7 @@ val dataModule = module {
     single<AccountRepository> { AccountRepositoryImpl(remote = get(), local = get()) }
     single<ContributionRepository> {
         ContributionRepositoryImpl(
+            local = get(),
             remote = get(),
             accountLocalSource = get()
         )
