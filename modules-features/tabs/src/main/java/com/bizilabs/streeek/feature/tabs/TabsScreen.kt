@@ -156,23 +156,16 @@ fun TabsScreenContent(state: TabsScreenState) {
                                             .padding(16.dp)
                                             .fillMaxWidth()
                                     ) {
-                                        SafiCenteredRow {
-                                            AsyncImage(
-                                                modifier = Modifier
-                                                    .size(48.dp)
-                                                    .padding(8.dp)
-                                                    .clip(CircleShape),
-                                                model = it.actor.url,
-                                                contentDescription = "actor image",
-                                            )
-                                            Text(text = it.actor.name)
-                                        }
-                                        Text(text = it.id)
-                                        Text(text = it.type)
                                         Text(
                                             text = it.createdAt.asString()
                                                 ?: "Some Date..."
                                         )
+                                        Text(text = it.id)
+                                        SafiCenteredRow {
+                                            Text(text = it.type)
+                                            Text(text = " > ", fontSize = 24.sp)
+                                            Text(text = it.repo.name)
+                                        }
                                     }
                                 }
                             }

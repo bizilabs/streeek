@@ -6,5 +6,12 @@ data class UserEventDomain(
     val id: String,
     val type: String,
     val createdAt: Date,
-    val actor: ActorDomain
+    val actor: ActorDomain,
+    val repo: EventRepositoryDomain
+)
+
+data class EventRepositoryDomain(
+    val id: String,
+    val url: String,
+    val name: String,
 )

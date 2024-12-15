@@ -1,7 +1,5 @@
 package com.bizilabs.streeek.lib.domain.models
 
-import kotlinx.serialization.SerialName
-
 data class UserDomain(
     val id: Int,
     val name: String,
