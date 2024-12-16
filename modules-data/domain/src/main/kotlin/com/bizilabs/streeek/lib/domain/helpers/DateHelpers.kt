@@ -34,3 +34,15 @@ fun Date.asString(format: String = DateFormats.EEE_MMM_dd_yyyy_HH_mm): String? {
         outputFormat.format(this)
     }
 }
+
+fun Date.isSameDay(date: Date): Boolean {
+    val calendar1 = Calendar.getInstance()
+    calendar1.time = this
+
+    val calendar2 = Calendar.getInstance()
+    calendar2.time = date
+
+    return calendar1.get(Calendar.YEAR) == calendar2.get(Calendar.YEAR) &&
+            calendar1.get(Calendar.MONTH) == calendar2.get(Calendar.MONTH) &&
+            calendar1.get(Calendar.DAY_OF_MONTH) == calendar2.get(Calendar.DAY_OF_MONTH)
+}

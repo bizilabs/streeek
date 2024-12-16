@@ -1,24 +1,30 @@
 package com.bizilabs.streeek.feature.tabs
 
+import android.content.Context
 import cafe.adriel.voyager.core.model.StateScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
-import coil.util.CoilUtils.result
 import com.bizilabs.streeek.lib.common.models.FetchState
 import com.bizilabs.streeek.lib.domain.helpers.DataResult
 import com.bizilabs.streeek.lib.domain.models.AccountDomain
 import com.bizilabs.streeek.lib.domain.models.ContributionDomain
-import com.bizilabs.streeek.lib.domain.models.UserDomain
 import com.bizilabs.streeek.lib.domain.models.UserEventDomain
 import com.bizilabs.streeek.lib.domain.repositories.AccountRepository
 import com.bizilabs.streeek.lib.domain.repositories.ContributionRepository
-import com.bizilabs.streeek.lib.domain.repositories.UserRepository
+import com.bizilabs.streeek.lib.domain.workers.startDailySyncContributionsWork
+import com.bizilabs.streeek.lib.domain.workers.startSyncContributionsWork
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.koin.dsl.module
 import timber.log.Timber
 
 val tabsModule = module {
-    factory { TabsScreenModel(contributionRepository = get(), accountRepository = get()) }
+    factory {
+        TabsScreenModel(
+            context = get(),
+            contributionRepository = get(),
+            accountRepository = get()
+        )
+    }
 }
 
 data class TabsScreenState(
@@ -28,6 +34,7 @@ data class TabsScreenState(
 )
 
 class TabsScreenModel(
+    private val context: Context,
     private val contributionRepository: ContributionRepository,
     private val accountRepository: AccountRepository
 ) : StateScreenModel<TabsScreenState>(TabsScreenState()) {
@@ -35,6 +42,14 @@ class TabsScreenModel(
     init {
         observeAccount()
         observeContributions()
+        startSyncContributionsWork()
+    }
+
+    private fun startSyncContributionsWork() {
+        with(context){
+//            startSyncContributionsWork()
+            startDailySyncContributionsWork()
+        }
     }
 
     private fun observeAccount() {

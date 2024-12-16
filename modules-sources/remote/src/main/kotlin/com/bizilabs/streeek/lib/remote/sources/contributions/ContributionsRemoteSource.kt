@@ -20,10 +20,11 @@ interface ContributionsRemoteSource {
     suspend fun fetchEvents(username: String, page: Int): NetworkResult<List<GithubUserEventDTO>>
 
     suspend fun fetchContribution(id: Long): NetworkResult<ContributionDTO>
-    suspend fun fetchContributions(page: Int): NetworkResult<List<ContributionDTO>>
+    suspend fun fetchContributions(accountId: Long, page: Int): NetworkResult<List<ContributionDTO>>
 
     suspend fun fetchContributionWithGithubEventId(githubEventId: String): NetworkResult<ContributionDTO?>
     suspend fun saveContribution(request: CreateContributionDTO): NetworkResult<ContributionDTO>
+    suspend fun saveContribution(requests: List<CreateContributionDTO>): NetworkResult<List<ContributionDTO>>
 }
 
 class ContributionsRemoteSourceImpl(
@@ -56,12 +57,20 @@ class ContributionsRemoteSourceImpl(
                 .decodeSingle()
         }
 
-    override suspend fun fetchContributions(page: Int): NetworkResult<List<ContributionDTO>> =
+    override suspend fun fetchContributions(
+        accountId: Long,
+        page: Int
+    ): NetworkResult<List<ContributionDTO>> =
         safeSupabaseCall {
             supabase
                 .from(Supabase.Tables.Contributions)
-                .select { order(ContributionDTO::createdAt.name, order = Order.DESCENDING) }
-                .decodeSingle()
+                .select {
+                    filter {
+                        ContributionDTO::accountId eq accountId
+                    }
+                    order(ContributionDTO.Columns.AccountId, order = Order.DESCENDING)
+                }
+                .decodeList()
         }
 
     override suspend fun fetchContributionWithGithubEventId(githubEventId: String): NetworkResult<ContributionDTO?> =
@@ -78,6 +87,14 @@ class ContributionsRemoteSourceImpl(
                 .from(Supabase.Tables.Contributions)
                 .insert(request) { select() }
                 .decodeSingle()
+        }
+
+    override suspend fun saveContribution(requests: List<CreateContributionDTO>): NetworkResult<List<ContributionDTO>> =
+        safeSupabaseCall {
+            supabase
+                .from(Supabase.Tables.Contributions)
+                .insert(requests) { select() }
+                .decodeList()
         }
 
 }

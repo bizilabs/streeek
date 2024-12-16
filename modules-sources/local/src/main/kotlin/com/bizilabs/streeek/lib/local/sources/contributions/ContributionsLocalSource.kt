@@ -10,8 +10,10 @@ import kotlinx.coroutines.flow.mapLatest
 interface ContributionsLocalSource {
     val contributions: Flow<List<ContributionCache>>
     suspend fun create(contribution: ContributionCache): LocalResult<Boolean>
+    suspend fun create(contributions: List<ContributionCache>): LocalResult<Boolean>
     suspend fun update(contribution: ContributionCache): LocalResult<ContributionCache>
-    suspend fun get(id: Long): LocalResult<ContributionCache>
+    suspend fun update(contributions: List<ContributionCache>): LocalResult<Boolean>
+    suspend fun get(id: Long): LocalResult<ContributionCache?>
     suspend fun delete(id: Long): LocalResult<Boolean>
 }
 
@@ -27,14 +29,26 @@ class ContributionsLocalSourceImpl(
             true
         }
 
+    override suspend fun create(contributions: List<ContributionCache>): LocalResult<Boolean> =
+        safeTransaction {
+            dao.insert(contributions.map { it.toEntity() })
+            true
+        }
+
     override suspend fun update(contribution: ContributionCache): LocalResult<ContributionCache> =
         safeTransaction {
             dao.update(contribution.toEntity())
-            dao.select(id = contribution.id).first().toCache()
+            dao.selectFlow(id = contribution.id).first().toCache()
         }
 
-    override suspend fun get(id: Long): LocalResult<ContributionCache> = safeTransaction {
-        dao.select(id = id).first().toCache()
+    override suspend fun update(contributions: List<ContributionCache>): LocalResult<Boolean> =
+        safeTransaction {
+            dao.update(contributions.map { it.toEntity() })
+            true
+        }
+
+    override suspend fun get(id: Long): LocalResult<ContributionCache?> = safeTransaction {
+        dao.select(id = id)?.toCache()
     }
 
     override suspend fun delete(id: Long): LocalResult<Boolean> = safeTransaction {

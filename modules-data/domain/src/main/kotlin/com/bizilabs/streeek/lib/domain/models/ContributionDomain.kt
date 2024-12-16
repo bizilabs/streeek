@@ -10,7 +10,7 @@ data class ContributionDomain(
     val githubEventType: String,
     val githubEventDate: Date,
     val githubEventRepo: EventRepositoryDomain,
-    val githubEventActor: ActorMinimalDomain,
+    val githubEventActor: ActorDomain,
     val githubEventPayload: EventPayloadDomain,
     val points: Long,
 )

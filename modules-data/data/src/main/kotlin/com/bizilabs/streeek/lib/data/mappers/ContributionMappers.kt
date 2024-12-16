@@ -9,15 +9,24 @@ import com.bizilabs.streeek.lib.remote.helpers.asJson
 import com.bizilabs.streeek.lib.remote.models.ContributionDTO
 import com.bizilabs.streeek.lib.remote.models.EventPayloadDTO
 import com.bizilabs.streeek.lib.remote.models.EventPayloadSerializer
-import com.bizilabs.streeek.lib.remote.models.GithubActorMinimalDTO
+import com.bizilabs.streeek.lib.remote.models.GithubActorDTO
 import com.bizilabs.streeek.lib.remote.models.GithubEventRepositoryDTO
 import kotlinx.serialization.json.Json
 import java.util.Date
 
-private fun String.asGithubRepo(): GithubEventRepositoryDTO = Json.decodeFromString(this)
-private fun String.asActorMinimal(): GithubActorMinimalDTO = Json.decodeFromString(this)
+val JsonSerializer = Json {
+    encodeDefaults = true
+    ignoreUnknownKeys = true
+    prettyPrint = true
+    isLenient = true
+    explicitNulls = false
+    classDiscriminator = "#class"
+}
+
+private fun String.asGithubRepo(): GithubEventRepositoryDTO = JsonSerializer.decodeFromString(this)
+private fun String.asActor(): GithubActorDTO = JsonSerializer.decodeFromString(this)
 private fun String.asEventPayload(): EventPayloadDTO =
-    Json.decodeFromString(EventPayloadSerializer, this)
+    JsonSerializer.decodeFromString(EventPayloadSerializer, this)
 
 fun ContributionDTO.toDomain() = ContributionDomain(
     id = id,
@@ -27,7 +36,7 @@ fun ContributionDTO.toDomain() = ContributionDomain(
     githubEventType = githubEventType,
     githubEventDate = githubEventDate.asDate()?.time ?: Date(),
     githubEventRepo = githubEventRepo.asGithubRepo().toDomain(),
-    githubEventActor = githubEventActor.asActorMinimal().toDomain(),
+    githubEventActor = githubEventActor.asActor().toDomain(),
     githubEventPayload = githubEventPayload.asEventPayload().toDomain(),
     points = points
 )
@@ -53,7 +62,7 @@ fun ContributionCache.toDomain() = ContributionDomain(
     githubEventType = githubEventType,
     githubEventDate = githubEventDate.asDate()?.time ?: Date(),
     githubEventRepo = githubEventRepo.asGithubRepo().toDomain(),
-    githubEventActor = githubEventActor.asActorMinimal().toDomain(),
+    githubEventActor = githubEventActor.asActor().toDomain(),
     githubEventPayload = githubEventPayload.asEventPayload().toDomain(),
     points = points
 )

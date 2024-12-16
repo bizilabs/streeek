@@ -8,8 +8,8 @@ android {
 }
 
 dependencies {
-
     // modules
     implementation(projects.modulesUi.resources)
-
+    // work-manager
+    implementation(libs.androidx.work.runtime)
 }

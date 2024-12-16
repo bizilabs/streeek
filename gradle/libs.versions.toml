@@ -76,8 +76,9 @@ androidx-security-crypto = { module = "androidx.security:security-crypto", versi
 # koin
 koin-bom = { module = "io.insert-koin:koin-bom", version.ref = "koin-bom" }
 koin-core = { module = "io.insert-koin:koin-core" }
-koin-core-coroutines = { module = "io.insert-koin:koin-core-coroutines" }
 koin-android = { module = "io.insert-koin:koin-android" }
+koin-core-coroutines = { module = "io.insert-koin:koin-core-coroutines" }
+koin-androidx-workmanager = { module = "io.insert-koin:koin-androidx-workmanager" }
 koin-test = { module = "io.insert-koin:koin-test" }
 koin-test-junit4 = { module = "io.insert-koin:koin-test-junit4" }
 
@@ -210,7 +211,7 @@ compose = [
     "compose-lifecycle-livedata-ktx", "compose-lifecycle-runtime", "compose-lifecycle-viewModel",
     "compose-qr-code"
 ]
-koin = ["koin-core", "koin-core-coroutines", "koin-android"]
+koin = ["koin-core", "koin-android", "koin-core-coroutines", "koin-androidx-workmanager"]
 firebase = [
     "firebase-messaging", "firebase-crashlytics", "firebase-analytics",
     "firebase-performance", "firebase-config", "firebase-inappmessagging",

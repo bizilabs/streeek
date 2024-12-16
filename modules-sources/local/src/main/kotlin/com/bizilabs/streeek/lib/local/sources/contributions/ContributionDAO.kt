@@ -12,7 +12,10 @@ interface ContributionDAO : BaseDAO<ContributionEntity> {
     fun selectAll() : Flow<List<ContributionEntity>>
 
     @Query("SELECT * FROM contributions WHERE id = :id")
-    fun select(id: Long) : Flow<ContributionEntity>
+    fun select(id: Long) : ContributionEntity?
+
+    @Query("SELECT * FROM contributions WHERE id = :id")
+    fun selectFlow(id: Long) : Flow<ContributionEntity>
 
     @Query("DELETE FROM contributions WHERE id = :id")
     fun delete(id: Long)

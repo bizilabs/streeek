@@ -65,32 +65,61 @@ class ContributionRepositoryImpl(
     }
 
     override suspend fun getContributions(page: Int): DataResult<List<ContributionDomain>> {
-        return when (val result = remote.fetchContributions(page = page)) {
+        return when (val result =
+            remote.fetchContributions(accountId = getAccountId(), page = page)) {
             is NetworkResult.Failure -> DataResult.Error(result.exception.localizedMessage)
             is NetworkResult.Success -> DataResult.Success(data = result.data.map { it.toDomain() })
         }
     }
 
-    override suspend fun saveContribution(event: UserEventDomain): DataResult<ContributionDomain> {
-        val request = CreateContributionDTO(
-            accountId = getAccountId(),
-            githubEventId = event.id,
-            githubEventType = event.type,
-            githubEventDate = event.createdAt.asString(DateFormats.ISO_8601) ?: "",
-            githubEventRepo = event.repo.toDTO().asJson(),
-            githubEventActor = event.actor.toDTO().asJson(),
-            githubEventPayload = event.payload.toDTO().asJson(),
-            points = event.payload.points
+    private fun UserEventDomain.toCreateContribution(accountId: Long) =
+        CreateContributionDTO(
+            accountId = accountId,
+            githubEventId = id,
+            githubEventType = type,
+            githubEventDate = createdAt.asString(DateFormats.ISO_8601) ?: "",
+            githubEventRepo = repo.toDTO().asJson(),
+            githubEventActor = actor.toDTO().asJson(),
+            githubEventPayload = payload.toDTO().asJson(),
+            points = payload.points
         )
+
+    override suspend fun getContributionsLocally(id: Long): DataResult<ContributionDomain?> {
+        return when (val result = local.get(id = id)) {
+            is LocalResult.Error -> DataResult.Error(result.message)
+            is LocalResult.Success -> DataResult.Success(data = result.data?.toDomain())
+        }
+    }
+
+    override suspend fun saveContribution(event: UserEventDomain): DataResult<ContributionDomain> {
+        val accountId = getAccountId()
+        val request = event.toCreateContribution(accountId = accountId)
         return when (val result = remote.saveContribution(request = request)) {
             is NetworkResult.Failure -> DataResult.Error(result.exception.localizedMessage)
             is NetworkResult.Success -> DataResult.Success(data = result.data.toDomain())
         }
     }
 
+    override suspend fun saveContribution(events: List<UserEventDomain>): DataResult<List<ContributionDomain>> {
+        val accountId = getAccountId()
+        val requests = events.map { it.toCreateContribution(accountId = accountId) }
+        return when (val result = remote.saveContribution(requests = requests)) {
+            is NetworkResult.Failure -> DataResult.Error(result.exception.localizedMessage)
+            is NetworkResult.Success -> DataResult.Success(data = result.data.map { it.toDomain() })
+        }
+    }
+
     override suspend fun saveContributionLocally(contribution: ContributionDomain): DataResult<Boolean> {
         val result = local.create(contribution = contribution.toCache())
         return when (result) {
+            is LocalResult.Error -> DataResult.Error(result.message)
+            is LocalResult.Success -> DataResult.Success(data = result.data)
+        }
+    }
+
+    override suspend fun saveContributionLocally(contributions: List<ContributionDomain>): DataResult<Boolean> {
+        return when (val result =
+            local.create(contributions = contributions.map { it.toCache() })) {
             is LocalResult.Error -> DataResult.Error(result.message)
             is LocalResult.Success -> DataResult.Success(data = result.data)
         }
@@ -109,6 +138,14 @@ class ContributionRepositoryImpl(
         return when (result) {
             is LocalResult.Error -> DataResult.Error(result.message)
             is LocalResult.Success -> DataResult.Success(data = result.data.toDomain())
+        }
+    }
+
+    override suspend fun updateContributionLocally(contributions: List<ContributionDomain>): DataResult<Boolean> {
+        return when (val result =
+            local.update(contributions = contributions.map { it.toCache() })) {
+            is LocalResult.Error -> DataResult.Error(result.message)
+            is LocalResult.Success -> DataResult.Success(data = result.data)
         }
     }
 

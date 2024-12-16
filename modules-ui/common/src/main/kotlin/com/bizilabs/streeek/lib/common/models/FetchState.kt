@@ -17,6 +17,7 @@ sealed interface FetchState<out T> {
 
 }
 
+@ConsistentCopyVisibility
 data class FetchData internal constructor(
     val icon: ImageVector,
     val image: Int?,

@@ -6,6 +6,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class ContributionDTO(
     val id: Long,
+    @SerialName("created_at")
     val createdAt: String,
     @SerialName("account_id")
     val accountId: Long,
@@ -22,7 +23,13 @@ data class ContributionDTO(
     @SerialName("github_event_payload")
     val githubEventPayload: String,
     val points: Long,
-)
+){
+    object Columns {
+        const val Id = "id"
+        const val CreatedAt = "created_at"
+        const val AccountId = "account_id"
+    }
+}
 
 @Serializable
 data class CreateContributionDTO(

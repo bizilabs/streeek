@@ -28,5 +28,6 @@ android {
 }
 
 dependencies {
-
+    // work-manager
+    implementation(libs.androidx.work.runtime)
 }
