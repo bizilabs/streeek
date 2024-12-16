@@ -42,6 +42,8 @@ class LibraryConventionPlugin : Plugin<Project> {
                 androidTestImplementation(libs.getLibrary("androidx-espresso-core"))
                 // timber
                 implementation(libs.getLibrary("timber"))
+                // kotlinx-datetime
+                implementation(libs.getLibrary("kotlinx-datetime"))
             }
         }
     }
