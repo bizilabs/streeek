@@ -1,5 +1,7 @@
 package com.bizilabs.streeek.lib.domain.models
 
+import kotlinx.serialization.json.JsonObject
+
 sealed interface EventPayloadDomain {
     val points: Long
 }
@@ -72,4 +74,9 @@ data class WatchEventDomain(val action: String) : EventPayloadDomain {
             action.equals("started", true) -> 10
             else -> 0
         }
+}
+
+data class ForkEventDomain(val forkee: JsonObject) : EventPayloadDomain {
+    override val points: Long
+        get() = 0
 }

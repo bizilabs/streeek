@@ -4,6 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonContentPolymorphicSerializer
 import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.jsonObject
 
 @Serializable(with = EventPayloadSerializer::class)
@@ -12,7 +13,7 @@ sealed interface EventPayloadDTO
 @Serializable
 data class CreateEventDTO(
     val ref: String? = "repository",
-    val description: String,
+    val description: String? = null,
     @SerialName("ref_type") val refType: String,
     @SerialName("pusher_type") val pusherType: String
 ) : EventPayloadDTO
@@ -58,7 +59,11 @@ data class IssuesEventDTO(
 @Serializable
 data class WatchEventDTO(val action: String) : EventPayloadDTO
 
-object EventPayloadSerializer : JsonContentPolymorphicSerializer<EventPayloadDTO>(EventPayloadDTO::class) {
+@Serializable
+data class ForkEventDTO(val forkee: JsonObject) : EventPayloadDTO
+
+object EventPayloadSerializer :
+    JsonContentPolymorphicSerializer<EventPayloadDTO>(EventPayloadDTO::class) {
     override fun selectDeserializer(element: JsonElement) = when {
         "comment" in element.jsonObject.keys -> CommitCommentEventDTO.serializer()
         "commits" in element.jsonObject.keys -> PushEventDTO.serializer()
@@ -66,6 +71,7 @@ object EventPayloadSerializer : JsonContentPolymorphicSerializer<EventPayloadDTO
         "issue" in element.jsonObject.keys -> IssuesEventDTO.serializer()
         "pusher_type" in element.jsonObject.keys && "master_branch" in element.jsonObject.keys -> CreateEventDTO.serializer()
         "ref_type" in element.jsonObject.keys -> DeleteEventDTO.serializer()
+        "forkee" in element.jsonObject.keys -> ForkEventDTO.serializer()
         else -> WatchEventDTO.serializer()
     }
 }

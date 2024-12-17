@@ -4,6 +4,7 @@ import com.bizilabs.streeek.lib.domain.models.CommitCommentEventDomain
 import com.bizilabs.streeek.lib.domain.models.CreateEventDomain
 import com.bizilabs.streeek.lib.domain.models.DeleteEventDomain
 import com.bizilabs.streeek.lib.domain.models.EventPayloadDomain
+import com.bizilabs.streeek.lib.domain.models.ForkEventDomain
 import com.bizilabs.streeek.lib.domain.models.IssuesEventDomain
 import com.bizilabs.streeek.lib.domain.models.PullRequestEventDomain
 import com.bizilabs.streeek.lib.domain.models.PushEventDomain
@@ -12,6 +13,7 @@ import com.bizilabs.streeek.lib.remote.models.CommitCommentEventDTO
 import com.bizilabs.streeek.lib.remote.models.CreateEventDTO
 import com.bizilabs.streeek.lib.remote.models.DeleteEventDTO
 import com.bizilabs.streeek.lib.remote.models.EventPayloadDTO
+import com.bizilabs.streeek.lib.remote.models.ForkEventDTO
 import com.bizilabs.streeek.lib.remote.models.IssuesEventDTO
 import com.bizilabs.streeek.lib.remote.models.PullRequestEventDTO
 import com.bizilabs.streeek.lib.remote.models.PushEventDTO
@@ -25,6 +27,7 @@ fun EventPayloadDTO.toDomain() = when (this) {
     is PullRequestEventDTO -> toDomain()
     is IssuesEventDTO -> toDomain()
     is WatchEventDTO -> toDomain()
+    is ForkEventDTO -> toDomain()
 }
 
 fun EventPayloadDomain.toDTO() = when (this) {
@@ -35,11 +38,12 @@ fun EventPayloadDomain.toDTO() = when (this) {
     is PullRequestEventDomain -> toDTO()
     is IssuesEventDomain -> toDTO()
     is WatchEventDomain -> toDTO()
+    is ForkEventDomain -> toDTO()
 }
 
 fun CreateEventDTO.toDomain() = CreateEventDomain(
     ref = ref,
-    description = description,
+    description = description ?: "",
     refType = refType,
     pusherType = pusherType
 )
@@ -104,3 +108,6 @@ fun IssuesEventDomain.toDTO() = IssuesEventDTO(action = action, issue = issue.to
 
 fun WatchEventDTO.toDomain() = WatchEventDomain(action = action)
 fun WatchEventDomain.toDTO() = WatchEventDTO(action = action)
+
+fun ForkEventDTO.toDomain() = ForkEventDomain(forkee = forkee)
+fun ForkEventDomain.toDTO() = ForkEventDTO(forkee = forkee)

@@ -9,7 +9,7 @@ data class GithubIssueDTO(
     val url: String,
     val number: Long,
     val title: String,
-    val body: String,
+    val body: String? = null,
     val user: GithubActorDTO,
     val labels: List<GithubLabelDTO>,
     @SerialName("created_at")

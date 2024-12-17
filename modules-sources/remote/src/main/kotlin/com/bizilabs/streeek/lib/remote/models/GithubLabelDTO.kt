@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class GithubLabelDTO(
-    val id: Int,
+    val id: Long,
     val name: String,
     val description: String,
     val color: String,
