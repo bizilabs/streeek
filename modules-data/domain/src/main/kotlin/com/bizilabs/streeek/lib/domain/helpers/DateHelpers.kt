@@ -5,7 +5,6 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
-import java.util.TimeZone
 
 object DateFormats {
     const val ISO_8601 = "yyyy-MM-dd'T'HH:mm:ss'Z'"
@@ -15,7 +14,7 @@ object DateFormats {
 fun String.asDate(format: String = DateFormats.ISO_8601): Calendar? {
     return tryOrNull {
         val inputFormat = SimpleDateFormat(format, Locale.getDefault())
-        inputFormat.timeZone = TimeZone.getTimeZone("UTC")
+//        inputFormat.timeZone = TimeZone.getTimeZone("UTC")
         val parsedDate = inputFormat.parse(this)
         val calendar = Calendar.getInstance()
         calendar.time = parsedDate
@@ -31,7 +30,7 @@ fun Calendar.asString(format: String = DateFormats.EEE_MMM_dd_yyyy_HH_mm): Strin
 fun Date.asString(format: String = DateFormats.EEE_MMM_dd_yyyy_HH_mm): String? {
     return tryOrNull {
         val outputFormat = SimpleDateFormat(format, Locale.getDefault())
-        outputFormat.timeZone = TimeZone.getTimeZone("UTC")
+//        outputFormat.timeZone = TimeZone.getTimeZone("UTC")
         outputFormat.format(this)
     }
 }

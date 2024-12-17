@@ -1,5 +1,6 @@
 package com.bizilabs.streeek.feature.authentication
 
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import cafe.adriel.voyager.core.model.StateScreenModel
@@ -7,6 +8,7 @@ import cafe.adriel.voyager.core.model.screenModelScope
 import com.bizilabs.streeek.lib.common.models.FetchState
 import com.bizilabs.streeek.lib.domain.helpers.DataResult
 import com.bizilabs.streeek.lib.domain.repositories.AuthenticationRepository
+import com.bizilabs.streeek.lib.domain.workers.startSyncContributionsWork
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -19,6 +21,7 @@ data class AuthenticationScreenState(
 )
 
 class AuthenticationScreenModel(
+    private val context: Context,
     private val authenticationRepository: AuthenticationRepository
 ) : StateScreenModel<AuthenticationScreenState>(AuthenticationScreenState()) {
 
@@ -49,7 +52,7 @@ class AuthenticationScreenModel(
             mutableState.update { it.copy(fetchState = update) }
             delay(2500)
             mutableState.update { it.copy(navigateToTabs = update is FetchState.Success) }
-
+            context.startSyncContributionsWork()
         }
     }
 

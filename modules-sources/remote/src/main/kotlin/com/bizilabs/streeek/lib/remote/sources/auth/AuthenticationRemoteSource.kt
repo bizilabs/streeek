@@ -13,6 +13,7 @@ import io.ktor.client.request.forms.submitForm
 import io.ktor.http.Parameters
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import timber.log.Timber
 
 interface AuthenticationRemoteSource {
     val authenticated: Flow<Boolean>
@@ -25,8 +26,13 @@ class AuthenticationRemoteSourceImpl(
     private val client: HttpClient,
     private val preferences: RemotePreferencesSource
 ) : AuthenticationRemoteSource {
+
     override val authenticated: Flow<Boolean>
-        get() = preferences.accessToken.map { it != null }
+        get() = preferences.accessToken.map {
+            Timber.d("Tooken -> $it")
+            it != null
+        }
+
     override suspend fun getAuthenticationIntent(): Intent {
         val url = buildString {
             append("https://github.com/login/oauth/authorize")
@@ -40,7 +46,8 @@ class AuthenticationRemoteSourceImpl(
     override suspend fun getAuthenticationToken(uri: Uri): NetworkResult<AccessTokenDTO> {
         val hasRedirectUrl = uri.toString().contains(BuildConfig.GithubClientRedirectUrl)
         if (hasRedirectUrl.not()) return NetworkResult.Failure(Exception("No redirect url found"))
-        val code = uri.getQueryParameter("code") ?: return NetworkResult.Failure(Exception("No code found"))
+        val code = uri.getQueryParameter("code")
+            ?: return NetworkResult.Failure(Exception("No code found"))
         return safeApiCall {
             client.submitForm(
                 url = "https://github.com/login/oauth/access_token",

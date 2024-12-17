@@ -81,8 +81,7 @@ class TabsScreenModel(
 
     private fun startSyncContributionsWork() {
         with(context) {
-//            startSyncContributionsWork()
-//            startDailySyncContributionsWork()
+            startDailySyncContributionsWork()
         }
     }
 

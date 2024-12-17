@@ -4,8 +4,9 @@ import android.content.Context
 import androidx.work.Constraints
 import androidx.work.CoroutineWorker
 import androidx.work.Data
+import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.NetworkType
-import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import com.bizilabs.streeek.lib.domain.helpers.DataResult
@@ -17,6 +18,7 @@ import com.bizilabs.streeek.lib.domain.repositories.ContributionRepository
 import timber.log.Timber
 import java.util.Calendar
 import java.util.UUID
+import java.util.concurrent.TimeUnit
 
 
 fun Context.startDailySyncContributionsWork() {
@@ -32,28 +34,19 @@ fun Context.startDailySyncContributionsWork() {
     val parameters = Data.Builder()
         .build()
 
-    val request = OneTimeWorkRequestBuilder<SyncDailyContributionsWork>()
-        .addTag(SyncContributionsWork.TAG)
+    val request = PeriodicWorkRequestBuilder<SyncDailyContributionsWork>(30, TimeUnit.MINUTES)
+        .addTag(SyncDailyContributionsWork.TAG)
         .setConstraints(constraints)
         .setInputData(parameters)
         .setId(uuid)
         .build()
 
-    WorkManager.getInstance(this).enqueue(request)
-
-//    val request = PeriodicWorkRequestBuilder<SyncContributionsWork>(30, TimeUnit.MINUTES)
-//        .addTag(SyncContributionsWork.TAG)
-//        .setConstraints(constraints)
-//        .setInputData(parameters)
-//        .setId(uuid)
-//        .build()
-//
-//    WorkManager.getInstance(this)
-//        .enqueueUniquePeriodicWork(
-//            SyncContributionsWork.TAG,
-//            ExistingPeriodicWorkPolicy.KEEP,
-//            request
-//        )
+    WorkManager.getInstance(this)
+        .enqueueUniquePeriodicWork(
+            SyncDailyContributionsWork.TAG,
+            ExistingPeriodicWorkPolicy.KEEP,
+            request
+        )
 
 }
 

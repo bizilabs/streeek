@@ -6,12 +6,14 @@ import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
 import okhttp3.Request
 import okhttp3.Response
+import timber.log.Timber
 
 class AuthorizationInterceptor(
     private val remotePreferencesSource: RemotePreferencesSource
 ) : Interceptor {
     private fun Request.Builder.addAccessToken() {
         val token = runBlocking { remotePreferencesSource.accessToken.first() }
+        Timber.d("Tooken -> $token")
         if (token.isNullOrBlank()) return
         addHeader("Authorization", "Bearer $token")
         addHeader("Accept", "application/vnd.github+json")
