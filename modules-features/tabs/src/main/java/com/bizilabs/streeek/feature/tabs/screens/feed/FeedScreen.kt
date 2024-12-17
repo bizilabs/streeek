@@ -251,7 +251,7 @@ private fun FeedHeader(
         Card(
             modifier = Modifier
                 .padding(start = 16.dp)
-                .size(28.dp),
+                .size(32.dp),
             onClick = {},
             shape = RoundedCornerShape(20),
             border = BorderStroke(2.dp, MaterialTheme.colorScheme.onBackground)
@@ -272,14 +272,21 @@ private fun FeedHeader(
             textAlign = TextAlign.Center
         )
 
-        AsyncImage(
-            modifier = Modifier
-                .padding(16.dp)
-                .size(28.dp)
-                .clip(RoundedCornerShape(20)),
-            model = state.account?.avatarUrl,
-            contentDescription = "user avatar url",
-        )
+        Card(
+            modifier = Modifier.padding(16.dp),
+            onClick = {},
+            shape = RoundedCornerShape(20),
+            border = BorderStroke(1.dp, MaterialTheme.colorScheme.onBackground)
+        ) {
+            AsyncImage(
+                modifier = Modifier
+                    .size(32.dp)
+                    .clip(RoundedCornerShape(20)),
+                model = state.account?.avatarUrl,
+                contentDescription = "user avatar url",
+                contentScale = ContentScale.Crop
+            )
+        }
 
     }
 }
