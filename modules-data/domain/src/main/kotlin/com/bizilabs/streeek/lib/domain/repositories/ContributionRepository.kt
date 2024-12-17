@@ -4,6 +4,7 @@ import com.bizilabs.streeek.lib.domain.helpers.DataResult
 import com.bizilabs.streeek.lib.domain.models.ContributionDomain
 import com.bizilabs.streeek.lib.domain.models.UserEventDomain
 import kotlinx.coroutines.flow.Flow
+import kotlinx.datetime.LocalDate
 
 interface ContributionRepository {
     val contributions: Flow<List<ContributionDomain>>
@@ -17,6 +18,7 @@ interface ContributionRepository {
     suspend fun saveContribution(event: UserEventDomain): DataResult<ContributionDomain>
     suspend fun saveContribution(events: List<UserEventDomain>): DataResult<List<ContributionDomain>>
 
+    fun getLocalContributionsByDate(date: LocalDate) : Flow<List<ContributionDomain>>
     suspend fun getContributionsLocally(id: Long): DataResult<ContributionDomain?>
     suspend fun saveContributionLocally(contribution: ContributionDomain) : DataResult<Boolean>
     suspend fun saveContributionLocally(contributions: List<ContributionDomain>) : DataResult<Boolean>

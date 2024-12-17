@@ -14,6 +14,7 @@ interface ContributionsLocalSource {
     suspend fun update(contribution: ContributionCache): LocalResult<ContributionCache>
     suspend fun update(contributions: List<ContributionCache>): LocalResult<Boolean>
     suspend fun get(id: Long): LocalResult<ContributionCache?>
+    fun getByDate(date: String): Flow<List<ContributionCache>>
     suspend fun delete(id: Long): LocalResult<Boolean>
 }
 
@@ -50,6 +51,9 @@ class ContributionsLocalSourceImpl(
     override suspend fun get(id: Long): LocalResult<ContributionCache?> = safeTransaction {
         dao.select(id = id)?.toCache()
     }
+
+    override fun getByDate(date: String): Flow<List<ContributionCache>> =
+        dao.selectByDate(date = "%$date%").mapLatest { list -> list.map { it.toCache() } }
 
     override suspend fun delete(id: Long): LocalResult<Boolean> = safeTransaction {
         dao.delete(id = id)

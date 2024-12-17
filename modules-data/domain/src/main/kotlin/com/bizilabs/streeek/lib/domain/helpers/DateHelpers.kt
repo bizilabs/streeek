@@ -1,5 +1,6 @@
 package com.bizilabs.streeek.lib.domain.helpers
 
+import kotlinx.datetime.LocalDate
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -46,3 +47,6 @@ fun Date.isSameDay(date: Date): Boolean {
             calendar1.get(Calendar.MONTH) == calendar2.get(Calendar.MONTH) &&
             calendar1.get(Calendar.DAY_OF_MONTH) == calendar2.get(Calendar.DAY_OF_MONTH)
 }
+
+val LocalDate.dayShort
+    get() = this.dayOfWeek.name.take(3).lowercase().replaceFirstChar { it.uppercase() }

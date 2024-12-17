@@ -11,6 +11,9 @@ interface ContributionDAO : BaseDAO<ContributionEntity> {
     @Query("SELECT * FROM contributions")
     fun selectAll() : Flow<List<ContributionEntity>>
 
+    @Query("SELECT * FROM contributions WHERE createdAt LIKE :date")
+    fun selectByDate(date: String) : Flow<List<ContributionEntity>>
+
     @Query("SELECT * FROM contributions WHERE id = :id")
     fun select(id: Long) : ContributionEntity?
 

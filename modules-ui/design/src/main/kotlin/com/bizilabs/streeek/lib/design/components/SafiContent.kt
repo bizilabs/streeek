@@ -1,5 +1,6 @@
 package com.bizilabs.streeek.lib.design.components
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -24,7 +25,9 @@ fun SafiContent(
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
     ) {
-        SafiNetworkComponent(isNetworkConnected = isNetworkConnected)
+        AnimatedVisibility(visible = !isNetworkConnected) {
+            SafiNetworkComponent(isNetworkConnected = isNetworkConnected)
+        }
         Column(modifier = Modifier.fillMaxWidth().weight(1f)) { content() }
     }
 }

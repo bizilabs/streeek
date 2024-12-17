@@ -19,6 +19,8 @@ import com.bizilabs.streeek.lib.remote.sources.contributions.ContributionsRemote
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.mapLatest
+import kotlinx.datetime.LocalDate
+import timber.log.Timber
 
 class ContributionRepositoryImpl(
     private val remote: ContributionsRemoteSource,
@@ -83,6 +85,12 @@ class ContributionRepositoryImpl(
             githubEventPayload = payload.toDTO().asJson(),
             points = payload.points
         )
+
+    override fun getLocalContributionsByDate(date: LocalDate): Flow<List<ContributionDomain>> {
+        Timber.d("Dately -> $date")
+        return local.getByDate(date = date.toString())
+            .mapLatest { list -> list.map { it.toDomain() } }
+    }
 
     override suspend fun getContributionsLocally(id: Long): DataResult<ContributionDomain?> {
         return when (val result = local.get(id = id)) {
