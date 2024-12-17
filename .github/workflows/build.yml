@@ -1,5 +1,6 @@
 name: Build Gradle project
 on: push
+
 jobs:
   build-gradle-project:
     runs-on: ubuntu-latest
@@ -7,13 +8,7 @@ jobs:
       - name: Checkout project sources
         uses: actions/checkout@v2
       - name: Create local.properties
-        run: |
-          echo "github.client.id=id" >> local.properties
-          echo "github.client.name=name" >> local.properties
-          echo "github.client.secret=secret" >> local.properties
-          echo "github.client.redirect.url=url" >> local.properties
-          echo "supabase.url=url" >> local.properties
-          echo "supabase.key=key" >> local.properties
+        run: echo "${{secrets.LOCAL_PROPERTIES }}" > ./local.properties
       - name: TODO to Issue
         uses: alstr/todo-to-issue-action@v4.6.8
         id: todo
