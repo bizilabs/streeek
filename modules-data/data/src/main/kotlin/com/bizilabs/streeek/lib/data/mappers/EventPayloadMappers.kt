@@ -109,5 +109,5 @@ fun IssuesEventDomain.toDTO() = IssuesEventDTO(action = action, issue = issue.to
 fun WatchEventDTO.toDomain() = WatchEventDomain(action = action)
 fun WatchEventDomain.toDTO() = WatchEventDTO(action = action)
 
-fun ForkEventDTO.toDomain() = ForkEventDomain(forkee = forkee)
-fun ForkEventDomain.toDTO() = ForkEventDTO(forkee = forkee)
+fun ForkEventDTO.toDomain() = ForkEventDomain(forkee = forkee.toDomain())
+fun ForkEventDomain.toDTO() = ForkEventDTO(forkee = forkee.toDTO())

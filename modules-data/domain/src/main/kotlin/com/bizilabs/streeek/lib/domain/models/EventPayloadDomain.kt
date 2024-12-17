@@ -76,7 +76,7 @@ data class WatchEventDomain(val action: String) : EventPayloadDomain {
         }
 }
 
-data class ForkEventDomain(val forkee: JsonObject) : EventPayloadDomain {
+data class ForkEventDomain(val forkee: EventRepositoryDomain) : EventPayloadDomain {
     override val points: Long
-        get() = 0
+        get() = 10
 }

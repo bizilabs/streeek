@@ -60,7 +60,7 @@ data class IssuesEventDTO(
 data class WatchEventDTO(val action: String) : EventPayloadDTO
 
 @Serializable
-data class ForkEventDTO(val forkee: JsonObject) : EventPayloadDTO
+data class ForkEventDTO(val forkee: GithubEventRepositoryDTO) : EventPayloadDTO
 
 object EventPayloadSerializer :
     JsonContentPolymorphicSerializer<EventPayloadDTO>(EventPayloadDTO::class) {
