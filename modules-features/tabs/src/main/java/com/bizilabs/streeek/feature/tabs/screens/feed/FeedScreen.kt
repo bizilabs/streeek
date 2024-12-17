@@ -90,7 +90,6 @@ fun FeedScreenContent(
                                     .fillMaxWidth()
                                     .padding(horizontal = 8.dp, vertical = 8.dp),
                                 day = weekDay,
-                                state = state,
                                 selectedDate = date,
                                 onClickDate = onClickDate
                             )
@@ -196,7 +195,6 @@ private fun FeedContent(
 @Composable
 private fun CalendarItem(
     selectedDate: LocalDate,
-    state: FeedScreenState,
     day: WeekDay,
     modifier: Modifier = Modifier,
     onClickDate: (LocalDate) -> Unit
@@ -212,9 +210,10 @@ private fun CalendarItem(
         onClick = { onClickDate(date) },
         border = border,
         colors = CardDefaults.cardColors(
-            contentColor = if (isSelected) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurface.copy(
-                0.5f
-            ),
+            contentColor = if (isSelected)
+                MaterialTheme.colorScheme.onSurface
+            else
+                MaterialTheme.colorScheme.onSurface.copy(0.5f),
             containerColor = if (isSelected) MaterialTheme.colorScheme.surface else Color.Transparent
         )
     ) {

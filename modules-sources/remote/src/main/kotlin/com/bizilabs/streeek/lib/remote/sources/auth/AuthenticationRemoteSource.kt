@@ -7,13 +7,11 @@ import com.bizilabs.streeek.lib.remote.helpers.NetworkResult
 import com.bizilabs.streeek.lib.remote.helpers.safeApiCall
 import com.bizilabs.streeek.lib.remote.models.AccessTokenDTO
 import com.bizilabs.streeek.lib.remote.sources.preferences.RemotePreferencesSource
-import io.github.jan.supabase.SupabaseClient
 import io.ktor.client.HttpClient
 import io.ktor.client.request.forms.submitForm
 import io.ktor.http.Parameters
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
-import timber.log.Timber
+import kotlinx.coroutines.flow.mapLatest
 
 interface AuthenticationRemoteSource {
     val authenticated: Flow<Boolean>
@@ -28,10 +26,7 @@ class AuthenticationRemoteSourceImpl(
 ) : AuthenticationRemoteSource {
 
     override val authenticated: Flow<Boolean>
-        get() = preferences.accessToken.map {
-            Timber.d("Tooken -> $it")
-            it != null
-        }
+        get() = preferences.accessToken.mapLatest { it != null }
 
     override suspend fun getAuthenticationIntent(): Intent {
         val url = buildString {
