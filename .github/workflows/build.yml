@@ -1,6 +1,5 @@
 name: Build Gradle project
 on: push
-
 jobs:
   build-gradle-project:
     runs-on: ubuntu-latest
@@ -8,7 +7,7 @@ jobs:
       - name: Checkout project sources
         uses: actions/checkout@v2
       - name: Create local.properties
-        run: echo "${{secrets.LOCAL_PROPERTIES }}" > ./local.properties
+        run: echo "${{secrets.LOCAL_PROPERTIES }}" > $GITHUB_WORKSPACE/local.properties
       - name: TODO to Issue
         uses: alstr/todo-to-issue-action@v4.6.8
         id: todo
