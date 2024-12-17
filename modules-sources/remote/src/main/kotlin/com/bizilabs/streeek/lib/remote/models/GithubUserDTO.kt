@@ -6,8 +6,9 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class GithubUserDTO(
     val id: Int,
+    @SerialName("login")
     val name: String,
-    val email: String,
+    val email: String? = null,
     val bio: String,
     @SerialName("avatar_url")
     val url: String
