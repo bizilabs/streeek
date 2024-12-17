@@ -15,9 +15,6 @@ jobs:
         uses: actions/checkout@v2
       - name: Create local.properties
         run: echo "${{secrets.LOCAL_PROPERTIES }}" > $GITHUB_WORKSPACE/local.properties
-      - name: TODO to Issue
-        uses: alstr/todo-to-issue-action@v4.6.8
-        id: todo
       - name: Set up JDK 17
         uses: actions/setup-java@v3
         with:
