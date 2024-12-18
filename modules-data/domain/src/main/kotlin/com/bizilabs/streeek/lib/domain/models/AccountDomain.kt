@@ -10,5 +10,7 @@ data class AccountDomain(
     val bio: String,
     val avatarUrl: String,
     val createdAt: LocalDateTime,
-    val updatedAt: LocalDateTime
+    val updatedAt: LocalDateTime,
+    val points: Long,
+    val level: LevelDomain?
 )

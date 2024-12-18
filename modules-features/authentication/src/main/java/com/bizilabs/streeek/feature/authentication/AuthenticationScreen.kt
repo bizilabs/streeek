@@ -35,14 +35,14 @@ object AuthenticationScreen : Screen {
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.current
-        val tabsScreen = rememberScreen(SharedScreen.Tabs)
+        val screen = rememberScreen(SharedScreen.Setup)
         val screenModel = getScreenModel<AuthenticationScreenModel>()
         val state by screenModel.state.collectAsStateWithLifecycle()
         AuthenticationScreenContent(
             state = state,
             onClickAuthenticate = screenModel::onClickAuthenticate,
             onUriReceived = screenModel::onUriReceived,
-            navigateToTabs = { navigator?.replace(tabsScreen) }
+            navigateToTabs = { navigator?.replace(screen) }
         )
     }
 }

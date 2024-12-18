@@ -19,3 +19,12 @@ fun StartActivity(intent: Intent) {
     val activity = LocalContext.current as ComponentActivity
     activity.startActivity(intent)
 }
+
+abstract class BaseActivity : ComponentActivity() {
+    fun restartActivity() {
+        with(this) {
+            finish()
+            startActivity(Intent(this, this::class.java))
+        }
+    }
+}

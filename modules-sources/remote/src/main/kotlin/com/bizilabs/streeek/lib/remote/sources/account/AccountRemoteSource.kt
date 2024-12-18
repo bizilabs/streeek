@@ -5,12 +5,18 @@ import com.bizilabs.streeek.lib.remote.helpers.Supabase
 import com.bizilabs.streeek.lib.remote.helpers.safeSupabaseCall
 import com.bizilabs.streeek.lib.remote.models.AccountCreateRequestDTO
 import com.bizilabs.streeek.lib.remote.models.AccountDTO
+import com.bizilabs.streeek.lib.remote.models.AccountFullDTO
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.postgrest.from
+import io.github.jan.supabase.postgrest.postgrest
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.encodeToJsonElement
+import kotlinx.serialization.json.jsonObject
 
 interface AccountRemoteSource {
     suspend fun fetchAccountWithGithubId(id: Int): NetworkResult<AccountDTO?>
     suspend fun createAccount(request: AccountCreateRequestDTO): NetworkResult<AccountDTO>
+    suspend fun getAccount(id: Long): NetworkResult<AccountFullDTO>
 }
 
 class AccountRemoteSourceImpl(
@@ -35,4 +41,13 @@ class AccountRemoteSourceImpl(
                 .insert(request) { select() }
                 .decodeSingle()
         }
+
+    override suspend fun getAccount(id: Long): NetworkResult<AccountFullDTO> =
+        safeSupabaseCall {
+            val body = Json.encodeToJsonElement(mapOf("value_account_id" to id))
+            supabase.postgrest
+                .rpc(Supabase.Functions.GetAccountWithPoints, body.jsonObject) {}
+                .decodeAs()
+        }
+
 }

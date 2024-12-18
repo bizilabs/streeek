@@ -2,6 +2,7 @@ package com.bizilabs.streeek.lib.remote.models
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import java.util.logging.Level
 
 @Serializable
 data class AccountDTO(
@@ -17,6 +18,14 @@ data class AccountDTO(
     val createdAt: String,
     @SerialName("updated_at")
     val updatedAt: String
+)
+
+@Serializable
+data class AccountFullDTO(
+    val account: AccountDTO,
+    @SerialName("total_points")
+    val points: Long? = 0,
+    val level: LevelDTO? = null
 )
 
 @Serializable

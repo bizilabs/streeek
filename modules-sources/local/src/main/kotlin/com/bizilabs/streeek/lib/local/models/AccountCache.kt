@@ -13,10 +13,11 @@ data class AccountCache(
     val bio: String,
     val avatarUrl: String,
     val createdAt: String,
-    val updatedAt: String
+    val updatedAt: String,
+    val points: Long,
+    val level: LevelCache?
 ) {
     fun asJson(): String = Json.encodeToString(this)
-
 }
 
 internal fun String.fromJsonToAccountCache(): AccountCache = Json.decodeFromString(this)

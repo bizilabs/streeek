@@ -15,7 +15,11 @@ import timber.log.Timber
 object Supabase {
     object Tables {
         const val Accounts = "accounts"
+        const val AccountPoints = "account_points"
         const val Contributions = "contributions"
+    }
+    object Functions {
+        const val GetAccountWithPoints = "get_account_with_points_and_level"
     }
 }
 
