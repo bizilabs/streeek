@@ -14,6 +14,7 @@ import com.bizilabs.streeek.lib.remote.sources.account.AccountRemoteSource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.datetime.Clock
+import timber.log.Timber
 
 class AccountRepositoryImpl(
     private val remote: AccountRemoteSource,
@@ -21,7 +22,13 @@ class AccountRepositoryImpl(
 ) : AccountRepository {
 
     override val account: Flow<AccountDomain?>
-        get() = local.account.mapLatest { it?.toDomain() }
+        get() = local.account.mapLatest {
+            it?.let {
+                val result = remote.getAccount(1)
+                Timber.d("Accounty -> $result")
+            }
+            it?.toDomain()
+        }
 
     override suspend fun getAccountWithGithubId(id: Int): DataResult<AccountDomain?> {
         return when (val result = remote.fetchAccountWithGithubId(id)) {
@@ -29,8 +36,18 @@ class AccountRepositoryImpl(
             is NetworkResult.Success -> {
                 val account = result.data?.toDomain()
                 account?.let { local.updateAccount(account = it.toCache()) }
-                DataResult.Success(result.data?.toDomain())
+                if (account != null)
+                    getAccount(id = account.id)
+                else
+                    DataResult.Success(result.data?.toDomain())
             }
+        }
+    }
+
+    override suspend fun getAccount(id: Long): DataResult<AccountDomain> {
+        return when (val result = remote.getAccount(id)) {
+            is NetworkResult.Failure -> DataResult.Error(result.exception.localizedMessage)
+            is NetworkResult.Success -> DataResult.Success(result.data.toDomain())
         }
     }
 

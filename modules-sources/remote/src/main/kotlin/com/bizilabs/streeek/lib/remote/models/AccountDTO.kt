@@ -6,7 +6,7 @@ import java.util.logging.Level
 
 @Serializable
 data class AccountDTO(
-    val id: String,
+    val id: Long,
     @SerialName("github_id")
     val githubId: Int,
     val username: String,

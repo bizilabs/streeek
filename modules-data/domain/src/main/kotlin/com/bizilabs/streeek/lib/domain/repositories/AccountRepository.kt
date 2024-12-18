@@ -14,4 +14,5 @@ interface AccountRepository {
         bio: String,
         avatarUrl: String
     ): DataResult<AccountDomain>
+    suspend fun getAccount(id: Long): DataResult<AccountDomain>
 }

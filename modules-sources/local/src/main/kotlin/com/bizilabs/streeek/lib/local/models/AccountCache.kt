@@ -6,7 +6,7 @@ import kotlinx.serialization.json.Json
 
 @Serializable
 data class AccountCache(
-    val id: String,
+    val id: Long,
     val githubId: Int,
     val username: String,
     val email: String,
