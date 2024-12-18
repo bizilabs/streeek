@@ -1,18 +1,41 @@
 package com.bizilabs.streeek.lib.domain.helpers
 
+import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.TimeZone
 import kotlinx.datetime.format.DateTimeComponents
 import kotlinx.datetime.format.FormatStringsInDatetimeFormats
 import kotlinx.datetime.format.byUnicodePattern
 import kotlinx.datetime.minus
+import kotlinx.datetime.toInstant
 import kotlinx.datetime.toLocalDateTime
 
 object DateFormats {
     const val ISO_8601 = "yyyy-MM-dd'T'HH:mm:ss'Z'"
+    const val YYYY_MM_dd_T_HH_mm_ss = "yyyy-MM-dd'T'HH:mm:ss"
+    const val YYYY_MM_dd_space_HH_mm_ss = "yyyy-MM-dd HH:mm:ss"
     const val EEE_MMM_dd_yyyy_HH_mm = "EEE, MMM dd yyyy HH:mm a"
 }
+
+val SystemLocalDateTime: LocalDateTime
+    get() = Clock.System.now().datetimeSystem
+
+val UTCLocalDateTime: LocalDateTime
+    get() = Clock.System.now().datetimeUTC
+
+val Instant.datetimeUTC
+    get() = toLocalDateTime(TimeZone.UTC)
+
+val Instant.datetimeSystem
+    get() = toLocalDateTime(TimeZone.currentSystemDefault())
+
+val LocalDateTime.asUTC
+    get() = toInstant(TimeZone.UTC)
+
+val LocalDateTime.asSystem
+    get() = toInstant(TimeZone.currentSystemDefault())
 
 @OptIn(FormatStringsInDatetimeFormats::class)
 fun String.asDate(format: String = DateFormats.ISO_8601): Instant? {
@@ -23,7 +46,7 @@ fun String.asDate(format: String = DateFormats.ISO_8601): Instant? {
 }
 
 fun Instant.asString(format: String = DateFormats.EEE_MMM_dd_yyyy_HH_mm): String? {
-    return this.toLocalDateTime(kotlinx.datetime.TimeZone.UTC).asString(format = format)
+    return this.toLocalDateTime(TimeZone.UTC).asString(format = format)
 }
 
 @OptIn(FormatStringsInDatetimeFormats::class)

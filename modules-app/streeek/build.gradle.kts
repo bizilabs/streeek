@@ -11,7 +11,7 @@ android {
     namespace = "com.bizilabs.app.streeek.mobile"
 
     defaultConfig {
-        applicationId = "com.bizilabs.app.streeek.mobile"
+        applicationId = "com.bizilabs.app.streeek.mobile.minimal"
         versionCode = 1
         versionName = "1.0"
     }
