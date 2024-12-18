@@ -24,8 +24,8 @@ fun CommitCommentDTO.toDomain() = CommitCommentDomain(
 
 fun CommitCommentDomain.toDTO() = CommitCommentDTO(
     id = id,
-    createdAt = createdAt.asString(DateFormats.ISO_8601) ?: "",
-    updatedAt = updatedAt.asString(DateFormats.ISO_8601) ?: "",
+    createdAt = createdAt.asString(DateFormats.ISO_8601_Z) ?: "",
+    updatedAt = updatedAt.asString(DateFormats.ISO_8601_Z) ?: "",
     body = body,
     user = user.toDTO()
 )

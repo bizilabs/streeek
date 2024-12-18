@@ -18,7 +18,7 @@ fun AccountDTO.toDomain(): AccountDomain = AccountDomain(
     bio = bio,
     avatarUrl = avatarUrl,
     createdAt = createdAt.asDate(format = DateFormats.YYYY_MM_dd_T_HH_mm_ss)?.datetimeSystem ?: SystemLocalDateTime,
-    updatedAt = createdAt.asDate(format = DateFormats.YYYY_MM_dd_T_HH_mm_ss)?.datetimeSystem ?: SystemLocalDateTime,
+    updatedAt = updatedAt.asDate(format = DateFormats.YYYY_MM_dd_T_HH_mm_ss)?.datetimeSystem ?: SystemLocalDateTime,
     points = 0,
     level = null
 )
@@ -30,8 +30,8 @@ fun AccountDomain.toCache(): AccountCache = AccountCache(
     email = email,
     bio = bio,
     avatarUrl = avatarUrl,
-    createdAt = createdAt.asString(format = DateFormats.ISO_8601) ?: "",
-    updatedAt = createdAt.asString(format = DateFormats.ISO_8601) ?: "",
+    createdAt = createdAt.asString(format = DateFormats.ISO_8601_Z) ?: "",
+    updatedAt = updatedAt.asString(format = DateFormats.ISO_8601_Z) ?: "",
     points = points,
     level = level?.toCache()
 )
@@ -43,8 +43,8 @@ fun AccountCache.toDomain(): AccountDomain = AccountDomain(
     email = email,
     bio = bio,
     avatarUrl = avatarUrl,
-    createdAt = createdAt.asDate(format = DateFormats.ISO_8601)?.datetimeSystem ?: SystemLocalDateTime,
-    updatedAt = createdAt.asDate(format = DateFormats.ISO_8601)?.datetimeSystem ?: SystemLocalDateTime,
+    createdAt = createdAt.asDate(format = DateFormats.ISO_8601_Z)?.datetimeSystem ?: SystemLocalDateTime,
+    updatedAt = updatedAt.asDate(format = DateFormats.ISO_8601_Z)?.datetimeSystem ?: SystemLocalDateTime,
     points = points,
     level = level?.toDomain()
 )

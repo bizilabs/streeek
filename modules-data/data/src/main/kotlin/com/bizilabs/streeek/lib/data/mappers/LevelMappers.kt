@@ -1,9 +1,13 @@
 package com.bizilabs.streeek.lib.data.mappers
 
+import com.bizilabs.streeek.lib.domain.helpers.DateFormats
+import com.bizilabs.streeek.lib.domain.helpers.SystemLocalDateTime
+import com.bizilabs.streeek.lib.domain.helpers.asDate
+import com.bizilabs.streeek.lib.domain.helpers.asString
+import com.bizilabs.streeek.lib.domain.helpers.datetimeSystem
 import com.bizilabs.streeek.lib.domain.models.LevelDomain
 import com.bizilabs.streeek.lib.local.models.LevelCache
 import com.bizilabs.streeek.lib.remote.models.LevelDTO
-import kotlinx.datetime.LocalDateTime
 
 fun LevelDTO.toDomain() = LevelDomain(
     id = id,
@@ -11,7 +15,7 @@ fun LevelDTO.toDomain() = LevelDomain(
     number = number,
     maxPoints = maxPoints,
     minPoints = minPoints,
-    createdAt = LocalDateTime.parse(createdAt)
+    createdAt = createdAt.asDate(format = DateFormats.ISO_8601)?.datetimeSystem ?: SystemLocalDateTime,
 )
 
 fun LevelDomain.toCache() = LevelCache(
@@ -20,7 +24,7 @@ fun LevelDomain.toCache() = LevelCache(
     number = number,
     maxPoints = maxPoints,
     minPoints = minPoints,
-    createdAt = createdAt.toString()
+    createdAt = createdAt.asString(format = DateFormats.ISO_8601_Z) ?: "",
 )
 
 fun LevelCache.toDomain() = LevelDomain(
@@ -29,5 +33,5 @@ fun LevelCache.toDomain() = LevelDomain(
     number = number,
     maxPoints = maxPoints,
     minPoints = minPoints,
-    createdAt = LocalDateTime.parse(createdAt)
+    createdAt = createdAt.asDate(format = DateFormats.ISO_8601_Z)?.datetimeSystem ?: SystemLocalDateTime,
 )

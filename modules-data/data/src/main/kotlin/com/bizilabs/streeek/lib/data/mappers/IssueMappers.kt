@@ -31,7 +31,7 @@ fun IssueDomain.toDTO() = GithubIssueDTO(
     body = body,
     user = user.toDTO(),
     labels = labels.map { it.toDTO() },
-    createdAt = createdAt.asString(DateFormats.ISO_8601) ?: "",
-    updatedAt = updatedAt.asString(DateFormats.ISO_8601) ?: "",
-    closedAt = closedAt?.asString(DateFormats.ISO_8601)
+    createdAt = createdAt.asString(DateFormats.ISO_8601_Z) ?: "",
+    updatedAt = updatedAt.asString(DateFormats.ISO_8601_Z) ?: "",
+    closedAt = closedAt?.asString(DateFormats.ISO_8601_Z)
 )

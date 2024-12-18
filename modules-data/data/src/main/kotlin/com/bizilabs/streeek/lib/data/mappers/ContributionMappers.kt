@@ -46,11 +46,11 @@ fun ContributionDTO.toDomain() = ContributionDomain(
 
 fun ContributionDomain.toCache() = ContributionCache(
     id = id,
-    createdAt = createdAt.asString(DateFormats.ISO_8601) ?: "",
+    createdAt = createdAt.asString(DateFormats.ISO_8601_Z) ?: "",
     accountId = accountId,
     githubEventId = githubEventId,
     githubEventType = githubEventType,
-    githubEventDate = githubEventDate.asString(DateFormats.ISO_8601) ?: "",
+    githubEventDate = githubEventDate.asString(DateFormats.ISO_8601_Z) ?: "",
     githubEventRepo = githubEventRepo.toDTO().asJson(),
     githubEventActor = githubEventActor.toDTO().asJson(),
     githubEventPayload = githubEventPayload.toDTO().asJson(),

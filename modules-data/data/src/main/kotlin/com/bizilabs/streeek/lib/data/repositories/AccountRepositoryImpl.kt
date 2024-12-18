@@ -64,8 +64,8 @@ class AccountRepositoryImpl(
             email = email,
             bio = bio,
             avatarUrl = avatarUrl,
-            createdAt = Clock.System.now().asString(DateFormats.ISO_8601) ?: "",
-            updatedAt = Clock.System.now().asString(DateFormats.ISO_8601) ?: ""
+            createdAt = Clock.System.now().asString(DateFormats.ISO_8601_Z) ?: "",
+            updatedAt = Clock.System.now().asString(DateFormats.ISO_8601_Z) ?: ""
         )
         return when (val result = remote.createAccount(request)) {
             is NetworkResult.Failure -> DataResult.Error(result.exception.localizedMessage)

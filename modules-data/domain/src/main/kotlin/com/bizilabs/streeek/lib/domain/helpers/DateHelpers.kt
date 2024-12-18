@@ -13,7 +13,8 @@ import kotlinx.datetime.toInstant
 import kotlinx.datetime.toLocalDateTime
 
 object DateFormats {
-    const val ISO_8601 = "yyyy-MM-dd'T'HH:mm:ss'Z'"
+    const val ISO_8601_Z = "yyyy-MM-dd'T'HH:mm:ss'Z'"
+    const val ISO_8601 = "yyyy-MM-dd'T'HH:mm:ss.SSSSSSXXX"
     const val YYYY_MM_dd_T_HH_mm_ss = "yyyy-MM-dd'T'HH:mm:ss"
     const val YYYY_MM_dd_space_HH_mm_ss = "yyyy-MM-dd HH:mm:ss"
     const val EEE_MMM_dd_yyyy_HH_mm = "EEE, MMM dd yyyy HH:mm a"
@@ -38,7 +39,7 @@ val LocalDateTime.asSystem
     get() = toInstant(TimeZone.currentSystemDefault())
 
 @OptIn(FormatStringsInDatetimeFormats::class)
-fun String.asDate(format: String = DateFormats.ISO_8601): Instant? {
+fun String.asDate(format: String = DateFormats.ISO_8601_Z): Instant? {
     return tryOrNull {
         val formatter = DateTimeComponents.Format { byUnicodePattern(format) }
         Instant.parse(this, formatter)

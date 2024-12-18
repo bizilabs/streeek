@@ -79,7 +79,7 @@ class ContributionRepositoryImpl(
             accountId = accountId,
             githubEventId = id,
             githubEventType = type,
-            githubEventDate = createdAt.asString(DateFormats.ISO_8601) ?: "",
+            githubEventDate = createdAt.asString(DateFormats.ISO_8601_Z) ?: "",
             githubEventRepo = repo.toDTO().asJson(),
             githubEventActor = actor.toDTO().asJson(),
             githubEventPayload = payload.toDTO().asJson(),
