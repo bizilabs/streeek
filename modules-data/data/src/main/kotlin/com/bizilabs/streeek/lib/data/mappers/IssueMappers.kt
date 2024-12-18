@@ -5,7 +5,9 @@ import com.bizilabs.streeek.lib.domain.helpers.asDate
 import com.bizilabs.streeek.lib.domain.helpers.asString
 import com.bizilabs.streeek.lib.domain.models.IssueDomain
 import com.bizilabs.streeek.lib.remote.models.GithubIssueDTO
-import java.util.Date
+import kotlinx.datetime.Clock
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 
 fun GithubIssueDTO.toDomain() = IssueDomain(
     id = id,
@@ -15,9 +17,10 @@ fun GithubIssueDTO.toDomain() = IssueDomain(
     body = body ?: "",
     user = user.toDomain(),
     labels = labels.map { it.toDomain() },
-    createdAt = createdAt.asDate()?.time ?: Date(),
-    updatedAt = updatedAt.asDate()?.time ?: Date(),
-    closedAt = closedAt?.asDate()?.time
+    createdAt = createdAt.asDate()?.toLocalDateTime(TimeZone.UTC) ?: Clock.System.now().toLocalDateTime(
+    TimeZone.UTC),
+    updatedAt = updatedAt.asDate()?.toLocalDateTime(TimeZone.UTC) ?: Clock.System.now().toLocalDateTime(TimeZone.UTC),
+    closedAt = closedAt?.asDate()?.toLocalDateTime(TimeZone.UTC)
 )
 
 fun IssueDomain.toDTO() = GithubIssueDTO(

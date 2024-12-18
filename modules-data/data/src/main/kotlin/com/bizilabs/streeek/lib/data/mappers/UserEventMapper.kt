@@ -5,12 +5,15 @@ import com.bizilabs.streeek.lib.domain.models.EventRepositoryDomain
 import com.bizilabs.streeek.lib.domain.models.UserEventDomain
 import com.bizilabs.streeek.lib.remote.models.GithubEventRepositoryDTO
 import com.bizilabs.streeek.lib.remote.models.GithubUserEventDTO
-import java.sql.Date
+import kotlinx.datetime.Clock
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 
 fun GithubUserEventDTO.toDomain() = UserEventDomain(
     id = id,
     type = type,
-    createdAt = createdAt.asDate()?.time ?: Date.valueOf(createdAt),
+    createdAt = createdAt.asDate()?.toLocalDateTime(TimeZone.UTC) ?: Clock.System.now()
+        .toLocalDateTime(TimeZone.UTC),
     actor = actor.toDomain(),
     repo = repo.toDomain(),
     payload = payload.toDomain()

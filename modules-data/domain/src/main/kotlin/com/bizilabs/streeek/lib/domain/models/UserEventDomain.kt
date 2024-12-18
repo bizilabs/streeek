@@ -1,11 +1,11 @@
 package com.bizilabs.streeek.lib.domain.models
 
-import java.util.Date
+import kotlinx.datetime.LocalDateTime
 
 data class UserEventDomain(
     val id: String,
     val type: String,
-    val createdAt: Date,
+    val createdAt: LocalDateTime,
     val actor: ActorDomain,
     val repo: EventRepositoryDomain,
     val payload: EventPayloadDomain

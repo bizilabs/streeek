@@ -13,7 +13,7 @@ import com.bizilabs.streeek.lib.remote.models.AccountCreateRequestDTO
 import com.bizilabs.streeek.lib.remote.sources.account.AccountRemoteSource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.mapLatest
-import java.util.Date
+import kotlinx.datetime.Clock
 
 class AccountRepositoryImpl(
     private val remote: AccountRemoteSource,
@@ -47,8 +47,8 @@ class AccountRepositoryImpl(
             email = email,
             bio = bio,
             avatarUrl = avatarUrl,
-            createdAt = Date().asString(DateFormats.ISO_8601) ?: "",
-            updatedAt = Date().asString(DateFormats.ISO_8601) ?: ""
+            createdAt = Clock.System.now().asString(DateFormats.ISO_8601) ?: "",
+            updatedAt = Clock.System.now().asString(DateFormats.ISO_8601) ?: ""
         )
         return when (val result = remote.createAccount(request)) {
             is NetworkResult.Failure -> DataResult.Error(result.exception.localizedMessage)

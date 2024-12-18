@@ -1,50 +1,40 @@
 package com.bizilabs.streeek.lib.domain.helpers
 
+import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
-import java.text.SimpleDateFormat
-import java.util.Calendar
-import java.util.Date
-import java.util.Locale
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.minus
+import kotlinx.datetime.toLocalDateTime
 
 object DateFormats {
     const val ISO_8601 = "yyyy-MM-dd'T'HH:mm:ss'Z'"
     const val EEE_MMM_dd_yyyy_HH_mm = "EEE, MMM dd yyyy HH:mm a"
 }
 
-fun String.asDate(format: String = DateFormats.ISO_8601): Calendar? {
+fun String.asDate(format: String = DateFormats.ISO_8601): Instant? {
     return tryOrNull {
-        val inputFormat = SimpleDateFormat(format, Locale.getDefault())
-//        inputFormat.timeZone = TimeZone.getTimeZone("UTC")
-        val parsedDate = inputFormat.parse(this)
-        val calendar = Calendar.getInstance()
-        calendar.time = parsedDate
-            ?: throw Exception("Couldn't change String : [$this] to date with the following format : [$format]")
-        calendar
+        Instant.parse(this)
     }
 }
 
-fun Calendar.asString(format: String = DateFormats.EEE_MMM_dd_yyyy_HH_mm): String? {
-    return time.asString(format)
+fun Instant.asString(format: String = DateFormats.EEE_MMM_dd_yyyy_HH_mm): String? {
+    return this.toLocalDateTime(kotlinx.datetime.TimeZone.UTC).asString(format = format)
 }
 
-fun Date.asString(format: String = DateFormats.EEE_MMM_dd_yyyy_HH_mm): String? {
+fun LocalDate.asString(format: String = DateFormats.EEE_MMM_dd_yyyy_HH_mm): String? {
     return tryOrNull {
-        val outputFormat = SimpleDateFormat(format, Locale.getDefault())
-//        outputFormat.timeZone = TimeZone.getTimeZone("UTC")
-        outputFormat.format(this)
+        this.toString()
     }
 }
 
-fun Date.isSameDay(date: Date): Boolean {
-    val calendar1 = Calendar.getInstance()
-    calendar1.time = this
+fun LocalDateTime.asString(format: String = DateFormats.EEE_MMM_dd_yyyy_HH_mm): String? {
+    return tryOrNull {
+        this.toString()
+    }
+}
 
-    val calendar2 = Calendar.getInstance()
-    calendar2.time = date
-
-    return calendar1.get(Calendar.YEAR) == calendar2.get(Calendar.YEAR) &&
-            calendar1.get(Calendar.MONTH) == calendar2.get(Calendar.MONTH) &&
-            calendar1.get(Calendar.DAY_OF_MONTH) == calendar2.get(Calendar.DAY_OF_MONTH)
+fun LocalDate.isSameDay(date: LocalDate): Boolean {
+    return this.minus(date).days == 0
 }
 
 val LocalDate.dayShort

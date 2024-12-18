@@ -5,7 +5,9 @@ import com.bizilabs.streeek.lib.domain.helpers.asString
 import com.bizilabs.streeek.lib.domain.models.AccountDomain
 import com.bizilabs.streeek.lib.local.models.AccountCache
 import com.bizilabs.streeek.lib.remote.models.AccountDTO
-import java.util.Date
+import kotlinx.datetime.Clock
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 
 fun AccountDTO.toDomain(): AccountDomain = AccountDomain(
     id = id,
@@ -14,8 +16,8 @@ fun AccountDTO.toDomain(): AccountDomain = AccountDomain(
     email = email,
     bio = bio,
     avatarUrl = avatarUrl,
-    createdAt = createdAt.asDate()?.time ?: Date(),
-    updatedAt = updatedAt.asDate()?.time ?: Date()
+    createdAt = createdAt.asDate()?.toLocalDateTime(TimeZone.UTC) ?: Clock.System.now().toLocalDateTime(TimeZone.UTC),
+    updatedAt = updatedAt.asDate()?.toLocalDateTime(TimeZone.UTC) ?: Clock.System.now().toLocalDateTime(TimeZone.UTC)
 )
 
 fun AccountDomain.toCache(): AccountCache = AccountCache(
@@ -36,6 +38,6 @@ fun AccountCache.toDomain(): AccountDomain = AccountDomain(
     email = email,
     bio = bio,
     avatarUrl = avatarUrl,
-    createdAt = createdAt.asDate()?.time ?: Date(),
-    updatedAt = createdAt.asDate()?.time ?: Date()
+    createdAt = createdAt.asDate()?.toLocalDateTime(TimeZone.UTC) ?: Clock.System.now().toLocalDateTime(TimeZone.UTC),
+    updatedAt = updatedAt.asDate()?.toLocalDateTime(TimeZone.UTC) ?: Clock.System.now().toLocalDateTime(TimeZone.UTC)
 )

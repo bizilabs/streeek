@@ -1,14 +1,14 @@
 package com.bizilabs.streeek.lib.domain.models
 
-import java.util.Date
+import kotlinx.datetime.LocalDateTime
 
 data class ContributionDomain(
     val id: Long,
-    val createdAt: Date,
+    val createdAt: LocalDateTime,
     val accountId: Long,
     val githubEventId: String,
     val githubEventType: String,
-    val githubEventDate: Date,
+    val githubEventDate: LocalDateTime,
     val githubEventRepo: EventRepositoryDomain,
     val githubEventActor: ActorDomain,
     val githubEventPayload: EventPayloadDomain,

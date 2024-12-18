@@ -5,7 +5,9 @@ import com.bizilabs.streeek.lib.domain.helpers.asDate
 import com.bizilabs.streeek.lib.domain.helpers.asString
 import com.bizilabs.streeek.lib.domain.models.PullRequestDomain
 import com.bizilabs.streeek.lib.remote.models.PullRequestDTO
-import java.util.Date
+import kotlinx.datetime.Clock
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 
 fun PullRequestDTO.toDomain() = PullRequestDomain(
     id = id,
@@ -15,8 +17,8 @@ fun PullRequestDTO.toDomain() = PullRequestDomain(
     body = body,
     user = user.toDomain(),
     labels = labels.map { it.toDomain() },
-    createdAt = createdAt.asDate()?.time ?: Date(),
-    updatedAt = updatedAt.asDate()?.time ?: Date(),
+    createdAt = createdAt.asDate()?.toLocalDateTime(TimeZone.UTC) ?: Clock.System.now().toLocalDateTime(TimeZone.UTC),
+    updatedAt = updatedAt.asDate()?.toLocalDateTime(TimeZone.UTC) ?: Clock.System.now().toLocalDateTime(TimeZone.UTC),
     comments = comments,
     reviewComments = reviewComments,
     commits = commits,

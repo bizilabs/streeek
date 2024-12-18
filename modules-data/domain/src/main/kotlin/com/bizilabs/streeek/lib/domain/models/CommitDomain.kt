@@ -1,6 +1,6 @@
 package com.bizilabs.streeek.lib.domain.models
 
-import java.util.Date
+import kotlinx.datetime.LocalDateTime
 
 data class CommitDomain(
     val sha: String,
@@ -10,8 +10,8 @@ data class CommitDomain(
 
 data class CommitCommentDomain(
     val id: Long,
-    val createdAt: Date,
-    val updatedAt: Date,
+    val createdAt: LocalDateTime,
+    val updatedAt: LocalDateTime,
     val body: String,
     val user: ActorDomain
 )

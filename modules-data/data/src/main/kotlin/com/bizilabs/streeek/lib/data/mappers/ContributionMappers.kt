@@ -11,8 +11,10 @@ import com.bizilabs.streeek.lib.remote.models.EventPayloadDTO
 import com.bizilabs.streeek.lib.remote.models.EventPayloadSerializer
 import com.bizilabs.streeek.lib.remote.models.GithubActorDTO
 import com.bizilabs.streeek.lib.remote.models.GithubEventRepositoryDTO
+import kotlinx.datetime.Clock
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 import kotlinx.serialization.json.Json
-import java.util.Date
 
 val JsonSerializer = Json {
     encodeDefaults = true
@@ -30,11 +32,12 @@ private fun String.asEventPayload(): EventPayloadDTO =
 
 fun ContributionDTO.toDomain() = ContributionDomain(
     id = id,
-    createdAt = createdAt.asDate()?.time ?: Date(),
+    createdAt = createdAt.asDate()?.toLocalDateTime(TimeZone.UTC) ?: Clock.System.now().toLocalDateTime(
+    TimeZone.UTC),
     accountId = accountId,
     githubEventId = githubEventId,
     githubEventType = githubEventType,
-    githubEventDate = githubEventDate.asDate()?.time ?: Date(),
+    githubEventDate = githubEventDate.asDate()?.toLocalDateTime(TimeZone.UTC) ?: Clock.System.now().toLocalDateTime(TimeZone.UTC),
     githubEventRepo = githubEventRepo.asGithubRepo().toDomain(),
     githubEventActor = githubEventActor.asActor().toDomain(),
     githubEventPayload = githubEventPayload.asEventPayload().toDomain(),
@@ -56,11 +59,11 @@ fun ContributionDomain.toCache() = ContributionCache(
 
 fun ContributionCache.toDomain() = ContributionDomain(
     id = id,
-    createdAt = createdAt.asDate()?.time ?: Date(),
+    createdAt = createdAt.asDate()?.toLocalDateTime(TimeZone.UTC) ?: Clock.System.now().toLocalDateTime(TimeZone.UTC),
     accountId = accountId,
     githubEventId = githubEventId,
     githubEventType = githubEventType,
-    githubEventDate = githubEventDate.asDate()?.time ?: Date(),
+    githubEventDate = githubEventDate.asDate()?.toLocalDateTime(TimeZone.UTC) ?: Clock.System.now().toLocalDateTime(TimeZone.UTC),
     githubEventRepo = githubEventRepo.asGithubRepo().toDomain(),
     githubEventActor = githubEventActor.asActor().toDomain(),
     githubEventPayload = githubEventPayload.asEventPayload().toDomain(),

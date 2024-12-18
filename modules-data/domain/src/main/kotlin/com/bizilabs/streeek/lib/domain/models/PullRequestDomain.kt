@@ -1,6 +1,6 @@
 package com.bizilabs.streeek.lib.domain.models
 
-import java.util.Date
+import kotlinx.datetime.LocalDateTime
 
 data class PullRequestDomain(
     val id: Long,
@@ -10,8 +10,8 @@ data class PullRequestDomain(
     val body: String,
     val user: ActorDomain,
     val labels: List<LabelDomain>,
-    val createdAt: Date,
-    val updatedAt: Date,
+    val createdAt: LocalDateTime,
+    val updatedAt: LocalDateTime,
     val comments: Long,
     val reviewComments: Long,
     val commits: Long,

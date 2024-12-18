@@ -15,8 +15,10 @@ import com.bizilabs.streeek.lib.domain.helpers.isSameDay
 import com.bizilabs.streeek.lib.domain.models.ContributionDomain
 import com.bizilabs.streeek.lib.domain.models.UserEventDomain
 import com.bizilabs.streeek.lib.domain.repositories.ContributionRepository
+import kotlinx.datetime.Clock
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.todayIn
 import timber.log.Timber
-import java.util.Calendar
 import java.util.UUID
 import java.util.concurrent.TimeUnit
 
@@ -62,7 +64,7 @@ class SyncDailyContributionsWork(
     override suspend fun doWork(): Result {
         Timber.d("Starting sync work")
 
-        val today = Calendar.getInstance()
+        val today = Clock.System.todayIn(TimeZone.UTC)
 
         val list = mutableListOf<UserEventDomain>()
         val supabaseContributions = mutableListOf<ContributionDomain>()
@@ -87,7 +89,7 @@ class SyncDailyContributionsWork(
                 val eventDate = event.createdAt
                 Timber.d("Today      -> ${today.asString()}")
                 Timber.d("Event Date -> ${eventDate.asString()}")
-                if (eventDate.isSameDay(today.time).not()) {
+                if (eventDate.date.isSameDay(today).not()) {
                     Timber.d("Today is not the same day...")
                     page = null
                     break
