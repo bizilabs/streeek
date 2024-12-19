@@ -5,6 +5,7 @@ import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
+import kotlinx.datetime.atTime
 import kotlinx.datetime.format.DateTimeComponents
 import kotlinx.datetime.format.FormatStringsInDatetimeFormats
 import kotlinx.datetime.format.byUnicodePattern
@@ -38,6 +39,9 @@ val LocalDateTime.asUTC
 val LocalDateTime.asSystem
     get() = toInstant(TimeZone.currentSystemDefault())
 
+internal val INCEPTION
+    get() = LocalDateTime(2024, 12, 1, 0, 0, 0)
+
 @OptIn(FormatStringsInDatetimeFormats::class)
 fun String.asDate(format: String = DateFormats.ISO_8601_Z): Instant? {
     return tryOrNull {
@@ -68,6 +72,14 @@ fun LocalDateTime.asString(format: String = DateFormats.EEE_MMM_dd_yyyy_HH_mm): 
 
 fun LocalDate.isSameDay(date: LocalDate): Boolean {
     return this.minus(date).days == 0
+}
+
+fun LocalDate.isPastDue(): Boolean {
+    return this.atTime(0,0,0,0).asUTC < INCEPTION.asUTC
+}
+
+fun LocalDateTime.isPastDue(): Boolean {
+    return this.asUTC < INCEPTION.asUTC
 }
 
 val LocalDate.dayShort

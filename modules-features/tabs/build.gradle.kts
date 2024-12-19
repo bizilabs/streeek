@@ -13,4 +13,7 @@ dependencies {
     implementation(libs.bundles.coil)
     // calendar
     implementation(libs.calendar)
+    // material
+    implementation(libs.compose.material)
+
 }

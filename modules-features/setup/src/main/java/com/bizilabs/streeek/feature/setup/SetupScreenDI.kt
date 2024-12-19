@@ -9,5 +9,5 @@ val featureSetup = screenModule {
 }
 
 val setupModule = module {
-    factory { SetupScreenModel(userRepository = get(), accountRepository = get()) }
+    factory { SetupScreenModel(context = get(), userRepository = get(), accountRepository = get()) }
 }

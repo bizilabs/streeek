@@ -5,8 +5,8 @@ import android.widget.Toast
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -15,14 +15,22 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.PushPin
+import androidx.compose.material.icons.rounded.Refresh
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -66,18 +74,25 @@ object FeedScreen : Screen {
             state = state,
             date = date,
             contributions = contributions,
-            onClickDate = screenModel::onClickDate
+            onClickDate = screenModel::onClickDate,
+            onRefreshContributions = screenModel::onRefreshContributions
         )
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
 fun FeedScreenContent(
     state: FeedScreenState,
     date: LocalDate,
     contributions: List<ContributionDomain>,
     onClickDate: (LocalDate) -> Unit,
+    onRefreshContributions: () -> Unit
 ) {
+
+    val pullRefreshState =
+        rememberPullRefreshState(refreshing = state.isSyncing, onRefresh = onRefreshContributions)
+
     Scaffold(
         topBar = {
             Surface(shadowElevation = 2.dp) {
@@ -99,28 +114,43 @@ fun FeedScreenContent(
                 }
             }
         }
-    ) { paddingValues ->
+    ) { innerPadding ->
         val context = LocalContext.current
-        FeedContent(
-            paddingValues = paddingValues,
-            state = state,
-            context = context,
-            contributions = contributions
-        )
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = innerPadding.calculateTopPadding())
+                .pullRefresh(pullRefreshState)
+        ) {
+            FeedContent(
+                state = state,
+                context = context,
+                contributions = contributions,
+                onRefreshContributions = onRefreshContributions
+            )
+
+            PullRefreshIndicator(
+                backgroundColor = MaterialTheme.colorScheme.onBackground,
+                contentColor = MaterialTheme.colorScheme.background,
+                refreshing = state.isSyncing,
+                state = pullRefreshState,
+                modifier = Modifier.align(Alignment.TopCenter)
+            )
+
+        }
+
     }
 }
 
 @Composable
 private fun FeedContent(
-    paddingValues: PaddingValues,
+    context: Context,
     state: FeedScreenState,
     contributions: List<ContributionDomain>,
-    context: Context
+    onRefreshContributions: () -> Unit
 ) {
     AnimatedContent(
-        modifier = Modifier
-            .padding(top = paddingValues.calculateTopPadding())
-            .fillMaxSize(),
+        modifier = Modifier.fillMaxSize(),
         targetState = state.isFetchingContributions,
         label = "list_animation"
     ) {
@@ -135,11 +165,20 @@ private fun FeedContent(
                 when {
                     contributions.isEmpty() -> {
                         SafiCenteredColumn(modifier = Modifier.fillMaxSize()) {
-                            SafiInfoSection(
-                                icon = Icons.Rounded.PushPin,
-                                title = "No Contributions Found",
-                                description = "You haven't been busy today... Push some few commits!"
-                            )
+                            SafiCenteredColumn {
+                                SafiInfoSection(
+                                    icon = Icons.Rounded.PushPin,
+                                    title = "No Contributions Found",
+                                    description = "You haven't been busy today... Push some few commits!"
+                                )
+                                SmallFloatingActionButton(onClick = onRefreshContributions) {
+                                    Icon(
+                                        imageVector = Icons.Rounded.Refresh,
+                                        contentDescription = "refresh"
+                                    )
+                                }
+                            }
+
                         }
                     }
 

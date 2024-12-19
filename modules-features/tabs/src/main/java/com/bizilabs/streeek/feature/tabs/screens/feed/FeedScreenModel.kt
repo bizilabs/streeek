@@ -1,13 +1,18 @@
 package com.bizilabs.streeek.feature.tabs.screens.feed
 
+import android.content.Context
 import cafe.adriel.voyager.core.model.StateScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
 import com.bizilabs.streeek.lib.domain.models.AccountDomain
 import com.bizilabs.streeek.lib.domain.models.ContributionDomain
 import com.bizilabs.streeek.lib.domain.repositories.AccountRepository
 import com.bizilabs.streeek.lib.domain.repositories.ContributionRepository
+import com.bizilabs.streeek.lib.domain.repositories.PreferenceRepository
+import com.bizilabs.streeek.lib.domain.workers.startImmediateDailySyncContributionsWork
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -18,24 +23,33 @@ import kotlinx.datetime.toLocalDateTime
 import org.koin.dsl.module
 
 val FeedModule = module {
-    factory { FeedScreenModel(accountRepository = get(), contributionRepository = get()) }
+    factory {
+        FeedScreenModel(
+            context = get(),
+            accountRepository = get(),
+            preferenceRepository = get(),
+            contributionRepository = get()
+        )
+    }
 }
 
 data class FeedScreenState(
+    val isSyncing: Boolean = false,
     val account: AccountDomain? = null,
-    val contributions: List<ContributionDomain> = emptyList(),
     val isFetchingContributions: Boolean = true,
 )
 
 class FeedScreenModel(
+    private val context: Context,
     private val accountRepository: AccountRepository,
-    private val contributionRepository: ContributionRepository
+    private val preferenceRepository: PreferenceRepository,
+    private val contributionRepository: ContributionRepository,
 ) : StateScreenModel<FeedScreenState>(FeedScreenState()) {
 
     private val _date = MutableStateFlow(Clock.System.now().toLocalDateTime(TimeZone.UTC).date)
     val date = _date.asStateFlow()
 
-    val contributions = _date.flatMapLatest {
+    val contributions: Flow<List<ContributionDomain>> = _date.flatMapLatest {
         mutableState.update { it.copy(isFetchingContributions = true) }
         contributionRepository.getLocalContributionsByDate(date = it).also {
             mutableState.update { it.copy(isFetchingContributions = false) }
@@ -44,6 +58,7 @@ class FeedScreenModel(
 
     init {
         observeAccount()
+        observeSyncingContributions()
     }
 
     private fun observeAccount() {
@@ -54,9 +69,21 @@ class FeedScreenModel(
         }
     }
 
+    private fun observeSyncingContributions() {
+        screenModelScope.launch {
+            preferenceRepository.isSyncingContributions.collectLatest { value ->
+                mutableState.update { it.copy(isSyncing = value) }
+            }
+        }
+    }
+
     // actions
     fun onClickDate(date: LocalDate) {
         _date.update { date }
+    }
+
+    fun onRefreshContributions() {
+        context.startImmediateDailySyncContributionsWork()
     }
 
 }

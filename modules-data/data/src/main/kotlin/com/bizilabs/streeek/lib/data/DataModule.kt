@@ -3,10 +3,12 @@ package com.bizilabs.streeek.lib.data
 import com.bizilabs.streeek.lib.data.repositories.AccountRepositoryImpl
 import com.bizilabs.streeek.lib.data.repositories.AuthenticationRepositoryImpl
 import com.bizilabs.streeek.lib.data.repositories.ContributionRepositoryImpl
+import com.bizilabs.streeek.lib.data.repositories.PreferenceRepositoryImpl
 import com.bizilabs.streeek.lib.data.repositories.UserRepositoryImpl
 import com.bizilabs.streeek.lib.domain.repositories.AccountRepository
 import com.bizilabs.streeek.lib.domain.repositories.AuthenticationRepository
 import com.bizilabs.streeek.lib.domain.repositories.ContributionRepository
+import com.bizilabs.streeek.lib.domain.repositories.PreferenceRepository
 import com.bizilabs.streeek.lib.domain.repositories.UserRepository
 import com.bizilabs.streeek.lib.local.LocalModule
 import com.bizilabs.streeek.lib.remote.RemoteModule
@@ -23,5 +25,8 @@ val dataModule = module {
             remote = get(),
             accountLocalSource = get()
         )
+    }
+    single<PreferenceRepository> {
+        PreferenceRepositoryImpl(localSource = get(), remoteSource = get())
     }
 }

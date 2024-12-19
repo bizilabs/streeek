@@ -1,5 +1,6 @@
 package com.bizilabs.streeek.feature.setup
 
+import android.content.Context
 import cafe.adriel.voyager.core.model.StateScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
 import com.bizilabs.streeek.lib.common.models.FetchState
@@ -8,6 +9,7 @@ import com.bizilabs.streeek.lib.domain.models.AccountDomain
 import com.bizilabs.streeek.lib.domain.models.UserDomain
 import com.bizilabs.streeek.lib.domain.repositories.AccountRepository
 import com.bizilabs.streeek.lib.domain.repositories.UserRepository
+import com.bizilabs.streeek.lib.domain.workers.startSyncContributionsWork
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -17,6 +19,7 @@ data class SetupScreenState(
 )
 
 class SetupScreenModel(
+    private val context: Context,
     private val userRepository: UserRepository,
     private val accountRepository: AccountRepository,
 ) : StateScreenModel<SetupScreenState>(SetupScreenState()) {
@@ -49,8 +52,10 @@ class SetupScreenModel(
                     val account = result.data
                     if (account == null)
                         createAccount(user = user)
-                    else
+                    else {
+                        syncContributions()
                         mutableState.update { it.copy(accountState = FetchState.Success(value = account)) }
+                    }
                 }
             }
 
@@ -68,10 +73,17 @@ class SetupScreenModel(
                 avatarUrl = user.url
             )) {
                 is DataResult.Error -> FetchState.Error(message = result.message)
-                is DataResult.Success -> FetchState.Success(value = result.data)
+                is DataResult.Success -> {
+                    syncContributions()
+                    FetchState.Success(value = result.data)
+                }
             }
             mutableState.update { it.copy(accountState = update) }
         }
+    }
+
+    private fun syncContributions() {
+        context.startSyncContributionsWork()
     }
 
 }

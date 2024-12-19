@@ -54,7 +54,7 @@ class SyncContributionsWork(
             page = if (list.isNotEmpty()) page.plus(1) else null
             list.forEach { contributionRepository.saveContributionLocally(contribution = it) }
         }
-        context.startDailySyncContributionsWork()
+        context.startPeriodicDailySyncContributionsWork()
         return Result.success()
     }
 }

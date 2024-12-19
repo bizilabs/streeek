@@ -4,14 +4,10 @@ import android.content.Context
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.EmojiEvents
 import androidx.compose.material.icons.outlined.Explore
-import androidx.compose.material.icons.outlined.People
 import androidx.compose.material.icons.outlined.PeopleAlt
 import androidx.compose.material.icons.rounded.EmojiEvents
 import androidx.compose.material.icons.rounded.Explore
-import androidx.compose.material.icons.rounded.Favorite
-import androidx.compose.material.icons.rounded.Home
 import androidx.compose.material.icons.rounded.PeopleAlt
-import androidx.compose.material.icons.rounded.Search
 import androidx.compose.ui.graphics.vector.ImageVector
 import cafe.adriel.voyager.core.model.StateScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
@@ -23,8 +19,7 @@ import com.bizilabs.streeek.lib.domain.models.ContributionDomain
 import com.bizilabs.streeek.lib.domain.models.UserEventDomain
 import com.bizilabs.streeek.lib.domain.repositories.AccountRepository
 import com.bizilabs.streeek.lib.domain.repositories.ContributionRepository
-import com.bizilabs.streeek.lib.domain.workers.startDailySyncContributionsWork
-import com.bizilabs.streeek.lib.domain.workers.startSyncContributionsWork
+import com.bizilabs.streeek.lib.domain.workers.startPeriodicDailySyncContributionsWork
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.koin.dsl.module
@@ -81,7 +76,7 @@ class TabsScreenModel(
 
     private fun startSyncContributionsWork() {
         with(context) {
-            startDailySyncContributionsWork()
+            startPeriodicDailySyncContributionsWork()
         }
     }
 
