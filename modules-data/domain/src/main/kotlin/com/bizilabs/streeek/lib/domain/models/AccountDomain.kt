@@ -4,7 +4,7 @@ import kotlinx.datetime.LocalDateTime
 
 data class AccountDomain(
     val id: Long,
-    val githubId: Int,
+    val githubId: Long,
     val username: String,
     val email: String,
     val bio: String,

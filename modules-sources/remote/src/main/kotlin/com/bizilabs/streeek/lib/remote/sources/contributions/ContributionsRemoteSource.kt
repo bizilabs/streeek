@@ -14,6 +14,9 @@ import io.github.jan.supabase.postgrest.query.Order
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
 import io.ktor.client.request.url
+import io.ktor.http.append
+import io.ktor.http.parameters
+import io.ktor.http.plus
 
 interface ContributionsRemoteSource {
     suspend fun fetchEvent(username: String, id: String): NetworkResult<GithubUserEventDTO>
@@ -44,8 +47,10 @@ class ContributionsRemoteSourceImpl(
         username: String,
         page: Int
     ): NetworkResult<List<GithubUserEventDTO>> = safeApiCall {
-        client.get {
-            url(GithubEndpoint.Events(username = username).url)
+        client.get(GithubEndpoint.Events(username = username).url) {
+            url {
+                parameters.append("page", "$page")
+            }
         }
     }
 

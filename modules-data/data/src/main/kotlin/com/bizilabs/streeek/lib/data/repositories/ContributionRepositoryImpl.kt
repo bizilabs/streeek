@@ -1,11 +1,13 @@
 package com.bizilabs.streeek.lib.data.repositories
 
+import androidx.work.Data
 import com.bizilabs.streeek.lib.data.mappers.toCache
 import com.bizilabs.streeek.lib.data.mappers.toDTO
 import com.bizilabs.streeek.lib.data.mappers.toDomain
 import com.bizilabs.streeek.lib.domain.helpers.DataResult
 import com.bizilabs.streeek.lib.domain.helpers.DateFormats
 import com.bizilabs.streeek.lib.domain.helpers.asString
+import com.bizilabs.streeek.lib.domain.models.AccountDomain
 import com.bizilabs.streeek.lib.domain.models.ContributionDomain
 import com.bizilabs.streeek.lib.domain.models.UserEventDomain
 import com.bizilabs.streeek.lib.domain.repositories.ContributionRepository
@@ -74,16 +76,16 @@ class ContributionRepositoryImpl(
         }
     }
 
-    private fun UserEventDomain.toCreateContribution(accountId: Long) =
+    private fun UserEventDomain.toCreateContribution(account: AccountDomain) =
         CreateContributionDTO(
-            accountId = accountId,
+            accountId = account.id,
             githubEventId = id,
             githubEventType = type,
             githubEventDate = createdAt.asString(DateFormats.ISO_8601_Z) ?: "",
             githubEventRepo = repo.toDTO().asJson(),
             githubEventActor = actor.toDTO().asJson(),
             githubEventPayload = payload.toDTO().asJson(),
-            points = payload.points
+            points = payload.getPoints(account = account)
         )
 
     override fun getLocalContributionsByDate(date: LocalDate): Flow<List<ContributionDomain>> {
@@ -100,8 +102,9 @@ class ContributionRepositoryImpl(
     }
 
     override suspend fun saveContribution(event: UserEventDomain): DataResult<ContributionDomain> {
-        val accountId = getAccountId()
-        val request = event.toCreateContribution(accountId = accountId)
+        val account =
+            getAccount()?.toDomain() ?: return DataResult.Error("Couldn't get logged in account")
+        val request = event.toCreateContribution(account = account)
         return when (val result = remote.saveContribution(request = request)) {
             is NetworkResult.Failure -> DataResult.Error(result.exception.localizedMessage)
             is NetworkResult.Success -> DataResult.Success(data = result.data.toDomain())
@@ -109,8 +112,9 @@ class ContributionRepositoryImpl(
     }
 
     override suspend fun saveContribution(events: List<UserEventDomain>): DataResult<List<ContributionDomain>> {
-        val accountId = getAccountId()
-        val requests = events.map { it.toCreateContribution(accountId = accountId) }
+        val account =
+            getAccount()?.toDomain() ?: return DataResult.Error("Couldn't get logged in account")
+        val requests = events.map { it.toCreateContribution(account = account) }
         return when (val result = remote.saveContribution(requests = requests)) {
             is NetworkResult.Failure -> DataResult.Error(result.exception.localizedMessage)
             is NetworkResult.Success -> DataResult.Success(data = result.data.map { it.toDomain() })

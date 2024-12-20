@@ -17,6 +17,7 @@ import com.bizilabs.streeek.lib.remote.sources.preferences.RemotePreferencesSour
 import com.bizilabs.streeek.lib.remote.sources.preferences.RemotePreferencesSourceImpl
 import com.bizilabs.streeek.lib.remote.sources.user.UserRemoteSource
 import com.bizilabs.streeek.lib.remote.sources.user.UserRemoteSourceImpl
+import com.chuckerteam.chucker.api.ChuckerInterceptor
 import io.ktor.client.HttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.koin.core.qualifier.named
@@ -30,9 +31,11 @@ val RemoteModule = module {
             setLevel(HttpLoggingInterceptor.Level.BODY)
         }
     }
+    single<ChuckerInterceptor>{ ChuckerInterceptor(context = get()) }
     single<AuthorizationInterceptor> { AuthorizationInterceptor(remotePreferencesSource = get()) }
     single<HttpClient> {
         createHttpClient(
+            chuckerInterceptor = get(),
             loggingInterceptor = get(),
             authorizationInterceptor = get()
         )

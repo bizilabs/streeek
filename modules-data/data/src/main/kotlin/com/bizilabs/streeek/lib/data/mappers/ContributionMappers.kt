@@ -1,8 +1,12 @@
 package com.bizilabs.streeek.lib.data.mappers
 
 import com.bizilabs.streeek.lib.domain.helpers.DateFormats
+import com.bizilabs.streeek.lib.domain.helpers.SystemLocalDateTime
 import com.bizilabs.streeek.lib.domain.helpers.asDate
+import com.bizilabs.streeek.lib.domain.helpers.asLocalDate
+import com.bizilabs.streeek.lib.domain.helpers.asLocalDateTime
 import com.bizilabs.streeek.lib.domain.helpers.asString
+import com.bizilabs.streeek.lib.domain.helpers.datetimeSystem
 import com.bizilabs.streeek.lib.domain.models.ContributionDomain
 import com.bizilabs.streeek.lib.local.models.ContributionCache
 import com.bizilabs.streeek.lib.remote.helpers.asJson
@@ -11,9 +15,7 @@ import com.bizilabs.streeek.lib.remote.models.EventPayloadDTO
 import com.bizilabs.streeek.lib.remote.models.EventPayloadSerializer
 import com.bizilabs.streeek.lib.remote.models.GithubActorDTO
 import com.bizilabs.streeek.lib.remote.models.GithubEventRepositoryDTO
-import kotlinx.datetime.Clock
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
+import kotlinx.datetime.Instant
 import kotlinx.serialization.json.Json
 
 val JsonSerializer = Json {
@@ -32,12 +34,11 @@ private fun String.asEventPayload(): EventPayloadDTO =
 
 fun ContributionDTO.toDomain() = ContributionDomain(
     id = id,
-    createdAt = createdAt.asDate()?.toLocalDateTime(TimeZone.UTC) ?: Clock.System.now().toLocalDateTime(
-    TimeZone.UTC),
+    createdAt = Instant.parse(createdAt).datetimeSystem,
     accountId = accountId,
     githubEventId = githubEventId,
     githubEventType = githubEventType,
-    githubEventDate = githubEventDate.asDate()?.toLocalDateTime(TimeZone.UTC) ?: Clock.System.now().toLocalDateTime(TimeZone.UTC),
+    githubEventDate = githubEventDate.asLocalDate(DateFormats.YYYY_MM_dd)?.asLocalDateTime() ?: SystemLocalDateTime,
     githubEventRepo = githubEventRepo.asGithubRepo().toDomain(),
     githubEventActor = githubEventActor.asActor().toDomain(),
     githubEventPayload = githubEventPayload.asEventPayload().toDomain(),
@@ -46,11 +47,11 @@ fun ContributionDTO.toDomain() = ContributionDomain(
 
 fun ContributionDomain.toCache() = ContributionCache(
     id = id,
-    createdAt = createdAt.asString(DateFormats.ISO_8601_Z) ?: "",
+    createdAt = createdAt.asString() ?: "",
     accountId = accountId,
     githubEventId = githubEventId,
     githubEventType = githubEventType,
-    githubEventDate = githubEventDate.asString(DateFormats.ISO_8601_Z) ?: "",
+    githubEventDate = githubEventDate.asString(DateFormats.YYYY_MM_dd) ?: "",
     githubEventRepo = githubEventRepo.toDTO().asJson(),
     githubEventActor = githubEventActor.toDTO().asJson(),
     githubEventPayload = githubEventPayload.toDTO().asJson(),
@@ -59,11 +60,11 @@ fun ContributionDomain.toCache() = ContributionCache(
 
 fun ContributionCache.toDomain() = ContributionDomain(
     id = id,
-    createdAt = createdAt.asDate()?.toLocalDateTime(TimeZone.UTC) ?: Clock.System.now().toLocalDateTime(TimeZone.UTC),
+    createdAt = createdAt.asDate()?.datetimeSystem ?: SystemLocalDateTime,
     accountId = accountId,
     githubEventId = githubEventId,
     githubEventType = githubEventType,
-    githubEventDate = githubEventDate.asDate()?.toLocalDateTime(TimeZone.UTC) ?: Clock.System.now().toLocalDateTime(TimeZone.UTC),
+    githubEventDate = githubEventDate.asLocalDate(DateFormats.YYYY_MM_dd)?.asLocalDateTime() ?: SystemLocalDateTime,
     githubEventRepo = githubEventRepo.asGithubRepo().toDomain(),
     githubEventActor = githubEventActor.asActor().toDomain(),
     githubEventPayload = githubEventPayload.asEventPayload().toDomain(),

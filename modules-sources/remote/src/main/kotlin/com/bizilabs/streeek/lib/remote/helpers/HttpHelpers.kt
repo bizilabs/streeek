@@ -1,6 +1,7 @@
 package com.bizilabs.streeek.lib.remote.helpers
 
 import com.bizilabs.streeek.lib.remote.interceptor.AuthorizationInterceptor
+import com.chuckerteam.chucker.api.ChuckerInterceptor
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.okhttp.OkHttp
 import io.ktor.client.plugins.DefaultRequest
@@ -8,7 +9,6 @@ import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.request.header
 import io.ktor.http.HttpHeaders
 import io.ktor.serialization.kotlinx.json.json
-import kotlinx.serialization.json.Json
 import okhttp3.logging.HttpLoggingInterceptor
 
 sealed class Header(val name: String, val value: String) {
@@ -65,12 +65,14 @@ private fun DefaultRequest.DefaultRequestBuilder.addStandardHeaders() {
 }
 
 fun createHttpClient(
+    chuckerInterceptor: ChuckerInterceptor,
     loggingInterceptor: HttpLoggingInterceptor,
-    authorizationInterceptor: AuthorizationInterceptor
+    authorizationInterceptor: AuthorizationInterceptor,
 ) = HttpClient(OkHttp) {
     engine {
-        addInterceptor(loggingInterceptor)
         addInterceptor(authorizationInterceptor)
+        addInterceptor(loggingInterceptor)
+        addInterceptor(chuckerInterceptor)
     }
     install(DefaultRequest) {
         addStandardHeaders()

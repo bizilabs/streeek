@@ -22,13 +22,7 @@ class AccountRepositoryImpl(
 ) : AccountRepository {
 
     override val account: Flow<AccountDomain?>
-        get() = local.account.mapLatest {
-            it?.let {
-                val result = remote.getAccount(1)
-                Timber.d("Accounty -> $result")
-            }
-            it?.toDomain()
-        }
+        get() = local.account.mapLatest { it?.toDomain() }
 
     override suspend fun getAccountWithGithubId(id: Int): DataResult<AccountDomain?> {
         return when (val result = remote.fetchAccountWithGithubId(id)) {

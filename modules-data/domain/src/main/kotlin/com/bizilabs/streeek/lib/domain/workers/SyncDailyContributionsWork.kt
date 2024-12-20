@@ -11,6 +11,7 @@ import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import com.bizilabs.streeek.lib.domain.helpers.DataResult
+import com.bizilabs.streeek.lib.domain.helpers.DateFormats
 import com.bizilabs.streeek.lib.domain.helpers.asString
 import com.bizilabs.streeek.lib.domain.helpers.isPastDue
 import com.bizilabs.streeek.lib.domain.models.ContributionDomain
@@ -77,89 +78,106 @@ class SyncDailyContributionsWork(
     }
 
     override suspend fun doWork(): Result {
-        Timber.d("Starting sync work")
+        return try {
+            Timber.d("Starting sync work")
 
-        preferences.setIsSyncingContributions(isSyncing = true)
+            preferences.setIsSyncingContributions(isSyncing = true)
 
-        val today = Clock.System.todayIn(TimeZone.UTC)
+            val today = Clock.System.todayIn(TimeZone.UTC)
 
-        val list = mutableListOf<UserEventDomain>()
-        val supabaseContributions = mutableListOf<ContributionDomain>()
+            val list = mutableListOf<UserEventDomain>()
+            val supabaseContributions = mutableListOf<ContributionDomain>()
 
-        var page: Int? = 1
-        while (page != null) {
-            val eventsResult = repository.getEvents(page = page)
-            if (eventsResult is DataResult.Error) {
-                preferences.setIsSyncingContributions(isSyncing = false)
-                return Result.failure().also { Timber.e(eventsResult.message) }
-            }
-            val events = (eventsResult as DataResult.Success).data
-            Timber.d(
-                "Events -> ${
-                    events.map {
-                        mapOf(
-                            "type" to it.type,
-                            "createdAt" to it.createdAt.asString()
-                        )
-                    }
-                }"
-            )
-            for (event in events) {
-                val eventDate = event.createdAt
-                Timber.d("Today      -> ${today.asString()}")
-                Timber.d("Event Date -> ${eventDate.asString()}")
-                if (eventDate.isPastDue()) {
-                    Timber.d("Event date is past INCEPTION date ...")
+            var page: Int? = 1
+            while (page != null) {
+                val eventsResult = repository.getEvents(page = page)
+                if (eventsResult is DataResult.Error) {
+                    preferences.setIsSyncingContributions(isSyncing = false)
+                    return Result.failure().also { Timber.e(eventsResult.message) }
+                }
+                val events = (eventsResult as DataResult.Success).data
+                Timber.d(
+                    "Events -> ${
+                        events.map {
+                            mapOf(
+                                "type" to it.type,
+                                "createdAt" to it.createdAt.toString(),
+                            )
+                        }
+                    }"
+                )
+                if (events.isEmpty()) {
                     page = null
                     break
                 }
-                Timber.d("Today is the same day...")
-                val saved =
-                    repository.getContributionWithGithubEventId(githubEventId = event.id)
-                if (saved is DataResult.Error) {
-                    preferences.setIsSyncingContributions(isSyncing = false)
-                    return Result.failure().also { Timber.e(saved.message) }
+                if (list.contains(events.first())) {
+                    page = null
+                    break
                 }
-                val contribution = (saved as DataResult.Success).data
-                if (contribution == null) {
-                    Timber.d("Event has not been uploaded to supabase")
-                    list.add(event)
-                } else {
-                    Timber.d("Event has been uploaded to supabase")
-                    supabaseContributions.add(contribution)
+                Timber.d("Today      -> $today")
+                for (event in events) {
+                    val eventDate = event.createdAt
+                    Timber.d("Event Date -> $eventDate")
+                    Timber.d("Event Data -> id : ${event.id} , type : ${event.type}")
+                    if (eventDate.isPastDue()) {
+                        Timber.d("Event date is past INCEPTION date ...")
+                        page = null
+                        break
+                    }
+                    Timber.d("Event date is not past INCEPTION date ...")
+                    val saved =
+                        repository.getContributionWithGithubEventId(githubEventId = event.id)
+                    if (saved is DataResult.Error) {
+                        preferences.setIsSyncingContributions(isSyncing = false)
+                        return Result.failure().also { Timber.e(saved.message) }
+                    }
+                    val contribution = (saved as DataResult.Success).data
+                    if (contribution == null) {
+                        Timber.d("Event has not been uploaded to supabase")
+                        list.add(event)
+                    } else {
+                        Timber.d("Event has been uploaded to supabase")
+                        supabaseContributions.add(contribution)
+                    }
+                    Timber.d("-".repeat(20))
                 }
+                page = page?.plus(1)
             }
-            page = if (list.isNotEmpty() && page != null) page.plus(1) else null
-        }
 
-        // save events to supabase as contributions
-        Timber.d("Saving list of events to supabase")
-        val result = repository.saveContribution(events = list)
-        if (result is DataResult.Error) {
+            // save events to supabase as contributions
+            Timber.d("Saving list of events to supabase")
+            val result = repository.saveContribution(events = list)
+            if (result is DataResult.Error) {
+                preferences.setIsSyncingContributions(isSyncing = false)
+                return Result.failure().also { Timber.e(result.message) }
+            }
+            val data = (result as DataResult.Success).data
+            val contributions = data.toMutableList().plus(supabaseContributions).toMutableList()
+
+            if (contributions.isEmpty()) return Result.success()
+
+            // save contributions locally
+            Timber.d("Saving list of contributions to local cache")
+            val iterator = contributions.iterator()
+            while (iterator.hasNext()) {
+                val contribution = iterator.next()
+                val result = repository.getContributionsLocally(id = contribution.id)
+                if (result is DataResult.Success && result.data != null) iterator.remove()
+            }
+            val local = repository.saveContributionLocally(contributions = contributions)
+            if (local is DataResult.Error) {
+                preferences.setIsSyncingContributions(isSyncing = false)
+                return Result.failure().also { Timber.e(local.message) }
+            }
+
+            // return success if everything is okay
             preferences.setIsSyncingContributions(isSyncing = false)
-            return Result.failure().also { Timber.e(result.message) }
-        }
-        val data = (result as DataResult.Success).data
-        val contributions = data.toMutableList().plus(supabaseContributions).toMutableList()
-
-        if (contributions.isEmpty()) return Result.success()
-
-        // save contributions locally
-        Timber.d("Saving list of contributions to local cache")
-        val iterator = contributions.iterator()
-        while (iterator.hasNext()) {
-            val contribution = iterator.next()
-            val result = repository.getContributionsLocally(id = contribution.id)
-            if (result is DataResult.Success && result.data != null) iterator.remove()
-        }
-        val local = repository.saveContributionLocally(contributions = contributions)
-        if (local is DataResult.Error) {
+            return Result.success()
+        } catch (e : Exception){
             preferences.setIsSyncingContributions(isSyncing = false)
-            return Result.failure().also { Timber.e(local.message) }
+            Timber.e(e, "Failed to Sync Daily Contributions")
+            Result.failure()
         }
 
-        // return success if everything is okay
-        preferences.setIsSyncingContributions(isSyncing = false)
-        return Result.success()
     }
 }

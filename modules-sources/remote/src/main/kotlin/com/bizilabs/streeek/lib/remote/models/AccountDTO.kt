@@ -8,7 +8,7 @@ import java.util.logging.Level
 data class AccountDTO(
     val id: Long,
     @SerialName("github_id")
-    val githubId: Int,
+    val githubId: Long,
     val username: String,
     val email: String,
     val bio: String,

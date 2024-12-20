@@ -1,9 +1,17 @@
 package com.bizilabs.streeek.lib.domain.models
 
-import kotlinx.serialization.json.JsonObject
+import kotlinx.datetime.LocalDateTime
 
 sealed interface EventPayloadDomain {
-    val points: Long
+    fun getPoints(account: AccountDomain): Long
+}
+
+data class CommitCommentEventDomain(
+    val action: String,
+    val comment: CommitCommentDomain
+) : EventPayloadDomain {
+    override fun getPoints(account: AccountDomain): Long =
+        if (action.equals("created", true)) 10 else 0
 }
 
 data class CreateEventDomain(
@@ -12,24 +20,111 @@ data class CreateEventDomain(
     val refType: String,
     val pusherType: String
 ) : EventPayloadDomain {
-    override val points: Long
-        get() = if (pusherType.equals("user", true)) 20 else 0
+    override fun getPoints(account: AccountDomain): Long =
+        if (pusherType.equals("user", true)) 20 else 0
 }
 
 data class DeleteEventDomain(
     val ref: String,
     val refType: String
 ) : EventPayloadDomain {
-    override val points: Long
-        get() = -10
+    override fun getPoints(account: AccountDomain): Long = -10
 }
 
-data class CommitCommentEventDomain(
-    val action: String,
-    val comment: CommitCommentDomain
+data class ForkEventDomain(val forkee: EventRepositoryDomain) : EventPayloadDomain {
+    override fun getPoints(account: AccountDomain): Long = 10
+}
+
+data class GollumEventDomain(
+    val pages: List<GollumPageDomain>
 ) : EventPayloadDomain {
-    override val points: Long
-        get() = if (action.equals("created", true)) 10 else 0
+    override fun getPoints(account: AccountDomain): Long = 10
+}
+
+data class IssueCommentEventDomain(
+    val action: String,
+    val issue: IssueDomain,
+    val comment: CommentDomain,
+) : EventPayloadDomain {
+    override fun getPoints(account: AccountDomain): Long = 10
+}
+
+data class IssuesEventDomain(
+    val action: String,
+    val issue: IssueDomain,
+) : EventPayloadDomain {
+    override fun getPoints(account: AccountDomain): Long {
+        return when {
+            action.equals("opened", true) -> 50
+            action.equals("edited", true) -> 20
+            else -> 0
+        }
+    }
+}
+
+data class MemberEventDomain(
+    val action: String,
+    val member: ActorDomain
+) : EventPayloadDomain {
+    override fun getPoints(account: AccountDomain): Long = when (member.id) {
+        account.githubId -> 10
+        else -> 0
+    }
+}
+
+class PublicEventDomain() : EventPayloadDomain {
+    override fun getPoints(account: AccountDomain): Long = 20
+}
+
+data class PullRequestEventDomain(
+    val action: String,
+    val pullRequest: MinPullRequestDomain,
+    val reason: String?
+) : EventPayloadDomain {
+    override fun getPoints(account: AccountDomain): Long {
+        return when {
+            action.equals("opened", true) -> 50
+            action.equals("edited", true) -> 20
+            else -> 0
+        }
+    }
+}
+
+data class PullRequestReviewEventDomain(
+    val action: String,
+    val review: ReviewDomain,
+    val pullRequest: MinPullRequestDomain,
+) : EventPayloadDomain {
+    override fun getPoints(account: AccountDomain): Long {
+        return 10
+    }
+}
+
+data class PullRequestReviewCommentEventDomain(
+    val action: String,
+    val comment: CommentDomain,
+    val pullRequest: MinPullRequestDomain,
+) : EventPayloadDomain {
+    override fun getPoints(account: AccountDomain): Long {
+        return when {
+            action.equals("created", true) -> 20
+            action.equals("edited", true) -> 10
+            else -> 0
+        }
+    }
+}
+
+data class PullRequestReviewThreadEventDomain(
+    val action: String,
+    val pullRequest: MinPullRequestDomain
+) : EventPayloadDomain {
+    override fun getPoints(account: AccountDomain): Long {
+        return when {
+            action.equals("resolved", true) -> 20
+            action.equals("unresolved", true) -> 10
+            else -> 0
+        }
+    }
 }
 
 data class PushEventDomain(
@@ -39,44 +134,45 @@ data class PushEventDomain(
     val ref: String,
     val commits: List<CommitDomain>
 ) : EventPayloadDomain {
-    override val points: Long
-        get() = commits.map { 20 }.sum().toLong()
+    override fun getPoints(account: AccountDomain): Long {
+        return commits.map {
+            if (it.author.name.equals(account.username, true))
+                10L
+            else
+                0L
+        }.sum()
+    }
 }
 
-data class PullRequestEventDomain(
+data class ReleaseEventDomain(
     val action: String,
-    val number: Long,
-    val pullRequest: PullRequestDomain
+    val release: ReleaseDomain
 ) : EventPayloadDomain {
-    override val points: Long
-        get() = when {
-            action.equals("opened", true) -> 50
-            action.equals("edited", true) -> 20
+    override fun getPoints(account: AccountDomain): Long {
+        return when {
+            action.equals("published", true) -> 50
             else -> 0
         }
+    }
 }
 
-data class IssuesEventDomain(
+data class SponsorshipEventDomain(
     val action: String,
-    val issue: IssueDomain,
+    val effectiveDate: LocalDateTime
 ) : EventPayloadDomain {
-    override val points: Long
-        get() = when {
-            action.equals("opened", true) -> 50
-            action.equals("edited", true) -> 20
+    override fun getPoints(account: AccountDomain): Long {
+        return when {
+            action.equals("created", true) -> 100
             else -> 0
         }
+    }
 }
 
 data class WatchEventDomain(val action: String) : EventPayloadDomain {
-    override val points: Long
-        get() = when {
+    override fun getPoints(account: AccountDomain): Long {
+        return when {
             action.equals("started", true) -> 10
             else -> 0
         }
-}
-
-data class ForkEventDomain(val forkee: EventRepositoryDomain) : EventPayloadDomain {
-    override val points: Long
-        get() = 10
+    }
 }

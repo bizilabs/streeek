@@ -18,3 +18,15 @@ data class PullRequestDomain(
     val additions: Long,
     val deletions: Long
 )
+
+data class MinPullRequestDomain(
+    val id: Long,
+    val url: String,
+    val number: Long,
+    val title: String,
+    val body: String?,
+    val user: ActorDomain,
+    val labels: List<LabelDomain>,
+    val createdAt: LocalDateTime,
+    val updatedAt: LocalDateTime,
+)

@@ -9,6 +9,6 @@ fun createJson() = Json {
     ignoreUnknownKeys = true
     prettyPrint = true
     isLenient = true
-    explicitNulls = false
+    explicitNulls = true
     classDiscriminator = "#class"
 }

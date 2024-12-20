@@ -3,7 +3,9 @@ package com.bizilabs.streeek.lib.data.mappers
 import com.bizilabs.streeek.lib.domain.helpers.DateFormats
 import com.bizilabs.streeek.lib.domain.helpers.asDate
 import com.bizilabs.streeek.lib.domain.helpers.asString
+import com.bizilabs.streeek.lib.domain.models.MinPullRequestDomain
 import com.bizilabs.streeek.lib.domain.models.PullRequestDomain
+import com.bizilabs.streeek.lib.remote.models.MinPullRequestDTO
 import com.bizilabs.streeek.lib.remote.models.PullRequestDTO
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
@@ -17,8 +19,10 @@ fun PullRequestDTO.toDomain() = PullRequestDomain(
     body = body,
     user = user.toDomain(),
     labels = labels.map { it.toDomain() },
-    createdAt = createdAt.asDate()?.toLocalDateTime(TimeZone.UTC) ?: Clock.System.now().toLocalDateTime(TimeZone.UTC),
-    updatedAt = updatedAt.asDate()?.toLocalDateTime(TimeZone.UTC) ?: Clock.System.now().toLocalDateTime(TimeZone.UTC),
+    createdAt = createdAt.asDate()?.toLocalDateTime(TimeZone.UTC) ?: Clock.System.now()
+        .toLocalDateTime(TimeZone.UTC),
+    updatedAt = updatedAt.asDate()?.toLocalDateTime(TimeZone.UTC) ?: Clock.System.now()
+        .toLocalDateTime(TimeZone.UTC),
     comments = comments,
     reviewComments = reviewComments,
     commits = commits,
@@ -41,4 +45,30 @@ fun PullRequestDomain.toDTO() = PullRequestDTO(
     commits = commits,
     additions = additions,
     deletions = deletions
+)
+
+fun MinPullRequestDTO.toDomain() = MinPullRequestDomain(
+    id = id,
+    url = url,
+    number = number,
+    title = title,
+    body = body,
+    user = user.toDomain(),
+    labels = labels.map { it.toDomain() },
+    createdAt = createdAt.asDate()?.toLocalDateTime(TimeZone.UTC) ?: Clock.System.now()
+        .toLocalDateTime(TimeZone.UTC),
+    updatedAt = updatedAt.asDate()?.toLocalDateTime(TimeZone.UTC) ?: Clock.System.now()
+        .toLocalDateTime(TimeZone.UTC),
+)
+
+fun MinPullRequestDomain.toDTO() = MinPullRequestDTO(
+    id = id,
+    url = url,
+    number = number,
+    title = title,
+    body = body,
+    user = user.toDTO(),
+    labels = labels.map { it.toDTO() },
+    createdAt = createdAt.asString(DateFormats.ISO_8601_Z) ?: "",
+    updatedAt = updatedAt.asString(DateFormats.ISO_8601_Z) ?: "",
 )

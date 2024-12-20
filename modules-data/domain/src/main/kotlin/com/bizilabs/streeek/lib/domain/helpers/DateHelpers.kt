@@ -1,6 +1,7 @@
 package com.bizilabs.streeek.lib.domain.helpers
 
 import kotlinx.datetime.Clock
+import kotlinx.datetime.DatePeriod
 import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
@@ -12,11 +13,18 @@ import kotlinx.datetime.format.byUnicodePattern
 import kotlinx.datetime.minus
 import kotlinx.datetime.toInstant
 import kotlinx.datetime.toLocalDateTime
+import timber.log.Timber
 
 object DateFormats {
     const val ISO_8601_Z = "yyyy-MM-dd'T'HH:mm:ss'Z'"
     const val ISO_8601 = "yyyy-MM-dd'T'HH:mm:ss.SSSSSSXXX"
-    const val YYYY_MM_dd_T_HH_mm_ss = "yyyy-MM-dd'T'HH:mm:ss"
+    const val YYYY_MM_dd_T_HH_mm_ss = "yyyy-MM-dd'T'HH:mm:ss.SSSSSS"
+    const val YYYY_MM_dd = "yyyy-MM-dd"
+    const val YYYY_MM_dd_space_HH_mm_ss_SSSSSS = "yyyy-MM-dd HH:mm:ss.SSSSSS"
+    const val YYYY_MM_dd_T_HH_mm_ss_SSSSSS = "yyyy-MM-dd'T'HH:mm:ss.SSSSSS"
+    const val YYYY_MM_dd_space_HH_mm_ss_XXX = "yyyy-MM-dd HH:mm:ssXXX"
+    const val YYYY_MM_dd_T_HH_mm_ss_SSSSSSXXX = "yyyy-MM-dd'T'HH:mm:ss.SSSSSSSXXX"
+    const val YYYY_MM_dd_T_HH_mm_ss_SSSSS = "yyyy-MM-dd'T'HH:mm:ss.SSSSS"
     const val YYYY_MM_dd_space_HH_mm_ss = "yyyy-MM-dd HH:mm:ss"
     const val EEE_MMM_dd_yyyy_HH_mm = "EEE, MMM dd yyyy HH:mm a"
 }
@@ -46,16 +54,32 @@ internal val INCEPTION
 fun String.asDate(format: String = DateFormats.ISO_8601_Z): Instant? {
     return tryOrNull {
         val formatter = DateTimeComponents.Format { byUnicodePattern(format) }
-        Instant.parse(this, formatter)
+        Instant.parse(this, formatter).let {
+            Timber.d("Trying to parse String to Instant :\nVALUE = $this\nFORMAT = $format\nOUTPUT = $it")
+            it
+        }
     }
 }
 
-fun Instant.asString(format: String = DateFormats.EEE_MMM_dd_yyyy_HH_mm): String? {
+@OptIn(FormatStringsInDatetimeFormats::class)
+fun String.asLocalDate(format: String = DateFormats.YYYY_MM_dd): LocalDate? {
+    Timber.d("Trying to parse String to LocalDate :\nVALUE = $this\nFORMAT= $format")
+    return tryOrNull {
+        val formatter = LocalDate.Format { byUnicodePattern(format) }
+        LocalDate.parse(this, formatter)
+    }
+}
+
+fun Instant.asString(format: String = DateFormats.ISO_8601_Z): String? {
     return this.toLocalDateTime(TimeZone.UTC).asString(format = format)
 }
 
+fun LocalDate.asLocalDateTime(): LocalDateTime {
+    return atTime(0, 0, 0)
+}
+
 @OptIn(FormatStringsInDatetimeFormats::class)
-fun LocalDate.asString(format: String = DateFormats.EEE_MMM_dd_yyyy_HH_mm): String? {
+fun LocalDate.asString(format: String = DateFormats.ISO_8601_Z): String? {
     return tryOrNull {
         val formatter = LocalDate.Format { byUnicodePattern(format) }
         formatter.format(this)
@@ -63,7 +87,7 @@ fun LocalDate.asString(format: String = DateFormats.EEE_MMM_dd_yyyy_HH_mm): Stri
 }
 
 @OptIn(FormatStringsInDatetimeFormats::class)
-fun LocalDateTime.asString(format: String = DateFormats.EEE_MMM_dd_yyyy_HH_mm): String? {
+fun LocalDateTime.asString(format: String = DateFormats.ISO_8601_Z): String? {
     return tryOrNull {
         val formatter = LocalDateTime.Format { byUnicodePattern(format) }
         formatter.format(this)
@@ -75,11 +99,14 @@ fun LocalDate.isSameDay(date: LocalDate): Boolean {
 }
 
 fun LocalDate.isPastDue(): Boolean {
-    return this.atTime(0,0,0,0).asUTC < INCEPTION.asUTC
+    val past: LocalDate = this.minus(DatePeriod(0, 0, 2))
+    return this.atTime(0,0,0,0).asUTC < past.atTime(0,0,0,0).asUTC
 }
 
 fun LocalDateTime.isPastDue(): Boolean {
-    return this.asUTC < INCEPTION.asUTC
+    val today = Clock.System.now()
+    val past = today.minus(this.asSystem)
+    return past.inWholeDays >= 4
 }
 
 val LocalDate.dayShort

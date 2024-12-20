@@ -44,4 +44,7 @@ dependencies {
     implementation(libs.bundles.okhttp)
     // datastore
     implementation(libs.androidx.datastore)
+    // chucker
+    debugImplementation(libs.chucker.debug)
+    releaseImplementation(libs.chucker.release)
 }

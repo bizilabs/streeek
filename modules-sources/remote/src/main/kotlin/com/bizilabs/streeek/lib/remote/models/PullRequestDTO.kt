@@ -23,3 +23,18 @@ data class PullRequestDTO(
     val additions: Long,
     val deletions: Long
 )
+
+@Serializable
+data class MinPullRequestDTO(
+    val id: Long,
+    val url: String,
+    val number: Long,
+    val title: String,
+    val body: String?,
+    val user: GithubActorDTO,
+    val labels: List<GithubLabelDTO>,
+    @SerialName("created_at")
+    val createdAt: String,
+    @SerialName("updated_at")
+    val updatedAt: String,
+)

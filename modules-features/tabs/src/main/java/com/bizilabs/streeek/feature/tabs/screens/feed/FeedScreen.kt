@@ -3,6 +3,7 @@ package com.bizilabs.streeek.feature.tabs.screens.feed
 import android.content.Context
 import android.widget.Toast
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
@@ -171,14 +172,15 @@ private fun FeedContent(
                                     title = "No Contributions Found",
                                     description = "You haven't been busy today... Push some few commits!"
                                 )
-                                SmallFloatingActionButton(onClick = onRefreshContributions) {
-                                    Icon(
-                                        imageVector = Icons.Rounded.Refresh,
-                                        contentDescription = "refresh"
-                                    )
+                                AnimatedVisibility(visible = state.isSyncing.not()) {
+                                    SmallFloatingActionButton(onClick = onRefreshContributions) {
+                                        Icon(
+                                            imageVector = Icons.Rounded.Refresh,
+                                            contentDescription = "refresh"
+                                        )
+                                    }
                                 }
                             }
-
                         }
                     }
 
@@ -208,10 +210,7 @@ private fun FeedContent(
                                             .padding(16.dp)
                                             .fillMaxWidth()
                                     ) {
-                                        Text(
-                                            text = it.createdAt.asString()
-                                                ?: "Some Date..."
-                                        )
+                                        Text(text = it.createdAt.toString())
                                         Text(text = "ID : ${it.id} > git : ${it.githubEventId}")
                                         SafiCenteredRow {
                                             Text(text = it.githubEventType)
