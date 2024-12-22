@@ -21,10 +21,11 @@ import cafe.adriel.voyager.core.registry.screenModule
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.getScreenModel
 import com.bizilabs.streeek.feature.tabs.screens.achievements.AchievementsScreen
-import com.bizilabs.streeek.feature.tabs.screens.TeamsScreen
+import com.bizilabs.streeek.feature.tabs.screens.teams.TeamsScreen
 import com.bizilabs.streeek.feature.tabs.screens.feed.FeedScreen
 import com.bizilabs.streeek.lib.common.navigation.SharedScreen
 import com.bizilabs.streeek.lib.design.helpers.SetupNavigationBarColor
+import com.bizilabs.streeek.lib.design.helpers.SetupStatusBarColor
 
 val featureTabs = screenModule {
     register<SharedScreen.Tabs> { TabsScreen }
@@ -33,10 +34,14 @@ val featureTabs = screenModule {
 object TabsScreen : Screen {
     @Composable
     override fun Content() {
-        val activity = LocalContext.current as Activity
+
         SetupNavigationBarColor(color = MaterialTheme.colorScheme.surface)
+        SetupStatusBarColor(color = MaterialTheme.colorScheme.surface)
+
+        val activity = LocalContext.current as Activity
         val screenModel: TabsScreenModel = getScreenModel()
         val state by screenModel.state.collectAsStateWithLifecycle()
+
         BackHandler(enabled = true) {
             if (state.tab != Tabs.FEED)
                 screenModel.onValueChangeTab(Tabs.FEED)
@@ -92,152 +97,3 @@ fun TabsScreenContent(state: TabsScreenState, onValueChangeTab: (Tabs) -> Unit) 
         }
     }
 }
-
-//@Composable
-//fun TabsScreenContent(state: TabsScreenState) {
-//    Scaffold { paddingValues ->
-//        Column(
-//            modifier = Modifier
-//                .padding(paddingValues)
-//                .fillMaxSize()
-//        ) {
-//            AnimatedContent(
-//                modifier = Modifier.fillMaxWidth(),
-//                targetState = state.accountState,
-//                label = "account_animation"
-//            ) { result ->
-//                when (result) {
-//                    is FetchState.Error -> {
-//                        SafiCenteredColumn {
-//                            Text(
-//                                text = "Error",
-//                                modifier = Modifier.padding(16.dp),
-//                                fontSize = 24.sp
-//                            )
-//                            Text(text = result.message)
-//                        }
-//                    }
-//
-//                    FetchState.Loading -> {
-//                        CircularProgressIndicator()
-//                    }
-//
-//                    is FetchState.Success -> {
-//                        val user = result.value
-//                        SafiCenteredColumn(
-//                            modifier = Modifier
-//                                .fillMaxWidth()
-//                                .padding(bottom = 16.dp)
-//                        ) {
-//                            AsyncImage(
-//                                modifier = Modifier
-//                                    .size(100.dp)
-//                                    .padding(16.dp)
-//                                    .clip(CircleShape),
-//                                model = user.avatarUrl,
-//                                contentDescription = null,
-//                            )
-//                            Text(
-//                                modifier = Modifier.padding(16.dp),
-//                                text = user.id.toString()
-//                            )
-//                            Text(text = user.username)
-//                            Text(text = user.email)
-//                            Text(
-//                                text = user.bio,
-//                                modifier = Modifier.fillMaxWidth(0.5f),
-//                                textAlign = TextAlign.Center
-//                            )
-//                        }
-//                    }
-//                }
-//            }
-//            HorizontalDivider(modifier = Modifier.fillMaxWidth())
-//            AnimatedContent(
-//                modifier = Modifier
-//                    .weight(1f)
-//                    .fillMaxSize(),
-//                targetState = state.contributions,
-//                label = "events_animation"
-//            ) { contributions ->
-//                when (contributions) {
-//                    FetchState.Loading -> {
-//                        SafiCenteredColumn(modifier = Modifier.fillMaxSize()) { CircularProgressIndicator() }
-//                    }
-//
-//                    is FetchState.Error -> {
-//                        SafiCenteredColumn(modifier = Modifier.fillMaxSize()) {
-//                            Text(text = "Error")
-//                            Text(text = contributions.message)
-//                        }
-//
-//                    }
-//
-//                    is FetchState.Success -> {
-//                        val context = LocalContext.current
-//                        val list = contributions.value
-//                        AnimatedContent(
-//                            modifier = Modifier.fillMaxSize(),
-//                            targetState = list,
-//                            label = "list_animation"
-//                        ) {
-//                            when {
-//                                it.isEmpty() -> {
-//                                    SafiCenteredColumn(modifier = Modifier.fillMaxSize()) {
-//                                        SafiInfoSection(
-//                                            icon = Icons.Rounded.PushPin,
-//                                            title = "No Contributions Found",
-//                                            description = "You haven't been busy today... Push some few commits!"
-//                                        )
-//                                    }
-//                                }
-//
-//                                else -> {
-//                                    LazyColumn(modifier = Modifier.fillMaxSize()) {
-//                                        items(it) {
-//                                            Card(
-//                                                modifier = Modifier
-//                                                    .fillMaxWidth()
-//                                                    .padding(8.dp),
-//                                                onClick = {
-//                                                    Toast.makeText(
-//                                                        context,
-//                                                        it.githubEventType,
-//                                                        Toast.LENGTH_SHORT
-//                                                    ).show()
-//                                                },
-//                                                border = BorderStroke(
-//                                                    1.dp,
-//                                                    MaterialTheme.colorScheme.onBackground.copy(
-//                                                        0.2f
-//                                                    )
-//                                                ),
-//                                            ) {
-//                                                Column(
-//                                                    modifier = Modifier
-//                                                        .padding(16.dp)
-//                                                        .fillMaxWidth()
-//                                                ) {
-//                                                    Text(
-//                                                        text = it.createdAt.asString()
-//                                                            ?: "Some Date..."
-//                                                    )
-//                                                    Text(text = "ID : ${it.id} > git : ${it.githubEventId}")
-//                                                    SafiCenteredRow {
-//                                                        Text(text = it.githubEventType)
-//                                                        Text(text = " > ", fontSize = 24.sp)
-//                                                        Text(text = it.githubEventRepo.name)
-//                                                    }
-//                                                }
-//                                            }
-//                                        }
-//                                    }
-//                                }
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//    }
-//}

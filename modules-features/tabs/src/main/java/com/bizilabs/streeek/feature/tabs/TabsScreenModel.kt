@@ -13,6 +13,7 @@ import cafe.adriel.voyager.core.model.StateScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
 import com.bizilabs.streeek.feature.tabs.screens.achievements.AchievementsModule
 import com.bizilabs.streeek.feature.tabs.screens.feed.FeedModule
+import com.bizilabs.streeek.feature.tabs.screens.teams.TeamsModule
 import com.bizilabs.streeek.lib.common.models.FetchState
 import com.bizilabs.streeek.lib.domain.helpers.DataResult
 import com.bizilabs.streeek.lib.domain.models.AccountDomain
@@ -34,7 +35,7 @@ val tabsModule = module {
             accountRepository = get()
         )
     }
-    includes(FeedModule, AchievementsModule)
+    includes(TeamsModule, FeedModule, AchievementsModule)
 }
 
 enum class Tabs {
@@ -56,7 +57,7 @@ enum class Tabs {
 }
 
 data class TabsScreenState(
-    val tab: Tabs = Tabs.FEED,
+    val tab: Tabs = Tabs.TEAMS,
     val tabs: List<Tabs> = Tabs.entries.toList(),
     val accountState: FetchState<AccountDomain> = FetchState.Loading,
     val eventsState: FetchState<List<UserEventDomain>> = FetchState.Loading,

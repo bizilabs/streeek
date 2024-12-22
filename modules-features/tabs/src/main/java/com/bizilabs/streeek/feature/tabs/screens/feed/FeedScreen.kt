@@ -69,7 +69,6 @@ import kotlinx.datetime.LocalDate
 object FeedScreen : Screen {
     @Composable
     override fun Content() {
-        SetupStatusBarColor(color = MaterialTheme.colorScheme.surface)
         val navigator = LocalNavigator.current
         val screenModel: FeedScreenModel = getScreenModel()
         val state by screenModel.state.collectAsStateWithLifecycle()
