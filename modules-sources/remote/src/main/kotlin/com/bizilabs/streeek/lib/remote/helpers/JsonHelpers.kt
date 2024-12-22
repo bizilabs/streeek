@@ -2,6 +2,9 @@ package com.bizilabs.streeek.lib.remote.helpers
 
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.encodeToJsonElement
+import kotlinx.serialization.json.jsonObject
+
 inline fun <reified T> T.asJson() = Json.encodeToString(this)
 
 fun createJson() = Json {
@@ -12,3 +15,5 @@ fun createJson() = Json {
     explicitNulls = true
     classDiscriminator = "#class"
 }
+
+internal inline fun <reified T> T.asJsonObject() = createJson().encodeToJsonElement(this).jsonObject

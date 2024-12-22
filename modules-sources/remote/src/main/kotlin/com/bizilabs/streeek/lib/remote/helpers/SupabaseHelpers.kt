@@ -20,6 +20,14 @@ object Supabase {
     }
     object Functions {
         const val GetAccountWithPoints = "get_account_with_points_and_level"
+        object Teams {
+            const val Create = "create_team"
+            const val Get = "get_team_with_members"
+            const val Join = "join_team_request"
+            object Requests {
+                const val Get = "accept_team_request"
+            }
+        }
     }
 }
 

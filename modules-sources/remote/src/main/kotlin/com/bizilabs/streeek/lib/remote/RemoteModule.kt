@@ -15,6 +15,8 @@ import com.bizilabs.streeek.lib.remote.sources.contributions.ContributionsRemote
 import com.bizilabs.streeek.lib.remote.sources.contributions.ContributionsRemoteSourceImpl
 import com.bizilabs.streeek.lib.remote.sources.preferences.RemotePreferencesSource
 import com.bizilabs.streeek.lib.remote.sources.preferences.RemotePreferencesSourceImpl
+import com.bizilabs.streeek.lib.remote.sources.team.TeamRemoteSource
+import com.bizilabs.streeek.lib.remote.sources.team.TeamRemoteSourceImpl
 import com.bizilabs.streeek.lib.remote.sources.user.UserRemoteSource
 import com.bizilabs.streeek.lib.remote.sources.user.UserRemoteSourceImpl
 import com.chuckerteam.chucker.api.ChuckerInterceptor
@@ -31,7 +33,7 @@ val RemoteModule = module {
             setLevel(HttpLoggingInterceptor.Level.BODY)
         }
     }
-    single<ChuckerInterceptor>{ ChuckerInterceptor(context = get()) }
+    single<ChuckerInterceptor> { ChuckerInterceptor(context = get()) }
     single<AuthorizationInterceptor> { AuthorizationInterceptor(remotePreferencesSource = get()) }
     single<HttpClient> {
         createHttpClient(
@@ -59,4 +61,5 @@ val RemoteModule = module {
             client = get()
         )
     }
+    single<TeamRemoteSource> { TeamRemoteSourceImpl(supabase = get()) }
 }
