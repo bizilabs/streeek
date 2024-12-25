@@ -37,15 +37,22 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
+import cafe.adriel.voyager.core.registry.rememberScreen
 import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.navigator.LocalNavigator
+import com.bizilabs.streeek.lib.common.navigation.SharedScreen
 import com.bizilabs.streeek.lib.design.components.SafiCenteredColumn
 
 object TeamsScreen : Screen {
     @Composable
     override fun Content() {
+        val navigator = LocalNavigator.current
+
+        val teamScreen = rememberScreen(SharedScreen.Team(teamId = 1))
+
         TeamsScreenContent(
             onClickMenuSearch = {},
-            onClickMenuCreateTeam = {},
+            onClickMenuCreateTeam = { navigator?.push(teamScreen) },
             onClickMenuJoinTeam = {}
         )
     }

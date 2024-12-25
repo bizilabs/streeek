@@ -19,6 +19,7 @@ object DateFormats {
     const val ISO_8601_Z = "yyyy-MM-dd'T'HH:mm:ss'Z'"
     const val ISO_8601 = "yyyy-MM-dd'T'HH:mm:ss.SSSSSSXXX"
     const val YYYY_MM_dd_T_HH_mm_ss = "yyyy-MM-dd'T'HH:mm:ss.SSSSSS"
+    const val YYYY_MM_ddTHH_mm_ss = "yyyy-MM-dd'T'HH:mm:ss"
     const val YYYY_MM_dd = "yyyy-MM-dd"
     const val YYYY_MM_dd_space_HH_mm_ss_SSSSSS = "yyyy-MM-dd HH:mm:ss.SSSSSS"
     const val YYYY_MM_dd_T_HH_mm_ss_SSSSSS = "yyyy-MM-dd'T'HH:mm:ss.SSSSSS"

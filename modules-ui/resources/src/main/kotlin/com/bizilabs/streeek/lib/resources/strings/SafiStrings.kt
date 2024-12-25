@@ -11,4 +11,5 @@ object SafiStrings {
      */
     val Labels = SafiStringLabels
     val AppName: Int = R.string.app_name
+    val SelectTeamVisibility: Int = R.string.select_team_visibility
 }

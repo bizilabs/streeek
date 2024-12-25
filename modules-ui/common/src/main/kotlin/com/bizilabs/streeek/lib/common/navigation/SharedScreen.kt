@@ -8,4 +8,5 @@ sealed class SharedScreen : ScreenProvider {
     object Tabs : SharedScreen()
     object Setup : SharedScreen()
     object Profile : SharedScreen()
+    class Team(val teamId: Long?) : SharedScreen()
 }

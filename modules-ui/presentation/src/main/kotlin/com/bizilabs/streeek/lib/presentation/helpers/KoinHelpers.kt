@@ -6,6 +6,7 @@ import com.bizilabs.streeek.feature.landing.landingModule
 import com.bizilabs.streeek.feature.profile.profileModule
 import com.bizilabs.streeek.feature.setup.setupModule
 import com.bizilabs.streeek.feature.tabs.tabsModule
+import com.bizilabs.streeek.feature.team.FeatureTeamModule
 import com.bizilabs.streeek.lib.domain.workers.SyncContributionsWork
 import com.bizilabs.streeek.lib.domain.workers.SyncDailyContributionsWork
 import org.koin.android.ext.koin.androidContext
@@ -28,7 +29,8 @@ fun Application.initKoin(vararg modules: Module) {
 val PresentationModule = module {
     includes(
         landingModule, authenticationModule,
-        setupModule, tabsModule, profileModule
+        setupModule, tabsModule, profileModule,
+        FeatureTeamModule
     )
     workerOf(::SyncContributionsWork)
     workerOf(::SyncDailyContributionsWork)
