@@ -56,9 +56,9 @@ data class TeamScreenState(
     val dialogState: DialogState? = null,
     val fetchState: FetchState<TeamWithMembersDomain> = FetchState.Loading,
     val isInvitationsOpen: Boolean = false,
+    val isLoadingInvitationsPartially: Boolean = false,
     val invitationsState: FetchListState<TeamInvitationDomain> = FetchListState.Loading,
     val createInvitationState: FetchState<CreateTeamInvitationDomain>? = null,
-    val deleteInvitationState: FetchState<Boolean>? = null
 ) {
     val isCreate: Boolean
         get() = teamId == null
@@ -121,7 +121,10 @@ class TeamScreenModel(
     private fun getInvitations() {
         val teamId = state.value.teamId ?: return
         screenModelScope.launch {
-            mutableState.update { it.copy(invitationsState = FetchListState.Loading) }
+            if (state.value.invitationsState is FetchListState.Success)
+                mutableState.update { it.copy(isLoadingInvitationsPartially = true) }
+            else
+                mutableState.update { it.copy(invitationsState = FetchListState.Loading) }
             val update =
                 when (val result = teamInvitationRepository.getInvitations(teamId = teamId)) {
                     is DataResult.Error -> FetchListState.Error(result.message)
