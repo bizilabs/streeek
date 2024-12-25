@@ -28,6 +28,12 @@ object Supabase {
             object Requests {
                 const val Get = "accept_team_request"
             }
+            object Invitations {
+                const val Get = "get_team_invitations"
+                const val Join = "join_team_with_invite_code"
+                const val Delete = "delete_team_invitation"
+                const val Create = "create_team_invite_code"
+            }
         }
     }
 }
@@ -35,6 +41,7 @@ object Supabase {
 private val serializer = KotlinXSerializer(Json {
     prettyPrint = true
     isLenient = true
+    ignoreUnknownKeys = true
 })
 
 fun createSupabase(): SupabaseClient = createSupabaseClient(

@@ -45,6 +45,7 @@ import cafe.adriel.voyager.core.registry.screenModule
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.getScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
+import com.bizilabs.streeek.feature.team.components.TeamInvitationBottomSheet
 import com.bizilabs.streeek.feature.team.components.TeamMemberComponent
 import com.bizilabs.streeek.lib.common.models.FetchState
 import com.bizilabs.streeek.lib.common.navigation.SharedScreen
@@ -53,7 +54,9 @@ import com.bizilabs.streeek.lib.design.components.SafiBottomSheetPicker
 import com.bizilabs.streeek.lib.design.components.SafiCenteredColumn
 import com.bizilabs.streeek.lib.design.components.SafiInfoSection
 import com.bizilabs.streeek.lib.domain.models.TeamWithMembersDomain
+import com.bizilabs.streeek.lib.domain.models.team.TeamInvitationDomain
 import com.bizilabs.streeek.lib.resources.strings.SafiStrings
+import kotlin.math.exp
 
 val screenTeam = screenModule {
     register<SharedScreen.Team> { parameters -> TeamScreen(parameters.teamId) }
@@ -75,7 +78,13 @@ class TeamScreen(val teamId: Long?) : Screen {
             onValueChangePublic = screenModel::onValueChangePublic,
             onValueChangePublicDropdown = screenModel::onValueChangePublicDropDown,
             onClickDismissDialog = screenModel::onClickDismissDialog,
-            onClickAction = screenModel::onClickAction
+            onClickManageAction = screenModel::onClickManageAction,
+            onDismissInvitationsSheet = screenModel::onDismissInvitationsSheet,
+            onClickMenuAction = screenModel::onClickMenuAction,
+            onClickInvitationGet = screenModel::onClickInvitationGet,
+            onClickInvitationCreate = screenModel::onClickInvitationCreate,
+            onClickInvitationRetry = screenModel::onClickInvitationRetry,
+            onSwipeInvitationDelete = screenModel::onSwipeInvitationDelete
         )
     }
 }
@@ -89,7 +98,13 @@ fun TeamScreenContent(
     onValueChangePublic: (String) -> Unit,
     onValueChangePublicDropdown: (Boolean) -> Unit,
     onClickDismissDialog: () -> Unit,
-    onClickAction: () -> Unit,
+    onClickManageAction: () -> Unit,
+    onDismissInvitationsSheet: () -> Unit,
+    onClickMenuAction: (TeamMenuAction) -> Unit,
+    onClickInvitationGet: () -> Unit,
+    onClickInvitationCreate: () -> Unit,
+    onClickInvitationRetry:() -> Unit,
+    onSwipeInvitationDelete: (TeamInvitationDomain) -> Unit
 ) {
 
     if (state.isOpen)
@@ -109,9 +124,19 @@ fun TeamScreenContent(
             onClickDismiss = onClickDismissDialog
         )
 
+    if (state.isInvitationsOpen)
+        TeamInvitationBottomSheet(
+            state = state,
+            onDismissSheet = onDismissInvitationsSheet,
+            onClickInvitationGet = onClickInvitationGet,
+            onClickInvitationRetry = onClickInvitationRetry,
+            onClickInvitationCreate = onClickInvitationCreate,
+            onSwipeInvitationDelete = onSwipeInvitationDelete
+        )
+
     Scaffold(
         topBar = {
-            TeamScreenHeaderComponent(onClickBack = onClickBack, state = state)
+            TeamScreenHeaderComponent(onClickBack = onClickBack, state = state, onClickMenuAction = onClickMenuAction)
         }
     ) { innerPadding ->
         AnimatedContent(
@@ -128,7 +153,7 @@ fun TeamScreenContent(
                         state = state,
                         onValueChangeName = onValueChangeName,
                         onValueChangePublicDropdown = onValueChangePublicDropdown,
-                        onClickAction = onClickAction
+                        onClickAction = onClickManageAction
                     )
                 }
 
@@ -144,8 +169,9 @@ fun TeamScreenContent(
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 private fun TeamScreenHeaderComponent(
+    state: TeamScreenState,
     onClickBack: () -> Unit,
-    state: TeamScreenState
+    onClickMenuAction: (TeamMenuAction) -> Unit
 ) {
     TopAppBar(
         navigationIcon = {
@@ -213,42 +239,22 @@ private fun TeamScreenHeaderComponent(
                         onDismissRequest = { expanded = false }
                     ) {
 
-                        DropdownMenuItem(
-                            contentPadding = PaddingValues(start = 16.dp, end = 24.dp),
-                            text = { Text("Edit") },
-                            leadingIcon = {
-                                Icon(
-                                    Icons.Outlined.Create,
-                                    contentDescription = null
-                                )
-                            },
-                            onClick = {}
-                        )
-
-                        DropdownMenuItem(
-                            contentPadding = PaddingValues(start = 16.dp, end = 24.dp),
-                            text = { Text("Invite") },
-                            leadingIcon = {
-                                Icon(
-                                    Icons.Outlined.People,
-                                    contentDescription = null
-                                )
-                            },
-                            onClick = { }
-                        )
-
-                        DropdownMenuItem(
-                            contentPadding = PaddingValues(start = 16.dp, end = 24.dp),
-                            text = { Text("Delete") },
-                            leadingIcon = {
-                                Icon(
-                                    Icons.Outlined.Delete,
-                                    contentDescription = null
-                                )
-                            },
-                            onClick = { }
-                        )
-
+                        TeamMenuAction.entries.forEach { menu ->
+                            DropdownMenuItem(
+                                contentPadding = PaddingValues(start = 16.dp, end = 24.dp),
+                                text = { Text(menu.label) },
+                                leadingIcon = {
+                                    Icon(
+                                        imageVector = menu.icon,
+                                        contentDescription = null
+                                    )
+                                },
+                                onClick = {
+                                    expanded = false
+                                    onClickMenuAction(menu)
+                                }
+                            )
+                        }
                     }
                 }
             }

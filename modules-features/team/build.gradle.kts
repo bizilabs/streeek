@@ -11,4 +11,6 @@ android {
 dependencies {
     // coil
     implementation(libs.bundles.coil)
+    // saket-swipe
+    implementation(libs.saket.swipe)
 }
