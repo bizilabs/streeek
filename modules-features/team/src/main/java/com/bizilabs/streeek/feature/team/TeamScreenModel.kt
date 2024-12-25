@@ -136,7 +136,12 @@ class TeamScreenModel(
                             FetchListState.Success(list = list)
                     }
                 }
-            mutableState.update { it.copy(invitationsState = update) }
+            mutableState.update {
+                it.copy(
+                    invitationsState = update,
+                    isLoadingInvitationsPartially = false
+                )
+            }
         }
     }
 

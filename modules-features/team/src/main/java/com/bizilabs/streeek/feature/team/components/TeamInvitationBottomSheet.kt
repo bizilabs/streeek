@@ -115,7 +115,7 @@ fun TeamInvitationBottomSheet(
             AnimatedContent(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(innerPadding),
+                    .padding(innerPadding.calculateTopPadding()),
                 targetState = state.invitationsState,
                 label = "animated_invitations"
             ) { result ->
