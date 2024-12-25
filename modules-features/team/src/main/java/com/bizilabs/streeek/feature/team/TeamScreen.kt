@@ -1,7 +1,12 @@
 package com.bizilabs.streeek.feature.team
 
+import android.R.attr.enabled
+import android.R.attr.label
+import android.R.attr.onClick
+import android.R.attr.value
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -15,12 +20,10 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.icons.outlined.Create
-import androidx.compose.material.icons.outlined.Delete
-import androidx.compose.material.icons.outlined.People
 import androidx.compose.material.icons.rounded.KeyboardArrowDown
 import androidx.compose.material.icons.rounded.People
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -28,6 +31,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -56,7 +60,6 @@ import com.bizilabs.streeek.lib.design.components.SafiInfoSection
 import com.bizilabs.streeek.lib.domain.models.TeamWithMembersDomain
 import com.bizilabs.streeek.lib.domain.models.team.TeamInvitationDomain
 import com.bizilabs.streeek.lib.resources.strings.SafiStrings
-import kotlin.math.exp
 
 val screenTeam = screenModule {
     register<SharedScreen.Team> { parameters -> TeamScreen(parameters.teamId) }
@@ -84,7 +87,9 @@ class TeamScreen(val teamId: Long?) : Screen {
             onClickInvitationGet = screenModel::onClickInvitationGet,
             onClickInvitationCreate = screenModel::onClickInvitationCreate,
             onClickInvitationRetry = screenModel::onClickInvitationRetry,
-            onSwipeInvitationDelete = screenModel::onSwipeInvitationDelete
+            onSwipeInvitationDelete = screenModel::onSwipeInvitationDelete,
+            onClickActionCancel = screenModel::onClickManageCancelAction,
+            onClickActionDelete = screenModel::onClickManageDeleteAction
         )
     }
 }
@@ -99,11 +104,13 @@ fun TeamScreenContent(
     onValueChangePublicDropdown: (Boolean) -> Unit,
     onClickDismissDialog: () -> Unit,
     onClickManageAction: () -> Unit,
+    onClickActionDelete: () -> Unit,
+    onClickActionCancel: () -> Unit,
     onDismissInvitationsSheet: () -> Unit,
     onClickMenuAction: (TeamMenuAction) -> Unit,
     onClickInvitationGet: () -> Unit,
     onClickInvitationCreate: () -> Unit,
-    onClickInvitationRetry:() -> Unit,
+    onClickInvitationRetry: () -> Unit,
     onSwipeInvitationDelete: (TeamInvitationDomain) -> Unit
 ) {
 
@@ -136,28 +143,33 @@ fun TeamScreenContent(
 
     Scaffold(
         topBar = {
-            TeamScreenHeaderComponent(onClickBack = onClickBack, state = state, onClickMenuAction = onClickMenuAction)
+            TeamScreenHeaderComponent(
+                onClickBack = onClickBack,
+                state = state,
+                onClickMenuAction = onClickMenuAction
+            )
         }
     ) { innerPadding ->
         AnimatedContent(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding),
-            targetState = state.teamId,
+            targetState = state.isManagingTeam,
             label = ""
-        ) { teamId ->
-            when (teamId) {
-                null -> {
+        ) { isManaging ->
+            when (isManaging) {
+                true -> {
                     ManageTeamSection(
-                        innerPadding = innerPadding,
                         state = state,
                         onValueChangeName = onValueChangeName,
                         onValueChangePublicDropdown = onValueChangePublicDropdown,
-                        onClickAction = onClickManageAction
+                        onClickAction = onClickManageAction,
+                        onClickActionDelete = onClickActionDelete,
+                        onClickActionCancel = onClickActionCancel
                     )
                 }
 
-                else -> {
+                false -> {
                     ViewTeamSection(state = state.fetchState)
                 }
             }
@@ -307,26 +319,26 @@ fun ViewTeamSection(state: FetchState<TeamWithMembersDomain>) {
 
 @Composable
 fun ManageTeamSection(
-    innerPadding: PaddingValues,
     state: TeamScreenState,
     onValueChangeName: (String) -> Unit,
     onValueChangePublicDropdown: (Boolean) -> Unit,
-    onClickAction: () -> Unit
+    onClickAction: () -> Unit,
+    onClickActionDelete: () -> Unit,
+    onClickActionCancel: () -> Unit
 ) {
     Column(
-        modifier = Modifier
-            .padding(innerPadding)
-            .fillMaxSize()
+        modifier = Modifier.fillMaxSize()
     ) {
         TextField(
             modifier = Modifier
                 .fillMaxWidth()
+                .padding(top = 16.dp)
                 .padding(horizontal = 16.dp),
             value = state.name,
             onValueChange = onValueChangeName,
             label = {
                 Text(text = "Name")
-            }
+            },
         )
         Spacer(modifier = Modifier.padding(8.dp))
         TextField(
@@ -343,17 +355,52 @@ fun ManageTeamSection(
                 IconButton(onClick = { onValueChangePublicDropdown(true) }) {
                     Icon(Icons.Rounded.KeyboardArrowDown, "")
                 }
-            }
+            },
         )
 
         Button(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(26.dp),
+                .padding(top = 16.dp)
+                .padding(horizontal = 16.dp),
             onClick = onClickAction,
             enabled = state.isActionEnabled
         ) {
-            Text(text = if (state.teamId == null) "Create Team" else "Edit Team")
+            Text(text = if (state.teamId == null) "Create" else "Update")
+        }
+
+        AnimatedVisibility(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f),
+            visible = state.isEditing
+        ) {
+            Column(modifier = Modifier.padding(horizontal = 16.dp)) {
+                OutlinedButton(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 8.dp),
+                    onClick = onClickActionCancel,
+                ) {
+                    Text(text = "Cancel")
+                }
+
+                Spacer(modifier = Modifier.weight(1f))
+
+                Button(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 16.dp),
+                    onClick = onClickActionDelete,
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.error,
+                        contentColor = MaterialTheme.colorScheme.onError
+                    )
+                ) {
+                    Text(text = "Delete")
+                }
+
+            }
         }
     }
 }

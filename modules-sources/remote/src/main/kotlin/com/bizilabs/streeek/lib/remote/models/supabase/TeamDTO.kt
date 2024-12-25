@@ -27,6 +27,18 @@ data class CreateTeamRequestDTO(
 )
 
 @Serializable
+data class UpdateTeamRequestDTO(
+    @SerialName("p_team_id")
+    val teamId: Long,
+    @SerialName("p_name")
+    val name: String,
+    @SerialName("p_account_id")
+    val accountId: Long,
+    @SerialName("p_is_public")
+    val public: Boolean,
+)
+
+@Serializable
 data class JoinTeamRequestDTO(
     @SerialName("p_account_id")
     val account: Long,

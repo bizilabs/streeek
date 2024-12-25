@@ -7,6 +7,7 @@ import com.bizilabs.streeek.lib.domain.models.TeamWithMembersDomain
 import com.bizilabs.streeek.lib.domain.repositories.TeamRepository
 import com.bizilabs.streeek.lib.local.sources.account.AccountLocalSource
 import com.bizilabs.streeek.lib.remote.models.supabase.CreateTeamRequestDTO
+import com.bizilabs.streeek.lib.remote.models.supabase.UpdateTeamRequestDTO
 import com.bizilabs.streeek.lib.remote.sources.team.TeamRemoteSource
 import kotlinx.coroutines.flow.firstOrNull
 
@@ -20,6 +21,15 @@ class TeamRepositoryImpl(
         )
         val request = CreateTeamRequestDTO(name = name, public = public, account = account)
         return remoteSource.createTeam(request = request).asDataResult { it }
+    }
+
+    override suspend fun updateTeam(teamId: Long, name: String, public: Boolean): DataResult<Boolean> {
+        val account = accountLocalSource.account.firstOrNull()?.id ?: return DataResult.Error(
+            message = "No account found"
+        )
+        val request =
+            UpdateTeamRequestDTO(teamId = teamId, name = name, public = public, accountId = account)
+        return remoteSource.updateTeam(request = request).asDataResult { it }
     }
 
     override suspend fun getTeam(id: Long, page: Int): DataResult<TeamWithMembersDomain> {

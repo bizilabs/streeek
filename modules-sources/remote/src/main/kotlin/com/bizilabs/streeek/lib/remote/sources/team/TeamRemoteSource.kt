@@ -8,11 +8,13 @@ import com.bizilabs.streeek.lib.remote.models.supabase.CreateTeamRequestDTO
 import com.bizilabs.streeek.lib.remote.models.supabase.GetTeamRequestDTO
 import com.bizilabs.streeek.lib.remote.models.supabase.JoinTeamRequestDTO
 import com.bizilabs.streeek.lib.remote.models.supabase.TeamWithMembersDTO
+import com.bizilabs.streeek.lib.remote.models.supabase.UpdateTeamRequestDTO
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.postgrest.postgrest
 
 interface TeamRemoteSource {
     suspend fun createTeam(request: CreateTeamRequestDTO): NetworkResult<Long>
+    suspend fun updateTeam(request: UpdateTeamRequestDTO): NetworkResult<Boolean>
     suspend fun fetchTeam(
         teamId: Long,
         accountId: Long,
@@ -34,6 +36,16 @@ internal class TeamRemoteSourceImpl(
                     parameters = request.asJsonObject()
                 )
                 .decodeAs()
+        }
+
+    override suspend fun updateTeam(request: UpdateTeamRequestDTO): NetworkResult<Boolean> =
+        safeSupabaseCall {
+            supabase.postgrest
+                .rpc(
+                    function = Supabase.Functions.Teams.Update,
+                    parameters = request.asJsonObject()
+                )
+            true
         }
 
     override suspend fun fetchTeam(

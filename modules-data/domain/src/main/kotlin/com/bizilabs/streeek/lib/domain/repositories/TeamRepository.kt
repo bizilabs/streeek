@@ -9,6 +9,12 @@ interface TeamRepository {
         public: Boolean,
     ): DataResult<Long>
 
+    suspend fun updateTeam(
+        teamId: Long,
+        name: String,
+        public: Boolean,
+    ): DataResult<Boolean>
+
     suspend fun getTeam(id: Long, page: Int) : DataResult<TeamWithMembersDomain>
 
 }

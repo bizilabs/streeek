@@ -46,6 +46,7 @@ enum class TeamMenuAction {
 }
 
 data class TeamScreenState(
+    val isEditing: Boolean = false,
     val account: AccountDomain? = null,
     val hasAlreadySetTeamId: Boolean = false,
     val teamId: Long? = null,
@@ -60,14 +61,19 @@ data class TeamScreenState(
     val invitationsState: FetchListState<TeamInvitationDomain> = FetchListState.Loading,
     val createInvitationState: FetchState<CreateTeamInvitationDomain>? = null,
 ) {
-    val isCreate: Boolean
-        get() = teamId == null
+    val isManagingTeam: Boolean
+        get() = isEditing || teamId == null
 
     val isPublic: Boolean
         get() = value.equals("public", true)
 
     val isActionEnabled: Boolean
-        get() = name.isNotBlank() && value.isNotBlank()
+        get() = if (fetchState is FetchState.Success) {
+            val team = fetchState.value.team
+            name.isNotBlank() && (!team.name.equals(name, ignoreCase = false) || team.public != isPublic)
+        } else {
+            name.isNotBlank() && value.isNotBlank()
+        }
 
     val isMenusVisible: Boolean
         get() = fetchState is FetchState.Success && fetchState.value.details.role.isAdmin
@@ -87,9 +93,56 @@ class TeamScreenModel(
         screenModelScope.launch {
             val update = when (val result = teamRepository.getTeam(id = id, page = 1)) {
                 is DataResult.Error -> FetchState.Error(result.message)
-                is DataResult.Success -> FetchState.Success(result.data)
+                is DataResult.Success -> {
+                    val team = result.data.team
+                    onValueChangeName(name = team.name)
+                    onValueChangePublic(value = if (team.public) "public" else "private")
+                    FetchState.Success(result.data)
+                }
             }
             mutableState.update { it.copy(fetchState = update) }
+        }
+    }
+
+    private fun createTeam() {
+        val value = state.value
+        val name = value.name
+        val public = value.isPublic
+        mutableState.update { it.copy(dialogState = DialogState.Loading()) }
+        screenModelScope.launch {
+            val update = when (val result = teamRepository.createTeam(name, public)) {
+                is DataResult.Error -> DialogState.Error(title = "Error", message = result.message)
+                is DataResult.Success -> {
+                    val teamId = result.data
+                    getTeam(id = teamId)
+                    DialogState.Success(
+                        title = "Success",
+                        message = "Created team successfully"
+                    )
+                }
+            }
+            mutableState.update { it.copy(dialogState = update) }
+        }
+    }
+
+    private fun updateTeam() {
+        val value = state.value
+        val teamId = value.teamId ?: return
+        val name = value.name
+        val public = value.isPublic
+        mutableState.update { it.copy(dialogState = DialogState.Loading()) }
+        screenModelScope.launch {
+            val update = when (val result = teamRepository.updateTeam(teamId, name, public)) {
+                is DataResult.Error -> DialogState.Error(title = "Error", message = result.message)
+                is DataResult.Success -> {
+                    getTeam(id = teamId)
+                    DialogState.Success(
+                        title = "Success",
+                        message = "Updated team successfully"
+                    )
+                }
+            }
+            mutableState.update { it.copy(dialogState = update) }
         }
     }
 
@@ -185,9 +238,13 @@ class TeamScreenModel(
         teamId?.let { getTeam(id = it) }
     }
 
+    //<editor-fold desc="actions">
     fun onClickMenuAction(menu: TeamMenuAction) {
         when (menu) {
-            TeamMenuAction.EDIT -> {}
+            TeamMenuAction.EDIT -> {
+                mutableState.update { it.copy(isEditing = true) }
+            }
+
             TeamMenuAction.DELETE -> {}
             TeamMenuAction.INVITE -> {
                 mutableState.update { it.copy(isInvitationsOpen = true) }
@@ -214,25 +271,19 @@ class TeamScreenModel(
     }
 
     fun onClickManageAction() {
-        val value = state.value
-        val name = value.name
-        val public = value.isPublic
-        mutableState.update { it.copy(dialogState = DialogState.Loading()) }
-        screenModelScope.launch {
-            val update = when (val result = teamRepository.createTeam(name, public)) {
-                is DataResult.Error -> DialogState.Error(title = "Error", message = result.message)
-                is DataResult.Success -> {
-                    val teamId = result.data
-                    getTeam(id = teamId)
-                    DialogState.Success(
-                        title = "Success",
-                        message = "Created team successfully"
-                    )
-                }
-            }
-            mutableState.update { it.copy(dialogState = update) }
-        }
+        if (state.value.teamId != null)
+            updateTeam()
+        else
+            createTeam()
     }
 
+    fun onClickManageCancelAction(){
+        mutableState.update { it.copy(isEditing = false) }
+    }
+
+    fun onClickManageDeleteAction(){
+    }
+
+    //</editor-fold>
 
 }
