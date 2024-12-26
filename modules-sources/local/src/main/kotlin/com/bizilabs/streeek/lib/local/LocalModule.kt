@@ -15,6 +15,8 @@ import com.bizilabs.streeek.lib.local.sources.preference.LocalPreferenceSource
 import com.bizilabs.streeek.lib.local.sources.preference.LocalPreferenceSourceImpl
 import com.bizilabs.streeek.lib.local.sources.preference.PreferenceSource
 import com.bizilabs.streeek.lib.local.sources.preference.PreferenceSourceImpl
+import com.bizilabs.streeek.lib.local.sources.team.TeamLocalSource
+import com.bizilabs.streeek.lib.local.sources.team.TeamLocalSourceImpl
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
@@ -36,4 +38,5 @@ val LocalModule = module {
     single<LocalPreferenceSource> { LocalPreferenceSourceImpl(source = get()) }
     single<AccountLocalSource> { AccountLocalSourceImpl(preferenceSource = get()) }
     single<ContributionsLocalSource> { ContributionsLocalSourceImpl(dao = get()) }
+    single<TeamLocalSource> { TeamLocalSourceImpl(source = get()) }
 }

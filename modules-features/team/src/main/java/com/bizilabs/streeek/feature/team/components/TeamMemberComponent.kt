@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -24,7 +23,7 @@ import com.bizilabs.streeek.lib.design.components.SafiCenteredRow
 import com.bizilabs.streeek.lib.design.theme.SafiTheme
 import com.bizilabs.streeek.lib.domain.extensions.asRank
 import com.bizilabs.streeek.lib.domain.helpers.SystemLocalDateTime
-import com.bizilabs.streeek.lib.domain.models.TeamDetailsDomain
+import com.bizilabs.streeek.lib.domain.models.TeamMemberDetailsDomain
 import com.bizilabs.streeek.lib.domain.models.TeamDomain
 import com.bizilabs.streeek.lib.domain.models.TeamMemberAccountDomain
 import com.bizilabs.streeek.lib.domain.models.TeamMemberDomain
@@ -102,7 +101,7 @@ private val DummyTeamWithMembers = TeamWithMembersDomain(
         createdAt = SystemLocalDateTime,
         count = 10
     ),
-    details = TeamDetailsDomain(
+    details = TeamMemberDetailsDomain(
         role = TeamMemberRole.MEMBER,
         rank = 20
     ),

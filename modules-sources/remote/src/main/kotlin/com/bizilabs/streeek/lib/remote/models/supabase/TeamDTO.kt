@@ -75,8 +75,8 @@ data class TeamWithDetailDTO(
 
 @Serializable
 data class TeamDTO(
-    val created_at: String,
     val id: Long,
+    val created_at: String,
     val is_public: Boolean,
     val name: String,
     @SerialName("members_count")

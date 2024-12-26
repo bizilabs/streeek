@@ -2,22 +2,37 @@ package com.bizilabs.streeek.lib.data.repositories
 
 import com.bizilabs.streeek.lib.data.mappers.asDataResult
 import com.bizilabs.streeek.lib.data.mappers.team.toDomain
+import com.bizilabs.streeek.lib.data.mappers.toCache
 import com.bizilabs.streeek.lib.data.mappers.toDomain
 import com.bizilabs.streeek.lib.domain.helpers.DataResult
+import com.bizilabs.streeek.lib.domain.models.TeamDetailsDomain
 import com.bizilabs.streeek.lib.domain.models.TeamWithDetailDomain
 import com.bizilabs.streeek.lib.domain.models.TeamWithMembersDomain
 import com.bizilabs.streeek.lib.domain.models.team.JoinTeamInvitationDomain
 import com.bizilabs.streeek.lib.domain.repositories.TeamRepository
+import com.bizilabs.streeek.lib.local.helpers.LocalResult
 import com.bizilabs.streeek.lib.local.sources.account.AccountLocalSource
+import com.bizilabs.streeek.lib.local.sources.team.TeamLocalSource
 import com.bizilabs.streeek.lib.remote.models.supabase.CreateTeamRequestDTO
 import com.bizilabs.streeek.lib.remote.models.supabase.UpdateTeamRequestDTO
 import com.bizilabs.streeek.lib.remote.sources.team.TeamRemoteSource
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.mapLatest
 
 class TeamRepositoryImpl(
     private val remoteSource: TeamRemoteSource,
+    private val localSource: TeamLocalSource,
     private val accountLocalSource: AccountLocalSource
 ) : TeamRepository {
+
+    override val teamId: Flow<Long?>
+        get() = localSource.team
+
+    override val teams: Flow<Map<Long, TeamDetailsDomain>>
+        get() = localSource.teams.mapLatest { map ->
+            map.mapValues { it.value.toDomain() }
+        }
 
     private suspend fun getAccountId() = accountLocalSource.account.firstOrNull()?.id
 
@@ -59,6 +74,29 @@ class TeamRepositoryImpl(
     override suspend fun leaveTeam(teamId: Long): DataResult<Boolean> {
         val account = getAccountId() ?: return DataResult.Error(message = "No account found")
         return remoteSource.leaveTeam(accountId = account, teamId = teamId).asDataResult { it }
+    }
+
+    override suspend fun setSelectedTeam(team: TeamDetailsDomain) {
+        localSource.setSelected(team.toCache())
+    }
+
+    override suspend fun getTeamLocally(id: Long): DataResult<TeamDetailsDomain> {
+        return when (val result = localSource.get(id = id)) {
+            is LocalResult.Error -> DataResult.Error(result.message)
+            is LocalResult.Success -> DataResult.Success(result.data.toDomain())
+        }
+    }
+
+    override suspend fun addTeamLocally(team: TeamDetailsDomain) {
+        localSource.add(team.toCache())
+    }
+
+    override suspend fun updateTeamLocally(team: TeamDetailsDomain) {
+        localSource.update(team.toCache())
+    }
+
+    override suspend fun deleteTeamLocally(team: TeamDetailsDomain) {
+        localSource.delete(team.toCache())
     }
 
 }

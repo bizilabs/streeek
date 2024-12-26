@@ -12,20 +12,33 @@ enum class TeamMemberRole {
         get() = name.lowercase().replaceFirstChar { it.uppercase() }
 }
 
+data class TeamDetailsDomain(
+    val team: TeamDomain,
+    val page: Int,
+    val members: List<TeamMemberDomain>,
+    val rank: TeamRankDomain,
+    val top: Map<Long, TeamMemberDomain>
+)
+
+data class TeamRankDomain(
+    val previous: Long?,
+    val current: Long
+)
+
 data class TeamWithMembersDomain(
     val members: List<TeamMemberDomain>,
     val team: TeamDomain,
-    val details: TeamDetailsDomain
+    val details: TeamMemberDetailsDomain
 )
 
-data class TeamDetailsDomain(
+data class TeamMemberDetailsDomain(
     val role: TeamMemberRole,
     val rank: Long
 )
 
 data class TeamWithDetailDomain(
     val team: TeamDomain,
-    val member: TeamDetailsDomain
+    val member: TeamMemberDetailsDomain
 )
 
 data class TeamDomain(
