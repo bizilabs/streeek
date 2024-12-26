@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.koin.dsl.module
 
-internal val TeamsModule = module() {
+internal val TeamsModule = module {
     factory<TeamsScreenModel> {
         TeamsScreenModel()
     }

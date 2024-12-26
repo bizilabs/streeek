@@ -38,6 +38,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.core.registry.screenModule
@@ -168,12 +169,15 @@ fun TeamScreenContent(
             when {
                 joining -> {
                     TeamJoiningSection(
-                        modifier = Modifier.fillMaxSize().padding(16.dp),
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(16.dp),
                         state = state,
                         onValueChangeTeamCode = onValueChangeTeamCode,
                         onClickJoin = onClickJoin
                     )
                 }
+
                 else -> {
                     AnimatedContent(
                         modifier = Modifier.fillMaxSize(),
@@ -228,24 +232,22 @@ private fun TeamScreenHeaderComponent(
             ) { isManaging ->
                 when {
                     state.isJoining -> {
-                        SafiCenteredColumn {
-                            Text(text = "Join Team")
-                        }
+                        Text(text = "Join Team")
                     }
+
                     isManaging -> {
-                        SafiCenteredColumn {
-                            Text(text = "Create Team")
-                        }
+                        Text(text = "Create Team")
                     }
 
                     else -> {
                         if (team is FetchState.Success) {
-                            SafiCenteredColumn(
+                            Column(
                                 modifier = Modifier.fillMaxWidth()
                             ) {
                                 Text(
                                     text = team.value.team.name,
-                                    style = MaterialTheme.typography.titleLarge
+                                    style = MaterialTheme.typography.titleLarge,
+                                    fontWeight = FontWeight.Bold
                                 )
                                 val count = team.value.team.count
                                 Text(
@@ -267,38 +269,40 @@ private fun TeamScreenHeaderComponent(
             var expanded by remember { mutableStateOf(false) }
 
             AnimatedVisibility(
-                visible = state.isMenusVisible
+                visible = state.fetchState is FetchState.Success
             ) {
-                Box(
-                    modifier = Modifier
-                ) {
-                    IconButton(onClick = { expanded = !expanded }) {
-                        Icon(Icons.Default.MoreVert, contentDescription = "More options")
-                    }
-                    DropdownMenu(
-                        modifier = Modifier.defaultMinSize(minWidth = 150.dp),
-                        expanded = expanded,
-                        onDismissRequest = { expanded = false }
+                if (state.fetchState is FetchState.Success)
+                    Box(
+                        modifier = Modifier
                     ) {
-
-                        TeamMenuAction.entries.forEach { menu ->
-                            DropdownMenuItem(
-                                contentPadding = PaddingValues(start = 16.dp, end = 24.dp),
-                                text = { Text(menu.label) },
-                                leadingIcon = {
-                                    Icon(
-                                        imageVector = menu.icon,
-                                        contentDescription = null
+                        IconButton(onClick = { expanded = !expanded }) {
+                            Icon(Icons.Default.MoreVert, contentDescription = "More options")
+                        }
+                        DropdownMenu(
+                            modifier = Modifier.defaultMinSize(minWidth = 150.dp),
+                            expanded = expanded,
+                            onDismissRequest = { expanded = false }
+                        ) {
+                            TeamMenuAction
+                                .get(role = state.fetchState.value.details.role)
+                                .forEach { menu ->
+                                    DropdownMenuItem(
+                                        contentPadding = PaddingValues(start = 16.dp, end = 24.dp),
+                                        text = { Text(menu.label) },
+                                        leadingIcon = {
+                                            Icon(
+                                                imageVector = menu.icon,
+                                                contentDescription = null
+                                            )
+                                        },
+                                        onClick = {
+                                            expanded = false
+                                            onClickMenuAction(menu)
+                                        }
                                     )
-                                },
-                                onClick = {
-                                    expanded = false
-                                    onClickMenuAction(menu)
                                 }
-                            )
                         }
                     }
-                }
             }
 
         }

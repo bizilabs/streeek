@@ -1,8 +1,10 @@
 package com.bizilabs.streeek.feature.team
 
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.ExitToApp
 import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material.icons.rounded.Edit
+import androidx.compose.material.icons.rounded.ExitToApp
 import androidx.compose.material.icons.rounded.People
 import androidx.compose.ui.graphics.vector.ImageVector
 import cafe.adriel.voyager.core.model.StateScreenModel
@@ -12,6 +14,7 @@ import com.bizilabs.streeek.lib.common.models.FetchState
 import com.bizilabs.streeek.lib.design.components.DialogState
 import com.bizilabs.streeek.lib.domain.helpers.DataResult
 import com.bizilabs.streeek.lib.domain.models.AccountDomain
+import com.bizilabs.streeek.lib.domain.models.TeamMemberRole
 import com.bizilabs.streeek.lib.domain.models.TeamWithMembersDomain
 import com.bizilabs.streeek.lib.domain.models.team.CreateTeamInvitationDomain
 import com.bizilabs.streeek.lib.domain.models.team.JoinTeamInvitationDomain
@@ -28,13 +31,24 @@ val FeatureTeamModule = module {
 }
 
 enum class TeamMenuAction {
-    EDIT, DELETE, INVITE;
+
+    EDIT, DELETE, INVITE, LEAVE;
+
+    companion object {
+        fun get(role: TeamMemberRole): List<TeamMenuAction> {
+            return when (role.isAdmin) {
+                true -> entries.toList()
+                false -> listOf(LEAVE)
+            }
+        }
+    }
 
     val label: String
         get() = when (this) {
             EDIT -> "Edit"
             DELETE -> "Delete"
             INVITE -> "Invite"
+            LEAVE -> "Leave"
         }
 
     val icon: ImageVector
@@ -42,6 +56,7 @@ enum class TeamMenuAction {
             EDIT -> Icons.Rounded.Edit
             DELETE -> Icons.Rounded.Delete
             INVITE -> Icons.Rounded.People
+            LEAVE -> Icons.AutoMirrored.Rounded.ExitToApp
         }
 
 }
@@ -49,6 +64,7 @@ enum class TeamMenuAction {
 data class TeamScreenState(
     val isEditing: Boolean = false,
     val isJoining: Boolean = false,
+    val shouldNavigateBack: Boolean = false,
     val account: AccountDomain? = null,
     val hasAlreadyUpdatedNavVariables: Boolean = false,
     val teamId: Long? = null,
@@ -81,9 +97,6 @@ data class TeamScreenState(
         } else {
             name.isNotBlank() && value.isNotBlank()
         }
-
-    val isMenusVisible: Boolean
-        get() = fetchState is FetchState.Success && fetchState.value.details.role.isAdmin
 
     val isJoinActionEnabled: Boolean
         get() = code.length == 6 && dialogState == null
@@ -173,7 +186,7 @@ class TeamScreenModel(
         if (code.length != 6 && code.any { it.digitToIntOrNull() == null }) return
         mutableState.update { it.copy(dialogState = DialogState.Loading()) }
         screenModelScope.launch {
-            when (val result = teamInvitationRepository.joinWithInviteCode(code = code)) {
+            when (val result = teamRepository.joinTeam(code = code)) {
                 is DataResult.Error -> {
                     mutableState.update {
                         it.copy(
@@ -202,7 +215,38 @@ class TeamScreenModel(
                 }
             }
         }
+    }
 
+    private fun leaveTeam() {
+        val teamId = state.value.teamId ?: return
+        mutableState.update { it.copy(dialogState = DialogState.Loading()) }
+        screenModelScope.launch {
+            when (val result = teamRepository.leaveTeam(teamId = teamId)) {
+                is DataResult.Error -> {
+                    mutableState.update {
+                        it.copy(
+                            dialogState = DialogState.Error(
+                                title = "Error",
+                                message = result.message
+                            )
+                        )
+                    }
+                }
+
+                is DataResult.Success -> {
+                    mutableState.update {
+                        it.copy(
+                            dialogState = DialogState.Success(
+                                title = "Success",
+                                message = "Left team successfully. \nHope you come back soon!"
+                            )
+                        )
+                    }
+                    delay(2000)
+                    mutableState.update { it.copy(dialogState = null, shouldNavigateBack = true) }
+                }
+            }
+        }
     }
 
     //<editor-fold desc="team invitations">
@@ -302,6 +346,10 @@ class TeamScreenModel(
             TeamMenuAction.INVITE -> {
                 mutableState.update { it.copy(isInvitationsOpen = true) }
                 if (state.value.invitationsState !is FetchListState.Success) getInvitations()
+            }
+
+            TeamMenuAction.LEAVE -> {
+                leaveTeam()
             }
         }
     }

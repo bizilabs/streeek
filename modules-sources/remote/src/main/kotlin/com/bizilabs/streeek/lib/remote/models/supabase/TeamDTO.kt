@@ -39,7 +39,7 @@ data class UpdateTeamRequestDTO(
 )
 
 @Serializable
-data class JoinTeamRequestDTO(
+data class AccountTeamRequestDTO(
     @SerialName("p_account_id")
     val account: Long,
     @SerialName("p_team_id")

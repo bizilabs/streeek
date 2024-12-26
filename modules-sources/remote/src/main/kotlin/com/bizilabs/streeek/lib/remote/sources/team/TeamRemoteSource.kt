@@ -6,7 +6,8 @@ import com.bizilabs.streeek.lib.remote.helpers.asJsonObject
 import com.bizilabs.streeek.lib.remote.helpers.safeSupabaseCall
 import com.bizilabs.streeek.lib.remote.models.supabase.CreateTeamRequestDTO
 import com.bizilabs.streeek.lib.remote.models.supabase.GetTeamRequestDTO
-import com.bizilabs.streeek.lib.remote.models.supabase.JoinTeamRequestDTO
+import com.bizilabs.streeek.lib.remote.models.supabase.AccountTeamRequestDTO
+import com.bizilabs.streeek.lib.remote.models.supabase.JoinTeamInvitationDTO
 import com.bizilabs.streeek.lib.remote.models.supabase.TeamWithMembersDTO
 import com.bizilabs.streeek.lib.remote.models.supabase.UpdateTeamRequestDTO
 import io.github.jan.supabase.SupabaseClient
@@ -21,7 +22,10 @@ interface TeamRemoteSource {
         page: Int
     ): NetworkResult<TeamWithMembersDTO>
 
-    suspend fun joinTeam(accountId: Long, teamId: Long): NetworkResult<Unit>
+    suspend fun joinTeam(accountId: Long, teamId: Long): NetworkResult<JoinTeamInvitationDTO>
+
+    suspend fun leaveTeam(accountId: Long, teamId: Long): NetworkResult<Boolean>
+
 }
 
 internal class TeamRemoteSourceImpl(
@@ -63,13 +67,23 @@ internal class TeamRemoteSourceImpl(
             .decodeAs()
     }
 
-    override suspend fun joinTeam(accountId: Long, teamId: Long): NetworkResult<Unit> =
+    override suspend fun joinTeam(accountId: Long, teamId: Long): NetworkResult<JoinTeamInvitationDTO> =
         safeSupabaseCall {
-            val parameters = JoinTeamRequestDTO(account = accountId, teamId).asJsonObject()
+            val parameters = AccountTeamRequestDTO(account = accountId, teamId).asJsonObject()
             supabase.postgrest.rpc(
                 function = Supabase.Functions.Teams.Join,
                 parameters = parameters
+            ).decodeAs()
+        }
+
+    override suspend fun leaveTeam(accountId: Long, teamId: Long): NetworkResult<Boolean> =
+        safeSupabaseCall {
+            val parameters = AccountTeamRequestDTO(account = accountId, teamId).asJsonObject()
+            supabase.postgrest.rpc(
+                function = Supabase.Functions.Teams.Leave,
+                parameters = parameters
             )
+            true
         }
 
 }
