@@ -53,7 +53,7 @@ data class JoinTeamInvitationRequestDTO(
     @SerialName("p_account_id")
     val accountId: Long,
     @SerialName("p_token")
-    val token: Long
+    val token: String
 )
 
 @Serializable

@@ -1,12 +1,7 @@
 package com.bizilabs.streeek.feature.team
 
-import android.R.attr.enabled
-import android.R.attr.label
-import android.R.attr.onClick
-import android.R.attr.value
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -50,6 +45,7 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.getScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import com.bizilabs.streeek.feature.team.components.TeamInvitationBottomSheet
+import com.bizilabs.streeek.feature.team.components.TeamJoiningSection
 import com.bizilabs.streeek.feature.team.components.TeamMemberComponent
 import com.bizilabs.streeek.lib.common.models.FetchState
 import com.bizilabs.streeek.lib.common.navigation.SharedScreen
@@ -62,16 +58,24 @@ import com.bizilabs.streeek.lib.domain.models.team.TeamInvitationDomain
 import com.bizilabs.streeek.lib.resources.strings.SafiStrings
 
 val screenTeam = screenModule {
-    register<SharedScreen.Team> { parameters -> TeamScreen(parameters.teamId) }
+    register<SharedScreen.Team> { parameters ->
+        TeamScreen(
+            parameters.isJoining,
+            parameters.teamId
+        )
+    }
 }
 
-class TeamScreen(val teamId: Long?) : Screen {
+class TeamScreen(
+    val isJoining: Boolean,
+    val teamId: Long?
+) : Screen {
     @Composable
     override fun Content() {
 
         val navigator = LocalNavigator.current
         val screenModel: TeamScreenModel = getScreenModel()
-        screenModel.setTeamId(teamId = teamId)
+        screenModel.setNavigationVariables(isJoining = isJoining, teamId = teamId)
         val state by screenModel.state.collectAsStateWithLifecycle()
 
         TeamScreenContent(
@@ -89,7 +93,9 @@ class TeamScreen(val teamId: Long?) : Screen {
             onClickInvitationRetry = screenModel::onClickInvitationRetry,
             onSwipeInvitationDelete = screenModel::onSwipeInvitationDelete,
             onClickActionCancel = screenModel::onClickManageCancelAction,
-            onClickActionDelete = screenModel::onClickManageDeleteAction
+            onClickActionDelete = screenModel::onClickManageDeleteAction,
+            onValueChangeTeamCode = screenModel::onValueChangeTeamCode,
+            onClickJoin = screenModel::onClickJoin
         )
     }
 }
@@ -111,7 +117,9 @@ fun TeamScreenContent(
     onClickInvitationGet: () -> Unit,
     onClickInvitationCreate: () -> Unit,
     onClickInvitationRetry: () -> Unit,
-    onSwipeInvitationDelete: (TeamInvitationDomain) -> Unit
+    onSwipeInvitationDelete: (TeamInvitationDomain) -> Unit,
+    onValueChangeTeamCode: (String) -> Unit,
+    onClickJoin: () -> Unit,
 ) {
 
     if (state.isOpen)
@@ -152,29 +160,46 @@ fun TeamScreenContent(
     ) { innerPadding ->
         AnimatedContent(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding),
-            targetState = state.isManagingTeam,
-            label = ""
-        ) { isManaging ->
-            when (isManaging) {
-                true -> {
-                    ManageTeamSection(
+                .padding(innerPadding)
+                .fillMaxSize(),
+            targetState = state.isJoining,
+            label = "animate team joining",
+        ) { joining ->
+            when {
+                joining -> {
+                    TeamJoiningSection(
+                        modifier = Modifier.fillMaxSize().padding(16.dp),
                         state = state,
-                        onValueChangeName = onValueChangeName,
-                        onValueChangePublicDropdown = onValueChangePublicDropdown,
-                        onClickAction = onClickManageAction,
-                        onClickActionDelete = onClickActionDelete,
-                        onClickActionCancel = onClickActionCancel
+                        onValueChangeTeamCode = onValueChangeTeamCode,
+                        onClickJoin = onClickJoin
                     )
                 }
+                else -> {
+                    AnimatedContent(
+                        modifier = Modifier.fillMaxSize(),
+                        targetState = state.isManagingTeam,
+                        label = ""
+                    ) { isManaging ->
+                        when (isManaging) {
+                            true -> {
+                                ManageTeamSection(
+                                    state = state,
+                                    onValueChangeName = onValueChangeName,
+                                    onValueChangePublicDropdown = onValueChangePublicDropdown,
+                                    onClickAction = onClickManageAction,
+                                    onClickActionDelete = onClickActionDelete,
+                                    onClickActionCancel = onClickActionCancel
+                                )
+                            }
 
-                false -> {
-                    ViewTeamSection(state = state.fetchState)
+                            false -> {
+                                ViewTeamSection(state = state.fetchState)
+                            }
+                        }
+                    }
                 }
             }
         }
-
     }
 }
 
@@ -198,13 +223,18 @@ private fun TeamScreenHeaderComponent(
             val team = state.fetchState
             AnimatedContent(
                 modifier = Modifier.fillMaxWidth(),
-                targetState = state.teamId,
+                targetState = state.isManagingTeam,
                 label = "animate_team_title"
-            ) { teamId ->
+            ) { isManaging ->
                 when {
-                    teamId == null -> {
+                    state.isJoining -> {
                         SafiCenteredColumn {
-                            Text(text = "Create")
+                            Text(text = "Join Team")
+                        }
+                    }
+                    isManaging -> {
+                        SafiCenteredColumn {
+                            Text(text = "Create Team")
                         }
                     }
 

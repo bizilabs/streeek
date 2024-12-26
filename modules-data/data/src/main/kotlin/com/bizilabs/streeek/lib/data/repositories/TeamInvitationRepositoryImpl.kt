@@ -36,7 +36,7 @@ class TeamInvitationRepositoryImpl(
             .asDataResult { list -> list.map { it.toDomain() } }
     }
 
-    override suspend fun joinWithInviteCode(code: Long): DataResult<JoinTeamInvitationDomain> {
+    override suspend fun joinWithInviteCode(code: String): DataResult<JoinTeamInvitationDomain> {
         val accountId = getAccountId() ?: return DataResult.Error(message = "No account found")
         return remote
             .joinWithInviteCode(accountId = accountId, code = code)

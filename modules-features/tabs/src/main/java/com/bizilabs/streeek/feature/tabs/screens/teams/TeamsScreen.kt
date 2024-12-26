@@ -31,14 +31,17 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.core.registry.rememberScreen
 import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.koin.getScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import com.bizilabs.streeek.lib.common.navigation.SharedScreen
 import com.bizilabs.streeek.lib.design.components.SafiCenteredColumn
@@ -48,23 +51,39 @@ object TeamsScreen : Screen {
     override fun Content() {
         val navigator = LocalNavigator.current
 
-        val teamScreen = rememberScreen(SharedScreen.Team(teamId = 1))
+        val screenModel: TeamsScreenModel = getScreenModel()
+        val state by screenModel.state.collectAsStateWithLifecycle()
 
         TeamsScreenContent(
-            onClickMenuSearch = {},
-            onClickMenuCreateTeam = { navigator?.push(teamScreen) },
-            onClickMenuJoinTeam = {}
-        )
+            state = state,
+            onClickMenuSearch = screenModel::onClickMenuSearch,
+            onClickMenuCreateTeam = screenModel::onClickMenuTeamCreate,
+            onClickMenuJoinTeam = screenModel::onClickMenuTeamJoin
+        ) { screen ->
+            navigator?.push(screen)
+        }
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TeamsScreenContent(
+    state: TeamsScreenState,
     onClickMenuSearch: () -> Unit,
     onClickMenuCreateTeam: () -> Unit,
     onClickMenuJoinTeam: () -> Unit,
+    navigate: (Screen) -> Unit
 ) {
+
+    if (state.isCreating)
+        navigate(rememberScreen(SharedScreen.Team(isJoining = false, teamId = null)))
+
+    if (state.isJoining)
+        navigate(rememberScreen(SharedScreen.Team(isJoining = true, teamId = null)))
+
+    if (state.teamId != null)
+        navigate(rememberScreen(SharedScreen.Team(isJoining = false, teamId = state.teamId)))
+
     Scaffold(
         topBar = {
             TopAppBar(

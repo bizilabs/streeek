@@ -14,6 +14,7 @@ import com.bizilabs.streeek.lib.domain.helpers.DataResult
 import com.bizilabs.streeek.lib.domain.models.AccountDomain
 import com.bizilabs.streeek.lib.domain.models.TeamWithMembersDomain
 import com.bizilabs.streeek.lib.domain.models.team.CreateTeamInvitationDomain
+import com.bizilabs.streeek.lib.domain.models.team.JoinTeamInvitationDomain
 import com.bizilabs.streeek.lib.domain.models.team.TeamInvitationDomain
 import com.bizilabs.streeek.lib.domain.repositories.TeamInvitationRepository
 import com.bizilabs.streeek.lib.domain.repositories.TeamRepository
@@ -47,9 +48,11 @@ enum class TeamMenuAction {
 
 data class TeamScreenState(
     val isEditing: Boolean = false,
+    val isJoining: Boolean = false,
     val account: AccountDomain? = null,
-    val hasAlreadySetTeamId: Boolean = false,
+    val hasAlreadyUpdatedNavVariables: Boolean = false,
     val teamId: Long? = null,
+    val code: String = "",
     val name: String = "",
     val isOpen: Boolean = false,
     val visibilityOptions: List<String> = listOf("public", "private"),
@@ -60,6 +63,7 @@ data class TeamScreenState(
     val isLoadingInvitationsPartially: Boolean = false,
     val invitationsState: FetchListState<TeamInvitationDomain> = FetchListState.Loading,
     val createInvitationState: FetchState<CreateTeamInvitationDomain>? = null,
+    val joinTeamState: FetchState<JoinTeamInvitationDomain>? = null,
 ) {
     val isManagingTeam: Boolean
         get() = isEditing || teamId == null
@@ -70,7 +74,10 @@ data class TeamScreenState(
     val isActionEnabled: Boolean
         get() = if (fetchState is FetchState.Success) {
             val team = fetchState.value.team
-            name.isNotBlank() && (!team.name.equals(name, ignoreCase = false) || team.public != isPublic)
+            name.isNotBlank() && (!team.name.equals(
+                name,
+                ignoreCase = false
+            ) || team.public != isPublic)
         } else {
             name.isNotBlank() && value.isNotBlank()
         }
@@ -78,12 +85,27 @@ data class TeamScreenState(
     val isMenusVisible: Boolean
         get() = fetchState is FetchState.Success && fetchState.value.details.role.isAdmin
 
+    val isJoinActionEnabled: Boolean
+        get() = code.length == 6 && dialogState == null
+
 }
 
 class TeamScreenModel(
     private val teamRepository: TeamRepository,
     private val teamInvitationRepository: TeamInvitationRepository
 ) : StateScreenModel<TeamScreenState>(TeamScreenState()) {
+
+    fun setNavigationVariables(isJoining: Boolean, teamId: Long?) {
+        if (state.value.hasAlreadyUpdatedNavVariables) return
+        mutableState.update {
+            it.copy(
+                isJoining = isJoining,
+                teamId = teamId,
+                hasAlreadyUpdatedNavVariables = true
+            )
+        }
+        teamId?.let { getTeam(id = it) }
+    }
 
     private fun dismissDialog() {
         mutableState.update { it.copy(dialogState = null) }
@@ -144,6 +166,43 @@ class TeamScreenModel(
             }
             mutableState.update { it.copy(dialogState = update) }
         }
+    }
+
+    private fun joinTeam() {
+        val code = state.value.code
+        if (code.length != 6 && code.any { it.digitToIntOrNull() == null }) return
+        mutableState.update { it.copy(dialogState = DialogState.Loading()) }
+        screenModelScope.launch {
+            when (val result = teamInvitationRepository.joinWithInviteCode(code = code)) {
+                is DataResult.Error -> {
+                    mutableState.update {
+                        it.copy(
+                            dialogState = DialogState.Error(
+                                title = "Error",
+                                message = result.message
+                            )
+                        )
+                    }
+                }
+
+                is DataResult.Success -> {
+                    mutableState.update {
+                        it.copy(
+                            isJoining = false,
+                            teamId = result.data.teamId,
+                            dialogState = DialogState.Success(
+                                title = "Success",
+                                message = "Joined team successfully as a ${result.data.role}"
+                            )
+                        )
+                    }
+                    getTeam(id = result.data.teamId)
+                    delay(2000)
+                    mutableState.update { it.copy(dialogState = null) }
+                }
+            }
+        }
+
     }
 
     //<editor-fold desc="team invitations">
@@ -232,12 +291,6 @@ class TeamScreenModel(
 
     //</editor-fold>
 
-    fun setTeamId(teamId: Long?) {
-        if (state.value.hasAlreadySetTeamId) return
-        mutableState.update { it.copy(teamId = teamId, hasAlreadySetTeamId = true) }
-        teamId?.let { getTeam(id = it) }
-    }
-
     //<editor-fold desc="actions">
     fun onClickMenuAction(menu: TeamMenuAction) {
         when (menu) {
@@ -277,11 +330,20 @@ class TeamScreenModel(
             createTeam()
     }
 
-    fun onClickManageCancelAction(){
+    fun onClickManageCancelAction() {
         mutableState.update { it.copy(isEditing = false) }
     }
 
-    fun onClickManageDeleteAction(){
+    fun onClickManageDeleteAction() {
+    }
+
+    fun onValueChangeTeamCode(value: String) {
+        mutableState.update { it.copy(code = value) }
+        if (value.length == 6) joinTeam()
+    }
+
+    fun onClickJoin() {
+        joinTeam()
     }
 
     //</editor-fold>

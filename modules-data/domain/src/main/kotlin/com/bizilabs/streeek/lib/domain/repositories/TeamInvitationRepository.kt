@@ -17,7 +17,7 @@ interface TeamInvitationRepository {
     ): DataResult<List<TeamInvitationDomain>>
 
     suspend fun joinWithInviteCode(
-        code: Long
+        code: String
     ): DataResult<JoinTeamInvitationDomain>
 
     suspend fun deleteInvitation(id: Long) : DataResult<Boolean>

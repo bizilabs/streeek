@@ -29,7 +29,7 @@ interface TeamInvitationRemoteSource {
 
     suspend fun joinWithInviteCode(
         accountId: Long,
-        code: Long
+        code: String
     ): NetworkResult<JoinTeamInvitationDTO>
 
     suspend fun deleteInvitation(
@@ -76,7 +76,7 @@ class TeamInvitationRemoteSourceImpl(
 
     override suspend fun joinWithInviteCode(
         accountId: Long,
-        code: Long
+        code: String
     ): NetworkResult<JoinTeamInvitationDTO> = safeSupabaseCall {
         val parameters = JoinTeamInvitationRequestDTO(
             accountId = accountId,

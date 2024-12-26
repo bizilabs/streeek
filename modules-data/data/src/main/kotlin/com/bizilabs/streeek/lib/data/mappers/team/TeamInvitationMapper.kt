@@ -25,5 +25,5 @@ fun CreateTeamInvitationDTO.toDomain() = CreateTeamInvitationDomain(
 
 fun JoinTeamInvitationDTO.toDomain() = JoinTeamInvitationDomain(
     teamId = teamId,
-    role = TeamMemberRole.valueOf(role)
+    role = TeamMemberRole.valueOf(role.uppercase())
 )

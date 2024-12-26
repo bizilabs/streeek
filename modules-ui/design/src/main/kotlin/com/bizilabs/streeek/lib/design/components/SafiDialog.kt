@@ -13,13 +13,18 @@ import androidx.compose.material.icons.rounded.WarningAmber
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.ModalBottomSheetDefaults
+import androidx.compose.material3.ModalBottomSheetProperties
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.SecureFlagPolicy
+import kotlinx.coroutines.launch
 
 sealed class DialogState(open val title: String, open val message: String) {
 
@@ -47,6 +52,7 @@ fun SafiBottomDialog(
     onClickDismiss: () -> Unit,
 ) {
 
+    val scope = rememberCoroutineScope()
     val bottomSheetState = rememberModalBottomSheetState()
 
     AnimatedVisibility(visible = state != null) {
@@ -54,8 +60,14 @@ fun SafiBottomDialog(
             if (state != null) bottomSheetState.show() else bottomSheetState.hide()
         }
         ModalBottomSheet(
-            onDismissRequest = {},
-            sheetState = bottomSheetState
+            sheetState = bottomSheetState,
+            onDismissRequest = {
+                scope.launch { bottomSheetState.hide() }
+                onClickDismiss()
+            },
+            properties = ModalBottomSheetProperties(
+                securePolicy =SecureFlagPolicy.Inherit,
+            )
         ) {
             AnimatedContent(targetState = state, label = "dialog state") { dialog ->
                 Column(
