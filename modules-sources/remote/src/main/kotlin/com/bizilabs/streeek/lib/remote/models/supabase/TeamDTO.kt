@@ -68,6 +68,12 @@ data class TeamMemberDTO(
 )
 
 @Serializable
+data class TeamWithDetailDTO(
+    val team: TeamDTO,
+    val member: TeamDetailsDTO
+)
+
+@Serializable
 data class TeamDTO(
     val created_at: String,
     val id: Long,

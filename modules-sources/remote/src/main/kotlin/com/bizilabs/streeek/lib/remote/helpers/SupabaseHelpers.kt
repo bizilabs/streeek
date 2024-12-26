@@ -24,7 +24,7 @@ object Supabase {
             const val Create = "create_team"
             const val Update = "update_team"
             const val GetMembersWithAccount = "get_team_with_members_and_account"
-            const val Get = "get_teams_for_account"
+            const val GetAccountTeams = "get_teams_for_account"
             const val Join = "join_team_request"
             const val Leave = "leave_team"
             object Requests {

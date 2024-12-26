@@ -8,12 +8,14 @@ import com.bizilabs.streeek.lib.remote.models.supabase.CreateTeamRequestDTO
 import com.bizilabs.streeek.lib.remote.models.supabase.GetTeamRequestDTO
 import com.bizilabs.streeek.lib.remote.models.supabase.AccountTeamRequestDTO
 import com.bizilabs.streeek.lib.remote.models.supabase.JoinTeamInvitationDTO
+import com.bizilabs.streeek.lib.remote.models.supabase.TeamWithDetailDTO
 import com.bizilabs.streeek.lib.remote.models.supabase.TeamWithMembersDTO
 import com.bizilabs.streeek.lib.remote.models.supabase.UpdateTeamRequestDTO
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.postgrest.postgrest
 
 interface TeamRemoteSource {
+    suspend fun getAccountTeams(accountId: Long): NetworkResult<List<TeamWithDetailDTO>>
     suspend fun createTeam(request: CreateTeamRequestDTO): NetworkResult<Long>
     suspend fun updateTeam(request: UpdateTeamRequestDTO): NetworkResult<Boolean>
     suspend fun fetchTeam(
@@ -31,6 +33,16 @@ interface TeamRemoteSource {
 internal class TeamRemoteSourceImpl(
     private val supabase: SupabaseClient
 ) : TeamRemoteSource {
+
+    override suspend fun getAccountTeams(accountId: Long): NetworkResult<List<TeamWithDetailDTO>> = safeSupabaseCall {
+        val request = mapOf("p_account_id" to accountId)
+        supabase.postgrest
+            .rpc(
+                function = Supabase.Functions.Teams.GetAccountTeams,
+                parameters = request.asJsonObject()
+            )
+            .decodeList()
+    }
 
     override suspend fun createTeam(request: CreateTeamRequestDTO): NetworkResult<Long> =
         safeSupabaseCall {
@@ -67,7 +79,10 @@ internal class TeamRemoteSourceImpl(
             .decodeAs()
     }
 
-    override suspend fun joinTeam(accountId: Long, teamId: Long): NetworkResult<JoinTeamInvitationDTO> =
+    override suspend fun joinTeam(
+        accountId: Long,
+        teamId: Long
+    ): NetworkResult<JoinTeamInvitationDTO> =
         safeSupabaseCall {
             val parameters = AccountTeamRequestDTO(account = accountId, teamId).asJsonObject()
             supabase.postgrest.rpc(

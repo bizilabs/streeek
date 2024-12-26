@@ -4,6 +4,7 @@ import com.bizilabs.streeek.lib.data.mappers.asDataResult
 import com.bizilabs.streeek.lib.data.mappers.team.toDomain
 import com.bizilabs.streeek.lib.data.mappers.toDomain
 import com.bizilabs.streeek.lib.domain.helpers.DataResult
+import com.bizilabs.streeek.lib.domain.models.TeamWithDetailDomain
 import com.bizilabs.streeek.lib.domain.models.TeamWithMembersDomain
 import com.bizilabs.streeek.lib.domain.models.team.JoinTeamInvitationDomain
 import com.bizilabs.streeek.lib.domain.repositories.TeamRepository
@@ -35,6 +36,12 @@ class TeamRepositoryImpl(
         val request =
             UpdateTeamRequestDTO(teamId = teamId, name = name, public = public, accountId = account)
         return remoteSource.updateTeam(request = request).asDataResult { it }
+    }
+
+    override suspend fun getAccountTeams(): DataResult<List<TeamWithDetailDomain>> {
+        val accountId = getAccountId() ?: return DataResult.Error(message = "No account found")
+        return remoteSource.getAccountTeams(accountId = accountId)
+            .asDataResult { list -> list.map { it.toDomain() } }
     }
 
     override suspend fun getTeam(id: Long, page: Int): DataResult<TeamWithMembersDomain> {

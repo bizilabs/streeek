@@ -23,6 +23,11 @@ data class TeamDetailsDomain(
     val rank: Long
 )
 
+data class TeamWithDetailDomain(
+    val team: TeamDomain,
+    val member: TeamDetailsDomain
+)
+
 data class TeamDomain(
     val id: Long,
     val name: String,

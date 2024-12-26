@@ -1,12 +1,18 @@
 package com.bizilabs.streeek.feature.tabs.screens.teams
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.Help
 import androidx.compose.material.icons.automirrored.outlined.OpenInNew
@@ -20,6 +26,9 @@ import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.outlined.TransitEnterexit
+import androidx.compose.material.icons.rounded.People
+import androidx.compose.material3.Card
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -38,13 +47,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.text.font.FontWeight
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.core.registry.rememberScreen
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.getScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
+import com.bizilabs.streeek.lib.common.models.FetchListState
 import com.bizilabs.streeek.lib.common.navigation.SharedScreen
 import com.bizilabs.streeek.lib.design.components.SafiCenteredColumn
+import com.bizilabs.streeek.lib.design.components.SafiInfoSection
+import com.bizilabs.streeek.lib.domain.extensions.asRank
+import com.bizilabs.streeek.lib.domain.models.TeamDomain
 
 object TeamsScreen : Screen {
     @Composable
@@ -58,7 +72,8 @@ object TeamsScreen : Screen {
             state = state,
             onClickMenuSearch = screenModel::onClickMenuSearch,
             onClickMenuCreateTeam = screenModel::onClickMenuTeamCreate,
-            onClickMenuJoinTeam = screenModel::onClickMenuTeamJoin
+            onClickMenuJoinTeam = screenModel::onClickMenuTeamJoin,
+            onClickTeam = screenModel::onClickTeam
         ) { screen ->
             navigator?.push(screen)
         }
@@ -72,6 +87,7 @@ fun TeamsScreenContent(
     onClickMenuSearch: () -> Unit,
     onClickMenuCreateTeam: () -> Unit,
     onClickMenuJoinTeam: () -> Unit,
+    onClickTeam: (TeamDomain) -> Unit,
     navigate: (Screen) -> Unit
 ) {
 
@@ -103,7 +119,86 @@ fun TeamsScreenContent(
                 .padding(paddingValues)
                 .fillMaxSize()
         ) {
-            Text(text = "Teams")
+            AnimatedContent(
+                label = "animate teams",
+                modifier = Modifier.fillMaxSize(),
+                targetState = state.teamsState
+            ) { result ->
+                when (result) {
+                    FetchListState.Empty -> {
+                        SafiCenteredColumn(modifier = Modifier.fillMaxSize()) {
+                            SafiInfoSection(
+                                icon = Icons.Rounded.People,
+                                title = "Empty",
+                                description = "Join a team to see the list"
+                            )
+                        }
+                    }
+
+                    FetchListState.Loading -> {
+                        SafiCenteredColumn(modifier = Modifier.fillMaxSize()) {
+                            CircularProgressIndicator()
+                        }
+                    }
+
+                    is FetchListState.Error -> {
+                        SafiCenteredColumn(modifier = Modifier.fillMaxSize()) {
+                            SafiInfoSection(
+                                icon = Icons.Rounded.People,
+                                title = "Error",
+                                description = result.message
+                            )
+                        }
+                    }
+
+                    is FetchListState.Success -> {
+                        LazyColumn(modifier = Modifier.fillMaxSize()) {
+                            items(result.list) { item ->
+                                Card(
+                                    modifier = Modifier
+                                        .padding(horizontal = 16.dp)
+                                        .padding(top = 8.dp),
+                                    onClick = { onClickTeam(item.team) }
+                                ) {
+                                    Row(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(16.dp)
+                                    ) {
+                                        Column(modifier = Modifier) {
+                                            Text(
+                                                text = item.team.name,
+                                                style = MaterialTheme.typography.titleLarge,
+                                                fontWeight = FontWeight.Bold
+                                            )
+                                            val count = item.team.count
+                                            Text(
+                                                text = buildString {
+                                                    append(count)
+                                                    append(" Member")
+                                                    append(if (count > 1) "s" else "")
+                                                },
+                                                style = MaterialTheme.typography.labelMedium
+                                            )
+                                        }
+                                        Spacer(modifier = Modifier.weight(1f))
+                                        SafiCenteredColumn {
+                                            Text(
+                                                modifier = Modifier.padding(16.dp),
+                                                text = item.member.rank.asRank(),
+                                                fontSize = if (item.member.rank < 100)
+                                                    MaterialTheme.typography.titleLarge.fontSize
+                                                else
+                                                    MaterialTheme.typography.bodyLarge.fontSize
+                                            )
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 }

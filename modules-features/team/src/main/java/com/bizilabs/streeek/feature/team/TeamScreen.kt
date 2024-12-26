@@ -344,7 +344,6 @@ fun ViewTeamSection(state: FetchState<TeamWithMembersDomain>) {
                             TeamMemberComponent(member = member)
                         }
                     }
-
                 }
             }
         }

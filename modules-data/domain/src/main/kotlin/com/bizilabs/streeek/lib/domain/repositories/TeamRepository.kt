@@ -1,6 +1,7 @@
 package com.bizilabs.streeek.lib.domain.repositories
 
 import com.bizilabs.streeek.lib.domain.helpers.DataResult
+import com.bizilabs.streeek.lib.domain.models.TeamWithDetailDomain
 import com.bizilabs.streeek.lib.domain.models.TeamWithMembersDomain
 import com.bizilabs.streeek.lib.domain.models.team.JoinTeamInvitationDomain
 
@@ -15,6 +16,8 @@ interface TeamRepository {
         name: String,
         public: Boolean,
     ): DataResult<Boolean>
+
+    suspend fun getAccountTeams(): DataResult<List<TeamWithDetailDomain>>
 
     suspend fun getTeam(id: Long, page: Int) : DataResult<TeamWithMembersDomain>
 
