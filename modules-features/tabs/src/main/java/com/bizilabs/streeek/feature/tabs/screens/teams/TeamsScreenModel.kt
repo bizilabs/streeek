@@ -2,9 +2,7 @@ package com.bizilabs.streeek.feature.tabs.screens.teams
 
 import cafe.adriel.voyager.core.model.StateScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
-import coil.util.CoilUtils.result
 import com.bizilabs.streeek.lib.common.models.FetchListState
-import com.bizilabs.streeek.lib.common.models.FetchState
 import com.bizilabs.streeek.lib.domain.helpers.DataResult
 import com.bizilabs.streeek.lib.domain.models.TeamDomain
 import com.bizilabs.streeek.lib.domain.models.TeamWithDetailDomain
@@ -32,7 +30,7 @@ class TeamsScreenModel(
 ) : StateScreenModel<TeamsScreenState>(TeamsScreenState()) {
 
     init {
-        observeTeams()
+//        observeTeams()
     }
 
     private fun observeTeams() {
