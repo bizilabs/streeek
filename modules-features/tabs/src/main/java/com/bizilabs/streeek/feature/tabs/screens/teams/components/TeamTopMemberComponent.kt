@@ -1,15 +1,22 @@
 package com.bizilabs.streeek.feature.tabs.screens.teams.components
 
 import android.R.attr.contentDescription
+import android.R.attr.name
+import android.R.attr.top
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.QuestionMark
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -28,16 +35,14 @@ import coil.compose.AsyncImage
 import com.bizilabs.streeek.lib.design.components.SafiCenteredColumn
 import com.bizilabs.streeek.lib.design.helpers.onSuccess
 import com.bizilabs.streeek.lib.design.helpers.success
+import com.bizilabs.streeek.lib.domain.models.TeamMemberDomain
 import com.bizilabs.streeek.lib.resources.SafiResources
 
 @Composable
 fun TeamTopMemberComponent(
     isFirst: Boolean,
-    name: String = "MamboBryan",
-    exp: String = "500 EXP",
-    rank: String = "1",
-    image: String = "https://avatars.githubusercontent.com/u/40160345?v=4",
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    member: TeamMemberDomain? = null,
 ) {
 
     val containerColor = if (isFirst) Color(0xFFE6A817) else MaterialTheme.colorScheme.success
@@ -46,47 +51,74 @@ fun TeamTopMemberComponent(
     SafiCenteredColumn(
         modifier = modifier
     ) {
-        Box {
-            AsyncImage(
-                modifier = Modifier
-                    .padding(top = 48.dp, bottom = 12.dp)
-                    .clip(CircleShape)
-                    .border(BorderStroke(2.dp, containerColor), CircleShape)
-                    .size(if (isFirst) 120.dp else 90.dp),
-                model = image,
-                contentDescription = "user avatar url",
-                contentScale = ContentScale.Crop
-            )
-            Column(
-                modifier = Modifier.align(Alignment.TopCenter),
-            ) {
-                AnimatedVisibility(visible = isFirst) {
-                    Icon(
-                        modifier = Modifier.size(48.dp),
-                        painter = painterResource(SafiResources.Drawables.Crown),
-                        contentDescription = "crown",
-                        tint = containerColor
-                    )
-                }
-            }
+        AnimatedContent(
+            targetState = member?.account,
+            label = "animate member"
+        ) { account ->
+            when {
+                account != null -> {
+                    Box {
+                        AsyncImage(
+                            modifier = Modifier
+                                .padding(top = 48.dp, bottom = 12.dp)
+                                .clip(CircleShape)
+                                .border(BorderStroke(2.dp, containerColor), CircleShape)
+                                .size(if (isFirst) 120.dp else 90.dp),
+                            model = account.avatarUrl,
+                            contentDescription = "user avatar url",
+                            contentScale = ContentScale.Crop
+                        )
+                        Column(
+                            modifier = Modifier.align(Alignment.TopCenter),
+                        ) {
+                            AnimatedVisibility(visible = isFirst) {
+                                Icon(
+                                    modifier = Modifier.size(48.dp),
+                                    painter = painterResource(SafiResources.Drawables.Crown),
+                                    contentDescription = "crown",
+                                    tint = containerColor
+                                )
+                            }
+                        }
 
-            Card(
-                modifier = Modifier.align(Alignment.BottomCenter),
-                colors = CardDefaults.cardColors(
-                    containerColor = containerColor,
-                    contentColor = contentColor
-                )
-            ) {
-                Text(
-                    modifier = Modifier
-                        .padding(
-                            vertical = 4.dp,
-                            horizontal = 8.dp
-                        ),
-                    text = rank,
-                    style = MaterialTheme.typography.labelSmall,
-                    fontWeight = FontWeight.Bold
-                )
+                        Card(
+                            modifier = Modifier.align(Alignment.BottomCenter),
+                            colors = CardDefaults.cardColors(
+                                containerColor = containerColor,
+                                contentColor = contentColor
+                            )
+                        ) {
+                            Text(
+                                modifier = Modifier
+                                    .padding(
+                                        vertical = 4.dp,
+                                        horizontal = 8.dp
+                                    ),
+                                text = "LV.${member?.rank ?: 0}",
+                                style = MaterialTheme.typography.labelSmall,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+                    }
+                }
+
+                else -> {
+                    Card {
+                        SafiCenteredColumn(
+                            modifier = Modifier
+                                .padding(top = 48.dp, bottom = 12.dp)
+                                .clip(CircleShape)
+                                .border(BorderStroke(2.dp, containerColor), CircleShape)
+                                .size(if (isFirst) 120.dp else 90.dp)
+                                .background(MaterialTheme.colorScheme.onSurface.copy(0.25f)),
+                        ) {
+                            Icon(
+                                imageVector = Icons.Rounded.QuestionMark,
+                                contentDescription = "unknown member"
+                            )
+                        }
+                    }
+                }
             }
         }
 
@@ -95,8 +127,14 @@ fun TeamTopMemberComponent(
                 .fillMaxWidth()
                 .padding(top = 8.dp)
         ) {
-            Text(text = name, fontWeight = FontWeight.Bold)
-            Text(text = exp, style = MaterialTheme.typography.labelSmall)
+            Text(
+                text = member?.account?.username ?: "",
+                fontWeight = FontWeight.Bold
+            )
+            Text(
+                text = member?.let { "${it}EXP" } ?: "",
+                style = MaterialTheme.typography.labelSmall
+            )
         }
     }
 }

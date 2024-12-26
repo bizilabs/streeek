@@ -34,7 +34,7 @@ val dataModule = module {
         PreferenceRepositoryImpl(localSource = get(), remoteSource = get())
     }
     single<TeamRepository> {
-        TeamRepositoryImpl(remoteSource = get(), accountLocalSource = get())
+        TeamRepositoryImpl(remoteSource = get(), localSource = get(), accountLocalSource = get())
     }
     single<TeamInvitationRepository> {
         TeamInvitationRepositoryImpl(remote = get(), accountLocalSource = get())

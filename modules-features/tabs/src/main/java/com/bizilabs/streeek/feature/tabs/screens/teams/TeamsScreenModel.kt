@@ -3,11 +3,13 @@ package com.bizilabs.streeek.feature.tabs.screens.teams
 import cafe.adriel.voyager.core.model.StateScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
 import com.bizilabs.streeek.lib.common.models.FetchListState
-import com.bizilabs.streeek.lib.domain.helpers.DataResult
+import com.bizilabs.streeek.lib.domain.models.TeamDetailsDomain
 import com.bizilabs.streeek.lib.domain.models.TeamDomain
 import com.bizilabs.streeek.lib.domain.models.TeamWithDetailDomain
 import com.bizilabs.streeek.lib.domain.repositories.TeamRepository
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.koin.dsl.module
@@ -22,7 +24,9 @@ data class TeamsScreenState(
     val isJoining: Boolean = false,
     val isCreating: Boolean = false,
     val teamId: Long? = null,
-    val teamsState: FetchListState<TeamWithDetailDomain> = FetchListState.Loading
+    val teamsState: FetchListState<TeamWithDetailDomain> = FetchListState.Loading,
+    val team: TeamDetailsDomain? = null,
+    val teams: List<TeamDetailsDomain> = emptyList()
 )
 
 class TeamsScreenModel(
@@ -30,27 +34,22 @@ class TeamsScreenModel(
 ) : StateScreenModel<TeamsScreenState>(TeamsScreenState()) {
 
     init {
-//        observeTeams()
+        observeTeams()
+        observeTeamDetails()
+    }
+
+    private fun observeTeamDetails() {
+        combine(repository.teamId, repository.teams) { id, map ->
+            mutableState.update { it.copy(team = map[id]) }
+        }
     }
 
     private fun observeTeams() {
         screenModelScope.launch {
-            mutableState.update { it.copy(teamsState = FetchListState.Loading) }
-            val update = when (val result = repository.getAccountTeams()) {
-                is DataResult.Error -> FetchListState.Error(result.message)
-                is DataResult.Success -> {
-                    val list = result.data
-                    if (list.isEmpty())
-                        FetchListState.Empty
-                    else
-                        FetchListState.Success(result.data)
-                }
+            repository.teams.collectLatest { map ->
+                mutableState.update { it.copy(teams = map.values.toList()) }
             }
-            mutableState.update { it.copy(teamsState = update) }
         }
-    }
-
-    fun onClickMenuSearch() {
     }
 
     fun onClickMenuTeamCreate() {
@@ -69,7 +68,7 @@ class TeamsScreenModel(
         }
     }
 
-    fun onClickTeam(team: TeamDomain){
+    fun onClickTeam(team: TeamDomain) {
         screenModelScope.launch {
             mutableState.update { it.copy(teamId = team.id) }
             delay(250)
