@@ -4,7 +4,6 @@ import com.bizilabs.streeek.lib.data.mappers.asDataResult
 import com.bizilabs.streeek.lib.data.mappers.team.toDomain
 import com.bizilabs.streeek.lib.domain.helpers.DataResult
 import com.bizilabs.streeek.lib.domain.models.team.CreateTeamInvitationDomain
-import com.bizilabs.streeek.lib.domain.models.team.JoinTeamInvitationDomain
 import com.bizilabs.streeek.lib.domain.models.team.TeamInvitationDomain
 import com.bizilabs.streeek.lib.domain.repositories.TeamInvitationRepository
 import com.bizilabs.streeek.lib.local.sources.account.AccountLocalSource
@@ -34,13 +33,6 @@ class TeamInvitationRepositoryImpl(
         val accountId = getAccountId() ?: return DataResult.Error(message = "No account found")
         return remote.getInvitations(teamId = teamId, accountId = accountId)
             .asDataResult { list -> list.map { it.toDomain() } }
-    }
-
-    override suspend fun joinWithInviteCode(code: String): DataResult<JoinTeamInvitationDomain> {
-        val accountId = getAccountId() ?: return DataResult.Error(message = "No account found")
-        return remote
-            .joinWithInviteCode(accountId = accountId, code = code)
-            .asDataResult { it.toDomain() }
     }
 
     override suspend fun deleteInvitation(id: Long): DataResult<Boolean> {

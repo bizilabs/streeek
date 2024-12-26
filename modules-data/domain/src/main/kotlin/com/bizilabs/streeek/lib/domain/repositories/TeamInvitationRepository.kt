@@ -2,7 +2,6 @@ package com.bizilabs.streeek.lib.domain.repositories
 
 import com.bizilabs.streeek.lib.domain.helpers.DataResult
 import com.bizilabs.streeek.lib.domain.models.team.CreateTeamInvitationDomain
-import com.bizilabs.streeek.lib.domain.models.team.JoinTeamInvitationDomain
 import com.bizilabs.streeek.lib.domain.models.team.TeamInvitationDomain
 
 interface TeamInvitationRepository {
@@ -15,10 +14,6 @@ interface TeamInvitationRepository {
     suspend fun getInvitations(
         teamId: Long,
     ): DataResult<List<TeamInvitationDomain>>
-
-    suspend fun joinWithInviteCode(
-        code: String
-    ): DataResult<JoinTeamInvitationDomain>
 
     suspend fun deleteInvitation(id: Long) : DataResult<Boolean>
 

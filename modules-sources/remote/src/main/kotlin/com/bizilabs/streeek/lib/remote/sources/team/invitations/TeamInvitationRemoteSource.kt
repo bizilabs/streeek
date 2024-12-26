@@ -27,11 +27,6 @@ interface TeamInvitationRemoteSource {
         accountId: Long
     ): NetworkResult<List<TeamInvitationDTO>>
 
-    suspend fun joinWithInviteCode(
-        accountId: Long,
-        code: String
-    ): NetworkResult<JoinTeamInvitationDTO>
-
     suspend fun deleteInvitation(
         invitationId: Long,
         accountId: Long
@@ -72,21 +67,6 @@ class TeamInvitationRemoteSourceImpl(
                 function = Supabase.Functions.Teams.Invitations.Get,
                 parameters = parameters.asJsonObject()
             ).decodeList()
-    }
-
-    override suspend fun joinWithInviteCode(
-        accountId: Long,
-        code: String
-    ): NetworkResult<JoinTeamInvitationDTO> = safeSupabaseCall {
-        val parameters = JoinTeamInvitationRequestDTO(
-            accountId = accountId,
-            token = code
-        )
-        supabase.postgrest
-            .rpc(
-                function = Supabase.Functions.Teams.Invitations.Join,
-                parameters = parameters.asJsonObject()
-            ).decodeAs()
     }
 
     override suspend fun deleteInvitation(
