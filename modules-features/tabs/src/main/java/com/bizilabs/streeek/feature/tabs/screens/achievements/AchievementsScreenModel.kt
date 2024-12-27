@@ -61,7 +61,14 @@ class AchievementsScreenModel(
 ) : StateScreenModel<AchievementScreenState>(AchievementScreenState()) {
 
     init {
+        initiateAccountSync()
         observeAccount()
+    }
+
+    private fun initiateAccountSync() {
+        screenModelScope.launch {
+            accountRepository.syncAccount()
+        }
     }
 
     private fun observeAccount() {

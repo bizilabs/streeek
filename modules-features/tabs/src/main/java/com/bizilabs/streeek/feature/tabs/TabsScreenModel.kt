@@ -21,6 +21,7 @@ import com.bizilabs.streeek.lib.domain.models.ContributionDomain
 import com.bizilabs.streeek.lib.domain.models.UserEventDomain
 import com.bizilabs.streeek.lib.domain.repositories.AccountRepository
 import com.bizilabs.streeek.lib.domain.repositories.ContributionRepository
+import com.bizilabs.streeek.lib.domain.workers.startPeriodicAccountSyncWork
 import com.bizilabs.streeek.lib.domain.workers.startPeriodicDailySyncContributionsWork
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -73,11 +74,12 @@ class TabsScreenModel(
     init {
         observeAccount()
         observeContributions()
-        startSyncContributionsWork()
+        startWorkers()
     }
 
-    private fun startSyncContributionsWork() {
+    private fun startWorkers() {
         with(context) {
+            startPeriodicAccountSyncWork()
             startPeriodicDailySyncContributionsWork()
         }
     }
