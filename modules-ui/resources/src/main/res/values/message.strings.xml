@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="message_team_invite">
+        Yoh soy dev! 💻
+        \nReady to show off your coding skills and join the fun on Streeek? 🌟
+        \nUse this code :%s to join %s.
+        \nOr just click here to jump in: \nstreeek://app.mobile?destination=team&amp;code=%s
+        \nLet’s see what you’ve got! 🚀
+    </string>
+</resources>

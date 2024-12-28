@@ -1,5 +1,6 @@
 package com.bizilabs.streeek.feature.team
 
+import android.app.Activity
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Box
@@ -37,6 +38,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -123,6 +125,8 @@ fun TeamScreenContent(
     onClickJoin: () -> Unit,
 ) {
 
+    val activity = LocalContext.current as Activity
+
     if (state.isOpen)
         SafiBottomSheetPicker(
             title = stringResource(SafiStrings.SelectTeamVisibility),
@@ -142,6 +146,7 @@ fun TeamScreenContent(
 
     if (state.isInvitationsOpen)
         TeamInvitationBottomSheet(
+            activity = activity,
             state = state,
             onDismissSheet = onDismissInvitationsSheet,
             onClickInvitationGet = onClickInvitationGet,

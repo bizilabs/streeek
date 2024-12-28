@@ -27,7 +27,7 @@ class TeamRepositoryImpl(
 ) : TeamRepository {
 
     override val teamId: Flow<Long?>
-        get() = localSource.team
+        get() = localSource.teamId
 
     override val teams: Flow<Map<Long, TeamDetailsDomain>>
         get() = localSource.teams.mapLatest { map ->

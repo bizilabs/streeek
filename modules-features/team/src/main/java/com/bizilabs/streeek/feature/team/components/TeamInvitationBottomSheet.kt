@@ -1,5 +1,7 @@
 package com.bizilabs.streeek.feature.team.components
 
+import android.app.Activity
+import android.content.Intent
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
@@ -19,7 +21,6 @@ import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.People
 import androidx.compose.material.icons.rounded.Refresh
 import androidx.compose.material.icons.rounded.Share
-import androidx.compose.material.icons.twotone.Delete
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
@@ -41,8 +42,7 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -57,6 +57,7 @@ import com.bizilabs.streeek.lib.design.helpers.onSuccess
 import com.bizilabs.streeek.lib.design.helpers.success
 import com.bizilabs.streeek.lib.design.theme.SafiTheme
 import com.bizilabs.streeek.lib.domain.models.team.TeamInvitationDomain
+import com.bizilabs.streeek.lib.resources.strings.SafiStrings
 import kotlinx.coroutines.launch
 import me.saket.swipe.SwipeAction
 import me.saket.swipe.SwipeableActionsBox
@@ -64,6 +65,7 @@ import me.saket.swipe.SwipeableActionsBox
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TeamInvitationBottomSheet(
+    activity: Activity,
     state: TeamScreenState,
     onDismissSheet: () -> Unit,
     onClickInvitationGet: () -> Unit,
@@ -158,6 +160,7 @@ fun TeamInvitationBottomSheet(
 
                     is FetchListState.Success -> {
                         TeamInvitationsSection(
+                            activity = activity,
                             state = state,
                             result = result,
                             onSwipeInvitationDelete = onSwipeInvitationDelete,
@@ -172,11 +175,15 @@ fun TeamInvitationBottomSheet(
 
 @Composable
 private fun TeamInvitationsSection(
+    activity: Activity,
     state: TeamScreenState,
     result: FetchListState.Success<TeamInvitationDomain>,
     onSwipeInvitationDelete: (TeamInvitationDomain) -> Unit,
     onClickInvitationCreate: () -> Unit
 ) {
+
+    val team = (state.fetchState as? FetchState.Success)?.value?.team
+
     Column(modifier = Modifier.fillMaxSize()) {
         AnimatedVisibility(
             modifier = Modifier.fillMaxWidth(),
@@ -192,9 +199,10 @@ private fun TeamInvitationsSection(
             items(result.list) { invite ->
                 TeamInviteCardComponent(
                     modifier = Modifier.fillMaxWidth(),
-                    invite = invite
+                    invite = invite,
+                    onSwipeInvitationDelete = { onSwipeInvitationDelete(invite) },
                 ) {
-                    onSwipeInvitationDelete(invite)
+                    activity.share(teamName = team?.name ?: "The Unknowns", teamCode = invite.code)
                 }
             }
         }
@@ -263,6 +271,7 @@ fun TeamInviteCardComponent(
     invite: TeamInvitationDomain,
     modifier: Modifier = Modifier,
     onSwipeInvitationDelete: () -> Unit,
+    onClickShare: () -> Unit,
 ) {
 
     val delete = SwipeAction(
@@ -325,7 +334,7 @@ fun TeamInviteCardComponent(
 
                 Spacer(modifier = Modifier.weight(1f))
 
-                IconButton(onClick = { }) {
+                IconButton(onClick = onClickShare) {
                     Icon(
                         imageVector = Icons.Rounded.Share,
                         contentDescription = "share invite code"
@@ -334,6 +343,19 @@ fun TeamInviteCardComponent(
             }
         }
     }
+}
+
+private fun Activity.share(teamName: String, teamCode: Long) {
+    val sendIntent: Intent = Intent().apply {
+        action = Intent.ACTION_SEND
+        putExtra(
+            Intent.EXTRA_TEXT,
+            getString(SafiStrings.Messages.MessageTeamInvite, teamCode, teamName, teamCode)
+        )
+        type = "text/plain"
+    }
+    val shareIntent = Intent.createChooser(sendIntent, "Share with")
+    startActivity(shareIntent)
 }
 
 @Composable
@@ -379,28 +401,10 @@ fun InfoCardComponent(
 }
 
 @Preview
+@Preview(uiMode = android.content.res.Configuration.UI_MODE_NIGHT_YES)
 @Composable
 private fun InfoCardComponentLightPreview() {
     SafiTheme {
-        Surface {
-            InfoCardComponent(
-                modifier = Modifier.padding(16.dp),
-                title = "Error",
-                message = "Something went wrong",
-                action = {
-                    TextButton(onClick = { }) {
-                        Text(text = "Retry")
-                    }
-                }
-            )
-        }
-    }
-}
-
-@Preview
-@Composable
-private fun InfoCardComponentDarkPreview() {
-    SafiTheme(isDarkThemeEnabled = true) {
         Surface {
             InfoCardComponent(
                 modifier = Modifier.padding(16.dp),

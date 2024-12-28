@@ -20,6 +20,42 @@ data class TeamDetailsDomain(
     val top: Map<Long, TeamMemberDomain>
 )
 
+fun TeamDetailsDomain?.updateOrCreate(page: Int, team: TeamWithMembersDomain): TeamDetailsDomain {
+   return when {
+       this == null -> team.asTeamDetails(page = page)
+       else -> copy(
+           page = page,
+           team = team.team,
+           members = team.members,
+           rank = TeamRankDomain(
+               previous = rank.current,
+               current = team.details.rank
+           ),
+           top = if (page == 1) team.getTopMembersMap() else top
+       )
+   }
+
+}
+
+private fun TeamWithMembersDomain.asTeamDetails(page: Int): TeamDetailsDomain = TeamDetailsDomain(
+    page = page,
+    team = team,
+    members = members,
+    rank = TeamRankDomain(
+        previous = null,
+        current = details.rank
+    ),
+    top = if (page == 1) getTopMembersMap() else emptyMap(),
+)
+
+private fun TeamWithMembersDomain.getTopMembersMap(): Map<Long, TeamMemberDomain> {
+    val map = mutableMapOf<Long, TeamMemberDomain>()
+    members.getOrNull(0)?.let { map[0] = it }
+    members.getOrNull(1)?.let { map[1] = it }
+    members.getOrNull(2)?.let { map[2] = it }
+    return map
+}
+
 data class TeamRankDomain(
     val previous: Long?,
     val current: Long

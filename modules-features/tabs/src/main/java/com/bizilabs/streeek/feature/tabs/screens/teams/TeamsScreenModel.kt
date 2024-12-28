@@ -5,6 +5,7 @@ import cafe.adriel.voyager.core.model.screenModelScope
 import com.bizilabs.streeek.lib.common.models.FetchListState
 import com.bizilabs.streeek.lib.domain.models.TeamDetailsDomain
 import com.bizilabs.streeek.lib.domain.models.TeamDomain
+import com.bizilabs.streeek.lib.domain.models.TeamMemberDomain
 import com.bizilabs.streeek.lib.domain.models.TeamWithDetailDomain
 import com.bizilabs.streeek.lib.domain.repositories.TeamRepository
 import kotlinx.coroutines.delay
@@ -13,6 +14,8 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.koin.dsl.module
+import timber.log.Timber
+import kotlin.collections.get
 
 internal val TeamsModule = module {
     factory<TeamsScreenModel> {
@@ -27,11 +30,24 @@ data class TeamsScreenState(
     val teamsState: FetchListState<TeamWithDetailDomain> = FetchListState.Loading,
     val team: TeamDetailsDomain? = null,
     val teams: List<TeamDetailsDomain> = emptyList()
-)
+){
+    val list: List<TeamMemberDomain>
+        get() = when{
+            team == null -> emptyList()
+            team.page == 1 -> team.members.filterIndexed { index, _ -> index > 2 }
+            else -> team.members
+        }
+}
 
 class TeamsScreenModel(
     private val repository: TeamRepository
 ) : StateScreenModel<TeamsScreenState>(TeamsScreenState()) {
+
+    private val selectedTeam = combine(repository.teamId, repository.teams) { id, map ->
+        Timber.d("Selected Team being updated....")
+        Timber.d("Selected Team : ${mutableState.value.team}")
+        map[id]
+    }
 
     init {
         observeTeams()
@@ -39,8 +55,10 @@ class TeamsScreenModel(
     }
 
     private fun observeTeamDetails() {
-        combine(repository.teamId, repository.teams) { id, map ->
-            mutableState.update { it.copy(team = map[id]) }
+        screenModelScope.launch {
+            selectedTeam.collectLatest { value ->
+                mutableState.update { it.copy(team = value) }
+            }
         }
     }
 

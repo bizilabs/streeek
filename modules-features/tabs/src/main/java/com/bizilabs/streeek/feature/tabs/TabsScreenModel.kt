@@ -23,6 +23,7 @@ import com.bizilabs.streeek.lib.domain.repositories.AccountRepository
 import com.bizilabs.streeek.lib.domain.repositories.ContributionRepository
 import com.bizilabs.streeek.lib.domain.workers.startPeriodicAccountSyncWork
 import com.bizilabs.streeek.lib.domain.workers.startPeriodicDailySyncContributionsWork
+import com.bizilabs.streeek.lib.domain.workers.startPeriodicTeamsSyncWork
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.koin.dsl.module
@@ -79,6 +80,7 @@ class TabsScreenModel(
 
     private fun startWorkers() {
         with(context) {
+            startPeriodicTeamsSyncWork()
             startPeriodicAccountSyncWork()
             startPeriodicDailySyncContributionsWork()
         }

@@ -4,6 +4,7 @@ import com.bizilabs.streeek.lib.data.mappers.team.toCache
 import com.bizilabs.streeek.lib.data.mappers.team.toDomain
 import com.bizilabs.streeek.lib.domain.helpers.DateFormats
 import com.bizilabs.streeek.lib.domain.helpers.SystemLocalDateTime
+import com.bizilabs.streeek.lib.domain.helpers.UTCLocalDateTime
 import com.bizilabs.streeek.lib.domain.helpers.asDate
 import com.bizilabs.streeek.lib.domain.helpers.asString
 import com.bizilabs.streeek.lib.domain.helpers.datetimeSystem
@@ -77,7 +78,7 @@ fun TeamCache.toDomain() = TeamDomain(
     id = id,
     name = name,
     public = isPublic,
-    createdAt = Instant.parse(createdAt).datetimeUTC,
+    createdAt = createdAt.asDate(DateFormats.YYYY_MM_dd_T_HH_mm_ss_SSSSSS)?.datetimeUTC ?: UTCLocalDateTime,
     count = count
 )
 //</editor-fold>

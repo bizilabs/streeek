@@ -3,7 +3,10 @@ package com.bizilabs.streeek.feature.tabs.screens.teams
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -98,7 +101,8 @@ fun TeamsScreenContent(
                 state = state,
                 modifier = Modifier.fillMaxWidth(),
                 onClickMenuCreateTeam = onClickMenuCreateTeam,
-                onClickMenuJoinTeam = onClickMenuJoinTeam
+                onClickMenuJoinTeam = onClickMenuJoinTeam,
+                onClickTeam = onClickTeam
             )
         }
     ) { paddingValues ->
@@ -122,7 +126,7 @@ fun TeamsScreenContent(
 
                 else -> {
                     LazyColumn {
-                        items(team.members) { member ->
+                        items(state.list) { member ->
                             Card(
                                 modifier = Modifier
                                     .padding(horizontal = 16.dp)
@@ -191,11 +195,13 @@ fun TeamsScreenContent(
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun TeamsScreenHeaderSection(
     state: TeamsScreenState,
     onClickMenuCreateTeam: () -> Unit,
     onClickMenuJoinTeam: () -> Unit,
+    onClickTeam: (TeamDomain) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Surface(modifier = modifier) {
@@ -236,7 +242,7 @@ fun TeamsScreenHeaderSection(
             AnimatedVisibility(
                 modifier = Modifier
                     .padding(vertical = 16.dp)
-                    .fillMaxSize(),
+                    .fillMaxWidth(),
                 visible = state.teams.isNotEmpty()
             ) {
                 val pagerState = rememberPagerState { state.teams.size }
@@ -246,7 +252,14 @@ fun TeamsScreenHeaderSection(
                 ) { index ->
                     val team = state.teams[index]
                     val isCurrentTeam = state.team?.team?.id == team.team.id
-                    SafiCenteredColumn(modifier = Modifier) {
+                    SafiCenteredColumn(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .combinedClickable(
+                                onClick = {},
+                                onLongClick = { onClickTeam(team.team) }
+                            )
+                    ) {
                         Text(
                             text = team.team.name,
                             fontWeight = if (isCurrentTeam) FontWeight.Bold else FontWeight.Normal,
@@ -264,8 +277,8 @@ fun TeamsScreenHeaderSection(
                                 modifier = Modifier
                                     .padding(8.dp)
                                     .size(8.dp)
-                                    .background(MaterialTheme.colorScheme.primary)
                                     .clip(CircleShape)
+                                    .background(MaterialTheme.colorScheme.primary)
                             )
                         }
                     }
@@ -286,18 +299,18 @@ fun TeamsScreenHeaderSection(
                             modifier = Modifier
                                 .weight(1f)
                                 .padding(top = 48.dp),
-                            member = state.team.top[2]
+                            member = state.team.top[1]
                         )
                         TeamTopMemberComponent(
                             isFirst = true, modifier = Modifier.weight(1f),
-                            member = state.team.top[1]
+                            member = state.team.top[0]
                         )
                         TeamTopMemberComponent(
                             isFirst = false,
                             modifier = Modifier
                                 .weight(1f)
                                 .padding(top = 48.dp),
-                            member = state.team.top[3]
+                            member = state.team.top[2]
                         )
                     }
             }

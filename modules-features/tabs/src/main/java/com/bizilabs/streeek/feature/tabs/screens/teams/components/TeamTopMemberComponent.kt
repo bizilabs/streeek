@@ -1,8 +1,5 @@
 package com.bizilabs.streeek.feature.tabs.screens.teams.components
 
-import android.R.attr.contentDescription
-import android.R.attr.name
-import android.R.attr.top
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
@@ -10,7 +7,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -103,7 +99,7 @@ fun TeamTopMemberComponent(
                 }
 
                 else -> {
-                    Card {
+                    Card(colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)) {
                         SafiCenteredColumn(
                             modifier = Modifier
                                 .padding(top = 48.dp, bottom = 12.dp)
@@ -132,7 +128,7 @@ fun TeamTopMemberComponent(
                 fontWeight = FontWeight.Bold
             )
             Text(
-                text = member?.let { "${it}EXP" } ?: "",
+                text = member?.let { "${it.points} EXP" } ?: "",
                 style = MaterialTheme.typography.labelSmall
             )
         }

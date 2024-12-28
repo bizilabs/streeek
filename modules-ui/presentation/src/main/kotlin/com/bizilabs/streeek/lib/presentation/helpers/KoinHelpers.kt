@@ -7,8 +7,10 @@ import com.bizilabs.streeek.feature.profile.profileModule
 import com.bizilabs.streeek.feature.setup.setupModule
 import com.bizilabs.streeek.feature.tabs.tabsModule
 import com.bizilabs.streeek.feature.team.FeatureTeamModule
+import com.bizilabs.streeek.lib.domain.workers.SyncAccountWork
 import com.bizilabs.streeek.lib.domain.workers.SyncContributionsWork
 import com.bizilabs.streeek.lib.domain.workers.SyncDailyContributionsWork
+import com.bizilabs.streeek.lib.domain.workers.SyncTeamsWork
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.workmanager.dsl.workerOf
 import org.koin.androidx.workmanager.koin.workManagerFactory
@@ -32,6 +34,8 @@ val PresentationModule = module {
         setupModule, tabsModule, profileModule,
         FeatureTeamModule
     )
+    workerOf(::SyncTeamsWork)
+    workerOf(::SyncAccountWork)
     workerOf(::SyncContributionsWork)
     workerOf(::SyncDailyContributionsWork)
 }
