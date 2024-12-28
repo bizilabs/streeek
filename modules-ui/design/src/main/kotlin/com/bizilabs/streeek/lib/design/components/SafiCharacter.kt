@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -34,14 +35,13 @@ fun SafiCharacter(
 
     Column(
         modifier = modifier
-            .defaultMinSize(64.dp, 64.dp)
-            .padding(8.dp)
             .clip(MaterialTheme.shapes.medium)
             .background(MaterialTheme.colorScheme.onBackground.copy(0.2f)),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
+            modifier = Modifier.padding(16.dp),
             text = char,
             style = MaterialTheme.typography.titleLarge,
             textAlign = TextAlign.Justify,
