@@ -3,6 +3,7 @@ package com.bizilabs.streeek.feature.tabs.screens.achievements
 import android.R.attr.text
 import android.R.attr.top
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -198,6 +199,7 @@ fun AchievementsLevelsScreenSection(
                         val isSelected = level.id == current?.id
                         val isLesser = level.number < (current?.number ?: 0)
                         val isGreater = level.number > (current?.number ?: 0)
+                        val isNext = level.number == (current?.number ?: 0) + 1
 
                         val (containerColor, contentColor) = when {
                             isSelected -> Pair(
@@ -221,25 +223,32 @@ fun AchievementsLevelsScreenSection(
                             )
                         }
 
-                        Card(
-                            modifier = Modifier.padding(8.dp).fillMaxWidth(),
-                            colors = CardDefaults.cardColors(
-                                containerColor = containerColor,
-                                contentColor = contentColor
-                            )
+                        AnimatedVisibility(
+                            modifier = Modifier.fillMaxWidth(),
+                            visible = isSelected or isLesser or isNext
                         ) {
-                            Column(modifier = Modifier.padding(16.dp)) {
-                                Text(
-                                    modifier = Modifier.padding(top = 24.dp),
-                                    text = level.number.asRank(),
-                                    style = MaterialTheme.typography.titleSmall,
-                                    textAlign = TextAlign.Center,
-                                    fontWeight = FontWeight.Black
+                            Card(
+                                modifier = Modifier
+                                    .padding(8.dp)
+                                    .fillMaxWidth(),
+                                colors = CardDefaults.cardColors(
+                                    containerColor = containerColor,
+                                    contentColor = contentColor
                                 )
-                                Text(
-                                    text = if (isGreater) "..." else level.name.replaceFirstChar { it.uppercase() },
-                                    style = MaterialTheme.typography.labelLarge
-                                )
+                            ) {
+                                Column(modifier = Modifier.padding(16.dp)) {
+                                    Text(
+                                        modifier = Modifier.padding(top = 24.dp),
+                                        text = level.number.asRank(),
+                                        style = MaterialTheme.typography.titleSmall,
+                                        textAlign = TextAlign.Center,
+                                        fontWeight = FontWeight.Black
+                                    )
+                                    Text(
+                                        text = if (isGreater) "" else level.name.replaceFirstChar { it.uppercase() },
+                                        style = MaterialTheme.typography.labelLarge
+                                    )
+                                }
                             }
                         }
 
