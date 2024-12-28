@@ -15,6 +15,7 @@ import com.bizilabs.streeek.lib.domain.helpers.DataResult
 import com.bizilabs.streeek.lib.domain.models.AccountDomain
 import com.bizilabs.streeek.lib.domain.models.TeamMemberRole
 import com.bizilabs.streeek.lib.domain.models.TeamWithMembersDomain
+import com.bizilabs.streeek.lib.domain.models.asTeamDetails
 import com.bizilabs.streeek.lib.domain.models.team.CreateTeamInvitationDomain
 import com.bizilabs.streeek.lib.domain.models.team.JoinTeamInvitationDomain
 import com.bizilabs.streeek.lib.domain.models.team.TeamInvitationDomain
@@ -123,7 +124,7 @@ class TeamScreenModel(
         mutableState.update { it.copy(dialogState = null) }
     }
 
-    private fun getTeam(id: Long) {
+    private fun getTeam(id: Long, shouldSaveTeam: Boolean = false) {
         screenModelScope.launch {
             val update = when (val result = teamRepository.getTeam(id = id, page = 1)) {
                 is DataResult.Error -> FetchState.Error(result.message)
@@ -131,10 +132,17 @@ class TeamScreenModel(
                     val team = result.data.team
                     onValueChangeName(name = team.name)
                     onValueChangePublic(value = if (team.public) "public" else "private")
+                    if (shouldSaveTeam) saveTeam(team = result.data)
                     FetchState.Success(result.data)
                 }
             }
             mutableState.update { it.copy(fetchState = update) }
+        }
+    }
+
+    private fun saveTeam(team: TeamWithMembersDomain) {
+        screenModelScope.launch {
+            teamRepository.addTeamLocally(team = team.asTeamDetails(page = 1))
         }
     }
 
@@ -148,7 +156,7 @@ class TeamScreenModel(
                 is DataResult.Error -> DialogState.Error(title = "Error", message = result.message)
                 is DataResult.Success -> {
                     val teamId = result.data
-                    getTeam(id = teamId)
+                    getTeam(id = teamId, shouldSaveTeam = true)
                     DialogState.Success(
                         title = "Success",
                         message = "Created team successfully"
@@ -208,7 +216,7 @@ class TeamScreenModel(
                             )
                         )
                     }
-                    getTeam(id = result.data.teamId)
+                    getTeam(id = result.data.teamId, shouldSaveTeam = true)
                     delay(2000)
                     mutableState.update { it.copy(dialogState = null) }
                 }

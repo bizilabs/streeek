@@ -37,7 +37,7 @@ fun TeamDetailsDomain?.updateOrCreate(page: Int, team: TeamWithMembersDomain): T
 
 }
 
-private fun TeamWithMembersDomain.asTeamDetails(page: Int): TeamDetailsDomain = TeamDetailsDomain(
+fun TeamWithMembersDomain.asTeamDetails(page: Int): TeamDetailsDomain = TeamDetailsDomain(
     page = page,
     team = team,
     members = members,
