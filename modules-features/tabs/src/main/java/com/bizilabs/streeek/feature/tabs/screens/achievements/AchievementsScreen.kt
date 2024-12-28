@@ -1,13 +1,18 @@
 package com.bizilabs.streeek.feature.tabs.screens.achievements
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.Divider
+import androidx.compose.material.LinearProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -17,10 +22,12 @@ import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.core.screen.Screen
@@ -55,7 +62,7 @@ fun AchievementsScreenContent(
                 .padding(paddingValues)
                 .fillMaxSize()
         ) {
-            Text(text = state.tab.label)
+            ProgressIndicatorUI()
         }
     }
 }
@@ -137,5 +144,104 @@ fun AchievementScreenHeader(
                 }
             }
         }
+    }
+}
+
+
+@Composable
+fun ProgressIndicatorUI() {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        // Progress indicator with text
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            ProgressBarWithSteps(
+                currentProgress = 80, // current XP
+                maxProgress = 200, // progress for the next level
+                steps = listOf("Warga", "Bos", "Juragan", "Anak Sultan"),
+                xpValues = listOf(0, 200, 1500, 6000)
+            )
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Bottom description text
+        Text(
+            text = "Get 120 XP by 10 Jun 2023 to become Bos, and to earn 10K GoPay Coins!",
+            style = MaterialTheme.typography.bodyMedium,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.padding(horizontal = 16.dp)
+        )
+    }
+}
+
+@Composable
+fun ProgressBarWithSteps(
+    currentProgress: Int,
+    maxProgress: Int,
+    steps: List<String>,
+    xpValues: List<Int>
+) {
+    val progressFraction = currentProgress.toFloat() / maxProgress.toFloat()
+
+    Column(horizontalAlignment = Alignment.Start) {
+        // XP Labels and Progress Bar
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            steps.forEachIndexed { index, step ->
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    // Circle Indicators
+                    val isCompleted = currentProgress >= xpValues[index]
+                    Box(
+                        modifier = Modifier
+                            .size(20.dp)
+                            .background(
+                                if (isCompleted) Color(0xFF6200EE) else Color.Gray,
+                                CircleShape
+                            )
+                    )
+
+                    Spacer(modifier = Modifier.height(4.dp))
+
+                    // Step Texts
+                    Text(
+                        text = step,
+                        style = MaterialTheme.typography.labelLarge,
+                        textAlign = TextAlign.Center
+                    )
+                }
+
+                if (index < steps.size - 1) {
+                    // Line Between Indicators
+                    Divider(
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(2.dp)
+                            .background(Color.Gray),
+                        color = Color.LightGray
+                    )
+                }
+            }
+        }
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        // XP Bar below indicators
+        LinearProgressIndicator(
+            progress = progressFraction,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(8.dp),
+            color = Color(0xFF6200EE),
+            backgroundColor = Color.Gray
+        )
     }
 }

@@ -7,7 +7,7 @@ import com.bizilabs.streeek.lib.domain.helpers.asString
 import com.bizilabs.streeek.lib.domain.helpers.datetimeSystem
 import com.bizilabs.streeek.lib.domain.models.LevelDomain
 import com.bizilabs.streeek.lib.local.models.LevelCache
-import com.bizilabs.streeek.lib.remote.models.LevelDTO
+import com.bizilabs.streeek.lib.remote.models.supabase.LevelDTO
 
 fun LevelDTO.toDomain() = LevelDomain(
     id = id,

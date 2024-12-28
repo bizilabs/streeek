@@ -1,8 +1,8 @@
 package com.bizilabs.streeek.lib.remote.models
 
+import com.bizilabs.streeek.lib.remote.models.supabase.LevelDTO
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import java.util.logging.Level
 
 @Serializable
 data class AccountDTO(

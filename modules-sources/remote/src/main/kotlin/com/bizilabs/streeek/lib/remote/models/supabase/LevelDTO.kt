@@ -1,4 +1,4 @@
-package com.bizilabs.streeek.lib.remote.models
+package com.bizilabs.streeek.lib.remote.models.supabase
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
