@@ -44,6 +44,7 @@ class TeamsScreenModel(
 ) : StateScreenModel<TeamsScreenState>(TeamsScreenState()) {
 
     private val selectedTeam = combine(repository.teamId, repository.teams) { id, map ->
+        Timber.d("Teams Map -> $map")
         Timber.d("Selected Team being updated....")
         Timber.d("Selected Team : ${mutableState.value.team}")
         map[id]

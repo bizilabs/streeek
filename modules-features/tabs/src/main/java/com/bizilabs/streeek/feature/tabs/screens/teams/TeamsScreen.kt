@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
@@ -25,6 +26,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.People
 import androidx.compose.material.icons.rounded.TransitEnterexit
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -125,70 +127,79 @@ fun TeamsScreenContent(
                 }
 
                 else -> {
-                    LazyColumn {
-                        items(state.list) { member ->
-                            Card(
-                                modifier = Modifier
-                                    .padding(horizontal = 16.dp)
-                                    .padding(top = 8.dp)
-                                    .fillMaxWidth(),
-                                colors = CardDefaults.cardColors()
-                            ) {
-                                SafiCenteredRow(
-                                    modifier = Modifier.fillMaxWidth()
+                    if (state.list.isEmpty())
+                        SafiCenteredColumn(modifier = Modifier.fillMaxSize()) {
+                            SafiInfoSection(
+                                icon = Icons.Rounded.People,
+                                title = "No Other Members",
+                                description = "You're only three members in this team, invite others to continue."
+                            )
+                        }
+                    else
+                        LazyColumn {
+                            items(state.list) { member ->
+                                Card(
+                                    modifier = Modifier
+                                        .padding(horizontal = 16.dp)
+                                        .padding(top = 8.dp)
+                                        .fillMaxWidth(),
+                                    colors = CardDefaults.cardColors()
                                 ) {
-                                    Card(
-                                        modifier = Modifier.padding(16.dp),
-                                        shape = RoundedCornerShape(20),
-                                        border = BorderStroke(
-                                            1.dp,
-                                            MaterialTheme.colorScheme.onSurface
-                                        )
+                                    SafiCenteredRow(
+                                        modifier = Modifier.fillMaxWidth()
                                     ) {
-                                        AsyncImage(
-                                            modifier = Modifier
-                                                .size(52.dp)
-                                                .clip(RoundedCornerShape(20)),
-                                            model = member.account.avatarUrl,
-                                            contentDescription = "user avatar url",
-                                            contentScale = ContentScale.Crop
-                                        )
-                                    }
-
-                                    Column {
-                                        AnimatedVisibility(visible = member.account.role.isAdmin) {
-                                            Text(
-                                                text = member.account.role.label,
-                                                style = MaterialTheme.typography.bodySmall
+                                        Card(
+                                            modifier = Modifier.padding(16.dp),
+                                            shape = RoundedCornerShape(20),
+                                            border = BorderStroke(
+                                                1.dp,
+                                                MaterialTheme.colorScheme.onSurface
+                                            )
+                                        ) {
+                                            AsyncImage(
+                                                modifier = Modifier
+                                                    .size(52.dp)
+                                                    .clip(RoundedCornerShape(20)),
+                                                model = member.account.avatarUrl,
+                                                contentDescription = "user avatar url",
+                                                contentScale = ContentScale.Crop
                                             )
                                         }
-                                        Text(
-                                            text = member.account.username,
-                                            fontWeight = MaterialTheme.typography.titleMedium.fontWeight,
-                                            fontSize = MaterialTheme.typography.titleMedium.fontSize
-                                        )
-                                        Text(
-                                            text = buildString {
-                                                append(member.points)
-                                                append(" pts")
+
+                                        Column {
+                                            AnimatedVisibility(visible = member.account.role.isAdmin) {
+                                                Text(
+                                                    text = member.account.role.label,
+                                                    style = MaterialTheme.typography.bodySmall
+                                                )
                                             }
+                                            Text(
+                                                text = member.account.username,
+                                                fontWeight = MaterialTheme.typography.titleMedium.fontWeight,
+                                                fontSize = MaterialTheme.typography.titleMedium.fontSize
+                                            )
+                                            Text(
+                                                text = buildString {
+                                                    append(member.points)
+                                                    append(" pts")
+                                                }
+                                            )
+                                        }
+
+                                        Spacer(modifier = Modifier.weight(1f))
+
+                                        Text(
+                                            modifier = Modifier.padding(16.dp),
+                                            text = member.rank.asRank(),
+                                            fontSize = if (member.rank < 100)
+                                                MaterialTheme.typography.titleLarge.fontSize
+                                            else
+                                                MaterialTheme.typography.bodyLarge.fontSize
                                         )
                                     }
-
-                                    Spacer(modifier = Modifier.weight(1f))
-
-                                    Text(
-                                        modifier = Modifier.padding(16.dp),
-                                        text = member.rank.asRank(),
-                                        fontSize = if (member.rank < 100)
-                                            MaterialTheme.typography.titleLarge.fontSize
-                                        else
-                                            MaterialTheme.typography.bodyLarge.fontSize
-                                    )
                                 }
                             }
                         }
-                    }
                 }
             }
         }
@@ -283,6 +294,7 @@ fun TeamsScreenHeaderSection(
                         }
                     }
                 }
+
             }
             AnimatedVisibility(
                 modifier = Modifier.fillMaxWidth(),

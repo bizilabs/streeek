@@ -19,6 +19,7 @@ interface TeamLocalSource {
     suspend fun add(team: TeamDetailsCache)
     suspend fun update(team: TeamDetailsCache)
     suspend fun delete(team: TeamDetailsCache)
+    suspend fun delete(teamId: Long)
 }
 
 internal class TeamLocalSourceImpl(val source: PreferenceSource) : TeamLocalSource {
@@ -63,10 +64,18 @@ internal class TeamLocalSourceImpl(val source: PreferenceSource) : TeamLocalSour
     }
 
     override suspend fun delete(team: TeamDetailsCache) {
+        remove(id = team.team.id)
+    }
+
+    override suspend fun delete(teamId: Long) {
+        remove(id = teamId)
+    }
+
+    private suspend fun remove(id: Long) {
         val map = getMutableMap()
-        map.remove(team.team.id)
+        map.remove(id)
         val selected = teamId.first()
-        if (selected == team.team.id){
+        if (selected == id) {
             map.values.firstOrNull()?.let { setSelected(it) }
         }
         saveMutableMap(map)
