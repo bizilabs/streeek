@@ -8,6 +8,7 @@ import com.bizilabs.streeek.lib.remote.models.supabase.CreateTeamRequestDTO
 import com.bizilabs.streeek.lib.remote.models.supabase.GetTeamRequestDTO
 import com.bizilabs.streeek.lib.remote.models.supabase.AccountTeamRequestDTO
 import com.bizilabs.streeek.lib.remote.models.supabase.JoinTeamInvitationDTO
+import com.bizilabs.streeek.lib.remote.models.supabase.JoinTeamInvitationRequestDTO
 import com.bizilabs.streeek.lib.remote.models.supabase.TeamWithDetailDTO
 import com.bizilabs.streeek.lib.remote.models.supabase.TeamWithMembersDTO
 import com.bizilabs.streeek.lib.remote.models.supabase.UpdateTeamRequestDTO
@@ -24,7 +25,7 @@ interface TeamRemoteSource {
         page: Int
     ): NetworkResult<TeamWithMembersDTO>
 
-    suspend fun joinTeam(accountId: Long, teamId: Long): NetworkResult<JoinTeamInvitationDTO>
+    suspend fun joinTeam(accountId: Long, token: String): NetworkResult<JoinTeamInvitationDTO>
 
     suspend fun leaveTeam(accountId: Long, teamId: Long): NetworkResult<Boolean>
 
@@ -34,15 +35,16 @@ internal class TeamRemoteSourceImpl(
     private val supabase: SupabaseClient
 ) : TeamRemoteSource {
 
-    override suspend fun getAccountTeams(accountId: Long): NetworkResult<List<TeamWithDetailDTO>> = safeSupabaseCall {
-        val request = mapOf("p_account_id" to accountId)
-        supabase.postgrest
-            .rpc(
-                function = Supabase.Functions.Teams.GetAccountTeams,
-                parameters = request.asJsonObject()
-            )
-            .decodeList()
-    }
+    override suspend fun getAccountTeams(accountId: Long): NetworkResult<List<TeamWithDetailDTO>> =
+        safeSupabaseCall {
+            val request = mapOf("p_account_id" to accountId)
+            supabase.postgrest
+                .rpc(
+                    function = Supabase.Functions.Teams.GetAccountTeams,
+                    parameters = request.asJsonObject()
+                )
+                .decodeList()
+        }
 
     override suspend fun createTeam(request: CreateTeamRequestDTO): NetworkResult<Long> =
         safeSupabaseCall {
@@ -81,10 +83,11 @@ internal class TeamRemoteSourceImpl(
 
     override suspend fun joinTeam(
         accountId: Long,
-        teamId: Long
+        token: String
     ): NetworkResult<JoinTeamInvitationDTO> =
         safeSupabaseCall {
-            val parameters = AccountTeamRequestDTO(account = accountId, teamId).asJsonObject()
+            val parameters =
+                JoinTeamInvitationRequestDTO(accountId = accountId, token = token).asJsonObject()
             supabase.postgrest.rpc(
                 function = Supabase.Functions.Teams.Join,
                 parameters = parameters

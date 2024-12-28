@@ -14,7 +14,7 @@ data class GetTeamInvitationsRequestDTO(
 @Serializable
 data class TeamInvitationDTO(
     val id: Long,
-    val token: Long,
+    val token: String,
     @SerialName("created_at")
     val createdAt: String,
     @SerialName("expires_at")
@@ -35,7 +35,7 @@ data class CreateTeamInvitationRequestDTO(
 
 @Serializable
 data class CreateTeamInvitationDTO(
-    val token: Long,
+    val token: String,
     @SerialName("expires_at")
     val expiresAt: String
 )

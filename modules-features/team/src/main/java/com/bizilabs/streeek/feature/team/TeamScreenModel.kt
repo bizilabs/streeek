@@ -4,7 +4,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ExitToApp
 import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material.icons.rounded.Edit
-import androidx.compose.material.icons.rounded.ExitToApp
 import androidx.compose.material.icons.rounded.People
 import androidx.compose.ui.graphics.vector.ImageVector
 import cafe.adriel.voyager.core.model.StateScreenModel
@@ -68,7 +67,7 @@ data class TeamScreenState(
     val account: AccountDomain? = null,
     val hasAlreadyUpdatedNavVariables: Boolean = false,
     val teamId: Long? = null,
-    val code: String = "",
+    val token: String = "",
     val name: String = "",
     val isOpen: Boolean = false,
     val visibilityOptions: List<String> = listOf("public", "private"),
@@ -99,7 +98,7 @@ data class TeamScreenState(
         }
 
     val isJoinActionEnabled: Boolean
-        get() = code.length == 6 && dialogState == null
+        get() = token.length == 6 && dialogState == null
 
 }
 
@@ -182,11 +181,11 @@ class TeamScreenModel(
     }
 
     private fun joinTeam() {
-        val code = state.value.code
-        if (code.length != 6 && code.any { it.digitToIntOrNull() == null }) return
+        val token = state.value.token
+        if (token.length != 6 && token.any { it.digitToIntOrNull() == null }) return
         mutableState.update { it.copy(dialogState = DialogState.Loading()) }
         screenModelScope.launch {
-            when (val result = teamRepository.joinTeam(code = code)) {
+            when (val result = teamRepository.joinTeam(token = token)) {
                 is DataResult.Error -> {
                     mutableState.update {
                         it.copy(
@@ -386,7 +385,7 @@ class TeamScreenModel(
     }
 
     fun onValueChangeTeamCode(value: String) {
-        mutableState.update { it.copy(code = value) }
+        mutableState.update { it.copy(token = value) }
         if (value.length == 6) joinTeam()
     }
 

@@ -65,9 +65,9 @@ class TeamRepositoryImpl(
             .asDataResult { it.toDomain() }
     }
 
-    override suspend fun joinTeam(code: String): DataResult<JoinTeamInvitationDomain> {
+    override suspend fun joinTeam(token: String): DataResult<JoinTeamInvitationDomain> {
         val account = getAccountId() ?: return DataResult.Error(message = "No account found")
-        return remoteSource.joinTeam(accountId = account, teamId = code.toLong())
+        return remoteSource.joinTeam(accountId = account, token = token)
             .asDataResult { it.toDomain() }
     }
 

@@ -28,7 +28,7 @@ interface TeamRepository {
 
     suspend fun getTeam(id: Long, page: Int) : DataResult<TeamWithMembersDomain>
 
-    suspend fun joinTeam(code: String) : DataResult<JoinTeamInvitationDomain>
+    suspend fun joinTeam(token: String) : DataResult<JoinTeamInvitationDomain>
 
     suspend fun leaveTeam(teamId: Long) : DataResult<Boolean>
 

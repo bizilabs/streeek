@@ -25,14 +25,13 @@ object Supabase {
             const val Update = "update_team"
             const val GetMembersWithAccount = "get_team_with_members_and_account"
             const val GetAccountTeams = "get_teams_for_account"
-            const val Join = "join_team_request"
+            const val Join = "join_team_with_invite_code"
             const val Leave = "leave_team"
             object Requests {
                 const val Get = "accept_team_request"
             }
             object Invitations {
                 const val Get = "get_team_invitations"
-                const val Join = "join_team_with_invite_code"
                 const val Delete = "delete_team_invitation"
                 const val Create = "create_team_invite_code"
             }

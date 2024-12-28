@@ -40,7 +40,7 @@ fun TeamJoiningSection(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 24.dp),
-            text = state.code,
+            text = state.token,
             onClickDone = onClickJoin,
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.NumberPassword,

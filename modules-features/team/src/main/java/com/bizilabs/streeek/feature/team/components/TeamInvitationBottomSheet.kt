@@ -345,7 +345,7 @@ fun TeamInviteCardComponent(
     }
 }
 
-private fun Activity.share(teamName: String, teamCode: Long) {
+private fun Activity.share(teamName: String, teamCode: String) {
     val sendIntent: Intent = Intent().apply {
         action = Intent.ACTION_SEND
         putExtra(

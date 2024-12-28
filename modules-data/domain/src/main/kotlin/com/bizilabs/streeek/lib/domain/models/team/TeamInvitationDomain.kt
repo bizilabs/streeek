@@ -5,14 +5,14 @@ import kotlinx.datetime.LocalDateTime
 
 data class TeamInvitationDomain(
     val id: Long,
-    val code: Long,
+    val code: String,
     val createdAt: LocalDateTime,
     val expiresAt: LocalDateTime,
     val creatorId: Long
 )
 
 data class CreateTeamInvitationDomain(
-    val code: Long,
+    val code: String,
     val expiresAt: LocalDateTime
 )
 
