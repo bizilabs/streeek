@@ -11,6 +11,9 @@ import com.bizilabs.streeek.lib.local.sources.account.AccountLocalSourceImpl
 import com.bizilabs.streeek.lib.local.sources.contributions.ContributionDAO
 import com.bizilabs.streeek.lib.local.sources.contributions.ContributionsLocalSource
 import com.bizilabs.streeek.lib.local.sources.contributions.ContributionsLocalSourceImpl
+import com.bizilabs.streeek.lib.local.sources.level.LevelDAO
+import com.bizilabs.streeek.lib.local.sources.level.LevelLocalSource
+import com.bizilabs.streeek.lib.local.sources.level.LevelLocalSourceImpl
 import com.bizilabs.streeek.lib.local.sources.preference.LocalPreferenceSource
 import com.bizilabs.streeek.lib.local.sources.preference.LocalPreferenceSourceImpl
 import com.bizilabs.streeek.lib.local.sources.preference.PreferenceSource
@@ -30,13 +33,16 @@ val LocalModule = module {
             context = get(),
             klass = StreeekDatabase::class.java,
             name = StreeekDatabase.DATABASE_NAME
-        ).build()
+        ).fallbackToDestructiveMigration()
+            .build()
     }
     single<ContributionDAO> { get<StreeekDatabase>().contributions }
+    single<LevelDAO> { get<StreeekDatabase>().levels }
     // sources
     single<PreferenceSource> { PreferenceSourceImpl(dataStore = get(named("local"))) }
     single<LocalPreferenceSource> { LocalPreferenceSourceImpl(source = get()) }
     single<AccountLocalSource> { AccountLocalSourceImpl(preferenceSource = get()) }
     single<ContributionsLocalSource> { ContributionsLocalSourceImpl(dao = get()) }
     single<TeamLocalSource> { TeamLocalSourceImpl(source = get()) }
+    single<LevelLocalSource> { LevelLocalSourceImpl(source = get()) }
 }

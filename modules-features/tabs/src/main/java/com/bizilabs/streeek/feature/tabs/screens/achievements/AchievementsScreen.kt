@@ -1,18 +1,23 @@
 package com.bizilabs.streeek.feature.tabs.screens.achievements
 
+import android.R.attr.text
+import android.R.attr.top
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.Divider
-import androidx.compose.material.LinearProgressIndicator
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -22,11 +27,11 @@ import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -36,6 +41,9 @@ import coil.compose.AsyncImage
 import com.bizilabs.streeek.lib.design.components.SafiCenteredColumn
 import com.bizilabs.streeek.lib.design.components.SafiCenteredRow
 import com.bizilabs.streeek.lib.design.components.SafiProfileArc
+import com.bizilabs.streeek.lib.design.helpers.onSuccess
+import com.bizilabs.streeek.lib.design.helpers.success
+import com.bizilabs.streeek.lib.domain.extensions.asRank
 
 object AchievementsScreen : Screen {
     @Composable
@@ -43,8 +51,7 @@ object AchievementsScreen : Screen {
         val screenModel: AchievementsScreenModel = getScreenModel()
         val state by screenModel.state.collectAsStateWithLifecycle()
         AchievementsScreenContent(
-            state = state,
-            onClickTab = screenModel::onClickTab
+            state = state, onClickTab = screenModel::onClickTab
         )
     }
 }
@@ -54,15 +61,33 @@ fun AchievementsScreenContent(
     state: AchievementScreenState,
     onClickTab: (AchievementTab) -> Unit,
 ) {
-    Scaffold(
-        topBar = { AchievementScreenHeader(state = state, onClickTab = onClickTab) }
-    ) { paddingValues ->
+    Scaffold(topBar = {
+        AchievementScreenHeader(
+            state = state,
+            onClickTab = onClickTab
+        )
+    }) { paddingValues ->
         SafiCenteredColumn(
             modifier = Modifier
-                .padding(paddingValues)
+                .padding(top = paddingValues.calculateTopPadding())
                 .fillMaxSize()
         ) {
-            ProgressIndicatorUI()
+            AnimatedContent(targetState = state.tab, label = "animate achievements") { tab ->
+                when (tab) {
+                    AchievementTab.BADGES -> {
+                        SafiCenteredColumn(modifier = Modifier.fillMaxSize()) {
+                            Text(text = "Coming soon...")
+                        }
+                    }
+
+                    AchievementTab.LEVELS -> {
+                        AchievementsLevelsScreenSection(
+                            state = state,
+                            modifier = Modifier.fillMaxSize()
+                        )
+                    }
+                }
+            }
         }
     }
 }
@@ -101,11 +126,9 @@ fun AchievementScreenHeader(
                         text = account.username,
                         style = MaterialTheme.typography.titleLarge
                     )
-                    Text(
-                        text = account.level?.name?.replaceFirstChar { it.uppercase() } ?: "",
+                    Text(text = account.level?.name?.replaceFirstChar { it.uppercase() } ?: "",
                         style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.onSurface.copy(0.5f)
-                    )
+                        color = MaterialTheme.colorScheme.onSurface.copy(0.5f))
                     Text(
                         text = buildString {
                             append("LV.")
@@ -120,8 +143,7 @@ fun AchievementScreenHeader(
                 }
             }
             TabRow(
-                modifier = Modifier.fillMaxWidth(),
-                selectedTabIndex = state.tabs.indexOf(state.tab)
+                modifier = Modifier.fillMaxWidth(), selectedTabIndex = state.tabs.indexOf(state.tab)
             ) {
                 state.tabs.forEach { tab ->
                     val isSelected = tab == state.tab
@@ -147,101 +169,84 @@ fun AchievementScreenHeader(
     }
 }
 
-
 @Composable
-fun ProgressIndicatorUI() {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        // Progress indicator with text
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            ProgressBarWithSteps(
-                currentProgress = 80, // current XP
-                maxProgress = 200, // progress for the next level
-                steps = listOf("Warga", "Bos", "Juragan", "Anak Sultan"),
-                xpValues = listOf(0, 200, 1500, 6000)
-            )
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // Bottom description text
-        Text(
-            text = "Get 120 XP by 10 Jun 2023 to become Bos, and to earn 10K GoPay Coins!",
-            style = MaterialTheme.typography.bodyMedium,
-            textAlign = TextAlign.Center,
-            modifier = Modifier.padding(horizontal = 16.dp)
-        )
-    }
-}
-
-@Composable
-fun ProgressBarWithSteps(
-    currentProgress: Int,
-    maxProgress: Int,
-    steps: List<String>,
-    xpValues: List<Int>
+fun AchievementsLevelsScreenSection(
+    state: AchievementScreenState,
+    modifier: Modifier = Modifier
 ) {
-    val progressFraction = currentProgress.toFloat() / maxProgress.toFloat()
-
-    Column(horizontalAlignment = Alignment.Start) {
-        // XP Labels and Progress Bar
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            steps.forEachIndexed { index, step ->
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    // Circle Indicators
-                    val isCompleted = currentProgress >= xpValues[index]
-                    Box(
-                        modifier = Modifier
-                            .size(20.dp)
-                            .background(
-                                if (isCompleted) Color(0xFF6200EE) else Color.Gray,
-                                CircleShape
-                            )
-                    )
-
-                    Spacer(modifier = Modifier.height(4.dp))
-
-                    // Step Texts
-                    Text(
-                        text = step,
-                        style = MaterialTheme.typography.labelLarge,
-                        textAlign = TextAlign.Center
-                    )
+    AnimatedContent(
+        modifier = modifier,
+        targetState = state.levels,
+        label = "animated levels"
+    ) { levels ->
+        when {
+            levels.isEmpty() -> {
+                SafiCenteredColumn(modifier = Modifier.fillMaxSize()) {
+                    CircularProgressIndicator()
                 }
+            }
 
-                if (index < steps.size - 1) {
-                    // Line Between Indicators
-                    Divider(
-                        modifier = Modifier
-                            .weight(1f)
-                            .height(2.dp)
-                            .background(Color.Gray),
-                        color = Color.LightGray
-                    )
+            else -> {
+                LazyVerticalGrid(
+                    modifier = Modifier.fillMaxSize(),
+                    columns = GridCells.Fixed(3),
+                ) {
+                    items(levels) { level ->
+
+                        val current = state.level
+
+                        val isSelected = level.id == current?.id
+                        val isLesser = level.number < (current?.number ?: 0)
+                        val isGreater = level.number > (current?.number ?: 0)
+
+                        val (containerColor, contentColor) = when {
+                            isSelected -> Pair(
+                                MaterialTheme.colorScheme.success,
+                                MaterialTheme.colorScheme.onSuccess
+                            )
+
+                            isGreater -> Pair(
+                                MaterialTheme.colorScheme.onSurface.copy(0.1f),
+                                MaterialTheme.colorScheme.onSurface
+                            )
+
+                            isLesser -> Pair(
+                                MaterialTheme.colorScheme.success,
+                                MaterialTheme.colorScheme.onSuccess
+                            )
+
+                            else -> Pair(
+                                MaterialTheme.colorScheme.primary,
+                                MaterialTheme.colorScheme.onPrimary
+                            )
+                        }
+
+                        Card(
+                            modifier = Modifier.padding(8.dp).fillMaxWidth(),
+                            colors = CardDefaults.cardColors(
+                                containerColor = containerColor,
+                                contentColor = contentColor
+                            )
+                        ) {
+                            Column(modifier = Modifier.padding(16.dp)) {
+                                Text(
+                                    modifier = Modifier.padding(top = 24.dp),
+                                    text = level.number.asRank(),
+                                    style = MaterialTheme.typography.titleSmall,
+                                    textAlign = TextAlign.Center,
+                                    fontWeight = FontWeight.Black
+                                )
+                                Text(
+                                    text = if (isGreater) "..." else level.name.replaceFirstChar { it.uppercase() },
+                                    style = MaterialTheme.typography.labelLarge
+                                )
+                            }
+                        }
+
+                    }
                 }
             }
         }
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        // XP Bar below indicators
-        LinearProgressIndicator(
-            progress = progressFraction,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(8.dp),
-            color = Color(0xFF6200EE),
-            backgroundColor = Color.Gray
-        )
     }
 }
+

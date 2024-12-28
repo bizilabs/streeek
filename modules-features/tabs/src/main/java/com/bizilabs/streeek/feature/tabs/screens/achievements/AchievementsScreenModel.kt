@@ -16,17 +16,17 @@ import cafe.adriel.voyager.core.model.screenModelScope
 import com.bizilabs.streeek.lib.domain.models.AccountDomain
 import com.bizilabs.streeek.lib.domain.models.LevelDomain
 import com.bizilabs.streeek.lib.domain.repositories.AccountRepository
+import com.bizilabs.streeek.lib.domain.repositories.LevelRepository
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.koin.dsl.module
+import timber.log.Timber
 import kotlin.enums.EnumEntries
 
 internal val AchievementsModule = module {
     factory<AchievementsScreenModel> {
-        AchievementsScreenModel(
-            accountRepository = get()
-        )
+        AchievementsScreenModel(accountRepository = get(), levelRepository = get())
     }
 }
 
@@ -46,8 +46,9 @@ enum class AchievementTab {
 
 data class AchievementScreenState(
     val account: AccountDomain? = null,
-    val tab: AchievementTab = AchievementTab.BADGES,
-    val tabs: EnumEntries<AchievementTab> = AchievementTab.entries
+    val tab: AchievementTab = AchievementTab.LEVELS,
+    val tabs: EnumEntries<AchievementTab> = AchievementTab.entries,
+    val levels: List<LevelDomain> = emptyList()
 ) {
     val points: Long
         get() = account?.points ?: 0
@@ -57,12 +58,14 @@ data class AchievementScreenState(
 }
 
 class AchievementsScreenModel(
-    private val accountRepository: AccountRepository
+    private val accountRepository: AccountRepository,
+    private val levelRepository: LevelRepository
 ) : StateScreenModel<AchievementScreenState>(AchievementScreenState()) {
 
     init {
         initiateAccountSync()
         observeAccount()
+        observeLevels()
     }
 
     private fun initiateAccountSync() {
@@ -75,6 +78,14 @@ class AchievementsScreenModel(
         screenModelScope.launch {
             accountRepository.account.collectLatest { account ->
                 mutableState.update { it.copy(account = account) }
+            }
+        }
+    }
+
+    private fun observeLevels(){
+        screenModelScope.launch {
+            levelRepository.levels.collectLatest { levels ->
+                mutableState.update { it.copy(levels = levels) }
             }
         }
     }

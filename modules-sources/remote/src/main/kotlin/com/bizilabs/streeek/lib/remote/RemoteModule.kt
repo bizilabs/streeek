@@ -13,6 +13,8 @@ import com.bizilabs.streeek.lib.remote.sources.auth.AuthenticationRemoteSource
 import com.bizilabs.streeek.lib.remote.sources.auth.AuthenticationRemoteSourceImpl
 import com.bizilabs.streeek.lib.remote.sources.contributions.ContributionsRemoteSource
 import com.bizilabs.streeek.lib.remote.sources.contributions.ContributionsRemoteSourceImpl
+import com.bizilabs.streeek.lib.remote.sources.level.LevelRemoteSource
+import com.bizilabs.streeek.lib.remote.sources.level.LevelRemoteSourceImpl
 import com.bizilabs.streeek.lib.remote.sources.preferences.RemotePreferencesSource
 import com.bizilabs.streeek.lib.remote.sources.preferences.RemotePreferencesSourceImpl
 import com.bizilabs.streeek.lib.remote.sources.team.TeamRemoteSource
@@ -65,4 +67,5 @@ val RemoteModule = module {
     }
     single<TeamRemoteSource> { TeamRemoteSourceImpl(supabase = get()) }
     single<TeamInvitationRemoteSource> { TeamInvitationRemoteSourceImpl(supabase = get()) }
+    single<LevelRemoteSource> { LevelRemoteSourceImpl(supabase = get()) }
 }

@@ -4,12 +4,14 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.bizilabs.streeek.lib.local.entities.ContributionEntity
+import com.bizilabs.streeek.lib.local.entities.LevelEntity
 import com.bizilabs.streeek.lib.local.sources.contributions.ContributionDAO
+import com.bizilabs.streeek.lib.local.sources.level.LevelDAO
 
 @Database(
-    entities = [ContributionEntity::class],
+    entities = [ContributionEntity::class, LevelEntity::class],
     exportSchema = true,
-    version = 1
+    version = 2
 )
 @TypeConverters()
 abstract class StreeekDatabase : RoomDatabase() {
@@ -17,4 +19,5 @@ abstract class StreeekDatabase : RoomDatabase() {
         const val DATABASE_NAME = "streeek.db"
     }
     abstract val contributions: ContributionDAO
+    abstract val levels: LevelDAO
 }

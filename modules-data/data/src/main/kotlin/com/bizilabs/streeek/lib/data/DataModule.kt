@@ -3,6 +3,7 @@ package com.bizilabs.streeek.lib.data
 import com.bizilabs.streeek.lib.data.repositories.AccountRepositoryImpl
 import com.bizilabs.streeek.lib.data.repositories.AuthenticationRepositoryImpl
 import com.bizilabs.streeek.lib.data.repositories.ContributionRepositoryImpl
+import com.bizilabs.streeek.lib.data.repositories.LevelRepositoryImpl
 import com.bizilabs.streeek.lib.data.repositories.PreferenceRepositoryImpl
 import com.bizilabs.streeek.lib.data.repositories.TeamInvitationRepositoryImpl
 import com.bizilabs.streeek.lib.data.repositories.TeamRepositoryImpl
@@ -10,6 +11,7 @@ import com.bizilabs.streeek.lib.data.repositories.UserRepositoryImpl
 import com.bizilabs.streeek.lib.domain.repositories.AccountRepository
 import com.bizilabs.streeek.lib.domain.repositories.AuthenticationRepository
 import com.bizilabs.streeek.lib.domain.repositories.ContributionRepository
+import com.bizilabs.streeek.lib.domain.repositories.LevelRepository
 import com.bizilabs.streeek.lib.domain.repositories.PreferenceRepository
 import com.bizilabs.streeek.lib.domain.repositories.TeamInvitationRepository
 import com.bizilabs.streeek.lib.domain.repositories.TeamRepository
@@ -38,5 +40,8 @@ val dataModule = module {
     }
     single<TeamInvitationRepository> {
         TeamInvitationRepositoryImpl(remote = get(), accountLocalSource = get())
+    }
+    single<LevelRepository> {
+        LevelRepositoryImpl(remoteSource = get(), localSource = get())
     }
 }

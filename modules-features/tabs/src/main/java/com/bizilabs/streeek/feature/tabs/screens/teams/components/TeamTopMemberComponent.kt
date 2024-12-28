@@ -31,6 +31,7 @@ import coil.compose.AsyncImage
 import com.bizilabs.streeek.lib.design.components.SafiCenteredColumn
 import com.bizilabs.streeek.lib.design.helpers.onSuccess
 import com.bizilabs.streeek.lib.design.helpers.success
+import com.bizilabs.streeek.lib.domain.extensions.asRank
 import com.bizilabs.streeek.lib.domain.models.TeamMemberDomain
 import com.bizilabs.streeek.lib.resources.SafiResources
 
@@ -90,7 +91,7 @@ fun TeamTopMemberComponent(
                                         vertical = 4.dp,
                                         horizontal = 8.dp
                                     ),
-                                text = "LV.${member?.rank ?: 0}",
+                                text = member?.rank.toString(),
                                 style = MaterialTheme.typography.labelSmall,
                                 fontWeight = FontWeight.Bold
                             )

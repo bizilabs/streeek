@@ -21,8 +21,10 @@ import com.bizilabs.streeek.lib.domain.models.ContributionDomain
 import com.bizilabs.streeek.lib.domain.models.UserEventDomain
 import com.bizilabs.streeek.lib.domain.repositories.AccountRepository
 import com.bizilabs.streeek.lib.domain.repositories.ContributionRepository
+import com.bizilabs.streeek.lib.domain.workers.startImmediateLevelsSyncWork
 import com.bizilabs.streeek.lib.domain.workers.startPeriodicAccountSyncWork
 import com.bizilabs.streeek.lib.domain.workers.startPeriodicDailySyncContributionsWork
+import com.bizilabs.streeek.lib.domain.workers.startPeriodicLevelsSyncWork
 import com.bizilabs.streeek.lib.domain.workers.startPeriodicTeamsSyncWork
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -59,7 +61,7 @@ enum class Tabs {
 }
 
 data class TabsScreenState(
-    val tab: Tabs = Tabs.TEAMS,
+    val tab: Tabs = Tabs.ACHIEVEMENTS,
     val tabs: List<Tabs> = Tabs.entries.toList(),
     val accountState: FetchState<AccountDomain> = FetchState.Loading,
     val eventsState: FetchState<List<UserEventDomain>> = FetchState.Loading,
@@ -81,6 +83,7 @@ class TabsScreenModel(
     private fun startWorkers() {
         with(context) {
             startPeriodicTeamsSyncWork()
+            startPeriodicLevelsSyncWork()
             startPeriodicAccountSyncWork()
             startPeriodicDailySyncContributionsWork()
         }
