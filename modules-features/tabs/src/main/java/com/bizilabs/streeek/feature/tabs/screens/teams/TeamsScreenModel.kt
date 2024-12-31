@@ -95,4 +95,10 @@ class TeamsScreenModel(
         }
     }
 
+    fun onValueChangeTeam(team: TeamDetailsDomain) {
+        screenModelScope.launch {
+            repository.setSelectedTeam(team = team)
+        }
+    }
+
 }

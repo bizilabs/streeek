@@ -61,7 +61,7 @@ enum class Tabs {
 }
 
 data class TabsScreenState(
-    val tab: Tabs = Tabs.ACHIEVEMENTS,
+    val tab: Tabs = Tabs.TEAMS,
     val tabs: List<Tabs> = Tabs.entries.toList(),
     val accountState: FetchState<AccountDomain> = FetchState.Loading,
     val eventsState: FetchState<List<UserEventDomain>> = FetchState.Loading,

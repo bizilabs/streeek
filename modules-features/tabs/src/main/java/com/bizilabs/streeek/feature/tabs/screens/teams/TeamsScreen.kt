@@ -5,7 +5,6 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,7 +14,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
@@ -35,6 +33,8 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Tab
+import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -57,6 +57,7 @@ import com.bizilabs.streeek.lib.design.components.SafiCenteredColumn
 import com.bizilabs.streeek.lib.design.components.SafiCenteredRow
 import com.bizilabs.streeek.lib.design.components.SafiInfoSection
 import com.bizilabs.streeek.lib.domain.extensions.asRank
+import com.bizilabs.streeek.lib.domain.models.TeamDetailsDomain
 import com.bizilabs.streeek.lib.domain.models.TeamDomain
 
 object TeamsScreen : Screen {
@@ -71,7 +72,8 @@ object TeamsScreen : Screen {
             state = state,
             onClickMenuCreateTeam = screenModel::onClickMenuTeamCreate,
             onClickMenuJoinTeam = screenModel::onClickMenuTeamJoin,
-            onClickTeam = screenModel::onClickTeam
+            onClickTeam = screenModel::onClickTeam,
+            onValueChangeTeam = screenModel::onValueChangeTeam
         ) { screen ->
             navigator?.push(screen)
         }
@@ -85,6 +87,7 @@ fun TeamsScreenContent(
     onClickMenuCreateTeam: () -> Unit,
     onClickMenuJoinTeam: () -> Unit,
     onClickTeam: (TeamDomain) -> Unit,
+    onValueChangeTeam: (TeamDetailsDomain) -> Unit,
     navigate: (Screen) -> Unit
 ) {
 
@@ -104,7 +107,7 @@ fun TeamsScreenContent(
                 modifier = Modifier.fillMaxWidth(),
                 onClickMenuCreateTeam = onClickMenuCreateTeam,
                 onClickMenuJoinTeam = onClickMenuJoinTeam,
-                onClickTeam = onClickTeam
+                onValueChangeTeam = onValueChangeTeam
             )
         }
     ) { paddingValues ->
@@ -121,7 +124,7 @@ fun TeamsScreenContent(
                         SafiInfoSection(
                             icon = Icons.Rounded.People,
                             title = "Empty",
-                            description = "Join a team to see the list"
+                            description = "Join a team to continue"
                         )
                     }
                 }
@@ -133,7 +136,14 @@ fun TeamsScreenContent(
                                 icon = Icons.Rounded.People,
                                 title = "No Other Members",
                                 description = "You're only three members in this team, invite others to continue."
-                            )
+                            ) {
+                                Button(
+                                    modifier = Modifier.padding(16.dp),
+                                    onClick = { state.team?.let { it -> onClickTeam(it.team) } }
+                                ) {
+                                    Text(text = "View More")
+                                }
+                            }
                         }
                     else
                         LazyColumn {
@@ -199,6 +209,14 @@ fun TeamsScreenContent(
                                     }
                                 }
                             }
+                            item {
+                                Button(
+                                    modifier = Modifier.padding(16.dp),
+                                    onClick = { state.team?.let { it -> onClickTeam(it.team) } }
+                                ) {
+                                    Text(text = "View More")
+                                }
+                            }
                         }
                 }
             }
@@ -212,7 +230,7 @@ fun TeamsScreenHeaderSection(
     state: TeamsScreenState,
     onClickMenuCreateTeam: () -> Unit,
     onClickMenuJoinTeam: () -> Unit,
-    onClickTeam: (TeamDomain) -> Unit,
+    onValueChangeTeam: (TeamDetailsDomain) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Surface(modifier = modifier) {
@@ -256,40 +274,21 @@ fun TeamsScreenHeaderSection(
                     .fillMaxWidth(),
                 visible = state.teams.isNotEmpty()
             ) {
-                val pagerState = rememberPagerState { state.teams.size }
-                HorizontalPager(
+                val index = state.teams.indexOf(state.team)
+
+                TabRow(
                     modifier = Modifier.fillMaxWidth(),
-                    state = pagerState
-                ) { index ->
-                    val team = state.teams[index]
-                    val isCurrentTeam = state.team?.team?.id == team.team.id
-                    SafiCenteredColumn(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .combinedClickable(
-                                onClick = {},
-                                onLongClick = { onClickTeam(team.team) }
-                            )
-                    ) {
-                        Text(
-                            text = team.team.name,
-                            fontWeight = if (isCurrentTeam) FontWeight.Bold else FontWeight.Normal,
-                            style = if (isCurrentTeam)
-                                MaterialTheme.typography.titleMedium
-                            else
-                                MaterialTheme.typography.bodyMedium,
-                            color = if (isCurrentTeam)
-                                MaterialTheme.colorScheme.primary
-                            else
-                                MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
-                        )
-                        AnimatedVisibility(visible = isCurrentTeam) {
-                            Box(
-                                modifier = Modifier
-                                    .padding(8.dp)
-                                    .size(8.dp)
-                                    .clip(CircleShape)
-                                    .background(MaterialTheme.colorScheme.primary)
+                    selectedTabIndex = index,
+                    indicator = { it -> }
+                ) {
+                    state.teams.forEach {
+                        val selected = it.team.id == state.team?.team?.id
+                        Tab(selected = selected, onClick = { onValueChangeTeam(it) }) {
+                            Text(
+                                modifier = Modifier.padding(8.dp),
+                                text = it.team.name,
+                                color = if (selected) MaterialTheme.colorScheme.primary
+                                else MaterialTheme.colorScheme.onSurface.copy(0.75f),
                             )
                         }
                     }
@@ -314,7 +313,8 @@ fun TeamsScreenHeaderSection(
                             member = state.team.top[1]
                         )
                         TeamTopMemberComponent(
-                            isFirst = true, modifier = Modifier.weight(1f),
+                            isFirst = true,
+                            modifier = Modifier.weight(1f),
                             member = state.team.top[0]
                         )
                         TeamTopMemberComponent(
