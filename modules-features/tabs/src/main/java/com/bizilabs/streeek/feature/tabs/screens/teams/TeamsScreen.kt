@@ -279,7 +279,6 @@ fun TeamsScreenHeaderSection(
                 TabRow(
                     modifier = Modifier.fillMaxWidth(),
                     selectedTabIndex = index,
-                    indicator = { it -> }
                 ) {
                     state.teams.forEach {
                         val selected = it.team.id == state.team?.team?.id

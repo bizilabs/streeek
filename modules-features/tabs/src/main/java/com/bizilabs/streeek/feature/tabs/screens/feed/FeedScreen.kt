@@ -60,10 +60,12 @@ import com.bizilabs.streeek.lib.design.components.SafiInfoSection
 import com.bizilabs.streeek.lib.design.helpers.SetupStatusBarColor
 import com.bizilabs.streeek.lib.domain.helpers.asString
 import com.bizilabs.streeek.lib.domain.helpers.dayShort
+import com.bizilabs.streeek.lib.domain.helpers.isSameDay
 import com.bizilabs.streeek.lib.domain.models.ContributionDomain
 import com.bizilabs.streeek.lib.resources.SafiResources
 import com.kizitonwose.calendar.compose.WeekCalendar
 import com.kizitonwose.calendar.core.WeekDay
+import com.kizitonwose.calendar.core.now
 import kotlinx.datetime.LocalDate
 
 object FeedScreen : Screen {
@@ -248,21 +250,37 @@ private fun CalendarItem(
     onClickDate: (LocalDate) -> Unit
 ) {
     val date = day.date
+    val isToday = date.isSameDay(LocalDate.now())
     val isSelected = selectedDate == date
-    val border = if (isSelected)
-        BorderStroke(1.dp, MaterialTheme.colorScheme.onSurface)
-    else
-        BorderStroke(0.dp, Color.Transparent)
+
+    val isFutureDate = day.date > LocalDate.now()
+    val isPastDate = day.date > LocalDate.now()
+
+    val border = when {
+        isSelected -> BorderStroke(1.dp, MaterialTheme.colorScheme.primary)
+        else -> BorderStroke(0.dp, Color.Transparent)
+    }
+    val containerColor = when {
+        isSelected -> MaterialTheme.colorScheme.primary
+        isToday -> MaterialTheme.colorScheme.onSurface.copy(0.25f)
+        else -> Color.Transparent
+    }
+    val contentColor = when {
+        isSelected -> MaterialTheme.colorScheme.onPrimary
+        isToday -> MaterialTheme.colorScheme.onSurface
+        else -> MaterialTheme.colorScheme.onSurface
+    }
+
     Card(
         modifier = modifier,
         onClick = { onClickDate(date) },
+        enabled = isFutureDate.not(),
         border = border,
         colors = CardDefaults.cardColors(
-            contentColor = if (isSelected)
-                MaterialTheme.colorScheme.onSurface
-            else
-                MaterialTheme.colorScheme.onSurface.copy(0.5f),
-            containerColor = if (isSelected) MaterialTheme.colorScheme.surface else Color.Transparent
+            contentColor = contentColor,
+            containerColor = containerColor,
+            disabledContentColor = MaterialTheme.colorScheme.onSurface.copy(0.5f),
+            disabledContainerColor = Color.Transparent
         )
     ) {
         SafiCenteredColumn(
