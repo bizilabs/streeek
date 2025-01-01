@@ -100,14 +100,13 @@ fun LocalDate.isSameDay(date: LocalDate): Boolean {
 }
 
 fun LocalDate.isPastDue(): Boolean {
-    val past: LocalDate = this.minus(DatePeriod(0, 0, 2))
-    return this.atTime(0,0,0,0).asUTC < past.atTime(0,0,0,0).asUTC
+    return this.asLocalDateTime().isPastDue()
 }
 
 fun LocalDateTime.isPastDue(): Boolean {
-    val today = Clock.System.now()
+    val today = LocalDate(2025, 1, 1).asLocalDateTime().asSystem
     val past = today.minus(this.asSystem)
-    return past.inWholeDays >= 4
+    return past.inWholeDays < 1
 }
 
 val LocalDate.dayShort

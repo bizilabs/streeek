@@ -1,6 +1,7 @@
 package com.bizilabs.streeek.lib.remote.models
 
 import com.bizilabs.streeek.lib.remote.models.supabase.LevelDTO
+import com.bizilabs.streeek.lib.remote.models.supabase.StreakDTO
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -25,7 +26,8 @@ data class AccountFullDTO(
     val account: AccountDTO,
     @SerialName("total_points")
     val points: Long? = 0,
-    val level: LevelDTO? = null
+    val level: LevelDTO? = null,
+    val streak: StreakDTO? = null
 )
 
 @Serializable

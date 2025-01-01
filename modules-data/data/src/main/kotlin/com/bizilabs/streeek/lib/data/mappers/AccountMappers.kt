@@ -20,7 +20,8 @@ fun AccountDTO.toDomain(): AccountDomain = AccountDomain(
     createdAt = createdAt.asDate(format = DateFormats.YYYY_MM_dd_T_HH_mm_ss)?.datetimeSystem ?: SystemLocalDateTime,
     updatedAt = updatedAt.asDate(format = DateFormats.YYYY_MM_dd_T_HH_mm_ss)?.datetimeSystem ?: SystemLocalDateTime,
     points = 0,
-    level = null
+    level = null,
+    streak = null
 )
 
 fun AccountDomain.toCache(): AccountCache = AccountCache(
@@ -33,7 +34,8 @@ fun AccountDomain.toCache(): AccountCache = AccountCache(
     createdAt = createdAt.asString(format = DateFormats.ISO_8601_Z) ?: "",
     updatedAt = updatedAt.asString(format = DateFormats.ISO_8601_Z) ?: "",
     points = points,
-    level = level?.toCache()
+    level = level?.toCache(),
+    streak= streak?.toCache()
 )
 
 fun AccountCache.toDomain(): AccountDomain = AccountDomain(
@@ -46,7 +48,8 @@ fun AccountCache.toDomain(): AccountDomain = AccountDomain(
     createdAt = createdAt.asDate(format = DateFormats.ISO_8601_Z)?.datetimeSystem ?: SystemLocalDateTime,
     updatedAt = updatedAt.asDate(format = DateFormats.ISO_8601_Z)?.datetimeSystem ?: SystemLocalDateTime,
     points = points,
-    level = level?.toDomain()
+    level = level?.toDomain(),
+    streak = streak?.toDomain()
 )
 
 fun AccountFullDTO.toDomain() = AccountDomain(
@@ -59,5 +62,6 @@ fun AccountFullDTO.toDomain() = AccountDomain(
     createdAt = account.createdAt.asDate(format = DateFormats.YYYY_MM_dd_T_HH_mm_ss)?.datetimeSystem ?: SystemLocalDateTime,
     updatedAt = account.updatedAt.asDate(format = DateFormats.YYYY_MM_dd_T_HH_mm_ss)?.datetimeSystem ?: SystemLocalDateTime,
     points = points ?: 0,
-    level = level?.toDomain()
+    level = level?.toDomain(),
+    streak = streak?.toDomain()
 )

@@ -12,5 +12,6 @@ data class AccountDomain(
     val createdAt: LocalDateTime,
     val updatedAt: LocalDateTime,
     val points: Long,
-    val level: LevelDomain?
+    val level: LevelDomain?,
+    val streak: StreakDomain?
 )

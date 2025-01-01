@@ -6,6 +6,7 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -17,7 +18,11 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.IconButton
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.CalendarMonth
+import androidx.compose.material.icons.rounded.CalendarViewWeek
+import androidx.compose.material.icons.rounded.LocalFireDepartment
 import androidx.compose.material.icons.rounded.PushPin
 import androidx.compose.material.icons.rounded.Refresh
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
@@ -58,12 +63,16 @@ import com.bizilabs.streeek.lib.design.components.SafiCenteredColumn
 import com.bizilabs.streeek.lib.design.components.SafiCenteredRow
 import com.bizilabs.streeek.lib.design.components.SafiInfoSection
 import com.bizilabs.streeek.lib.design.helpers.SetupStatusBarColor
+import com.bizilabs.streeek.lib.domain.helpers.DateFormats
 import com.bizilabs.streeek.lib.domain.helpers.asString
 import com.bizilabs.streeek.lib.domain.helpers.dayShort
 import com.bizilabs.streeek.lib.domain.helpers.isSameDay
 import com.bizilabs.streeek.lib.domain.models.ContributionDomain
 import com.bizilabs.streeek.lib.resources.SafiResources
+import com.kizitonwose.calendar.compose.HorizontalCalendar
 import com.kizitonwose.calendar.compose.WeekCalendar
+import com.kizitonwose.calendar.core.CalendarDay
+import com.kizitonwose.calendar.core.CalendarMonth
 import com.kizitonwose.calendar.core.WeekDay
 import com.kizitonwose.calendar.core.now
 import kotlinx.datetime.LocalDate
@@ -85,6 +94,7 @@ object FeedScreen : Screen {
             contributions = contributions,
             onClickDate = screenModel::onClickDate,
             onRefreshContributions = screenModel::onRefreshContributions,
+            onClickToggleMonthView = screenModel::onClickToggleMonthView,
             onClickProfile = {
                 navigator?.push(profileScreen)
             }
@@ -101,6 +111,7 @@ fun FeedScreenContent(
     onClickDate: (LocalDate) -> Unit,
     onRefreshContributions: () -> Unit,
     onClickProfile: () -> Unit,
+    onClickToggleMonthView: () -> Unit,
 ) {
 
     val pullRefreshState =
@@ -110,19 +121,60 @@ fun FeedScreenContent(
         topBar = {
             Surface(shadowElevation = 2.dp) {
                 Column(modifier = Modifier.fillMaxWidth()) {
-                    FeedHeader(selectedDate = date, state = state, onClickProfile = onClickProfile)
-                    WeekCalendar(
-                        dayContent = { weekDay ->
-                            CalendarItem(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(horizontal = 8.dp, vertical = 8.dp),
-                                day = weekDay,
-                                selectedDate = date,
-                                onClickDate = onClickDate
-                            )
-                        }
+                    FeedHeader(
+                        selectedDate = date,
+                        state = state,
+                        onClickToggleMonthView = onClickToggleMonthView
                     )
+                    AnimatedContent(
+                        modifier = Modifier.fillMaxWidth(),
+                        targetState = state.isMonthView,
+                        label = "animated month"
+                    ) { isMonthView ->
+                        when (isMonthView) {
+                            true -> {
+                                HorizontalCalendar(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(horizontal = 8.dp, vertical = 8.dp),
+                                    dayContent = { day: CalendarDay ->
+                                        CalendarItem(
+                                            isMonthView,
+                                            modifier = Modifier.fillMaxWidth(),
+                                            day = day.date,
+                                            selectedDate = date,
+                                            onClickDate = onClickDate
+                                        )
+                                    },
+                                    monthHeader = {
+                                        MonthHeader(
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .padding(vertical = 8.dp),
+                                            calendarMonth = it,
+                                        )
+                                    }
+                                )
+                            }
+
+                            false -> {
+                                WeekCalendar(
+                                    dayContent = { weekDay ->
+                                        CalendarItem(
+                                            isMonthView = isMonthView,
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .padding(horizontal = 8.dp, vertical = 8.dp),
+                                            day = weekDay.date,
+                                            selectedDate = date,
+                                            onClickDate = onClickDate
+                                        )
+                                    }
+                                )
+                            }
+                        }
+                    }
+
                     HorizontalDivider()
                 }
             }
@@ -182,9 +234,30 @@ private fun FeedContent(
                                 SafiInfoSection(
                                     icon = Icons.Rounded.PushPin,
                                     title = "No Contributions Found",
-                                    description = "You haven't been busy today... Push some few commits!"
+                                    description = if (state.isToday)
+                                        "You haven't been busy today... Push some few commits!"
+                                    else
+                                        "Seems you we\'ren\'t busy on ${
+                                            buildString {
+                                                append(
+                                                    state.selectedDate.dayOfWeek.name.lowercase()
+                                                        .replaceFirstChar { it.uppercase() }
+                                                )
+                                                append(" ")
+                                                append(state.selectedDate.dayOfMonth)
+                                                append(" ")
+                                                append(
+                                                    state.selectedDate.month.name.lowercase()
+                                                        .replaceFirstChar { it.uppercase() }
+                                                )
+                                                append(" ")
+                                                append(state.selectedDate.year)
+                                            }
+                                        }"
                                 )
-                                AnimatedVisibility(visible = state.isSyncing.not()) {
+                                AnimatedVisibility(
+                                    visible = state.isSyncing.not() && state.isToday
+                                ) {
                                     SmallFloatingActionButton(onClick = onRefreshContributions) {
                                         Icon(
                                             imageVector = Icons.Rounded.Refresh,
@@ -243,18 +316,43 @@ private fun FeedContent(
 }
 
 @Composable
+private fun MonthHeader(
+    calendarMonth: CalendarMonth,
+    modifier: Modifier = Modifier,
+) {
+    val daysOfWeek = calendarMonth.weekDays.first().map { it.date.dayOfWeek }
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.Center,
+    ) {
+        Row(modifier = Modifier.fillMaxWidth()) {
+            for (dayOfWeek in daysOfWeek) {
+                Text(
+                    modifier = Modifier.weight(1f),
+                    textAlign = TextAlign.Center,
+                    fontSize = MaterialTheme.typography.bodyMedium.fontSize,
+                    text = dayOfWeek.name.take(3).lowercase().replaceFirstChar { it.uppercase() },
+                    fontWeight = FontWeight.SemiBold,
+                )
+            }
+        }
+    }
+}
+
+@Composable
 private fun CalendarItem(
+    isMonthView: Boolean,
     selectedDate: LocalDate,
-    day: WeekDay,
+    day: LocalDate,
     modifier: Modifier = Modifier,
     onClickDate: (LocalDate) -> Unit
 ) {
-    val date = day.date
+    val date = day
     val isToday = date.isSameDay(LocalDate.now())
     val isSelected = selectedDate == date
 
-    val isFutureDate = day.date > LocalDate.now()
-    val isPastDate = day.date > LocalDate.now()
+    val isFutureDate = day > LocalDate.now()
+    val isPastDate = day > LocalDate.now()
 
     val border = when {
         isSelected -> BorderStroke(1.dp, MaterialTheme.colorScheme.primary)
@@ -288,10 +386,13 @@ private fun CalendarItem(
                 .fillMaxWidth()
                 .padding(vertical = 8.dp)
         ) {
-            Text(
-                text = date.dayShort,
-                fontSize = MaterialTheme.typography.labelSmall.fontSize
-            )
+
+            AnimatedVisibility(visible = isMonthView.not()) {
+                Text(
+                    text = date.dayShort,
+                    fontSize = MaterialTheme.typography.labelSmall.fontSize
+                )
+            }
             Text(
                 text = if (date.dayOfMonth < 10) "0${date.dayOfMonth}" else "${date.dayOfMonth}",
                 fontSize = MaterialTheme.typography.titleMedium.fontSize,
@@ -305,49 +406,52 @@ private fun CalendarItem(
 private fun FeedHeader(
     selectedDate: LocalDate,
     state: FeedScreenState,
-    onClickProfile: () -> Unit,
+    onClickToggleMonthView: () -> Unit,
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Card(
-            modifier = Modifier
-                .padding(start = 16.dp)
-                .size(32.dp),
-            onClick = {},
-            shape = RoundedCornerShape(20),
-            border = BorderStroke(2.dp, MaterialTheme.colorScheme.onBackground)
-        ) {
-            Image(
-                modifier = Modifier.fillMaxSize(),
-                painter = painterResource(SafiResources.Drawables.Icon),
-                contentDescription = "app_logo",
-                contentScale = ContentScale.Crop
-            )
-        }
 
         Text(
-            modifier = Modifier.weight(1f),
-            text = selectedDate.month.name.lowercase().replaceFirstChar { it.uppercase() },
+            modifier = Modifier
+                .padding(start = 16.dp)
+                .weight(1f),
+            text = if (state.isToday)
+                "Today"
+            else selectedDate.month.name.lowercase()
+                .replaceFirstChar { it.uppercase() },
             fontWeight = FontWeight.Bold,
             fontSize = MaterialTheme.typography.titleLarge.fontSize,
-            textAlign = TextAlign.Center
         )
 
-        Card(
-            modifier = Modifier.padding(16.dp),
-            onClick = onClickProfile,
-            shape = RoundedCornerShape(20),
-            border = BorderStroke(1.dp, MaterialTheme.colorScheme.onBackground)
+        val streak = state.account?.streak
+
+        AnimatedVisibility(
+            modifier = Modifier.padding(horizontal = 16.dp),
+            visible = streak != null
         ) {
-            AsyncImage(
-                modifier = Modifier
-                    .size(32.dp)
-                    .clip(RoundedCornerShape(20)),
-                model = state.account?.avatarUrl,
-                contentDescription = "user avatar url",
-                contentScale = ContentScale.Crop
+            if (streak != null)
+                SafiCenteredRow {
+                    Text(
+                        modifier = Modifier.padding(end = 8.dp),
+                        text = streak.current.toString(),
+                        fontWeight = FontWeight.Bold,
+                        fontSize = MaterialTheme.typography.titleMedium.fontSize
+                    )
+                    Icon(
+                        imageVector = Icons.Rounded.LocalFireDepartment,
+                        contentDescription = "pin",
+                        tint = Color(0xFFFF4F00)
+                    )
+                }
+        }
+
+        IconButton(onClick = onClickToggleMonthView) {
+            Icon(
+                imageVector = if (state.isMonthView) Icons.Rounded.CalendarMonth else Icons.Rounded.CalendarViewWeek,
+                contentDescription = "pin",
+                tint = MaterialTheme.colorScheme.onBackground
             )
         }
 
