@@ -20,8 +20,10 @@ import com.bizilabs.streeek.lib.remote.models.CreateContributionDTO
 import com.bizilabs.streeek.lib.remote.sources.contributions.ContributionsRemoteSource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.datetime.LocalDate
+import kotlinx.datetime.LocalDateTime
 import timber.log.Timber
 
 class ContributionRepositoryImpl(
@@ -32,6 +34,9 @@ class ContributionRepositoryImpl(
 
     override val contributions: Flow<List<ContributionDomain>>
         get() = local.contributions.mapLatest { list -> list.map { it.toDomain() } }
+
+    override val dates: Flow<List<LocalDateTime>>
+        get() = local.dates.map { list -> list.map { it.toDomain().githubEventDate } }
 
     private suspend fun getAccount() = accountLocalSource.account.first()
 

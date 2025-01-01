@@ -3,8 +3,8 @@
 
     <style name="Theme.Streeek" parent="android:Theme.Material.Light.NoActionBar" />
 
-    <style name="Theme.Rhyme.Splash" parent="Theme.SplashScreen">
-        <item name="windowSplashScreenBackground">#FFFFFFFF</item>
+    <style name="Theme.Streeek.Splash" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/background</item>
         <item name="windowSplashScreenAnimatedIcon">@drawable/icon_launcher_foreground</item>
         <item name="postSplashScreenTheme">@style/Theme.Streeek</item>
     </style>

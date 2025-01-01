@@ -39,8 +39,9 @@ data class FeedScreenState(
     val isMonthView: Boolean = false,
     val account: AccountDomain? = null,
     val isFetchingContributions: Boolean = true,
-    val selectedDate: LocalDate = LocalDate.now()
-){
+    val selectedDate: LocalDate = LocalDate.now(),
+    val dates: List<LocalDate> = emptyList()
+) {
     val isToday: Boolean
         get() = selectedDate == LocalDate.now()
 }
@@ -63,8 +64,17 @@ class FeedScreenModel(
     }
 
     init {
+        observeDates()
         observeAccount()
         observeSyncingContributions()
+    }
+
+    private fun observeDates() {
+        screenModelScope.launch {
+            contributionRepository.dates.collectLatest { dates ->
+                mutableState.update { it.copy(dates = dates.map { it.date }) }
+            }
+        }
     }
 
     private fun observeAccount() {

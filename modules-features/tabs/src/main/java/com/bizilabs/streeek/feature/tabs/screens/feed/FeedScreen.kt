@@ -5,7 +5,6 @@ import android.widget.Toast
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,7 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.IconButton
 import androidx.compose.material.icons.Icons
@@ -43,11 +42,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -57,23 +53,19 @@ import cafe.adriel.voyager.core.registry.rememberScreen
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.getScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
-import coil.compose.AsyncImage
 import com.bizilabs.streeek.lib.common.navigation.SharedScreen
 import com.bizilabs.streeek.lib.design.components.SafiCenteredColumn
 import com.bizilabs.streeek.lib.design.components.SafiCenteredRow
 import com.bizilabs.streeek.lib.design.components.SafiInfoSection
-import com.bizilabs.streeek.lib.design.helpers.SetupStatusBarColor
-import com.bizilabs.streeek.lib.domain.helpers.DateFormats
-import com.bizilabs.streeek.lib.domain.helpers.asString
+import com.bizilabs.streeek.lib.design.helpers.onSuccess
+import com.bizilabs.streeek.lib.design.helpers.success
 import com.bizilabs.streeek.lib.domain.helpers.dayShort
 import com.bizilabs.streeek.lib.domain.helpers.isSameDay
 import com.bizilabs.streeek.lib.domain.models.ContributionDomain
-import com.bizilabs.streeek.lib.resources.SafiResources
 import com.kizitonwose.calendar.compose.HorizontalCalendar
 import com.kizitonwose.calendar.compose.WeekCalendar
 import com.kizitonwose.calendar.core.CalendarDay
 import com.kizitonwose.calendar.core.CalendarMonth
-import com.kizitonwose.calendar.core.WeekDay
 import com.kizitonwose.calendar.core.now
 import kotlinx.datetime.LocalDate
 
@@ -94,10 +86,7 @@ object FeedScreen : Screen {
             contributions = contributions,
             onClickDate = screenModel::onClickDate,
             onRefreshContributions = screenModel::onRefreshContributions,
-            onClickToggleMonthView = screenModel::onClickToggleMonthView,
-            onClickProfile = {
-                navigator?.push(profileScreen)
-            }
+            onClickToggleMonthView = screenModel::onClickToggleMonthView
         )
     }
 }
@@ -110,12 +99,13 @@ fun FeedScreenContent(
     contributions: List<ContributionDomain>,
     onClickDate: (LocalDate) -> Unit,
     onRefreshContributions: () -> Unit,
-    onClickProfile: () -> Unit,
     onClickToggleMonthView: () -> Unit,
 ) {
 
-    val pullRefreshState =
-        rememberPullRefreshState(refreshing = state.isSyncing, onRefresh = onRefreshContributions)
+    val pullRefreshState = rememberPullRefreshState(
+        refreshing = state.isSyncing,
+        onRefresh = onRefreshContributions
+    )
 
     Scaffold(
         topBar = {
@@ -139,7 +129,8 @@ fun FeedScreenContent(
                                         .padding(horizontal = 8.dp, vertical = 8.dp),
                                     dayContent = { day: CalendarDay ->
                                         CalendarItem(
-                                            isMonthView,
+                                            hasContribution = state.dates.contains(day.date),
+                                            isMonthView = isMonthView,
                                             modifier = Modifier.fillMaxWidth(),
                                             day = day.date,
                                             selectedDate = date,
@@ -161,6 +152,7 @@ fun FeedScreenContent(
                                 WeekCalendar(
                                     dayContent = { weekDay ->
                                         CalendarItem(
+                                            hasContribution = state.dates.contains(weekDay.date),
                                             isMonthView = isMonthView,
                                             modifier = Modifier
                                                 .fillMaxWidth()
@@ -342,6 +334,7 @@ private fun MonthHeader(
 @Composable
 private fun CalendarItem(
     isMonthView: Boolean,
+    hasContribution: Boolean,
     selectedDate: LocalDate,
     day: LocalDate,
     modifier: Modifier = Modifier,
@@ -386,18 +379,39 @@ private fun CalendarItem(
                 .fillMaxWidth()
                 .padding(vertical = 8.dp)
         ) {
-
             AnimatedVisibility(visible = isMonthView.not()) {
                 Text(
                     text = date.dayShort,
                     fontSize = MaterialTheme.typography.labelSmall.fontSize
                 )
             }
-            Text(
-                text = if (date.dayOfMonth < 10) "0${date.dayOfMonth}" else "${date.dayOfMonth}",
-                fontSize = MaterialTheme.typography.titleMedium.fontSize,
-                fontWeight = FontWeight.Bold
-            )
+            Card(
+                shape = CircleShape,
+                enabled = isFutureDate.not(),
+                onClick = { onClickDate(date) },
+                colors = CardDefaults.cardColors(
+                    containerColor = when {
+                        isSelected -> containerColor
+                        hasContribution -> MaterialTheme.colorScheme.success
+                        else -> Color.Transparent
+                    },
+                    contentColor = when {
+                        isSelected -> contentColor
+                        hasContribution -> MaterialTheme.colorScheme.onSuccess
+                        else -> contentColor
+                    },
+                    disabledContentColor = MaterialTheme.colorScheme.onSurface.copy(0.5f),
+                    disabledContainerColor = Color.Transparent
+                )
+            ) {
+                Text(
+                    modifier = Modifier.padding(8.dp),
+                    text = if (date.dayOfMonth < 10) "0${date.dayOfMonth}" else "${date.dayOfMonth}",
+                    fontSize = MaterialTheme.typography.titleMedium.fontSize,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+
         }
     }
 }
@@ -415,7 +429,7 @@ private fun FeedHeader(
 
         Text(
             modifier = Modifier
-                .padding(start = 16.dp)
+                .padding(start = 24.dp)
                 .weight(1f),
             text = if (state.isToday)
                 "Today"
@@ -447,9 +461,9 @@ private fun FeedHeader(
                 }
         }
 
-        IconButton(onClick = onClickToggleMonthView) {
+        IconButton(modifier = Modifier.padding(end = 16.dp), onClick = onClickToggleMonthView) {
             Icon(
-                imageVector = if (state.isMonthView) Icons.Rounded.CalendarMonth else Icons.Rounded.CalendarViewWeek,
+                imageVector = if (state.isMonthView.not()) Icons.Rounded.CalendarMonth else Icons.Rounded.CalendarViewWeek,
                 contentDescription = "pin",
                 tint = MaterialTheme.colorScheme.onBackground
             )

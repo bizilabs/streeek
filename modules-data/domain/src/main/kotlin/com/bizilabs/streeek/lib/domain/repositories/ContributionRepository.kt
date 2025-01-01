@@ -5,9 +5,11 @@ import com.bizilabs.streeek.lib.domain.models.ContributionDomain
 import com.bizilabs.streeek.lib.domain.models.UserEventDomain
 import kotlinx.coroutines.flow.Flow
 import kotlinx.datetime.LocalDate
+import kotlinx.datetime.LocalDateTime
 
 interface ContributionRepository {
     val contributions: Flow<List<ContributionDomain>>
+    val dates: Flow<List<LocalDateTime>>
     suspend fun getEvent(id: String): DataResult<UserEventDomain>
     suspend fun getEvents(page: Int): DataResult<List<UserEventDomain>>
 

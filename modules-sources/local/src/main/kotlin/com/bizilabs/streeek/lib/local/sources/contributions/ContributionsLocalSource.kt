@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.mapLatest
 
 interface ContributionsLocalSource {
     val contributions: Flow<List<ContributionCache>>
+    val dates: Flow<List<ContributionCache>>
     suspend fun create(contribution: ContributionCache): LocalResult<Boolean>
     suspend fun create(contributions: List<ContributionCache>): LocalResult<Boolean>
     suspend fun update(contribution: ContributionCache): LocalResult<ContributionCache>
@@ -21,8 +22,12 @@ interface ContributionsLocalSource {
 class ContributionsLocalSourceImpl(
     private val dao: ContributionDAO
 ) : ContributionsLocalSource {
+
     override val contributions: Flow<List<ContributionCache>>
         get() = dao.selectAll().mapLatest { it.map { it.toCache() } }
+
+    override val dates: Flow<List<ContributionCache>>
+        get() = dao.getDistinctContributionsByDate().mapLatest { it.map { it.toCache() } }
 
     override suspend fun create(contribution: ContributionCache): LocalResult<Boolean> =
         safeTransaction {
@@ -59,5 +64,4 @@ class ContributionsLocalSourceImpl(
         dao.delete(id = id)
         true
     }
-
 }
