@@ -25,6 +25,7 @@ class AuthenticationScreenModel(
 ) : StateScreenModel<AuthenticationScreenState>(AuthenticationScreenState()) {
 
     fun onClickAuthenticate() {
+        mutableState.update { it.copy(fetchState = null) }
         getAuthenticationIntent()
     }
 
