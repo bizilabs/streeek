@@ -32,7 +32,7 @@ class LandingScreenModel(
             val authenticated = authenticationRepository.authenticated.first()
             val account = accountRepository.account.first()
             val destination = when {
-                !authenticated -> LandingScreenDestination.AUTHENTICATE
+                !authenticated -> LandingScreenDestination.SETUP
                 account == null -> LandingScreenDestination.SETUP
                 else -> LandingScreenDestination.TABS
             }

@@ -1,6 +1,5 @@
 package com.bizilabs.streeek.feature.authentication
 
-import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import cafe.adriel.voyager.core.model.StateScreenModel
@@ -20,7 +19,6 @@ data class AuthenticationScreenState(
 )
 
 class AuthenticationScreenModel(
-    private val context: Context,
     private val authenticationRepository: AuthenticationRepository
 ) : StateScreenModel<AuthenticationScreenState>(AuthenticationScreenState()) {
 

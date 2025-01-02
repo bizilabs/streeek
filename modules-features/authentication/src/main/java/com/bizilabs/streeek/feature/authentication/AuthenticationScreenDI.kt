@@ -8,5 +8,5 @@ val featureAuthentication = screenModule {
     register<SharedScreen.Authentication> { AuthenticationScreen }
 }
 val authenticationModule = module {
-    factory { AuthenticationScreenModel(context = get(), authenticationRepository = get()) }
+    factory { AuthenticationScreenModel(authenticationRepository = get()) }
 }
