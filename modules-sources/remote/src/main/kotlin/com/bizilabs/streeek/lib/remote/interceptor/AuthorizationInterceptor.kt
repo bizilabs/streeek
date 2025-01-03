@@ -13,7 +13,6 @@ class AuthorizationInterceptor(
 ) : Interceptor {
     private fun Request.Builder.addAccessToken() {
         val token = runBlocking { remotePreferencesSource.accessToken.first() }
-        Timber.d("Tooken -> $token")
         if (token.isNullOrBlank()) return
         addHeader("Authorization", "Bearer $token")
         addHeader("Accept", "application/vnd.github+json")

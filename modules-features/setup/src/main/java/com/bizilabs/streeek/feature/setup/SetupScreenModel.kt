@@ -36,11 +36,12 @@ class SetupScreenModel(
                 is DataResult.Success -> FetchState.Success(value = result.data)
             }
             mutableState.update { it.copy(userState = update) }
-            if (update is FetchState.Success) getAccount(update.value)
+            if (update is FetchState.Success) getAccount()
         }
     }
 
-    private fun getAccount(user: UserDomain) {
+    private fun getAccount() {
+        val user = (mutableState.value.userState as? FetchState.Success)?.value ?: return
         screenModelScope.launch {
             mutableState.update { it.copy(accountState = FetchState.Loading) }
             when (val result = accountRepository.getAccountWithGithubId(id = user.id)) {
@@ -84,6 +85,14 @@ class SetupScreenModel(
 
     private fun syncContributions() {
         context.startSyncContributionsWork()
+    }
+
+    fun onClickGetUserRetry() {
+        getUser()
+    }
+
+    fun onClickGetAccountRetry(){
+        getAccount()
     }
 
 }
