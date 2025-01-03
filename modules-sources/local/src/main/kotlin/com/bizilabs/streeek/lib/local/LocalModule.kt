@@ -42,7 +42,12 @@ val LocalModule = module {
     single<PreferenceSource> { PreferenceSourceImpl(dataStore = get(named("local"))) }
     single<LocalPreferenceSource> { LocalPreferenceSourceImpl(source = get()) }
     single<AccountLocalSource> { AccountLocalSourceImpl(preferenceSource = get()) }
-    single<ContributionsLocalSource> { ContributionsLocalSourceImpl(dao = get()) }
+    single<ContributionsLocalSource> {
+        ContributionsLocalSourceImpl(
+            dao = get(),
+            preferenceSource = get()
+        )
+    }
     single<TeamLocalSource> { TeamLocalSourceImpl(source = get()) }
     single<LevelLocalSource> { LevelLocalSourceImpl(source = get()) }
 }

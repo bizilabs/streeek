@@ -8,20 +8,17 @@ import com.bizilabs.streeek.feature.profile.featureProfile
 import com.bizilabs.streeek.feature.setup.featureSetup
 import com.bizilabs.streeek.feature.tabs.featureTabs
 import com.bizilabs.streeek.feature.team.screenTeam
-import timber.log.Timber
+import com.bizilabs.streeek.lib.presentation.helpers.initTimber
 
 abstract class MainApplication : Application() {
+
     override fun onCreate() {
         super.onCreate()
         initTimber()
         initNavigation()
     }
 
-    private fun initTimber(){
-        if (BuildConfig.DEBUG) Timber.plant(Timber.DebugTree())
-    }
-
-    private fun initNavigation(){
+    private fun initNavigation() {
         ScreenRegistry {
             featureLanding()
             featureAuthentication()

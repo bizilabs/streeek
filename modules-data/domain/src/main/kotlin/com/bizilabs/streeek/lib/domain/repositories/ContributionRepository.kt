@@ -10,6 +10,10 @@ import kotlinx.datetime.LocalDateTime
 interface ContributionRepository {
     val contributions: Flow<List<ContributionDomain>>
     val dates: Flow<List<LocalDateTime>>
+
+    val lastSync: Flow<Long?>
+    suspend fun updateLastSync(timeInMillis: Long)
+
     suspend fun getEvent(id: String): DataResult<UserEventDomain>
     suspend fun getEvents(page: Int): DataResult<List<UserEventDomain>>
 

@@ -1,6 +1,5 @@
 package com.bizilabs.streeek.lib.data.repositories
 
-import androidx.work.Data
 import com.bizilabs.streeek.lib.data.mappers.toCache
 import com.bizilabs.streeek.lib.data.mappers.toDTO
 import com.bizilabs.streeek.lib.data.mappers.toDomain
@@ -37,6 +36,13 @@ class ContributionRepositoryImpl(
 
     override val dates: Flow<List<LocalDateTime>>
         get() = local.dates.map { list -> list.map { it.toDomain().githubEventDate } }
+
+    override val lastSync: Flow<Long?>
+        get() = local.lastSync
+
+    override suspend fun updateLastSync(timeInMillis: Long) {
+        local.updateLastSync(timeInMillis = timeInMillis)
+    }
 
     private suspend fun getAccount() = accountLocalSource.account.first()
 

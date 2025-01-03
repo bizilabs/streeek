@@ -9,6 +9,8 @@ import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import com.bizilabs.streeek.lib.domain.helpers.DataResult
 import com.bizilabs.streeek.lib.domain.repositories.ContributionRepository
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
 import timber.log.Timber
 import java.util.UUID
 
@@ -45,11 +47,12 @@ class SyncContributionsWork(
     }
 
     override suspend fun doWork(): Result {
+        val lastSyncTime = contributionRepository.lastSync.firstOrNull()
+        if (lastSyncTime != null) return Result.success()
         var page: Int? = 1
         while (page != null) {
             val contributions = contributionRepository.getContributions(page = page)
-            if (contributions is DataResult.Error)
-                return Result.failure().also { Timber.e(contributions.message) }
+            if (contributions is DataResult.Error) return Result.failure()
             val list = (contributions as DataResult.Success).data
             page = if (list.isNotEmpty()) page.plus(1) else null
             list.forEach { contributionRepository.saveContributionLocally(contribution = it) }
