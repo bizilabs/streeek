@@ -140,7 +140,7 @@ fun SetupScreenContent(
                                         containerColor = MaterialTheme.colorScheme.primary,
                                     ) {
                                         CircularProgressIndicator(
-                                            modifier = Modifier.size(24.dp).padding(16.dp),
+                                            modifier = Modifier.size(24.dp),
                                             color = MaterialTheme.colorScheme.onPrimary
                                         )
                                     }
@@ -178,7 +178,7 @@ fun SetupScreenContent(
                                                     containerColor = MaterialTheme.colorScheme.primary,
                                                 ) {
                                                     CircularProgressIndicator(
-                                                        modifier = Modifier.size(24.dp).padding(16.dp),
+                                                        modifier = Modifier.size(24.dp),
                                                         color = MaterialTheme.colorScheme.onPrimary
                                                     )
                                                 }

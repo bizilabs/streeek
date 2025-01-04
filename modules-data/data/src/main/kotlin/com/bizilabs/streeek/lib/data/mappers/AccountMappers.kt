@@ -17,8 +17,8 @@ fun AccountDTO.toDomain(): AccountDomain = AccountDomain(
     email = email,
     bio = bio,
     avatarUrl = avatarUrl,
-    createdAt = createdAt.asDate(format = DateFormats.YYYY_MM_dd_T_HH_mm_ss)?.datetimeSystem ?: SystemLocalDateTime,
-    updatedAt = updatedAt.asDate(format = DateFormats.YYYY_MM_dd_T_HH_mm_ss)?.datetimeSystem ?: SystemLocalDateTime,
+    createdAt = createdAt.asDate(format = DateFormats.YYYY_MM_ddTHH_mm_ss)?.datetimeSystem ?: SystemLocalDateTime,
+    updatedAt = updatedAt.asDate(format = DateFormats.YYYY_MM_ddTHH_mm_ss)?.datetimeSystem ?: SystemLocalDateTime,
     points = 0,
     level = null,
     streak = null

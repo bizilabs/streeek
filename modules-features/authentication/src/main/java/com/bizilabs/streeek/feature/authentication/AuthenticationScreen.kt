@@ -11,14 +11,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.CheckCircle
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -36,7 +35,8 @@ import com.bizilabs.streeek.lib.common.helpers.StartActivity
 import com.bizilabs.streeek.lib.common.helpers.findActivity
 import com.bizilabs.streeek.lib.common.models.FetchState
 import com.bizilabs.streeek.lib.common.navigation.SharedScreen
-import com.bizilabs.streeek.lib.design.components.SafiCenteredColumn
+import com.bizilabs.streeek.lib.design.components.SafiBottomInfoComponent
+import com.bizilabs.streeek.lib.design.helpers.onSuccess
 import com.bizilabs.streeek.lib.design.helpers.success
 import com.bizilabs.streeek.lib.resources.images.SafiDrawables
 import com.bizilabs.streeek.lib.resources.strings.SafiStrings
@@ -52,7 +52,7 @@ object AuthenticationScreen : Screen {
             state = state,
             onClickAuthenticate = screenModel::onClickAuthenticate,
             onUriReceived = screenModel::onUriReceived,
-            navigateToTabs = { navigator?.replace(screen) }
+            navigateToSetup = { navigator?.replace(screen) }
         )
     }
 }
@@ -62,7 +62,7 @@ fun AuthenticationScreenContent(
     state: AuthenticationScreenState,
     onClickAuthenticate: () -> Unit,
     onUriReceived: (Uri) -> Unit,
-    navigateToTabs: () -> Unit,
+    navigateToSetup: () -> Unit,
 ) {
 
     if (state.intent != null && state.fetchState == null)
@@ -72,7 +72,7 @@ fun AuthenticationScreenContent(
         HandleIntent(onUriReceived = onUriReceived)
 
     if (state.navigateToTabs)
-        navigateToTabs()
+        navigateToSetup()
 
     Scaffold { paddingValues ->
         Column(
@@ -106,44 +106,62 @@ fun AuthenticationScreenContent(
             )
 
             Column(
-                modifier = Modifier.weight(1f).fillMaxWidth()
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth()
             ) {
+                Spacer(modifier = Modifier.weight(1f))
                 AnimatedVisibility(
-                    modifier = Modifier.fillMaxSize(),
                     visible = (state.intent == null && state.uri == null).not()
                 ) {
                     AnimatedContent(
-                        modifier = Modifier.fillMaxSize(),
                         targetState = state.fetchState,
                         label = "animate auth state"
                     ) { result ->
-                        SafiCenteredColumn(modifier = Modifier.fillMaxSize()) {
-                            when (result) {
-                                is FetchState.Error -> {
-                                    Text(text = result.message)
-                                    Button(
-                                        modifier = Modifier.padding(top = 16.dp),
-                                        onClick = onClickAuthenticate
-                                    ) {
-                                        Text(text = "retry")
+                        when (result) {
+                            is FetchState.Error -> {
+                                SafiBottomInfoComponent(
+                                    title = "Authentication Error",
+                                    message = result.message,
+                                    contentColor = MaterialTheme.colorScheme.onError,
+                                    containerColor = MaterialTheme.colorScheme.error,
+                                ) {
+                                    TextButton(onClick = onClickAuthenticate) {
+                                        Text(
+                                            text = "Retry",
+                                            color = MaterialTheme.colorScheme.onError
+                                        )
                                     }
                                 }
+                            }
 
-                                is FetchState.Success -> {
-                                    Icon(
-                                        modifier = Modifier
-                                            .padding(16.dp)
-                                            .size(75.dp),
-                                        imageVector = Icons.Rounded.CheckCircle,
-                                        contentDescription = "success",
-                                        tint = MaterialTheme.colorScheme.success
-                                    )
-                                    Text(text = "Authenticated Successfully")
-                                    Text(text = result.value)
+                            is FetchState.Success -> {
+                                SafiBottomInfoComponent(
+                                    title = "Success",
+                                    message = "Authenticated with Github successfully",
+                                    contentColor = MaterialTheme.colorScheme.onSuccess,
+                                    containerColor = MaterialTheme.colorScheme.success,
+                                ) {
+                                    TextButton(onClick = navigateToSetup) {
+                                        Text(
+                                            text = "Continue",
+                                            color = MaterialTheme.colorScheme.onSuccess
+                                        )
+                                    }
                                 }
+                            }
 
-                                else -> {
-                                    CircularProgressIndicator()
+                            else -> {
+                                SafiBottomInfoComponent(
+                                    title = "Authenticating",
+                                    message = "Sending request to authenticate with GitHub...",
+                                    contentColor = MaterialTheme.colorScheme.onPrimary,
+                                    containerColor = MaterialTheme.colorScheme.primary,
+                                ) {
+                                    CircularProgressIndicator(
+                                        modifier = Modifier.size(24.dp),
+                                        color = MaterialTheme.colorScheme.onPrimary
+                                    )
                                 }
                             }
                         }

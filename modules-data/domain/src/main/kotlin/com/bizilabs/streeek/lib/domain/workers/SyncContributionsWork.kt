@@ -52,12 +52,15 @@ class SyncContributionsWork(
         var page: Int? = 1
         while (page != null) {
             val contributions = contributionRepository.getContributions(page = page)
-            if (contributions is DataResult.Error) return Result.failure()
+            if (contributions is DataResult.Error)
+                return Result.failure().also { Timber.e(contributions.message) }
             val list = (contributions as DataResult.Success).data
+            Timber.d("Contributions -> $list")
+            contributionRepository.saveContributionLocally(contributions = list)
             page = if (list.isNotEmpty()) page.plus(1) else null
-            list.forEach { contributionRepository.saveContributionLocally(contribution = it) }
         }
         context.startPeriodicDailySyncContributionsWork()
+        contributionRepository.updateLastSync(timeInMillis = System.currentTimeMillis())
         return Result.success()
     }
 }

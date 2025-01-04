@@ -18,6 +18,7 @@ import com.bizilabs.streeek.lib.domain.models.ContributionDomain
 import com.bizilabs.streeek.lib.domain.models.UserEventDomain
 import com.bizilabs.streeek.lib.domain.repositories.ContributionRepository
 import com.bizilabs.streeek.lib.domain.repositories.PreferenceRepository
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.todayIn
@@ -79,6 +80,12 @@ class SyncDailyContributionsWork(
 
     override suspend fun doWork(): Result {
         return try {
+            val isContributionsSynced = repository.contributions.firstOrNull() != null
+            if (isContributionsSynced.not()) {
+                context.startSyncContributionsWork()
+                return Result.success()
+            }
+
             Timber.d("Starting sync work")
 
             preferences.setIsSyncingContributions(isSyncing = true)

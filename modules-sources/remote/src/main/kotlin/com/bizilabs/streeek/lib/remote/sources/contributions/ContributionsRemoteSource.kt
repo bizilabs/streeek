@@ -3,6 +3,7 @@ package com.bizilabs.streeek.lib.remote.sources.contributions
 import com.bizilabs.streeek.lib.remote.helpers.GithubEndpoint
 import com.bizilabs.streeek.lib.remote.helpers.NetworkResult
 import com.bizilabs.streeek.lib.remote.helpers.Supabase
+import com.bizilabs.streeek.lib.remote.helpers.getRange
 import com.bizilabs.streeek.lib.remote.helpers.safeApiCall
 import com.bizilabs.streeek.lib.remote.helpers.safeSupabaseCall
 import com.bizilabs.streeek.lib.remote.models.ContributionDTO
@@ -14,9 +15,6 @@ import io.github.jan.supabase.postgrest.query.Order
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
 import io.ktor.client.request.url
-import io.ktor.http.append
-import io.ktor.http.parameters
-import io.ktor.http.plus
 
 interface ContributionsRemoteSource {
     suspend fun fetchEvent(username: String, id: String): NetworkResult<GithubUserEventDTO>
@@ -67,13 +65,13 @@ class ContributionsRemoteSourceImpl(
         page: Int
     ): NetworkResult<List<ContributionDTO>> =
         safeSupabaseCall {
+            val range = getRange(page = page)
             supabase
                 .from(Supabase.Tables.Contributions)
                 .select {
-                    filter {
-                        ContributionDTO::accountId eq accountId
-                    }
+                    filter { ContributionDTO::accountId eq accountId }
                     order(ContributionDTO.Columns.AccountId, order = Order.DESCENDING)
+                    range(range.from, range.to)
                 }
                 .decodeList()
         }
