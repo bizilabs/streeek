@@ -19,16 +19,9 @@ import timber.log.Timber
 object DateFormats {
     const val ISO_8601_Z = "yyyy-MM-dd'T'HH:mm:ss'Z'"
     const val ISO_8601 = "yyyy-MM-dd'T'HH:mm:ss.SSSSSSXXX"
-    const val YYYY_MM_dd_T_HH_mm_ss = "yyyy-MM-dd'T'HH:mm:ss.SSSSSS"
     const val YYYY_MM_ddTHH_mm_ss = "yyyy-MM-dd'T'HH:mm:ss"
     const val YYYY_MM_dd = "yyyy-MM-dd"
-    const val YYYY_MM_dd_space_HH_mm_ss_SSSSSS = "yyyy-MM-dd HH:mm:ss.SSSSSS"
     const val YYYY_MM_dd_T_HH_mm_ss_SSSSSS = "yyyy-MM-dd'T'HH:mm:ss.SSSSSS"
-    const val YYYY_MM_dd_space_HH_mm_ss_XXX = "yyyy-MM-dd HH:mm:ssXXX"
-    const val YYYY_MM_dd_T_HH_mm_ss_SSSSSSXXX = "yyyy-MM-dd'T'HH:mm:ss.SSSSSSSXXX"
-    const val YYYY_MM_dd_T_HH_mm_ss_SSSSS = "yyyy-MM-dd'T'HH:mm:ss.SSSSS"
-    const val YYYY_MM_dd_space_HH_mm_ss = "yyyy-MM-dd HH:mm:ss"
-    const val EEE_MMM_dd_yyyy_HH_mm = "EEE, MMM dd yyyy HH:mm a"
 }
 
 val SystemLocalDateTime: LocalDateTime
@@ -45,6 +38,10 @@ val Instant.datetimeSystem
 
 val LocalDateTime.asSystem
     get() = toInstant(TimeZone.currentSystemDefault())
+
+
+val LocalDateTime.datetimeUTC
+    get() = toInstant(TimeZone.UTC)
 
 @OptIn(FormatStringsInDatetimeFormats::class)
 fun String.asDate(format: String = DateFormats.ISO_8601_Z): Instant? {
@@ -70,7 +67,8 @@ fun String.asLocalDate(format: String = DateFormats.YYYY_MM_dd): LocalDate? {
 fun String.asLocalDateTime(format: String = DateFormats.YYYY_MM_dd): LocalDateTime? {
     Timber.d("Trying to parse String to LocalDate :\nVALUE = $this\nFORMAT= $format")
     return tryOrNull {
-        val formatter: DateTimeFormat<LocalDateTime> = LocalDateTime.Format { byUnicodePattern(format) }
+        val formatter: DateTimeFormat<LocalDateTime> =
+            LocalDateTime.Format { byUnicodePattern(format) }
         LocalDateTime.parse(this, formatter)
     }
 }
@@ -108,9 +106,9 @@ fun LocalDate.isPastDue(): Boolean {
 }
 
 fun LocalDateTime.isPastDue(): Boolean {
-    val today = LocalDate(2025, 1, 1).asLocalDateTime().asSystem
-    val past = today.minus(this.asSystem)
-    return past.inWholeDays < 1
+    val inception = LocalDate(year = 2025, monthNumber = 1, dayOfMonth = 1).asLocalDateTime().datetimeUTC
+    val duration = this.datetimeUTC.minus(inception)
+    return duration.inWholeDays < 1
 }
 
 val LocalDate.dayShort
