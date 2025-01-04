@@ -59,8 +59,6 @@ fun Context.startImmediateDailySyncContributionsWork() {
 
     val request = OneTimeWorkRequestBuilder<SyncDailyContributionsWork>()
         .addTag(SyncDailyContributionsWork.TAG)
-        .setConstraints(constraints)
-        .setInputData(parameters)
         .setId(uuid)
         .build()
 
@@ -80,6 +78,8 @@ class SyncDailyContributionsWork(
 
     override suspend fun doWork(): Result {
         return try {
+            preferences.setIsSyncingContributions(isSyncing = false)
+
             val isContributionsSynced = repository.contributions.firstOrNull() != null
             if (isContributionsSynced.not()) {
                 context.startSyncContributionsWork()
@@ -89,8 +89,6 @@ class SyncDailyContributionsWork(
             Timber.d("Starting sync work")
 
             preferences.setIsSyncingContributions(isSyncing = true)
-
-            val today = Clock.System.todayIn(TimeZone.UTC)
 
             val list = mutableListOf<UserEventDomain>()
             val supabaseContributions = mutableListOf<ContributionDomain>()
@@ -121,7 +119,6 @@ class SyncDailyContributionsWork(
                     page = null
                     break
                 }
-                Timber.d("Today      -> $today")
                 for (event in events) {
                     val eventDate = event.createdAt
                     Timber.d("Event Date -> $eventDate")
@@ -161,7 +158,10 @@ class SyncDailyContributionsWork(
             val data = (result as DataResult.Success).data
             val contributions = data.toMutableList().plus(supabaseContributions).toMutableList()
 
-            if (contributions.isEmpty()) return Result.success()
+            if (contributions.isEmpty()) {
+                preferences.setIsSyncingContributions(isSyncing = false)
+                return Result.success()
+            }
 
             // save contributions locally
             Timber.d("Saving list of contributions to local cache")

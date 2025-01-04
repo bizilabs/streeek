@@ -3,6 +3,7 @@ package com.bizilabs.streeek.lib.data.mappers
 import com.bizilabs.streeek.lib.domain.helpers.DateFormats
 import com.bizilabs.streeek.lib.domain.helpers.SystemLocalDateTime
 import com.bizilabs.streeek.lib.domain.helpers.asDate
+import com.bizilabs.streeek.lib.domain.helpers.asLocalDateTime
 import com.bizilabs.streeek.lib.domain.helpers.asString
 import com.bizilabs.streeek.lib.domain.helpers.datetimeSystem
 import com.bizilabs.streeek.lib.domain.models.AccountDomain
@@ -59,8 +60,8 @@ fun AccountFullDTO.toDomain() = AccountDomain(
     email = account.email,
     bio = account.bio,
     avatarUrl = account.avatarUrl,
-    createdAt = account.createdAt.asDate(format = DateFormats.YYYY_MM_dd_T_HH_mm_ss)?.datetimeSystem ?: SystemLocalDateTime,
-    updatedAt = account.updatedAt.asDate(format = DateFormats.YYYY_MM_dd_T_HH_mm_ss)?.datetimeSystem ?: SystemLocalDateTime,
+    createdAt = account.createdAt.asLocalDateTime(format = DateFormats.YYYY_MM_ddTHH_mm_ss) ?: SystemLocalDateTime,
+    updatedAt = account.updatedAt.asLocalDateTime(format = DateFormats.YYYY_MM_ddTHH_mm_ss) ?: SystemLocalDateTime,
     points = points ?: 0,
     level = level?.toDomain(),
     streak = streak?.toDomain()

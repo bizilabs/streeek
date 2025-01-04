@@ -1,6 +1,8 @@
 package com.bizilabs.streeek.lib.data.mappers
 
+import com.bizilabs.streeek.lib.domain.helpers.SystemLocalDateTime
 import com.bizilabs.streeek.lib.domain.helpers.asDate
+import com.bizilabs.streeek.lib.domain.helpers.datetimeUTC
 import com.bizilabs.streeek.lib.domain.models.EventRepositoryDomain
 import com.bizilabs.streeek.lib.domain.models.UserEventDomain
 import com.bizilabs.streeek.lib.remote.models.GithubEventRepositoryDTO
@@ -12,8 +14,7 @@ import kotlinx.datetime.toLocalDateTime
 fun GithubUserEventDTO.toDomain() = UserEventDomain(
     id = id,
     type = type,
-    createdAt = createdAt.asDate()?.toLocalDateTime(TimeZone.UTC) ?: Clock.System.now()
-        .toLocalDateTime(TimeZone.UTC),
+    createdAt = createdAt.asDate()?.datetimeUTC ?: SystemLocalDateTime,
     actor = actor.toDomain(),
     repo = repo.toDomain(),
     payload = payload.toDomain()

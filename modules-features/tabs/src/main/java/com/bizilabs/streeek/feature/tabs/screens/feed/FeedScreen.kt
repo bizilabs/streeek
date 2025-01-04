@@ -1,5 +1,6 @@
 package com.bizilabs.streeek.feature.tabs.screens.feed
 
+import android.R.attr.fontWeight
 import android.content.Context
 import android.widget.Toast
 import androidx.compose.animation.AnimatedContent
@@ -72,13 +73,11 @@ import kotlinx.datetime.LocalDate
 object FeedScreen : Screen {
     @Composable
     override fun Content() {
-        val navigator = LocalNavigator.current
+
         val screenModel: FeedScreenModel = getScreenModel()
         val state by screenModel.state.collectAsStateWithLifecycle()
         val date by screenModel.date.collectAsStateWithLifecycle()
         val contributions by screenModel.contributions.collectAsStateWithLifecycle(emptyList())
-
-        val profileScreen = rememberScreen(SharedScreen.Profile)
 
         FeedScreenContent(
             state = state,
@@ -441,24 +440,21 @@ private fun FeedHeader(
 
         val streak = state.account?.streak
 
-        AnimatedVisibility(
-            modifier = Modifier.padding(horizontal = 16.dp),
-            visible = streak != null
+        SafiCenteredRow(
+            modifier = Modifier.padding(horizontal = 16.dp)
         ) {
-            if (streak != null)
-                SafiCenteredRow {
-                    Text(
-                        modifier = Modifier.padding(end = 8.dp),
-                        text = streak.current.toString(),
-                        fontWeight = FontWeight.Bold,
-                        fontSize = MaterialTheme.typography.titleMedium.fontSize
-                    )
-                    Icon(
-                        imageVector = Icons.Rounded.LocalFireDepartment,
-                        contentDescription = "pin",
-                        tint = Color(0xFFFF4F00)
-                    )
-                }
+            Text(
+                modifier = Modifier.padding(end = 8.dp),
+                text = (streak?.current ?: 0).toString(),
+                fontWeight = FontWeight.Bold,
+                fontSize = MaterialTheme.typography.titleMedium.fontSize
+            )
+            Icon(
+                imageVector = Icons.Rounded.LocalFireDepartment,
+                contentDescription = "pin",
+                tint = Color(0xFFFF4F00)
+            )
+
         }
 
         IconButton(modifier = Modifier.padding(end = 16.dp), onClick = onClickToggleMonthView) {

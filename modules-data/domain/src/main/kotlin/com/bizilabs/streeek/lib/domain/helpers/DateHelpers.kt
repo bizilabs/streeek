@@ -8,6 +8,7 @@ import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.atTime
 import kotlinx.datetime.format.DateTimeComponents
+import kotlinx.datetime.format.DateTimeFormat
 import kotlinx.datetime.format.FormatStringsInDatetimeFormats
 import kotlinx.datetime.format.byUnicodePattern
 import kotlinx.datetime.minus
@@ -42,14 +43,8 @@ val Instant.datetimeUTC
 val Instant.datetimeSystem
     get() = toLocalDateTime(TimeZone.currentSystemDefault())
 
-val LocalDateTime.asUTC
-    get() = toInstant(TimeZone.UTC)
-
 val LocalDateTime.asSystem
     get() = toInstant(TimeZone.currentSystemDefault())
-
-internal val INCEPTION
-    get() = LocalDateTime(2024, 12, 1, 0, 0, 0)
 
 @OptIn(FormatStringsInDatetimeFormats::class)
 fun String.asDate(format: String = DateFormats.ISO_8601_Z): Instant? {
@@ -68,6 +63,15 @@ fun String.asLocalDate(format: String = DateFormats.YYYY_MM_dd): LocalDate? {
     return tryOrNull {
         val formatter = LocalDate.Format { byUnicodePattern(format) }
         LocalDate.parse(this, formatter)
+    }
+}
+
+@OptIn(FormatStringsInDatetimeFormats::class)
+fun String.asLocalDateTime(format: String = DateFormats.YYYY_MM_dd): LocalDateTime? {
+    Timber.d("Trying to parse String to LocalDate :\nVALUE = $this\nFORMAT= $format")
+    return tryOrNull {
+        val formatter: DateTimeFormat<LocalDateTime> = LocalDateTime.Format { byUnicodePattern(format) }
+        LocalDateTime.parse(this, formatter)
     }
 }
 
