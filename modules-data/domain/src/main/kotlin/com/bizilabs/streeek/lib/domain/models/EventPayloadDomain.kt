@@ -23,13 +23,14 @@ data class CreateEventDomain(
     override fun getPoints(account: AccountDomain): Long =
         when {
             pusherType.equals("user", true) -> {
-                when{
+                when {
                     refType.equals("repository", true) -> 15
                     refType.equals("tag", true) -> 10
                     refType.equals("branch", true) -> 5
                     else -> 5
                 }
             }
+
             else -> 0
         }
 }
@@ -147,12 +148,7 @@ data class PushEventDomain(
     val commits: List<CommitDomain>
 ) : EventPayloadDomain {
     override fun getPoints(account: AccountDomain): Long {
-        return commits.map {
-            if (it.author.name.equals(account.username, true))
-                5L
-            else
-                0L
-        }.sum()
+        return commits.filter { it.distinct == true }.map { 5L }.sum()
     }
 }
 

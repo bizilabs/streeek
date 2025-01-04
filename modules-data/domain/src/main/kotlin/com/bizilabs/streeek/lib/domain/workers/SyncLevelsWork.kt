@@ -16,7 +16,6 @@ import timber.log.Timber
 import java.util.UUID
 import java.util.concurrent.TimeUnit
 
-private val uuid = UUID.randomUUID()
 
 private val constraints = Constraints.Builder()
     .setRequiredNetworkType(NetworkType.CONNECTED)
@@ -33,7 +32,7 @@ fun Context.startImmediateLevelsSyncWork() {
         .addTag(SyncLevelsWork.TAG)
         .setConstraints(constraints)
         .setInputData(parameters)
-        .setId(uuid)
+        .setId(UUID.randomUUID())
         .build()
 
     WorkManager.getInstance(this).enqueue(request)
@@ -46,7 +45,7 @@ fun Context.startPeriodicLevelsSyncWork() {
         .addTag(SyncLevelsWork.TAG)
         .setConstraints(constraints)
         .setInputData(parameters)
-        .setId(uuid)
+        .setId(UUID.randomUUID())
         .build()
 
     WorkManager.getInstance(this)

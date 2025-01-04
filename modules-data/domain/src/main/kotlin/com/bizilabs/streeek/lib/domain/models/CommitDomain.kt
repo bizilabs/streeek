@@ -6,6 +6,8 @@ data class CommitDomain(
     val sha: String,
     val url: String,
     val author: ActorMinimalDomain,
+    val message: String,
+    val distinct: Boolean?
 )
 
 data class CommitCommentDomain(

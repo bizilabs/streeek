@@ -19,8 +19,6 @@ import kotlinx.coroutines.flow.first
 import java.util.UUID
 import java.util.concurrent.TimeUnit
 
-private val uuid = UUID.randomUUID()
-
 private val constraints = Constraints.Builder()
     .setRequiredNetworkType(NetworkType.CONNECTED)
     .setRequiresBatteryNotLow(true)
@@ -36,7 +34,7 @@ fun Context.startImmediateSyncTeamsWork() {
         .addTag(SyncTeamsWork.TAG)
         .setConstraints(constraints)
         .setInputData(parameters)
-        .setId(uuid)
+        .setId(UUID.randomUUID())
         .build()
 
     WorkManager.getInstance(this).enqueue(request)
@@ -49,7 +47,7 @@ fun Context.startPeriodicTeamsSyncWork() {
         .addTag(SyncTeamsWork.TAG)
         .setConstraints(constraints)
         .setInputData(parameters)
-        .setId(uuid)
+        .setId(UUID.randomUUID())
         .build()
 
     WorkManager.getInstance(this)

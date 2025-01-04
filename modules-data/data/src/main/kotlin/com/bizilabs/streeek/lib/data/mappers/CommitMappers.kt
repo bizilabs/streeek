@@ -11,13 +11,23 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 
-fun CommitDTO.toDomain() = CommitDomain(sha = sha, url = url, author = author.toDomain())
-fun CommitDomain.toDTO() = CommitDTO(sha = sha, url = url, author = author.toDTO())
+fun CommitDTO.toDomain() = CommitDomain(
+    sha = sha,
+    url = url,
+    author = author.toDomain(),
+    message = message,
+    distinct = distinct
+)
+
+fun CommitDomain.toDTO() =
+    CommitDTO(sha = sha, url = url, author = author.toDTO(), message = message, distinct = distinct)
 
 fun CommitCommentDTO.toDomain() = CommitCommentDomain(
     id = id,
-    createdAt = createdAt.asDate()?.toLocalDateTime(TimeZone.UTC) ?: Clock.System.now().toLocalDateTime(TimeZone.UTC),
-    updatedAt = updatedAt.asDate()?.toLocalDateTime(TimeZone.UTC) ?: Clock.System.now().toLocalDateTime(TimeZone.UTC),
+    createdAt = createdAt.asDate()?.toLocalDateTime(TimeZone.UTC) ?: Clock.System.now()
+        .toLocalDateTime(TimeZone.UTC),
+    updatedAt = updatedAt.asDate()?.toLocalDateTime(TimeZone.UTC) ?: Clock.System.now()
+        .toLocalDateTime(TimeZone.UTC),
     body = body,
     user = user.toDomain()
 )

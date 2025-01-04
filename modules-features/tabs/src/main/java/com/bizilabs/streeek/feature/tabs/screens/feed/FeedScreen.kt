@@ -54,6 +54,7 @@ import cafe.adriel.voyager.core.registry.rememberScreen
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.getScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
+import com.bizilabs.streeek.feature.tabs.screens.feed.components.ContributionItemComponent
 import com.bizilabs.streeek.lib.common.navigation.SharedScreen
 import com.bizilabs.streeek.lib.design.components.SafiCenteredColumn
 import com.bizilabs.streeek.lib.design.components.SafiCenteredRow
@@ -194,7 +195,6 @@ fun FeedScreenContent(
             )
 
         }
-
     }
 }
 
@@ -262,47 +262,17 @@ private fun FeedContent(
 
                     else -> {
                         LazyColumn(modifier = Modifier.fillMaxSize()) {
-                            items(contributions) {
-                                Card(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(8.dp),
-                                    onClick = {
-                                        Toast.makeText(
-                                            context,
-                                            it.githubEventType,
-                                            Toast.LENGTH_SHORT
-                                        ).show()
-                                    },
-                                    border = BorderStroke(
-                                        1.dp,
-                                        MaterialTheme.colorScheme.onBackground.copy(
-                                            0.2f
-                                        )
-                                    ),
-                                ) {
-                                    Column(
-                                        modifier = Modifier
-                                            .padding(16.dp)
-                                            .fillMaxWidth()
-                                    ) {
-                                        Text(text = it.createdAt.toString())
-                                        Text(text = "ID : ${it.id} > git : ${it.githubEventId}")
-                                        SafiCenteredRow {
-                                            Text(text = it.githubEventType)
-                                            Text(text = " > ", fontSize = 24.sp)
-                                            Text(text = it.githubEventRepo.name)
-                                        }
-                                    }
-                                }
+                            items(contributions) { contribution ->
+                                ContributionItemComponent(
+                                    modifier = Modifier.fillMaxWidth().padding(8.dp),
+                                    contribution = contribution
+                                )
                             }
                         }
                     }
                 }
             }
         }
-
-
     }
 }
 

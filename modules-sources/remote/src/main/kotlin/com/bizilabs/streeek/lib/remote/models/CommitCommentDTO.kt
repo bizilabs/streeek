@@ -8,6 +8,8 @@ data class CommitDTO(
     val sha: String,
     val url: String,
     val author: GithubActorMinimalDTO,
+    val message: String,
+    val distinct: Boolean? = true
 )
 
 @Serializable
