@@ -3,7 +3,9 @@ package com.bizilabs.streeek.feature.tabs.screens.achievements
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,10 +15,14 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.AccountCircle
+import androidx.compose.material.icons.rounded.Refresh
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -25,6 +31,7 @@ import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -33,9 +40,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import cafe.adriel.voyager.core.registry.rememberScreen
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.getScreenModel
+import cafe.adriel.voyager.navigator.LocalNavigator
 import coil.compose.AsyncImage
+import com.bizilabs.streeek.lib.common.navigation.SharedScreen
 import com.bizilabs.streeek.lib.design.components.SafiCenteredColumn
 import com.bizilabs.streeek.lib.design.components.SafiCenteredRow
 import com.bizilabs.streeek.lib.design.components.SafiProfileArc
@@ -46,10 +56,17 @@ import com.bizilabs.streeek.lib.domain.extensions.asRank
 object AchievementsScreen : Screen {
     @Composable
     override fun Content() {
+        val navigator = LocalNavigator.current
+        val profileScreen = rememberScreen(SharedScreen.Profile)
         val screenModel: AchievementsScreenModel = getScreenModel()
         val state by screenModel.state.collectAsStateWithLifecycle()
         AchievementsScreenContent(
-            state = state, onClickTab = screenModel::onClickTab
+            state = state,
+            onClickTab = screenModel::onClickTab,
+            onClickRefreshProfile = screenModel::onClickRefreshProfile,
+            onClickAccount = {
+                navigator?.push(profileScreen)
+            }
         )
     }
 }
@@ -57,12 +74,16 @@ object AchievementsScreen : Screen {
 @Composable
 fun AchievementsScreenContent(
     state: AchievementScreenState,
+    onClickAccount: () -> Unit,
+    onClickRefreshProfile: () -> Unit,
     onClickTab: (AchievementTab) -> Unit,
 ) {
     Scaffold(topBar = {
         AchievementScreenHeader(
             state = state,
-            onClickTab = onClickTab
+            onClickAccount = onClickAccount,
+            onClickTab = onClickTab,
+            onClickRefreshProfile = onClickRefreshProfile
         )
     }) { paddingValues ->
         SafiCenteredColumn(
@@ -93,10 +114,39 @@ fun AchievementsScreenContent(
 @Composable
 fun AchievementScreenHeader(
     state: AchievementScreenState,
+    onClickAccount: () -> Unit,
+    onClickRefreshProfile: () -> Unit,
     onClickTab: (AchievementTab) -> Unit,
 ) {
     Surface(modifier = Modifier.fillMaxWidth()) {
         Column(modifier = Modifier.fillMaxWidth()) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                IconButton(onClick = onClickAccount) {
+                    Icon(
+                        imageVector = Icons.Rounded.AccountCircle,
+                        contentDescription = "refresh profile"
+                    )
+                }
+                Text(
+                    modifier = Modifier,
+                    text = "Achievements".uppercase(),
+                    style = MaterialTheme.typography.titleSmall,
+                    textAlign = TextAlign.Center
+                )
+                IconButton(onClick = onClickRefreshProfile) {
+                    Icon(
+                        imageVector = Icons.Rounded.Refresh,
+                        contentDescription = "refresh profile"
+                    )
+                }
+            }
+            Spacer(modifier = Modifier.padding(8.dp))
             SafiCenteredColumn(
                 modifier = Modifier
                     .padding(16.dp)

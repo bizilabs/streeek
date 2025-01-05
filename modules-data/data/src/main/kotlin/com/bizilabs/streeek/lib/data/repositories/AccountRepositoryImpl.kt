@@ -8,6 +8,7 @@ import com.bizilabs.streeek.lib.domain.helpers.asString
 import com.bizilabs.streeek.lib.domain.models.AccountDomain
 import com.bizilabs.streeek.lib.domain.repositories.AccountRepository
 import com.bizilabs.streeek.lib.local.sources.account.AccountLocalSource
+import com.bizilabs.streeek.lib.local.sources.contributions.ContributionsLocalSource
 import com.bizilabs.streeek.lib.remote.helpers.NetworkResult
 import com.bizilabs.streeek.lib.remote.models.AccountCreateRequestDTO
 import com.bizilabs.streeek.lib.remote.sources.account.AccountRemoteSource
@@ -19,7 +20,8 @@ import timber.log.Timber
 
 class AccountRepositoryImpl(
     private val remote: AccountRemoteSource,
-    private val local: AccountLocalSource
+    private val local: AccountLocalSource,
+    private val contributionsLocalSource: ContributionsLocalSource
 ) : AccountRepository {
 
     override val account: Flow<AccountDomain?>
@@ -82,6 +84,12 @@ class AccountRepositoryImpl(
                 DataResult.Success(true)
             }
         }
+    }
+
+    override suspend fun logout() {
+        remote.logout()
+        local.logout()
+        contributionsLocalSource.deleteAll()
     }
 
 }

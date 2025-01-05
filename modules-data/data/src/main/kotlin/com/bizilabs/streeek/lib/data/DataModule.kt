@@ -24,7 +24,13 @@ val dataModule = module {
     includes(RemoteModule, LocalModule)
     single<AuthenticationRepository> { AuthenticationRepositoryImpl(remote = get()) }
     single<UserRepository> { UserRepositoryImpl(remote = get(), accountLocalSource = get()) }
-    single<AccountRepository> { AccountRepositoryImpl(remote = get(), local = get()) }
+    single<AccountRepository> {
+        AccountRepositoryImpl(
+            remote = get(),
+            local = get(),
+            contributionsLocalSource = get()
+        )
+    }
     single<ContributionRepository> {
         ContributionRepositoryImpl(
             local = get(),

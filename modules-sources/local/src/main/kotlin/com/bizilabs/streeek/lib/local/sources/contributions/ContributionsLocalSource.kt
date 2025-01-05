@@ -23,6 +23,7 @@ interface ContributionsLocalSource {
     suspend fun get(id: Long): LocalResult<ContributionCache?>
     fun getByDate(date: String): Flow<List<ContributionCache>>
     suspend fun delete(id: Long): LocalResult<Boolean>
+    suspend fun deleteAll(): LocalResult<Boolean>
 }
 
 class ContributionsLocalSourceImpl(
@@ -81,6 +82,11 @@ class ContributionsLocalSourceImpl(
 
     override suspend fun delete(id: Long): LocalResult<Boolean> = safeTransaction {
         dao.delete(id = id)
+        true
+    }
+
+    override suspend fun deleteAll(): LocalResult<Boolean> =safeTransaction {
+        dao.deleteAll()
         true
     }
 }

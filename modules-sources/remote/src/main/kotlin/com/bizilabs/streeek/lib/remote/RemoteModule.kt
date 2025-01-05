@@ -58,7 +58,12 @@ val RemoteModule = module {
         )
     }
     single<UserRemoteSource> { UserRemoteSourceImpl(client = get()) }
-    single<AccountRemoteSource> { AccountRemoteSourceImpl(supabase = get()) }
+    single<AccountRemoteSource> {
+        AccountRemoteSourceImpl(
+            supabase = get(),
+            remotePreferencesSource = get()
+        )
+    }
     single<ContributionsRemoteSource> {
         ContributionsRemoteSourceImpl(
             supabase = get(),

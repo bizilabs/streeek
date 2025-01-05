@@ -2,4 +2,6 @@
 <resources>
     <string name="label_network_connection_no">No Network Connection</string>
     <string name="label_network_connection_yes">Network Connected</string>
+    <string name="label_log_out">Log Out</string>
+    <string name="label_delete_account">Delete Account</string>
 </resources>

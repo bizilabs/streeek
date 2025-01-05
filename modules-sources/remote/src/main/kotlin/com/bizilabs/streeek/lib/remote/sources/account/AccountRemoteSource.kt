@@ -6,6 +6,7 @@ import com.bizilabs.streeek.lib.remote.helpers.safeSupabaseCall
 import com.bizilabs.streeek.lib.remote.models.AccountCreateRequestDTO
 import com.bizilabs.streeek.lib.remote.models.AccountDTO
 import com.bizilabs.streeek.lib.remote.models.AccountFullDTO
+import com.bizilabs.streeek.lib.remote.sources.preferences.RemotePreferencesSource
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.postgrest.from
 import io.github.jan.supabase.postgrest.postgrest
@@ -17,10 +18,12 @@ interface AccountRemoteSource {
     suspend fun fetchAccountWithGithubId(id: Int): NetworkResult<AccountDTO?>
     suspend fun createAccount(request: AccountCreateRequestDTO): NetworkResult<AccountDTO>
     suspend fun getAccount(id: Long): NetworkResult<AccountFullDTO>
+    suspend fun logout()
 }
 
 class AccountRemoteSourceImpl(
-    private val supabase: SupabaseClient
+    private val supabase: SupabaseClient,
+    private val remotePreferencesSource: RemotePreferencesSource
 ) : AccountRemoteSource {
     override suspend fun fetchAccountWithGithubId(id: Int): NetworkResult<AccountDTO?> =
         safeSupabaseCall {
@@ -49,5 +52,9 @@ class AccountRemoteSourceImpl(
                 .rpc(Supabase.Functions.GetAccountWithPoints, body.jsonObject) {}
                 .decodeAs()
         }
+
+    override suspend fun logout() {
+        remotePreferencesSource.clear()
+    }
 
 }

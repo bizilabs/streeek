@@ -1,20 +1,25 @@
 package com.bizilabs.streeek.feature.profile
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -22,16 +27,22 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import cafe.adriel.voyager.core.registry.rememberScreen
 import cafe.adriel.voyager.core.registry.screenModule
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.getScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import coil.compose.AsyncImage
 import com.bizilabs.streeek.lib.common.navigation.SharedScreen
+import com.bizilabs.streeek.lib.design.components.DialogState
+import com.bizilabs.streeek.lib.design.components.SafiBottomDialog
 import com.bizilabs.streeek.lib.design.components.SafiCenteredColumn
+import com.bizilabs.streeek.lib.resources.strings.SafiStringLabels
 
 val featureProfile = screenModule {
     register<SharedScreen.Profile> { ProfileScreen }
@@ -41,9 +52,16 @@ object ProfileScreen : Screen {
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.current
+        val landingScreen = rememberScreen(SharedScreen.Landing)
         val screenModel: ProfileScreenModel = getScreenModel()
         val state by screenModel.state.collectAsStateWithLifecycle()
-        ProfileScreenContent(state = state) { navigator?.pop() }
+        ProfileScreenContent(
+            state = state,
+            onClickNavigateBackIcon = { navigator?.pop() },
+            onClickLogout = screenModel::onClickLogout,
+            navigateToLanding = { navigator?.replaceAll(landingScreen) },
+            onClickConfirmLogout = screenModel::onClickConfirmLogout
+        )
     }
 }
 
@@ -51,8 +69,29 @@ object ProfileScreen : Screen {
 @Composable
 fun ProfileScreenContent(
     state: ProfileScreenState,
-    onClickNavigateBackIcon: () -> Unit
+    onClickNavigateBackIcon: () -> Unit,
+    onClickLogout: () -> Unit,
+    navigateToLanding: () -> Unit,
+    onClickConfirmLogout: (Boolean) -> Unit,
 ) {
+
+    val scrollState = rememberScrollState()
+
+    if (state.shouldNavigateToLanding) navigateToLanding()
+
+    if (state.shouldConfirmLogout)
+        SafiBottomDialog(
+            state = DialogState.Info(
+                title = "Logout",
+                message = "Are you sure you want to logout?"
+            ),
+            onClickDismiss = { onClickConfirmLogout(false) }
+        ) {
+            Button(onClick = { onClickConfirmLogout(true) }) {
+                Text(text = "Yes")
+            }
+        }
+
     Scaffold(topBar = {
         TopAppBar(
             navigationIcon = {
@@ -64,9 +103,7 @@ fun ProfileScreenContent(
                 }
             },
             title = {
-                Text(
-                    text = "Profile"
-                )
+                Text(text = "Profile")
             },
         )
 
@@ -76,6 +113,7 @@ fun ProfileScreenContent(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
+                .scrollable(state = scrollState, orientation = Orientation.Vertical)
         ) {
             SafiCenteredColumn(modifier = Modifier.fillMaxWidth()) {
                 state.account?.let { account ->
@@ -110,6 +148,14 @@ fun ProfileScreenContent(
                         append(account.createdAt)
                     })
                 }
+            }
+            Button(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                onClick = onClickLogout
+            ) {
+                Text(text = stringResource(SafiStringLabels.LogOut))
             }
         }
 

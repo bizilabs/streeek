@@ -6,6 +6,7 @@ import androidx.work.CoroutineWorker
 import androidx.work.Data
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.NetworkType
+import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
@@ -14,14 +15,29 @@ import com.bizilabs.streeek.lib.domain.repositories.AccountRepository
 import java.util.UUID
 import java.util.concurrent.TimeUnit
 
-fun Context.startPeriodicAccountSyncWork() {
-    val uuid = UUID.randomUUID()
+private val constraints = Constraints.Builder()
+    .setRequiredNetworkType(NetworkType.CONNECTED)
+    .setRequiresBatteryNotLow(true)
+    .setRequiresStorageNotLow(true)
+    .build()
 
-    val constraints = Constraints.Builder()
-        .setRequiredNetworkType(NetworkType.CONNECTED)
-        .setRequiresBatteryNotLow(true)
-        .setRequiresStorageNotLow(true)
+fun Context.startImmediateAccountSyncWork() {
+
+    val parameters = Data.Builder()
         .build()
+
+    val request = OneTimeWorkRequestBuilder<SyncAccountWork>()
+        .addTag(SyncAccountWork.TAG)
+        .setConstraints(constraints)
+        .setInputData(parameters)
+        .setId(UUID.randomUUID())
+        .build()
+
+    WorkManager.getInstance(this).enqueue(request)
+
+}
+
+fun Context.startPeriodicAccountSyncWork() {
 
     val parameters = Data.Builder()
         .build()
@@ -30,7 +46,7 @@ fun Context.startPeriodicAccountSyncWork() {
         .addTag(SyncAccountWork.TAG)
         .setConstraints(constraints)
         .setInputData(parameters)
-        .setId(uuid)
+        .setId(UUID.randomUUID())
         .build()
 
     WorkManager.getInstance(this)

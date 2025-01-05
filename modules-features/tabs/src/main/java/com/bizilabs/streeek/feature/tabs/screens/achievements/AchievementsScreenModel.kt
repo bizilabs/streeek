@@ -1,5 +1,6 @@
 package com.bizilabs.streeek.feature.tabs.screens.achievements
 
+import android.content.Context
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Bolt
 import androidx.compose.material.icons.filled.ElectricBolt
@@ -17,6 +18,8 @@ import com.bizilabs.streeek.lib.domain.models.AccountDomain
 import com.bizilabs.streeek.lib.domain.models.LevelDomain
 import com.bizilabs.streeek.lib.domain.repositories.AccountRepository
 import com.bizilabs.streeek.lib.domain.repositories.LevelRepository
+import com.bizilabs.streeek.lib.domain.workers.startImmediateAccountSyncWork
+import com.bizilabs.streeek.lib.domain.workers.startPeriodicAccountSyncWork
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -26,7 +29,7 @@ import kotlin.enums.EnumEntries
 
 internal val AchievementsModule = module {
     factory<AchievementsScreenModel> {
-        AchievementsScreenModel(accountRepository = get(), levelRepository = get())
+        AchievementsScreenModel(context = get(), accountRepository = get(), levelRepository = get())
     }
 }
 
@@ -58,6 +61,7 @@ data class AchievementScreenState(
 }
 
 class AchievementsScreenModel(
+    private val context: Context,
     private val accountRepository: AccountRepository,
     private val levelRepository: LevelRepository
 ) : StateScreenModel<AchievementScreenState>(AchievementScreenState()) {
@@ -82,7 +86,7 @@ class AchievementsScreenModel(
         }
     }
 
-    private fun observeLevels(){
+    private fun observeLevels() {
         screenModelScope.launch {
             levelRepository.levels.collectLatest { levels ->
                 mutableState.update { it.copy(levels = levels) }
@@ -92,6 +96,10 @@ class AchievementsScreenModel(
 
     fun onClickTab(tab: AchievementTab) {
         mutableState.update { it.copy(tab = tab) }
+    }
+
+    fun onClickRefreshProfile() {
+        context.startImmediateAccountSyncWork()
     }
 
 }

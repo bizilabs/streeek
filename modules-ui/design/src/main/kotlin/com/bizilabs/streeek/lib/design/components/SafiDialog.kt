@@ -154,3 +154,106 @@ fun SafiBottomDialog(
         }
     }
 }
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SafiBottomDialog(
+    state: DialogState?,
+    onClickDismiss: () -> Unit,
+    content: @Composable () -> Unit,
+) {
+
+    val scope = rememberCoroutineScope()
+    val bottomSheetState = rememberModalBottomSheetState()
+
+    AnimatedVisibility(visible = state != null) {
+        LaunchedEffect(state) {
+            if (state != null) bottomSheetState.show() else bottomSheetState.hide()
+        }
+        ModalBottomSheet(
+            sheetState = bottomSheetState,
+            onDismissRequest = {
+                scope.launch { bottomSheetState.hide() }
+                onClickDismiss()
+            },
+            properties = ModalBottomSheetProperties(
+                securePolicy =SecureFlagPolicy.Inherit,
+            )
+        ) {
+            AnimatedContent(targetState = state, label = "dialog state") { dialog ->
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)
+                ) {
+                    if (dialog != null)
+                        when (dialog) {
+                            is DialogState.Caution -> {
+                                SafiInfoSection(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(bottom = 32.dp),
+                                    icon = Icons.Rounded.WarningAmber,
+                                    title = dialog.title,
+                                    description = dialog.message
+                                ) {
+                                    content()
+                                }
+                            }
+
+                            is DialogState.Error -> {
+                                SafiInfoSection(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(bottom = 32.dp),
+                                    icon = Icons.Rounded.Error,
+                                    title = dialog.title,
+                                    description = dialog.message
+                                ) {
+                                    content()
+                                }
+                            }
+
+                            is DialogState.Info -> {
+                                SafiInfoSection(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(bottom = 32.dp),
+                                    icon = Icons.Rounded.Info,
+                                    title = dialog.title,
+                                    description = dialog.message
+                                ) {
+                                    content()
+                                }
+                            }
+
+                            is DialogState.Loading -> {
+                                SafiCenteredColumn(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(64.dp)
+                                ) {
+                                    CircularProgressIndicator()
+                                }
+                            }
+
+                            is DialogState.Success -> {
+                                SafiInfoSection(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(bottom = 32.dp),
+                                    icon = Icons.Rounded.CheckCircle,
+                                    title = dialog.title,
+                                    description = dialog.message
+                                ) {
+                                    content()
+                                }
+                            }
+
+                        }
+                }
+
+            }
+        }
+    }
+}

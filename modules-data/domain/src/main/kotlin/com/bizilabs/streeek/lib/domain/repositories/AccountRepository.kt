@@ -16,4 +16,5 @@ interface AccountRepository {
     ): DataResult<AccountDomain>
     suspend fun getAccount(id: Long): DataResult<AccountDomain>
     suspend fun syncAccount(): DataResult<Boolean>
+    suspend fun logout()
 }

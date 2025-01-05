@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.mapLatest
 interface AccountLocalSource {
     val account: Flow<AccountCache?>
     suspend fun updateAccount(account: AccountCache)
+    suspend fun logout()
 }
 
 class AccountLocalSourceImpl(
@@ -26,6 +27,10 @@ class AccountLocalSourceImpl(
 
     override suspend fun updateAccount(account: AccountCache) {
         preferenceSource.update(key = Keys.account, value = account.asJson())
+    }
+
+    override suspend fun logout() {
+        preferenceSource.clear()
     }
 
 }

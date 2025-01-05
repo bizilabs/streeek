@@ -13,6 +13,7 @@ import kotlinx.coroutines.withContext
 interface RemotePreferencesSource {
     val accessToken: Flow<String?>
     suspend fun updateAccessToken(token: String)
+    suspend fun clear()
 }
 
 class RemotePreferencesSourceImpl(
@@ -39,4 +40,9 @@ class RemotePreferencesSourceImpl(
     override suspend fun updateAccessToken(token: String) {
         update(key = Keys.accessToken, value = token)
     }
+
+    override suspend fun clear() {
+        dataStore.edit { it.clear() }
+    }
+
 }

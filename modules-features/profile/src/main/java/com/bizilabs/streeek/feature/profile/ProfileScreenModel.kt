@@ -14,7 +14,9 @@ val profileModule = module {
 }
 
 data class ProfileScreenState(
-    val account: AccountDomain? = null
+    val account: AccountDomain? = null,
+    val shouldConfirmLogout: Boolean = false,
+    val shouldNavigateToLanding: Boolean = false
 )
 
 class ProfileScreenModel(
@@ -26,7 +28,7 @@ class ProfileScreenModel(
         observeAccount()
     }
 
-    private fun getAccount(){
+    private fun getAccount() {
         screenModelScope.launch {
             accountRepository.syncAccount()
         }
@@ -38,6 +40,29 @@ class ProfileScreenModel(
                 mutableState.update { it.copy(account = account) }
             }
         }
+    }
+
+    fun onClickLogout() {
+        mutableState.update { it.copy(shouldConfirmLogout = true) }
+    }
+
+    fun onClickConfirmLogout(confirm: Boolean) {
+        when(confirm){
+            true -> onClickConfirmLogoutYes()
+            false -> onClickConfirmLogoutNo()
+        }
+    }
+
+    fun onClickConfirmLogoutYes() {
+        mutableState.update { it.copy(shouldConfirmLogout = false) }
+        screenModelScope.launch {
+            accountRepository.logout()
+            mutableState.update { it.copy(shouldNavigateToLanding = true) }
+        }
+    }
+
+    fun onClickConfirmLogoutNo() {
+        mutableState.update { it.copy(shouldConfirmLogout = false) }
     }
 
 }

@@ -34,4 +34,7 @@ interface ContributionDAO : BaseDAO<ContributionEntity> {
 
     @Query("DELETE FROM contributions WHERE id = :id")
     fun delete(id: Long)
+
+    @Query("DELETE FROM contributions")
+    fun deleteAll()
 }
