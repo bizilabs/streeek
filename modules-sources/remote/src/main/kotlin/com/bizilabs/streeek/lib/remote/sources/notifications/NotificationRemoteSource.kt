@@ -15,6 +15,8 @@ import io.github.jan.supabase.postgrest.query.Order
 interface NotificationRemoteSource {
     suspend fun fetchNotifications(accountId: Long, page: Int): NetworkResult<List<NotificationDTO>>
     suspend fun create(request: NotificationCreateDTO): NetworkResult<NotificationDTO>
+    suspend fun update(notification: NotificationDTO): NetworkResult<NotificationDTO>
+    suspend fun delete(notification: NotificationDTO): NetworkResult<Boolean>
 }
 
 internal class NotificationRemoteSourceImpl(
@@ -43,5 +45,36 @@ internal class NotificationRemoteSourceImpl(
                     parameters = request.asJsonObject()
                 )
                 .decodeAs()
+        }
+
+    override suspend fun update(notification: NotificationDTO): NetworkResult<NotificationDTO> =
+        safeSupabaseCall {
+            supabase
+                .from(Supabase.Tables.Notifications)
+                .update(
+                    {
+                        NotificationDTO::title setTo notification.title
+                        NotificationDTO::message setTo notification.message
+                        NotificationDTO::payload setTo notification.payload
+                        NotificationDTO::readAt setTo notification.readAt
+                    }
+                ) {
+                    select()
+                    filter {
+                        NotificationDTO::id eq notification.id
+                    }
+                }.decodeSingle<NotificationDTO>()
+        }
+
+    override suspend fun delete(notification: NotificationDTO): NetworkResult<Boolean> =
+        safeSupabaseCall {
+            supabase
+                .from(Supabase.Tables.Notifications)
+                .delete {
+                    filter {
+                        NotificationDTO::id eq notification.id
+                    }
+                }
+            true
         }
 }
