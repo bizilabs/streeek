@@ -20,3 +20,15 @@ data class NotificationDTO(
         const val CreatedAt = "created_at"
     }
 }
+
+@Serializable
+data class NotificationCreateDTO(
+    @SerialName("p_account_id")
+    val accountId: Long,
+    @SerialName("p_title")
+    val title: String,
+    @SerialName("p_message")
+    val message: String,
+    @SerialName("p_payloa")
+    val payload: String?
+)

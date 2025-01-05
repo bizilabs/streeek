@@ -22,8 +22,8 @@ object Supabase {
     }
     object Functions {
         const val GetAccountWithPoints = "get_account_with_points_and_level"
-        object Levels {
-            const val GetPagedLevels = "get_levels"
+        object Notifications {
+            const val Create = "insert_notification"
         }
         object Teams {
             const val Create = "create_team"
@@ -32,9 +32,6 @@ object Supabase {
             const val GetAccountTeams = "get_teams_for_account"
             const val Join = "join_team_with_invite_code"
             const val Leave = "leave_team"
-            object Requests {
-                const val Get = "accept_team_request"
-            }
             object Invitations {
                 const val Get = "get_team_invitations"
                 const val Delete = "delete_team_invitation"
