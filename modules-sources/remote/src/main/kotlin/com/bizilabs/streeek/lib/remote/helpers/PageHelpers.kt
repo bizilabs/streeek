@@ -1,5 +1,7 @@
 package com.bizilabs.streeek.lib.remote.helpers
 
+import io.github.jan.supabase.postgrest.query.request.SelectRequestBuilder
+
 const val PAGE_SIZE: Int = 20
 
 data class PageRange(
@@ -17,4 +19,9 @@ data class PageRange(
 
 fun getRange(page: Int): PageRange {
     return PageRange(page)
+}
+
+fun SelectRequestBuilder.range(page: Int) {
+    val page = getRange(page = page)
+    range(page.from, page.to)
 }

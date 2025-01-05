@@ -18,6 +18,7 @@ object Supabase {
         const val AccountPoints = "account_points"
         const val Contributions = "contributions"
         const val Levels = "levels"
+        const val Notifications = "notifications"
     }
     object Functions {
         const val GetAccountWithPoints = "get_account_with_points_and_level"

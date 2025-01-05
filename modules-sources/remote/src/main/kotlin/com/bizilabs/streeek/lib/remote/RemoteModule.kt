@@ -15,6 +15,8 @@ import com.bizilabs.streeek.lib.remote.sources.contributions.ContributionsRemote
 import com.bizilabs.streeek.lib.remote.sources.contributions.ContributionsRemoteSourceImpl
 import com.bizilabs.streeek.lib.remote.sources.level.LevelRemoteSource
 import com.bizilabs.streeek.lib.remote.sources.level.LevelRemoteSourceImpl
+import com.bizilabs.streeek.lib.remote.sources.notifications.NotificationRemoteSource
+import com.bizilabs.streeek.lib.remote.sources.notifications.NotificationRemoteSourceImpl
 import com.bizilabs.streeek.lib.remote.sources.preferences.RemotePreferencesSource
 import com.bizilabs.streeek.lib.remote.sources.preferences.RemotePreferencesSourceImpl
 import com.bizilabs.streeek.lib.remote.sources.team.TeamRemoteSource
@@ -73,4 +75,5 @@ val RemoteModule = module {
     single<TeamRemoteSource> { TeamRemoteSourceImpl(supabase = get()) }
     single<TeamInvitationRemoteSource> { TeamInvitationRemoteSourceImpl(supabase = get()) }
     single<LevelRemoteSource> { LevelRemoteSourceImpl(supabase = get()) }
+    single<NotificationRemoteSource> { NotificationRemoteSourceImpl(supabase = get()) }
 }
