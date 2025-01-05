@@ -2,8 +2,10 @@ package com.bizilabs.streeek.feature.tabs.screens.feed.components
 
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -47,17 +49,28 @@ fun ContributionItemComponent(contribution: ContributionDomain, modifier: Modifi
                 .height(100.dp)
         ) {
 
-            Text(
-                text = "${contribution.points}",
+            Column(
                 modifier = Modifier
-                    .alpha(0.25f)
-                    .align(Alignment.TopEnd)
-                    .rotate(-32f)
-                ,
-                softWrap = false,
-                fontSize = 48.sp,
-                fontWeight = FontWeight.Black
-            )
+                    .alpha(0.1f)
+                    .align(Alignment.TopEnd),
+                horizontalAlignment = Alignment.End
+            ) {
+                Text(
+                    text = "${contribution.points}",
+                    softWrap = false,
+                    fontSize = 48.sp,
+                    fontWeight = FontWeight.Black,
+                    lineHeight = 0.1.sp
+                )
+                Text(
+                    modifier = Modifier,
+                    text = "EXP",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Black,
+                    lineHeight = 0.1.sp
+                )
+            }
+
 
             Column(
                 modifier = Modifier
