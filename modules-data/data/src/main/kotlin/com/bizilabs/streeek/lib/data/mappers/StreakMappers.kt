@@ -12,7 +12,11 @@ import com.bizilabs.streeek.lib.remote.models.supabase.StreakDTO
 fun StreakDTO.toDomain(): StreakDomain = StreakDomain(
     current = currentStreak,
     longest = longestStreak,
-    updatedAt = updatedAt.replaceAfter(".", "").replace(".", "").asDate(format = DateFormats.YYYY_MM_ddTHH_mm_ss)?.datetimeSystem
+    updatedAt = updatedAt
+        .replaceAfter(".", "")
+        .replace(".", "")
+        .asDate(format = DateFormats.YYYY_MM_ddTHH_mm_ss)
+        ?.datetimeSystem
         ?: SystemLocalDateTime
 )
 

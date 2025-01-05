@@ -46,7 +46,7 @@ enum class Tabs {
 }
 
 data class TabsScreenState(
-    val tab: Tabs = Tabs.ACHIEVEMENTS,
+    val tab: Tabs = Tabs.FEED,
     val tabs: List<Tabs> = Tabs.entries.toList(),
 )
 
