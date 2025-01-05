@@ -29,6 +29,6 @@ data class NotificationCreateDTO(
     val title: String,
     @SerialName("p_message")
     val message: String,
-    @SerialName("p_payloa")
+    @SerialName("p_payload")
     val payload: String?
 )

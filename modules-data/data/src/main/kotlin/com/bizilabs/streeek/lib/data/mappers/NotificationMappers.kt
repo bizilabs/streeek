@@ -44,5 +44,5 @@ fun NotificationCache.toDomain() = NotificationDomain(
     message = message,
     payload = payload,
     createdAt = createdAt.asDate(DateFormats.YYYY_MM_dd_T_HH_mm_ss_SSSSSS)?.datetimeUTC ?: UTCLocalDateTime,
-    readAt = createdAt.asDate(DateFormats.YYYY_MM_dd_T_HH_mm_ss_SSSSSS)?.datetimeUTC ?: UTCLocalDateTime
+    readAt = readAt?.asDate(DateFormats.YYYY_MM_dd_T_HH_mm_ss_SSSSSS)?.datetimeUTC
 )

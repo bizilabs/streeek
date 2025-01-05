@@ -13,7 +13,7 @@ import com.bizilabs.streeek.lib.local.sources.notifications.NotificationDAO
 @Database(
     entities = [ContributionEntity::class, LevelEntity::class, NotificationEntity::class],
     exportSchema = true,
-    version = 2
+    version = 3
 )
 @TypeConverters()
 abstract class StreeekDatabase : RoomDatabase() {

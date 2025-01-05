@@ -7,6 +7,7 @@ object SafiStringLabels {
     val NetworkConnectionYes = R.string.label_network_connection_yes
     val LogOut = R.string.label_log_out
     val DeleteAccount = R.string.label_delete_account
+    val Notifications = R.string.label_notifications
 }
 
 object SafiStringMessages {

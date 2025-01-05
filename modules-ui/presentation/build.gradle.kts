@@ -22,6 +22,7 @@ dependencies {
     implementation(projects.modulesFeatures.setup)
     implementation(projects.modulesFeatures.profile)
     implementation(projects.modulesFeatures.team)
+    implementation(projects.modulesFeatures.notifications)
 
     // splash screen
     implementation(libs.androidx.core.splashscreen)
