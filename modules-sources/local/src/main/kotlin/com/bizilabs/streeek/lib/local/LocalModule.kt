@@ -14,6 +14,9 @@ import com.bizilabs.streeek.lib.local.sources.contributions.ContributionsLocalSo
 import com.bizilabs.streeek.lib.local.sources.level.LevelDAO
 import com.bizilabs.streeek.lib.local.sources.level.LevelLocalSource
 import com.bizilabs.streeek.lib.local.sources.level.LevelLocalSourceImpl
+import com.bizilabs.streeek.lib.local.sources.notifications.NotificationDAO
+import com.bizilabs.streeek.lib.local.sources.notifications.NotificationLocalSource
+import com.bizilabs.streeek.lib.local.sources.notifications.NotificationLocalSourceImpl
 import com.bizilabs.streeek.lib.local.sources.preference.LocalPreferenceSource
 import com.bizilabs.streeek.lib.local.sources.preference.LocalPreferenceSourceImpl
 import com.bizilabs.streeek.lib.local.sources.preference.PreferenceSource
@@ -36,18 +39,20 @@ val LocalModule = module {
         ).fallbackToDestructiveMigration()
             .build()
     }
-    single<ContributionDAO> { get<StreeekDatabase>().contributions }
-    single<LevelDAO> { get<StreeekDatabase>().levels }
     // sources
     single<PreferenceSource> { PreferenceSourceImpl(dataStore = get(named("local"))) }
     single<LocalPreferenceSource> { LocalPreferenceSourceImpl(source = get()) }
     single<AccountLocalSource> { AccountLocalSourceImpl(preferenceSource = get()) }
-    single<ContributionsLocalSource> {
-        ContributionsLocalSourceImpl(
-            dao = get(),
-            preferenceSource = get()
-        )
-    }
     single<TeamLocalSource> { TeamLocalSourceImpl(source = get()) }
+    // contributions
+    single<ContributionDAO> { get<StreeekDatabase>().contributions }
+    single<ContributionsLocalSource> {
+        ContributionsLocalSourceImpl(dao = get(), preferenceSource = get())
+    }
+    // levels
+    single<LevelDAO> { get<StreeekDatabase>().levels }
     single<LevelLocalSource> { LevelLocalSourceImpl(source = get()) }
+    // notifications
+    single<NotificationDAO> { get<StreeekDatabase>().notifications }
+    single<NotificationLocalSource> { NotificationLocalSourceImpl(dao = get()) }
 }
