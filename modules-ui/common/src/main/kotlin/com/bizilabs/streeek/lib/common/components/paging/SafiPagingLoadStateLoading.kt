@@ -16,12 +16,12 @@ import com.bizilabs.streeek.lib.design.theme.SafiTheme
 @Composable
 fun SafiPagingLoadStateLoading(
     modifier: Modifier = Modifier,
-    size: Dp = 48.dp
+    size: Dp = 24.dp
 ) {
     SafiCenteredColumn(modifier = modifier) {
         CircularProgressIndicator(
             modifier = Modifier
-            .padding(16.dp)
+            .padding(100.dp)
             .size(size)
         )
     }

@@ -1,8 +1,13 @@
 package com.bizilabs.streeek.lib.data.repositories
 
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
 import com.bizilabs.streeek.lib.data.mappers.toCache
 import com.bizilabs.streeek.lib.data.mappers.toDTO
 import com.bizilabs.streeek.lib.data.mappers.toDomain
+import com.bizilabs.streeek.lib.data.paging.NotificationPagingSource
+import com.bizilabs.streeek.lib.data.paging.Paging
 import com.bizilabs.streeek.lib.domain.helpers.DataResult
 import com.bizilabs.streeek.lib.domain.models.NotificationDomain
 import com.bizilabs.streeek.lib.domain.repositories.NotificationRepository
@@ -31,15 +36,22 @@ class NotificationRepositoryImpl(
 
     private suspend fun getAccountId() = getAccount()?.id?.toLong()
 
-    override val notifications: Flow<List<NotificationDomain>>
-        get() = localSource.notifications.toDomain()
-
-    override val unreadNotifications: Flow<List<NotificationDomain>>
-        get() = localSource.unreadNotifications.toDomain()
+    override val notifications: Flow<PagingData<NotificationDomain>>
+        get() = Pager(
+            config = PagingConfig(pageSize = Paging.PAGE_SIZE, enablePlaceholders = false),
+            pagingSourceFactory = {
+                NotificationPagingSource(
+                    accountLocalSource = accountLocalSource,
+                    notificationRemoteSource = remoteSource,
+                    notificationLocalSource = localSource
+                )
+            }
+        ).flow
 
     override suspend fun getNotifications(page: Int): DataResult<List<NotificationDomain>> {
         val accountId = getAccountId() ?: return DataResult.Error("Couldn't get logged in account")
-        return when (val result = remoteSource.fetchNotifications(accountId = accountId, page = page)) {
+        return when (val result =
+            remoteSource.fetchNotifications(accountId = accountId, page = page)) {
             is NetworkResult.Failure -> DataResult.Error(result.exception.localizedMessage)
             is NetworkResult.Success -> DataResult.Success(data = result.data.map { it.toDomain() })
         }

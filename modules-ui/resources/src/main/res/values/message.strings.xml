@@ -7,4 +7,5 @@
         \nOr just click here to jump in: \nstreeek://app.mobile?destination=team&amp;code=%s
         \nLet’s see what you’ve got! 🚀
     </string>
+    <string name="message_no_notifications">You have no notifications. Come back later! </string>
 </resources>

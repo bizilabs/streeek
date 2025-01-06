@@ -1,13 +1,13 @@
 package com.bizilabs.streeek.lib.domain.repositories
 
+import androidx.paging.PagingData
 import com.bizilabs.streeek.lib.domain.helpers.DataResult
 import com.bizilabs.streeek.lib.domain.models.NotificationDomain
 import kotlinx.coroutines.flow.Flow
 
 interface NotificationRepository {
 
-    val notifications: Flow<List<NotificationDomain>>
-    val unreadNotifications: Flow<List<NotificationDomain>>
+    val notifications: Flow<PagingData<NotificationDomain>>
 
     suspend fun getNotifications(page: Int): DataResult<List<NotificationDomain>>
 

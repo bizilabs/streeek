@@ -8,8 +8,11 @@ object SafiStringLabels {
     val LogOut = R.string.label_log_out
     val DeleteAccount = R.string.label_delete_account
     val Notifications = R.string.label_notifications
+    val NoNotifications = R.string.label_no_notifications
 }
 
 object SafiStringMessages {
     val MessageTeamInvite = R.string.message_team_invite
+    val NoNotifications = R.string.message_no_notifications
+
 }

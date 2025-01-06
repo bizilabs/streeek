@@ -14,4 +14,7 @@ dependencies {
     implementation(projects.modulesSources.local)
     implementation(projects.modulesData.domain)
 
+    // paging
+    implementation(libs.androidx.paging.runtime)
+
 }

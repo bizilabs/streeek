@@ -12,4 +12,6 @@ dependencies {
     implementation(projects.modulesUi.resources)
     // work-manager
     implementation(libs.androidx.work.runtime)
+    // paging
+    implementation(libs.androidx.paging.runtime)
 }
