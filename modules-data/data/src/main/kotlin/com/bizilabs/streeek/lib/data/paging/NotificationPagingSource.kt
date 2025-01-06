@@ -25,7 +25,7 @@ class NotificationPagingSource(
     }
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, NotificationDomain> {
-        val page = params.key ?: Paging.START_PAGE
+        val page = params.key ?: PagingHelpers.START_PAGE
 
         val accountId =
             accountLocalSource.account.firstOrNull()?.id
@@ -42,13 +42,13 @@ class NotificationPagingSource(
         val nextKey =
             when {
                 list.isEmpty() -> null
-                list.size < Paging.PAGE_SIZE -> null
+                list.size < PagingHelpers.PAGE_SIZE -> null
                 else -> page.plus(1)
             }
 
         Timber.d("Notifications -> $list")
 
-        val previousKey = if (page == Paging.START_PAGE) null else page.minus(1)
+        val previousKey = if (page == PagingHelpers.START_PAGE) null else page.minus(1)
 
         return LoadResult.Page(data = list, prevKey = previousKey, nextKey = nextKey)
     }

@@ -7,7 +7,7 @@ import com.bizilabs.streeek.lib.data.mappers.toCache
 import com.bizilabs.streeek.lib.data.mappers.toDTO
 import com.bizilabs.streeek.lib.data.mappers.toDomain
 import com.bizilabs.streeek.lib.data.paging.NotificationPagingSource
-import com.bizilabs.streeek.lib.data.paging.Paging
+import com.bizilabs.streeek.lib.data.paging.PagingHelpers
 import com.bizilabs.streeek.lib.domain.helpers.DataResult
 import com.bizilabs.streeek.lib.domain.models.NotificationDomain
 import com.bizilabs.streeek.lib.domain.repositories.NotificationRepository
@@ -37,7 +37,7 @@ class NotificationRepositoryImpl(
     override val notifications: Flow<PagingData<NotificationDomain>>
         get() =
             Pager(
-                config = PagingConfig(pageSize = Paging.PAGE_SIZE, enablePlaceholders = false),
+                config = PagingConfig(pageSize = PagingHelpers.PAGE_SIZE, enablePlaceholders = false),
                 pagingSourceFactory = {
                     NotificationPagingSource(
                         accountLocalSource = accountLocalSource,
