@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout project sources
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Create local.properties
         run: echo "${{secrets.LOCAL_PROPERTIES }}" > $GITHUB_WORKSPACE/local.properties
@@ -22,7 +22,7 @@ jobs:
           cache: 'gradle'
 
       - name: Setup Gradle
-        uses: gradle/gradle-build-action@v2
+        uses: gradle/gradle-build-action@v3
 
       - name: Run tests with Gradle Wrapper
         run: ./gradlew check
