@@ -13,27 +13,48 @@ import io.ktor.client.request.setBody
 import io.ktor.client.request.url
 
 interface IssuesRemoteSource {
-    suspend fun createIssue(createIssueDto: CreateIssueDTO): NetworkResult<GithubIssueDTO>
+    suspend fun createIssue(request: CreateIssueDTO): NetworkResult<GithubIssueDTO>
 
-    suspend fun getIssues(username: String): NetworkResult<List<GithubIssueDTO>>
+    suspend fun fetchUserIssues(
+        username: String,
+        page: Int,
+    ): NetworkResult<List<GithubIssueDTO>>
+
+    suspend fun fetchIssues(
+        page: Int,
+    ): NetworkResult<List<GithubIssueDTO>>
+
 }
 
 class IssuesRemoteSourceImpl(
     private val client: HttpClient,
 ) : IssuesRemoteSource {
-    override suspend fun createIssue(createIssueDto: CreateIssueDTO): NetworkResult<GithubIssueDTO> =
+    override suspend fun createIssue(request: CreateIssueDTO): NetworkResult<GithubIssueDTO> =
         safeApiCall {
             client.post {
                 url(GithubEndpoint.Issues.url)
-                setBody(body = createIssueDto)
+                setBody(body = request)
             }
         }
 
-    override suspend fun getIssues(username: String): NetworkResult<List<GithubIssueDTO>> =
+    override suspend fun fetchUserIssues(
+        username: String,
+        page: Int,
+    ): NetworkResult<List<GithubIssueDTO>> =
         safeApiCall {
             client.get {
                 url(GithubEndpoint.Issues.url)
                 parameter("creator", username)
+                parameter("page", page)
             }
         }
+
+    override suspend fun fetchIssues(page: Int): NetworkResult<List<GithubIssueDTO>> =
+        safeApiCall {
+            client.get {
+                url(GithubEndpoint.Issues.url)
+                parameter("page", page)
+            }
+        }
+
 }

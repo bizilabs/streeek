@@ -6,4 +6,6 @@
     <string name="label_delete_account">Delete Account</string>
     <string name="label_notifications">Notifications</string>
     <string name="label_no_notifications">No Notifications</string>
+
+    <string name="label_issues">Issues</string>
 </resources>

@@ -8,6 +8,7 @@ object SafiStringLabels {
     val LogOut = R.string.label_log_out
     val DeleteAccount = R.string.label_delete_account
     val Notifications = R.string.label_notifications
+    val Issues = R.string.label_issues
     val NoNotifications = R.string.label_no_notifications
 }
 

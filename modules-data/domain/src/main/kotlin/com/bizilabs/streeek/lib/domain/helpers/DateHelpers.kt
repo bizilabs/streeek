@@ -21,6 +21,7 @@ object DateFormats {
     const val YYYY_MM_DDTHH_MM_SS = "yyyy-MM-dd'T'HH:mm:ss"
     const val HH_MM = "HH:mm"
     const val YYYY_MM_DD = "yyyy-MM-dd"
+    const val DD_MM_YYYY = "dd/MM/YYYY"
     const val YYYY_MM_DD_T_HH_MM_SS_SSSSSS = "yyyy-MM-dd'T'HH:mm:ss.SSSSSS"
 }
 
@@ -112,3 +113,30 @@ fun LocalDateTime.isPastDue(): Boolean {
 
 val LocalDate.dayShort
     get() = this.dayOfWeek.name.take(3).lowercase().replaceFirstChar { it.uppercase() }
+
+fun LocalDateTime.toTimeAgo(): String {
+    val now = Clock.System.now()
+    val instantThis = this.toInstant(TimeZone.currentSystemDefault())
+    val duration = now - instantThis
+
+    return when {
+        duration.inWholeMinutes < 1 -> "just now"
+        duration.inWholeMinutes < 60 -> {
+            val minutes = duration.inWholeMinutes
+            if (minutes == 1L) "1 minute ago" else "$minutes minutes ago"
+        }
+        duration.inWholeHours < 24 -> {
+            val hours = duration.inWholeHours
+            if (hours == 1L) "1 hour ago" else "$hours hours ago"
+        }
+        duration.inWholeDays < 7 -> {
+            val days = duration.inWholeDays
+            if (days == 1L) "1 day ago" else "$days days ago"
+        }
+        duration.inWholeDays < 28 -> {
+            val weeks = duration.inWholeDays / 7
+            if (weeks == 1L) "1 week ago" else "$weeks weeks ago"
+        }
+        else -> this.date.asString(format = DateFormats.YYYY_MM_DD) ?: ""
+    }
+}

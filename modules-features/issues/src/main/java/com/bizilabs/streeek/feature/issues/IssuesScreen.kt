@@ -1,0 +1,180 @@
+package com.bizilabs.streeek.feature.issues
+
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.ArrowBack
+import androidx.compose.material.icons.rounded.Add
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
+import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.koin.getScreenModel
+import cafe.adriel.voyager.navigator.LocalNavigator
+import coil.compose.AsyncImage
+import com.bizilabs.streeek.lib.common.components.paging.SafiPagingComponent
+import com.bizilabs.streeek.lib.common.helpers.fromHex
+import com.bizilabs.streeek.lib.domain.helpers.toTimeAgo
+import com.bizilabs.streeek.lib.domain.models.IssueDomain
+import com.bizilabs.streeek.lib.resources.strings.SafiStrings
+
+object IssuesScreen : Screen {
+    @Composable
+    override fun Content() {
+        val navigator = LocalNavigator.current
+        val screenModel = getScreenModel<IssuesScreenModel>()
+        val state by screenModel.state.collectAsStateWithLifecycle()
+        val issues = screenModel.issues.collectAsLazyPagingItems()
+        IssuesScreenContent(
+            state = state,
+            issues = issues,
+            onClickNavigateBack = { navigator?.pop() },
+            onClickAddIssue = {}
+        )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun IssuesScreenContent(
+    state: IssuesScreenState,
+    issues: LazyPagingItems<IssueDomain>,
+    onClickNavigateBack: () -> Unit,
+    onClickAddIssue: () -> Unit,
+) {
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                navigationIcon = {
+                    IconButton(
+                        modifier = Modifier.padding(),
+                        onClick = onClickNavigateBack,
+                    ) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
+                            contentDescription = "navigate back",
+                        )
+                    }
+                },
+                title = {
+                    Text(
+                        modifier = Modifier.padding(start = 16.dp),
+                        text = stringResource(SafiStrings.Labels.Issues).uppercase(),
+                        style = MaterialTheme.typography.titleSmall,
+                        textAlign = TextAlign.Center,
+                    )
+                },
+            )
+        },
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = onClickAddIssue,
+                containerColor = MaterialTheme.colorScheme.primary,
+                contentColor = MaterialTheme.colorScheme.onPrimary,
+            ) {
+                Icon(imageVector = Icons.Rounded.Add, contentDescription = "add issue")
+            }
+        }
+    ) { innerPadding ->
+        SafiPagingComponent(
+            modifier =
+            Modifier
+                .padding(innerPadding)
+                .fillMaxSize(),
+            data = issues,
+        ) { issue ->
+            Column {
+                Column(
+                    modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+
+                        AsyncImage(
+                            modifier = Modifier
+                                .padding(end = 16.dp)
+                                .size(48.dp)
+                                .clip(CircleShape),
+                            model = issue.user.url,
+                            contentDescription = "avatar image url"
+                        )
+
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(
+                                text = issue.createdAt.toTimeAgo(),
+                                style = MaterialTheme.typography.labelMedium
+                            )
+                            Text(
+                                modifier = Modifier.padding(vertical = 8.dp),
+                                text = issue.title,
+                                maxLines = 2,
+                                overflow = TextOverflow.Ellipsis,
+                                fontWeight = FontWeight.Bold
+                            )
+                            AnimatedVisibility(
+                                modifier = Modifier
+                                    .fillMaxWidth(),
+                                visible = issue.labels.isNotEmpty()
+                            ) {
+                                LazyRow {
+                                    items(issue.labels) { label ->
+                                        Card(
+                                            colors = CardDefaults.cardColors(
+                                                containerColor = Color.fromHex(label.color)
+                                            )
+                                        ) {
+                                            Text(
+                                                modifier = Modifier.padding(vertical = 4.dp, horizontal = 8.dp),
+                                                text = label.name,
+                                                style = MaterialTheme.typography.labelSmall,
+                                                color = Color.Black
+                                            )
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                    }
+                }
+                HorizontalDivider(modifier = Modifier.fillMaxWidth())
+            }
+        }
+    }
+}

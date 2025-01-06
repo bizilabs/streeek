@@ -2,6 +2,7 @@ package com.bizilabs.streeek.lib.presentation.helpers
 
 import android.app.Application
 import com.bizilabs.streeek.feature.authentication.authenticationModule
+import com.bizilabs.streeek.feature.issues.FeatureIssuesModule
 import com.bizilabs.streeek.feature.landing.landingModule
 import com.bizilabs.streeek.feature.notifications.FeatureNotificationModule
 import com.bizilabs.streeek.feature.profile.profileModule
@@ -40,6 +41,7 @@ val PresentationModule =
             profileModule,
             FeatureTeamModule,
             FeatureNotificationModule,
+            FeatureIssuesModule,
         )
         workerOf(::SyncTeamsWork)
         workerOf(::SyncLevelsWork)

@@ -1,9 +1,12 @@
 package com.bizilabs.streeek.feature.profile
 
+import android.graphics.drawable.Icon
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.scrollable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -12,6 +15,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
+import androidx.compose.material.icons.rounded.ChevronRight
+import androidx.compose.material.icons.rounded.QuestionMark
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -25,6 +30,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -51,6 +57,8 @@ object ProfileScreen : Screen {
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.current
+        val screenIssues = rememberScreen(SharedScreen.Issues)
+
         val landingScreen = rememberScreen(SharedScreen.Landing)
         val screenModel: ProfileScreenModel = getScreenModel()
         val state by screenModel.state.collectAsStateWithLifecycle()
@@ -60,6 +68,9 @@ object ProfileScreen : Screen {
             onClickLogout = screenModel::onClickLogout,
             navigateToLanding = { navigator?.replaceAll(landingScreen) },
             onClickConfirmLogout = screenModel::onClickConfirmLogout,
+            onClickCardIssues = {
+                navigator?.push(screenIssues)
+            },
         )
     }
 }
@@ -72,6 +83,7 @@ fun ProfileScreenContent(
     onClickLogout: () -> Unit,
     navigateToLanding: () -> Unit,
     onClickConfirmLogout: (Boolean) -> Unit,
+    onClickCardIssues: () -> Unit,
 ) {
     val scrollState = rememberScrollState()
 
@@ -107,7 +119,6 @@ fun ProfileScreenContent(
             },
         )
     }) { innerPadding ->
-
         Column(
             modifier =
                 Modifier
@@ -153,15 +164,51 @@ fun ProfileScreenContent(
                     )
                 }
             }
+
+            ProfileItemComponent(
+                icon = Icons.Rounded.QuestionMark,
+                label = "Issues",
+                onClickCardIssues = onClickCardIssues
+            )
+
             Button(
                 modifier =
                     Modifier
                         .fillMaxWidth()
-                        .padding(16.dp),
+                        .padding(horizontal = 16.dp),
                 onClick = onClickLogout,
             ) {
                 Text(text = stringResource(SafiStringLabels.LogOut))
             }
+        }
+    }
+}
+
+@Composable
+private fun ProfileItemComponent(
+    icon: ImageVector,
+    label: String,
+    onClickCardIssues: () -> Unit
+) {
+    Card(
+        modifier = Modifier
+            .padding(16.dp)
+            .fillMaxWidth(),
+        onClick = onClickCardIssues,
+    ) {
+        Row(
+            modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+        ) {
+            Row {
+                Icon(imageVector = icon, contentDescription = label)
+                Text(modifier = Modifier.padding(start = 16.dp), text = label)
+            }
+
+            Icon(imageVector = Icons.Rounded.ChevronRight, contentDescription = label)
         }
     }
 }

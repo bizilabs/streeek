@@ -16,4 +16,6 @@ sealed class SharedScreen : ScreenProvider {
     class Team(val isJoining: Boolean = false, val teamId: Long?) : SharedScreen()
 
     object Notifications : SharedScreen()
+
+    object Issues : SharedScreen()
 }

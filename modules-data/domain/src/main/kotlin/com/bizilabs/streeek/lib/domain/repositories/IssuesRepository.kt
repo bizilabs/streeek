@@ -1,11 +1,14 @@
 package com.bizilabs.streeek.lib.domain.repositories
 
+import androidx.paging.PagingData
 import com.bizilabs.streeek.lib.domain.helpers.DataResult
 import com.bizilabs.streeek.lib.domain.models.CreateIssueDomain
 import com.bizilabs.streeek.lib.domain.models.IssueDomain
+import kotlinx.coroutines.flow.Flow
 
 interface IssuesRepository {
-    suspend fun createIssue(createIssueDomain: CreateIssueDomain): DataResult<IssueDomain>
+    val issues: Flow<PagingData<IssueDomain>>
 
-    suspend fun getIssues(): DataResult<List<IssueDomain>>
+    fun getIssues(isFetchingUserIssues: Boolean) : Flow<PagingData<IssueDomain>>
+    suspend fun createIssue(createIssueDomain: CreateIssueDomain): DataResult<IssueDomain>
 }

@@ -3,7 +3,9 @@ package com.bizilabs.streeek.lib.data.mappers
 import com.bizilabs.streeek.lib.domain.helpers.DateFormats
 import com.bizilabs.streeek.lib.domain.helpers.asDate
 import com.bizilabs.streeek.lib.domain.helpers.asString
+import com.bizilabs.streeek.lib.domain.models.CreateIssueDomain
 import com.bizilabs.streeek.lib.domain.models.IssueDomain
+import com.bizilabs.streeek.lib.remote.models.CreateIssueDTO
 import com.bizilabs.streeek.lib.remote.models.GithubIssueDTO
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
@@ -38,4 +40,11 @@ fun IssueDomain.toDTO() =
         createdAt = createdAt.asString(DateFormats.ISO_8601_Z) ?: "",
         updatedAt = updatedAt.asString(DateFormats.ISO_8601_Z) ?: "",
         closedAt = closedAt?.asString(DateFormats.ISO_8601_Z),
+    )
+
+fun CreateIssueDomain.toDTO(): CreateIssueDTO =
+    CreateIssueDTO(
+        title = title,
+        body = body,
+        label = label,
     )

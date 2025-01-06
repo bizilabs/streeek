@@ -1,35 +1,52 @@
 package com.bizilabs.streeek.lib.data.repositories
 
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
 import com.bizilabs.streeek.lib.data.mappers.asDataResult
+import com.bizilabs.streeek.lib.data.mappers.toDTO
 import com.bizilabs.streeek.lib.data.mappers.toDomain
+import com.bizilabs.streeek.lib.data.paging.IssuesPagingSource
+import com.bizilabs.streeek.lib.data.paging.PagingHelpers
 import com.bizilabs.streeek.lib.domain.helpers.DataResult
 import com.bizilabs.streeek.lib.domain.models.CreateIssueDomain
 import com.bizilabs.streeek.lib.domain.models.IssueDomain
 import com.bizilabs.streeek.lib.domain.repositories.IssuesRepository
 import com.bizilabs.streeek.lib.local.sources.account.AccountLocalSource
-import com.bizilabs.streeek.lib.remote.models.CreateIssueDTO
 import com.bizilabs.streeek.lib.remote.sources.issues.IssuesRemoteSource
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.Flow
 
 class IssuesRepositoryImpl(
     private val remoteSource: IssuesRemoteSource,
     private val accountLocalSource: AccountLocalSource,
 ) : IssuesRepository {
+    override val issues: Flow<PagingData<IssueDomain>>
+        get() =
+            Pager(
+                config = PagingConfig(pageSize = PagingHelpers.PAGE_SIZE, enablePlaceholders = false),
+                pagingSourceFactory = {
+                    IssuesPagingSource(
+                        isFetchingUserIssues = false,
+                        accountLocalSource = accountLocalSource,
+                        issuesRemoteSource = remoteSource,
+                    )
+                },
+            ).flow
+
+    override fun getIssues(isFetchingUserIssues: Boolean): Flow<PagingData<IssueDomain>> =
+        Pager(
+            config = PagingConfig(pageSize = PagingHelpers.PAGE_SIZE, enablePlaceholders = false),
+            pagingSourceFactory = {
+                IssuesPagingSource(
+                    isFetchingUserIssues = isFetchingUserIssues,
+                    accountLocalSource = accountLocalSource,
+                    issuesRemoteSource = remoteSource,
+                )
+            },
+        ).flow
+
     override suspend fun createIssue(createIssueDomain: CreateIssueDomain): DataResult<IssueDomain> {
-        return remoteSource.createIssue(createIssueDomain.toCreateIssue())
+        return remoteSource.createIssue(request = createIssueDomain.toDTO())
             .asDataResult { it.toDomain() }
     }
-
-    override suspend fun getIssues(): DataResult<List<IssueDomain>> {
-        val username = accountLocalSource.account.first()?.username ?: ""
-        return remoteSource.getIssues(username = username)
-            .asDataResult { list -> list.map { it.toDomain() } }
-    }
-
-    private fun CreateIssueDomain.toCreateIssue(): CreateIssueDTO =
-        CreateIssueDTO(
-            title = title,
-            body = body,
-            label = label,
-        )
 }
