@@ -6,7 +6,6 @@ import com.bizilabs.streeek.lib.remote.helpers.safeApiCall
 import com.bizilabs.streeek.lib.remote.models.CreateIssueDto
 import com.bizilabs.streeek.lib.remote.models.GithubIssueDTO
 import io.ktor.client.HttpClient
-import io.ktor.client.call.body
 import io.ktor.client.request.get
 import io.ktor.client.request.parameter
 import io.ktor.client.request.post
@@ -14,14 +13,14 @@ import io.ktor.client.request.setBody
 import io.ktor.client.request.url
 
 interface IssuesRemoteSource {
-    suspend fun createIssue(createIssueDto: CreateIssueDto): NetworkResult<Boolean>
-    suspend fun getIssues(name: String): NetworkResult<List<GithubIssueDTO>>
+    suspend fun createIssue(createIssueDto: CreateIssueDto): NetworkResult<GithubIssueDTO>
+    suspend fun getIssues(username: String): NetworkResult<List<GithubIssueDTO>>
 }
 
 class IssuesRemoteSourceImpl(
     private val client: HttpClient
 ) : IssuesRemoteSource {
-    override suspend fun createIssue(createIssueDto: CreateIssueDto): NetworkResult<Boolean> =
+    override suspend fun createIssue(createIssueDto: CreateIssueDto): NetworkResult<GithubIssueDTO> =
         safeApiCall {
             client.post {
                 url(GithubEndpoint.Issues.url)
@@ -29,11 +28,11 @@ class IssuesRemoteSourceImpl(
             }
         }
 
-    override suspend fun getIssues(name: String): NetworkResult<List<GithubIssueDTO>> =
+    override suspend fun getIssues(username: String): NetworkResult<List<GithubIssueDTO>> =
         safeApiCall {
             client.get {
                 url(GithubEndpoint.Issues.url)
-                parameter("creator", name)
+                parameter("creator", username)
             }
         }
 }
