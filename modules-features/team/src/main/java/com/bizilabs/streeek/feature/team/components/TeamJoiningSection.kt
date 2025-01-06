@@ -14,6 +14,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.bizilabs.streeek.feature.team.TeamScreenState
+import com.bizilabs.streeek.lib.design.components.SafiCenteredRow
 import com.bizilabs.streeek.lib.design.components.SafiOTPField
 
 @Composable
@@ -21,44 +22,45 @@ fun TeamJoiningSection(
     state: TeamScreenState,
     modifier: Modifier = Modifier,
     onValueChangeTeamCode: (String) -> Unit,
-    onClickJoin: () -> Unit,
+    onClickJoin: () -> Unit
 ) {
     Column(modifier = modifier) {
         Text(
             modifier = Modifier.padding(top = 16.dp),
             text = "Enter Team Code",
             style = MaterialTheme.typography.titleLarge,
-            fontWeight = FontWeight.Bold,
+            fontWeight = FontWeight.Bold
         )
         Text(
             modifier = Modifier.padding(top = 8.dp),
             text = "Enter the 6 digit code you received from a team admin to proceed",
             style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onBackground.copy(0.75f),
+            color = MaterialTheme.colorScheme.onBackground.copy(0.75f)
         )
-        SafiOTPField(
-            modifier =
-                Modifier
-                    .fillMaxWidth()
+        SafiCenteredRow(modifier = Modifier.fillMaxWidth()) {
+            SafiOTPField(
+                modifier = Modifier
+                    .fillMaxWidth(0.75f)
                     .padding(vertical = 24.dp),
-            text = state.token,
-            onClickDone = onClickJoin,
-            keyboardOptions =
-                KeyboardOptions(
+                text = state.token,
+                onClickDone = onClickJoin,
+                keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.NumberPassword,
-                    imeAction = ImeAction.Done,
+                    imeAction = ImeAction.Done
                 ),
-            isEnabled = state.dialogState == null,
-        ) { text, bool ->
-            onValueChangeTeamCode(text)
+                isEnabled = state.dialogState == null
+            ) { text, bool ->
+                onValueChangeTeamCode(text)
+            }
         }
 
         Button(
             modifier = Modifier.fillMaxWidth(),
             onClick = onClickJoin,
-            enabled = state.isJoinActionEnabled,
+            enabled = state.isJoinActionEnabled
         ) {
             Text(text = "Join")
         }
+
     }
 }

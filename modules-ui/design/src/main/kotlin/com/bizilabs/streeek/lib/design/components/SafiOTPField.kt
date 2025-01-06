@@ -76,7 +76,7 @@ fun SafiOTPField(
             ) {
                 repeat(count) { index ->
                     SafiCharacter(
-                        modifier = Modifier.padding(horizontal = 2.dp),
+                        modifier = Modifier.weight(1f).padding(horizontal = 2.dp),
                         index = index,
                         text = text,
                         isPassword = isPassword,
@@ -90,7 +90,18 @@ fun SafiOTPField(
 @Preview
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
-fun SafiOTPFieldLightPreview() {
+fun SafiOTPFieldPreview() {
+    SafiTheme {
+        Surface(modifier = Modifier.padding(16.dp)) {
+            SafiOTPField(text = "", onValueChange = { _, _ -> })
+        }
+    }
+}
+
+@Preview
+@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+fun SafiOTPFieldFullPreview() {
     SafiTheme {
         Surface(modifier = Modifier.padding(16.dp)) {
             SafiOTPField(text = "123456", onValueChange = { _, _ -> })
