@@ -6,10 +6,9 @@ import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
 import okhttp3.Request
 import okhttp3.Response
-import timber.log.Timber
 
 class AuthorizationInterceptor(
-    private val remotePreferencesSource: RemotePreferencesSource
+    private val remotePreferencesSource: RemotePreferencesSource,
 ) : Interceptor {
     private fun Request.Builder.addAccessToken() {
         val token = runBlocking { remotePreferencesSource.accessToken.first() }
@@ -18,6 +17,7 @@ class AuthorizationInterceptor(
         addHeader("Accept", "application/vnd.github+json")
         addHeader("X-GitHub-Api-Version", "2022-11-28")
     }
+
     override fun intercept(chain: Interceptor.Chain): Response {
         val builder = chain.request().newBuilder()
         with(builder) {

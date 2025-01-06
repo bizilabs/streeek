@@ -14,18 +14,19 @@ data class ContributionCache(
     val githubEventRepo: String,
     val githubEventActor: String,
     val githubEventPayload: String,
-    val points: Long
+    val points: Long,
 ) {
-    fun toEntity() = ContributionEntity(
-        id = id,
-        createdAt = createdAt,
-        accountId = accountId,
-        githubEventId = githubEventId,
-        githubEventType = githubEventType,
-        githubEventDate = githubEventDate,
-        githubEventRepo = githubEventRepo,
-        githubEventActor = githubEventActor,
-        githubEventPayload = githubEventPayload,
-        points = points
-    )
+    fun toEntity() =
+        ContributionEntity(
+            id = id,
+            createdAt = createdAt,
+            accountId = accountId,
+            githubEventId = githubEventId,
+            githubEventType = githubEventType,
+            githubEventDate = githubEventDate,
+            githubEventRepo = githubEventRepo,
+            githubEventActor = githubEventActor,
+            githubEventPayload = githubEventPayload,
+            points = points,
+        )
 }

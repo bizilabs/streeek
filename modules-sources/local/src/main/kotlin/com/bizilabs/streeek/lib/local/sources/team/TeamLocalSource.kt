@@ -14,16 +14,21 @@ import kotlinx.serialization.json.Json
 interface TeamLocalSource {
     val teamId: Flow<Long?>
     val teams: Flow<Map<Long, TeamDetailsCache>>
+
     suspend fun get(id: Long): LocalResult<TeamDetailsCache>
+
     suspend fun setSelected(team: TeamDetailsCache)
+
     suspend fun add(team: TeamDetailsCache)
+
     suspend fun update(team: TeamDetailsCache)
+
     suspend fun delete(team: TeamDetailsCache)
+
     suspend fun delete(teamId: Long)
 }
 
 internal class TeamLocalSourceImpl(val source: PreferenceSource) : TeamLocalSource {
-
     private val teamKey = longPreferencesKey("team.id")
     private val teamsKey = stringPreferencesKey("teams.list")
 
@@ -31,9 +36,10 @@ internal class TeamLocalSourceImpl(val source: PreferenceSource) : TeamLocalSour
         get() = source.getNullable(teamKey)
 
     override val teams: Flow<Map<Long, TeamDetailsCache>>
-        get() = source.getNullable(teamsKey).mapLatest { json ->
-            json?.let { Json.decodeFromString(it) } ?: emptyMap()
-        }
+        get() =
+            source.getNullable(teamsKey).mapLatest { json ->
+                json?.let { Json.decodeFromString(it) } ?: emptyMap()
+            }
 
     private suspend fun getMutableMap() = teams.first().toMutableMap()
 
@@ -80,5 +86,4 @@ internal class TeamLocalSourceImpl(val source: PreferenceSource) : TeamLocalSour
         }
         saveMutableMap(map)
     }
-
 }

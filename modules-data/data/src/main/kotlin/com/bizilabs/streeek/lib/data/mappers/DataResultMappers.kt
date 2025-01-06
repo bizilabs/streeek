@@ -12,11 +12,9 @@ fun <T, R> NetworkResult<T>.asDataResult(block: (T) -> R): DataResult<R> {
     }
 }
 
-
 fun <T, R> LocalResult<T>.asDataResult(block: (T) -> R): DataResult<R> {
     return when (this) {
         is LocalResult.Error -> DataResult.Error(message = message)
         is LocalResult.Success -> DataResult.Success(block(data))
     }
 }
-

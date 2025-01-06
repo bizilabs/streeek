@@ -24,7 +24,6 @@ fun SafiPagingLoadStates(
     appendSuccess: @Composable (Boolean) -> Unit,
     content: @Composable (Int) -> Unit,
 ) {
-
     val prepend = states.prepend
     val refresh = states.refresh
     val append = states.append
@@ -34,16 +33,17 @@ fun SafiPagingLoadStates(
             SafiPagingLoadState(
                 state = prepend,
                 error = prependError,
-                success = prependSuccess
+                success = prependSuccess,
             )
         }
         when (refresh) {
             is LoadState.Error -> {
                 item {
                     SafiCenteredColumn(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(24.dp)
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(24.dp),
                     ) {
                         refreshError?.invoke(refresh.error)
                     }
@@ -62,9 +62,10 @@ fun SafiPagingLoadStates(
                 if (count == 0) {
                     item {
                         SafiCenteredColumn(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(24.dp)
+                            modifier =
+                                Modifier
+                                    .fillMaxWidth()
+                                    .padding(24.dp),
                         ) {
                             refreshEmpty()
                         }
@@ -74,16 +75,14 @@ fun SafiPagingLoadStates(
                         content(index)
                     }
                 }
-
             }
         }
         item {
             SafiPagingLoadState(
                 state = append,
                 error = appendError,
-                success = appendSuccess
+                success = appendSuccess,
             )
         }
-
     }
 }

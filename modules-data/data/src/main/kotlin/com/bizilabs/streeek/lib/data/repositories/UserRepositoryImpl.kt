@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.first
 
 class UserRepositoryImpl(
     private val remote: UserRemoteSource,
-    private val accountLocalSource: AccountLocalSource
+    private val accountLocalSource: AccountLocalSource,
 ) : UserRepository {
     override suspend fun getUser(): DataResult<UserDomain> {
         return when (val result = remote.getUser()) {
@@ -23,7 +23,7 @@ class UserRepositoryImpl(
 
     override suspend fun getUserEvents(): DataResult<List<UserEventDomain>> {
         val username = accountLocalSource.account.first()?.username ?: ""
-        return when(val result = remote.getUserEvents(username = username)) {
+        return when (val result = remote.getUserEvents(username = username)) {
             is NetworkResult.Failure -> DataResult.Error(message = result.exception.localizedMessage)
             is NetworkResult.Success -> {
                 val data = result.data.map { it.toDomain() }

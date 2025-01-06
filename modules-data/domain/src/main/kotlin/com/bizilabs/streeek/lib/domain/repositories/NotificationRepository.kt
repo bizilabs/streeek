@@ -6,7 +6,6 @@ import com.bizilabs.streeek.lib.domain.models.NotificationDomain
 import kotlinx.coroutines.flow.Flow
 
 interface NotificationRepository {
-
     val notifications: Flow<PagingData<NotificationDomain>>
 
     suspend fun getNotifications(page: Int): DataResult<List<NotificationDomain>>
@@ -14,11 +13,10 @@ interface NotificationRepository {
     suspend fun create(
         title: String,
         message: String,
-        payload: String? = null
+        payload: String? = null,
     ): DataResult<NotificationDomain>
 
     suspend fun update(notification: NotificationDomain): DataResult<NotificationDomain>
 
     suspend fun delete(notification: NotificationDomain): DataResult<Boolean>
-
 }

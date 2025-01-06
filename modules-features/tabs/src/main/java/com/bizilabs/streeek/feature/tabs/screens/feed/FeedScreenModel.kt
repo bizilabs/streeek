@@ -23,16 +23,17 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import org.koin.dsl.module
 
-internal val FeedModule = module {
-    factory {
-        FeedScreenModel(
-            context = get(),
-            accountRepository = get(),
-            preferenceRepository = get(),
-            contributionRepository = get()
-        )
+internal val FeedModule =
+    module {
+        factory {
+            FeedScreenModel(
+                context = get(),
+                accountRepository = get(),
+                preferenceRepository = get(),
+                contributionRepository = get(),
+            )
+        }
     }
-}
 
 data class FeedScreenState(
     val isSyncing: Boolean = false,
@@ -40,7 +41,7 @@ data class FeedScreenState(
     val account: AccountDomain? = null,
     val isFetchingContributions: Boolean = true,
     val selectedDate: LocalDate = LocalDate.now(),
-    val dates: List<LocalDate> = emptyList()
+    val dates: List<LocalDate> = emptyList(),
 ) {
     val isToday: Boolean
         get() = selectedDate == LocalDate.now()
@@ -52,16 +53,16 @@ class FeedScreenModel(
     private val preferenceRepository: PreferenceRepository,
     private val contributionRepository: ContributionRepository,
 ) : StateScreenModel<FeedScreenState>(FeedScreenState()) {
-
     private val _date = MutableStateFlow(Clock.System.now().toLocalDateTime(TimeZone.UTC).date)
     val date = _date.asStateFlow()
 
-    val contributions: Flow<List<ContributionDomain>> = _date.flatMapLatest {
-        mutableState.update { it.copy(isFetchingContributions = true) }
-        contributionRepository.getLocalContributionsByDate(date = it).also {
-            mutableState.update { it.copy(isFetchingContributions = false) }
+    val contributions: Flow<List<ContributionDomain>> =
+        _date.flatMapLatest {
+            mutableState.update { it.copy(isFetchingContributions = true) }
+            contributionRepository.getLocalContributionsByDate(date = it).also {
+                mutableState.update { it.copy(isFetchingContributions = false) }
+            }
         }
-    }
 
     init {
         observeDates()
@@ -106,5 +107,4 @@ class FeedScreenModel(
     fun onClickToggleMonthView() {
         mutableState.update { it.copy(isMonthView = it.isMonthView.not()) }
     }
-
 }

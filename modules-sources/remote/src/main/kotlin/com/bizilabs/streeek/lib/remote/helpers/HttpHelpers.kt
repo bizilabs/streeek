@@ -12,7 +12,6 @@ import io.ktor.serialization.kotlinx.json.json
 import okhttp3.logging.HttpLoggingInterceptor
 
 sealed class Header(val name: String, val value: String) {
-
     data class ApiKey(val key: String) : Header(name = "apiKey", value = key)
 
     data class Authorization(val key: String) : Header(name = "Authorization", value = key)
@@ -21,7 +20,6 @@ sealed class Header(val name: String, val value: String) {
         Header(name = "language", value = language.lowercase())
 
     data object User {
-
         data class Locale(val locale: String) :
             Header(name = "User-Locale", value = locale.lowercase())
 
@@ -32,8 +30,7 @@ sealed class Header(val name: String, val value: String) {
             Header(name = "User-Application", value = packageName)
 
         data class Agent(val code: String) :
-            Header(name = "User-Agent", value = "Baobab-Android/${code}")
-
+            Header(name = "User-Agent", value = "Baobab-Android/$code")
     }
 
     data class Locale(val locale: String) : Header(name = "locale", value = locale.lowercase())
@@ -52,7 +49,6 @@ sealed class Header(val name: String, val value: String) {
     data object Accept {
         data object Json : Header(name = HttpHeaders.Accept, value = "application/json")
     }
-
 }
 
 fun DefaultRequest.DefaultRequestBuilder.addHeader(header: Header) {
@@ -80,5 +76,4 @@ fun createHttpClient(
     install(ContentNegotiation) {
         json(json = createJson())
     }
-
 }

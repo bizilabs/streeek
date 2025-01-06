@@ -3,10 +3,8 @@ package com.bizilabs.streeek.lib.design.components
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -30,10 +28,11 @@ import com.bizilabs.streeek.lib.design.theme.SafiTheme
 @Composable
 fun SafiOTPField(
     modifier: Modifier = Modifier,
-    keyboardOptions: KeyboardOptions = KeyboardOptions(
-        keyboardType = KeyboardType.Number,
-        imeAction = ImeAction.Done
-    ),
+    keyboardOptions: KeyboardOptions =
+        KeyboardOptions(
+            keyboardType = KeyboardType.Number,
+            imeAction = ImeAction.Done,
+        ),
     text: String,
     count: Int = 6,
     isPassword: Boolean = false,
@@ -42,7 +41,6 @@ fun SafiOTPField(
     onClickDone: () -> Unit = {},
     onValueChange: (String, Boolean) -> Unit,
 ) {
-
     val keyboardController = LocalSoftwareKeyboardController.current
 
     LaunchedEffect(Unit) {
@@ -64,27 +62,28 @@ fun SafiOTPField(
         enabled = isEnabled,
         readOnly = isReadOnly,
         keyboardOptions = keyboardOptions,
-        keyboardActions = KeyboardActions(
-            onDone = {
-                keyboardController?.hide()
-                onClickDone()
-            }
-        ),
+        keyboardActions =
+            KeyboardActions(
+                onDone = {
+                    keyboardController?.hide()
+                    onClickDone()
+                },
+            ),
         decorationBox = {
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center
+                horizontalArrangement = Arrangement.Center,
             ) {
                 repeat(count) { index ->
                     SafiCharacter(
                         modifier = Modifier.padding(horizontal = 2.dp),
                         index = index,
                         text = text,
-                        isPassword = isPassword
+                        isPassword = isPassword,
                     )
                 }
             }
-        }
+        },
     )
 }
 

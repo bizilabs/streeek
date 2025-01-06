@@ -7,5 +7,5 @@ data class GithubReviewDTO(
     val id: Long,
     val user: GithubActorDTO,
     val body: String?,
-    val state: String
+    val state: String,
 )

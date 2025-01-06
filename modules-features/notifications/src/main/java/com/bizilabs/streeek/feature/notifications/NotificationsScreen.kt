@@ -48,7 +48,7 @@ object NotificationsScreen : Screen {
             state = state,
             notifications = notifications,
             onClickNavigateBack = { navigator?.pop() },
-            onClickNotification = screenModel::onClickNotification
+            onClickNotification = screenModel::onClickNotification,
         )
     }
 }
@@ -59,7 +59,7 @@ fun NotificationsScreenComponent(
     state: NotificationsScreenState,
     notifications: LazyPagingItems<NotificationDomain>,
     onClickNavigateBack: () -> Unit,
-    onClickNotification: (NotificationDomain) -> Unit
+    onClickNotification: (NotificationDomain) -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -67,14 +67,15 @@ fun NotificationsScreenComponent(
                 modifier = Modifier.fillMaxWidth(),
                 onClickNavigateBack = onClickNavigateBack,
             )
-        }
+        },
     ) { innerPadding ->
         NotificationsContent(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding),
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding),
             notifications = notifications,
-            onClickNotification = onClickNotification
+            onClickNotification = onClickNotification,
         )
     }
 }
@@ -87,7 +88,7 @@ fun NotificationsScreenHeader(
 ) {
     Surface(modifier = modifier) {
         Column(
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
         ) {
             TopAppBar(
                 navigationIcon = {
@@ -97,7 +98,7 @@ fun NotificationsScreenHeader(
                     ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
-                            contentDescription = "navigate back"
+                            contentDescription = "navigate back",
                         )
                     }
                 },
@@ -106,9 +107,9 @@ fun NotificationsScreenHeader(
                         modifier = Modifier.padding(start = 16.dp),
                         text = stringResource(SafiStrings.Labels.Notifications).uppercase(),
                         style = MaterialTheme.typography.titleSmall,
-                        textAlign = TextAlign.Center
+                        textAlign = TextAlign.Center,
                     )
-                }
+                },
             )
             HorizontalDivider(modifier = Modifier.fillMaxWidth())
         }
@@ -120,9 +121,8 @@ fun NotificationsScreenHeader(
 fun NotificationsContent(
     notifications: LazyPagingItems<NotificationDomain>,
     onClickNotification: (NotificationDomain) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
-
     SafiPagingComponent(
         modifier = modifier,
         data = notifications,
@@ -130,23 +130,21 @@ fun NotificationsContent(
             SafiInfoSection(
                 icon = Icons.Rounded.Notifications,
                 title = stringResource(SafiStrings.Labels.NoNotifications),
-                description = stringResource(SafiStrings.Messages.NoNotifications)
+                description = stringResource(SafiStrings.Messages.NoNotifications),
             ) {
                 SmallFloatingActionButton(
                     onClick = { notifications.refresh() },
                     containerColor = MaterialTheme.colorScheme.primary,
-                    contentColor = MaterialTheme.colorScheme.onPrimary
+                    contentColor = MaterialTheme.colorScheme.onPrimary,
                 ) {
                     Icon(imageVector = Icons.Rounded.Refresh, contentDescription = null)
                 }
             }
-        }
+        },
     ) { notification ->
         NotificationItemComponent(
             notification = notification,
-            onClickNotification = onClickNotification
+            onClickNotification = onClickNotification,
         )
     }
-
 }
-

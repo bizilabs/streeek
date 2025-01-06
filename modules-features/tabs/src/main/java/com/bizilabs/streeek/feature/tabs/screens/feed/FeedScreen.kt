@@ -42,7 +42,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -71,7 +70,6 @@ import kotlinx.datetime.LocalDate
 object FeedScreen : Screen {
     @Composable
     override fun Content() {
-
         val navigator = LocalNavigator.current
         val screenNotifications = rememberScreen(SharedScreen.Notifications)
 
@@ -87,7 +85,7 @@ object FeedScreen : Screen {
             onClickDate = screenModel::onClickDate,
             onRefreshContributions = screenModel::onRefreshContributions,
             onClickToggleMonthView = screenModel::onClickToggleMonthView,
-            onClosesNotifications = { navigator?.push(screenNotifications) }
+            onClosesNotifications = { navigator?.push(screenNotifications) },
         )
     }
 }
@@ -101,13 +99,13 @@ fun FeedScreenContent(
     onClickDate: (LocalDate) -> Unit,
     onRefreshContributions: () -> Unit,
     onClickToggleMonthView: () -> Unit,
-    onClosesNotifications: () -> Unit
+    onClosesNotifications: () -> Unit,
 ) {
-
-    val pullRefreshState = rememberPullRefreshState(
-        refreshing = state.isSyncing,
-        onRefresh = onRefreshContributions
-    )
+    val pullRefreshState =
+        rememberPullRefreshState(
+            refreshing = state.isSyncing,
+            onRefresh = onRefreshContributions,
+        )
 
     Scaffold(
         topBar = {
@@ -117,19 +115,20 @@ fun FeedScreenContent(
                         selectedDate = date,
                         state = state,
                         onClickToggleMonthView = onClickToggleMonthView,
-                        onClickNotifications = onClosesNotifications
+                        onClickNotifications = onClosesNotifications,
                     )
                     AnimatedContent(
                         modifier = Modifier.fillMaxWidth(),
                         targetState = state.isMonthView,
-                        label = "animated month"
+                        label = "animated month",
                     ) { isMonthView ->
                         when (isMonthView) {
                             true -> {
                                 HorizontalCalendar(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(horizontal = 8.dp, vertical = 8.dp),
+                                    modifier =
+                                        Modifier
+                                            .fillMaxWidth()
+                                            .padding(horizontal = 8.dp, vertical = 8.dp),
                                     dayContent = { day: CalendarDay ->
                                         CalendarItem(
                                             hasContribution = state.dates.contains(day.date),
@@ -137,17 +136,18 @@ fun FeedScreenContent(
                                             modifier = Modifier.fillMaxWidth(),
                                             day = day.date,
                                             selectedDate = date,
-                                            onClickDate = onClickDate
+                                            onClickDate = onClickDate,
                                         )
                                     },
                                     monthHeader = {
                                         MonthHeader(
-                                            modifier = Modifier
-                                                .fillMaxWidth()
-                                                .padding(vertical = 8.dp),
+                                            modifier =
+                                                Modifier
+                                                    .fillMaxWidth()
+                                                    .padding(vertical = 8.dp),
                                             calendarMonth = it,
                                         )
-                                    }
+                                    },
                                 )
                             }
 
@@ -157,14 +157,15 @@ fun FeedScreenContent(
                                         CalendarItem(
                                             hasContribution = state.dates.contains(weekDay.date),
                                             isMonthView = isMonthView,
-                                            modifier = Modifier
-                                                .fillMaxWidth()
-                                                .padding(horizontal = 8.dp, vertical = 8.dp),
+                                            modifier =
+                                                Modifier
+                                                    .fillMaxWidth()
+                                                    .padding(horizontal = 8.dp, vertical = 8.dp),
                                             day = weekDay.date,
                                             selectedDate = date,
-                                            onClickDate = onClickDate
+                                            onClickDate = onClickDate,
                                         )
-                                    }
+                                    },
                                 )
                             }
                         }
@@ -173,18 +174,19 @@ fun FeedScreenContent(
                     HorizontalDivider()
                 }
             }
-        }
+        },
     ) { innerPadding ->
         Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = innerPadding.calculateTopPadding())
-                .pullRefresh(pullRefreshState)
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(top = innerPadding.calculateTopPadding())
+                    .pullRefresh(pullRefreshState),
         ) {
             FeedContent(
                 state = state,
                 contributions = contributions,
-                onRefreshContributions = onRefreshContributions
+                onRefreshContributions = onRefreshContributions,
             )
 
             PullRefreshIndicator(
@@ -192,9 +194,8 @@ fun FeedScreenContent(
                 contentColor = MaterialTheme.colorScheme.background,
                 refreshing = state.isSyncing,
                 state = pullRefreshState,
-                modifier = Modifier.align(Alignment.TopCenter)
+                modifier = Modifier.align(Alignment.TopCenter),
             )
-
         }
     }
 }
@@ -203,12 +204,12 @@ fun FeedScreenContent(
 private fun FeedContent(
     state: FeedScreenState,
     contributions: List<ContributionDomain>,
-    onRefreshContributions: () -> Unit
+    onRefreshContributions: () -> Unit,
 ) {
     AnimatedContent(
         modifier = Modifier.fillMaxSize(),
         targetState = state.isFetchingContributions,
-        label = "list_animation"
+        label = "list_animation",
     ) {
         when (it) {
             true -> {
@@ -225,34 +226,36 @@ private fun FeedContent(
                                 SafiInfoSection(
                                     icon = Icons.Rounded.PushPin,
                                     title = "No Contributions Found",
-                                    description = if (state.isToday)
-                                        "You haven't been busy today... Push some few commits!"
-                                    else
-                                        "Seems you we\'ren\'t busy on ${
-                                            buildString {
-                                                append(
-                                                    state.selectedDate.dayOfWeek.name.lowercase()
-                                                        .replaceFirstChar { it.uppercase() }
-                                                )
-                                                append(" ")
-                                                append(state.selectedDate.dayOfMonth)
-                                                append(" ")
-                                                append(
-                                                    state.selectedDate.month.name.lowercase()
-                                                        .replaceFirstChar { it.uppercase() }
-                                                )
-                                                append(" ")
-                                                append(state.selectedDate.year)
-                                            }
-                                        }"
+                                    description =
+                                        if (state.isToday) {
+                                            "You haven't been busy today... Push some few commits!"
+                                        } else {
+                                            "Seems you we\'ren\'t busy on ${
+                                                buildString {
+                                                    append(
+                                                        state.selectedDate.dayOfWeek.name.lowercase()
+                                                            .replaceFirstChar { it.uppercase() },
+                                                    )
+                                                    append(" ")
+                                                    append(state.selectedDate.dayOfMonth)
+                                                    append(" ")
+                                                    append(
+                                                        state.selectedDate.month.name.lowercase()
+                                                            .replaceFirstChar { it.uppercase() },
+                                                    )
+                                                    append(" ")
+                                                    append(state.selectedDate.year)
+                                                }
+                                            }"
+                                        },
                                 )
                                 AnimatedVisibility(
-                                    visible = state.isSyncing.not() && state.isToday
+                                    visible = state.isSyncing.not() && state.isToday,
                                 ) {
                                     SmallFloatingActionButton(onClick = onRefreshContributions) {
                                         Icon(
                                             imageVector = Icons.Rounded.Refresh,
-                                            contentDescription = "refresh"
+                                            contentDescription = "refresh",
                                         )
                                     }
                                 }
@@ -264,10 +267,11 @@ private fun FeedContent(
                         LazyColumn(modifier = Modifier.fillMaxSize()) {
                             items(contributions) { contribution ->
                                 ContributionItemComponent(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(8.dp),
-                                    contribution = contribution
+                                    modifier =
+                                        Modifier
+                                            .fillMaxWidth()
+                                            .padding(8.dp),
+                                    contribution = contribution,
                                 )
                             }
                         }
@@ -309,7 +313,7 @@ private fun CalendarItem(
     selectedDate: LocalDate,
     day: LocalDate,
     modifier: Modifier = Modifier,
-    onClickDate: (LocalDate) -> Unit
+    onClickDate: (LocalDate) -> Unit,
 ) {
     val date = day
     val isToday = date.isSameDay(LocalDate.now())
@@ -318,71 +322,78 @@ private fun CalendarItem(
     val isFutureDate = day > LocalDate.now()
     val isPastDate = day > LocalDate.now()
 
-    val border = when {
-        isSelected -> BorderStroke(1.dp, MaterialTheme.colorScheme.primary)
-        else -> BorderStroke(0.dp, Color.Transparent)
-    }
-    val containerColor = when {
-        isSelected -> MaterialTheme.colorScheme.primary
-        isToday -> MaterialTheme.colorScheme.onSurface.copy(0.25f)
-        else -> Color.Transparent
-    }
-    val contentColor = when {
-        isSelected -> MaterialTheme.colorScheme.onPrimary
-        isToday -> MaterialTheme.colorScheme.onSurface
-        else -> MaterialTheme.colorScheme.onSurface
-    }
+    val border =
+        when {
+            isSelected -> BorderStroke(1.dp, MaterialTheme.colorScheme.primary)
+            else -> BorderStroke(0.dp, Color.Transparent)
+        }
+    val containerColor =
+        when {
+            isSelected -> MaterialTheme.colorScheme.primary
+            isToday -> MaterialTheme.colorScheme.onSurface.copy(0.25f)
+            else -> Color.Transparent
+        }
+    val contentColor =
+        when {
+            isSelected -> MaterialTheme.colorScheme.onPrimary
+            isToday -> MaterialTheme.colorScheme.onSurface
+            else -> MaterialTheme.colorScheme.onSurface
+        }
 
     Card(
         modifier = modifier,
         onClick = { onClickDate(date) },
         enabled = isFutureDate.not(),
         border = border,
-        colors = CardDefaults.cardColors(
-            contentColor = contentColor,
-            containerColor = containerColor,
-            disabledContentColor = MaterialTheme.colorScheme.onSurface.copy(0.5f),
-            disabledContainerColor = Color.Transparent
-        )
+        colors =
+            CardDefaults.cardColors(
+                contentColor = contentColor,
+                containerColor = containerColor,
+                disabledContentColor = MaterialTheme.colorScheme.onSurface.copy(0.5f),
+                disabledContainerColor = Color.Transparent,
+            ),
     ) {
         SafiCenteredColumn(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 8.dp)
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp),
         ) {
             AnimatedVisibility(visible = isMonthView.not()) {
                 Text(
                     text = date.dayShort,
-                    fontSize = MaterialTheme.typography.labelSmall.fontSize
+                    fontSize = MaterialTheme.typography.labelSmall.fontSize,
                 )
             }
             Card(
                 shape = CircleShape,
                 enabled = isFutureDate.not(),
                 onClick = { onClickDate(date) },
-                colors = CardDefaults.cardColors(
-                    containerColor = when {
-                        isSelected -> containerColor
-                        hasContribution -> MaterialTheme.colorScheme.success
-                        else -> Color.Transparent
-                    },
-                    contentColor = when {
-                        isSelected -> contentColor
-                        hasContribution -> MaterialTheme.colorScheme.onSuccess
-                        else -> contentColor
-                    },
-                    disabledContentColor = MaterialTheme.colorScheme.onSurface.copy(0.5f),
-                    disabledContainerColor = Color.Transparent
-                )
+                colors =
+                    CardDefaults.cardColors(
+                        containerColor =
+                            when {
+                                isSelected -> containerColor
+                                hasContribution -> MaterialTheme.colorScheme.success
+                                else -> Color.Transparent
+                            },
+                        contentColor =
+                            when {
+                                isSelected -> contentColor
+                                hasContribution -> MaterialTheme.colorScheme.onSuccess
+                                else -> contentColor
+                            },
+                        disabledContentColor = MaterialTheme.colorScheme.onSurface.copy(0.5f),
+                        disabledContainerColor = Color.Transparent,
+                    ),
             ) {
                 Text(
                     modifier = Modifier.padding(8.dp),
                     text = if (date.dayOfMonth < 10) "0${date.dayOfMonth}" else "${date.dayOfMonth}",
                     fontSize = MaterialTheme.typography.titleMedium.fontSize,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
                 )
             }
-
         }
     }
 }
@@ -396,17 +407,20 @@ private fun FeedHeader(
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
     ) {
-
         Text(
-            modifier = Modifier
-                .padding(start = 24.dp)
-                .weight(1f),
-            text = if (state.isToday)
-                "Today"
-            else selectedDate.month.name.lowercase()
-                .replaceFirstChar { it.uppercase() },
+            modifier =
+                Modifier
+                    .padding(start = 24.dp)
+                    .weight(1f),
+            text =
+                if (state.isToday) {
+                    "Today"
+                } else {
+                    selectedDate.month.name.lowercase()
+                        .replaceFirstChar { it.uppercase() }
+                },
             fontWeight = FontWeight.Bold,
             fontSize = MaterialTheme.typography.titleLarge.fontSize,
         )
@@ -414,43 +428,41 @@ private fun FeedHeader(
         val streak = state.account?.streak
 
         SafiCenteredRow(
-            modifier = Modifier.padding(horizontal = 16.dp)
+            modifier = Modifier.padding(horizontal = 16.dp),
         ) {
             Text(
                 modifier = Modifier.padding(end = 8.dp),
                 text = (streak?.current ?: 0).toString(),
                 fontWeight = FontWeight.Bold,
-                fontSize = MaterialTheme.typography.titleMedium.fontSize
+                fontSize = MaterialTheme.typography.titleMedium.fontSize,
             )
             Icon(
                 imageVector = Icons.Rounded.LocalFireDepartment,
                 contentDescription = "pin",
-                tint = Color(0xFFFF4F00)
+                tint = Color(0xFFFF4F00),
             )
-
         }
 
         IconButton(
             modifier = Modifier.padding(end = 8.dp),
-            onClick = onClickToggleMonthView
+            onClick = onClickToggleMonthView,
         ) {
             Icon(
                 imageVector = if (state.isMonthView.not()) Icons.Rounded.CalendarMonth else Icons.Rounded.CalendarViewWeek,
                 contentDescription = "pin",
-                tint = MaterialTheme.colorScheme.onBackground
+                tint = MaterialTheme.colorScheme.onBackground,
             )
         }
 
         IconButton(
             modifier = Modifier.padding(end = 16.dp),
-            onClick = onClickNotifications
+            onClick = onClickNotifications,
         ) {
             Icon(
                 imageVector = Icons.Outlined.Notifications,
                 contentDescription = "notifications",
-                tint = MaterialTheme.colorScheme.onBackground
+                tint = MaterialTheme.colorScheme.onBackground,
             )
         }
-
     }
 }

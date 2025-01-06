@@ -17,7 +17,6 @@ class NotificationPagingSource(
     private val notificationRemoteSource: NotificationRemoteSource,
     private val notificationLocalSource: NotificationLocalSource,
 ) : PagingSource<Int, NotificationDomain>() {
-
     override fun getRefreshKey(state: PagingState<Int, NotificationDomain>): Int? {
         return state.anchorPosition?.let { anchorPosition ->
             state.closestPageToPosition(anchorPosition)?.prevKey?.plus(1)
@@ -26,11 +25,11 @@ class NotificationPagingSource(
     }
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, NotificationDomain> {
-
         val page = params.key ?: Paging.START_PAGE
 
-        val accountId = accountLocalSource.account.firstOrNull()?.id
-            ?: return LoadResult.Error(Exception("Couldn't get logged in account"))
+        val accountId =
+            accountLocalSource.account.firstOrNull()?.id
+                ?: return LoadResult.Error(Exception("Couldn't get logged in account"))
 
         val result = notificationRemoteSource.fetchNotifications(accountId = accountId, page = page)
 
@@ -40,18 +39,17 @@ class NotificationPagingSource(
 
         val list = data.map(NotificationDTO::toDomain)
 
-        val nextKey = when {
-            list.isEmpty() -> null
-            list.size < Paging.PAGE_SIZE -> null
-            else -> page.plus(1)
-        }
+        val nextKey =
+            when {
+                list.isEmpty() -> null
+                list.size < Paging.PAGE_SIZE -> null
+                else -> page.plus(1)
+            }
 
         Timber.d("Notifications -> $list")
 
         val previousKey = if (page == Paging.START_PAGE) null else page.minus(1)
 
         return LoadResult.Page(data = list, prevKey = previousKey, nextKey = nextKey)
-
     }
-
 }

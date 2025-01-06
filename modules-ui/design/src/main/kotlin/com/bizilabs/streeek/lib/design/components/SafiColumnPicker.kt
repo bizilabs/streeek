@@ -33,7 +33,7 @@ fun <T : Any> SafiColumnPicker(
             item = value,
             isSelected = isSelected,
             onClick = block,
-            text = text
+            text = text,
         )
     },
     onItemSelected: (T) -> Unit = {},
@@ -43,7 +43,7 @@ fun <T : Any> SafiColumnPicker(
         Text(
             modifier = Modifier.padding(start = 24.dp, bottom = 16.dp),
             text = title,
-            fontSize = MaterialTheme.typography.titleLarge.fontSize
+            fontSize = MaterialTheme.typography.titleLarge.fontSize,
         )
         LazyColumn {
             items(list) {
@@ -66,39 +66,42 @@ fun <T> SafiPickItem(
     contentColor: Color = MaterialTheme.colorScheme.onBackground,
     onClick: () -> Unit,
 ) {
-
     val (container, content) =
-        if (isSelected)
+        if (isSelected) {
             Pair(MaterialTheme.colorScheme.primary, MaterialTheme.colorScheme.onPrimary)
-        else
+        } else {
             Pair(containerColor, contentColor)
+        }
 
     Column(
-        modifier = modifier
-            .padding(vertical = 4.dp)
-            .clip(RoundedCornerShape(10))
-            .clickable { onClick() },
+        modifier =
+            modifier
+                .padding(vertical = 4.dp)
+                .clip(RoundedCornerShape(10))
+                .clickable { onClick() },
     ) {
         Row(
-            modifier = Modifier
-                .background(container)
-                .padding(8.dp)
-                .padding(horizontal = 8.dp),
-            verticalAlignment = Alignment.CenterVertically
+            modifier =
+                Modifier
+                    .background(container)
+                    .padding(8.dp)
+                    .padding(horizontal = 8.dp),
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(8.dp),
+                modifier =
+                    Modifier
+                        .weight(1f)
+                        .padding(8.dp),
                 text = text,
                 color = content,
-                fontWeight = if (isSelected) FontWeight.Medium else FontWeight.Normal
+                fontWeight = if (isSelected) FontWeight.Medium else FontWeight.Normal,
             )
             AnimatedVisibility(visible = isSelected) {
                 Icon(
                     imageVector = Icons.Rounded.Check,
                     contentDescription = "selected",
-                    tint = content
+                    tint = content,
                 )
             }
         }

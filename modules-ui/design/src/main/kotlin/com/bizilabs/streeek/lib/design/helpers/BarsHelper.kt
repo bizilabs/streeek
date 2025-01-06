@@ -13,7 +13,7 @@ import androidx.core.view.WindowCompat
 @Composable
 internal fun StatusAndNavigationBar(
     colorScheme: ColorScheme,
-    isDarkThemeEnabled: Boolean
+    isDarkThemeEnabled: Boolean,
 ) {
     val view = LocalView.current
     if (!view.isInEditMode) {

@@ -5,13 +5,13 @@ import kotlinx.coroutines.flow.Flow
 
 interface LocalPreferenceSource {
     val isSyncingContributions: Flow<Boolean>
+
     suspend fun setIsSyncingContributions(isSyncing: Boolean)
 }
 
 class LocalPreferenceSourceImpl(
-    val source: PreferenceSource
+    val source: PreferenceSource,
 ) : LocalPreferenceSource {
-
     object Keys {
         val SyncingContributions = booleanPreferencesKey("syncing_contributions")
     }
@@ -22,5 +22,4 @@ class LocalPreferenceSourceImpl(
     override suspend fun setIsSyncingContributions(isSyncing: Boolean) {
         source.update(key = Keys.SyncingContributions, value = isSyncing)
     }
-
 }

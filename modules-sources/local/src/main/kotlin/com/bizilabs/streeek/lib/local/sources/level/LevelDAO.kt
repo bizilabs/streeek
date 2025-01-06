@@ -10,7 +10,6 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface LevelDAO {
-
     @Query("SELECT * FROM levels")
     fun getLevels(): Flow<List<LevelEntity>>
 
@@ -19,5 +18,4 @@ interface LevelDAO {
 
     @Update
     suspend fun updateLevels(levels: List<LevelEntity>)
-
 }

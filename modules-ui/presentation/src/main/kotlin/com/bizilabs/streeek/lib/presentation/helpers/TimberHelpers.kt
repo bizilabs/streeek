@@ -7,18 +7,27 @@ import com.google.firebase.crashlytics.FirebaseCrashlytics
 import timber.log.Timber
 
 fun Application.initTimber() {
-    if (BuildConfig.DEBUG)
+    if (BuildConfig.DEBUG) {
         Timber.plant(Timber.DebugTree())
-    else
+    } else {
         Timber.plant(FirebaseCrashlyticsTree())
+    }
 }
 
 private class FirebaseCrashlyticsTree : Timber.Tree() {
-    override fun isLoggable(tag: String?, priority: Int): Boolean {
+    override fun isLoggable(
+        tag: String?,
+        priority: Int,
+    ): Boolean {
         return priority == Log.WARN || priority == Log.ERROR
     }
 
-    override fun log(priority: Int, tag: String?, message: String, t: Throwable?) {
+    override fun log(
+        priority: Int,
+        tag: String?,
+        message: String,
+        t: Throwable?,
+    ) {
         FirebaseCrashlytics.getInstance().log("$tag: $message")
         if (t != null) {
             FirebaseCrashlytics.getInstance().recordException(t)

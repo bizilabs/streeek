@@ -9,32 +9,32 @@ import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import com.bizilabs.streeek.lib.domain.helpers.DataResult
 import com.bizilabs.streeek.lib.domain.repositories.ContributionRepository
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import timber.log.Timber
 import java.util.UUID
 
 fun Context.startSyncContributionsWork() {
-
     val uuid = UUID.randomUUID()
 
-    val constraints = Constraints.Builder()
-        .setRequiresBatteryNotLow(true)
-        .setRequiresStorageNotLow(true)
-        .build()
+    val constraints =
+        Constraints.Builder()
+            .setRequiresBatteryNotLow(true)
+            .setRequiresStorageNotLow(true)
+            .build()
 
-    val parameters = Data.Builder()
-        .build()
+    val parameters =
+        Data.Builder()
+            .build()
 
-    val request = OneTimeWorkRequestBuilder<SyncContributionsWork>()
-        .addTag(SyncContributionsWork.TAG)
-        .setConstraints(constraints)
-        .setInputData(parameters)
-        .setId(uuid)
-        .build()
+    val request =
+        OneTimeWorkRequestBuilder<SyncContributionsWork>()
+            .addTag(SyncContributionsWork.TAG)
+            .setConstraints(constraints)
+            .setInputData(parameters)
+            .setId(uuid)
+            .build()
 
     WorkManager.getInstance(this).enqueue(request)
-
 }
 
 class SyncContributionsWork(
@@ -52,8 +52,9 @@ class SyncContributionsWork(
         var page: Int? = 1
         while (page != null) {
             val contributions = contributionRepository.getContributions(page = page)
-            if (contributions is DataResult.Error)
+            if (contributions is DataResult.Error) {
                 return Result.failure().also { Timber.e(contributions.message) }
+            }
             val list = (contributions as DataResult.Success).data
             Timber.d("Contributions -> $list")
             contributionRepository.saveContributionLocally(contributions = list)

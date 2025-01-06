@@ -16,7 +16,7 @@ data class PullRequestDomain(
     val reviewComments: Long,
     val commits: Long,
     val additions: Long,
-    val deletions: Long
+    val deletions: Long,
 )
 
 data class MinPullRequestDomain(

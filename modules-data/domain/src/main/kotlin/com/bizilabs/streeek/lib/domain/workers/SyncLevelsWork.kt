@@ -12,49 +12,47 @@ import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import com.bizilabs.streeek.lib.domain.helpers.DataResult
 import com.bizilabs.streeek.lib.domain.repositories.LevelRepository
-import timber.log.Timber
 import java.util.UUID
 import java.util.concurrent.TimeUnit
 
-
-private val constraints = Constraints.Builder()
-    .setRequiredNetworkType(NetworkType.CONNECTED)
-    .setRequiresBatteryNotLow(true)
-    .setRequiresStorageNotLow(true)
-    .build()
-
-private val parameters = Data.Builder()
-    .build()
-
-fun Context.startImmediateLevelsSyncWork() {
-
-    val request = OneTimeWorkRequestBuilder<SyncLevelsWork>()
-        .addTag(SyncLevelsWork.TAG)
-        .setConstraints(constraints)
-        .setInputData(parameters)
-        .setId(UUID.randomUUID())
+private val constraints =
+    Constraints.Builder()
+        .setRequiredNetworkType(NetworkType.CONNECTED)
+        .setRequiresBatteryNotLow(true)
+        .setRequiresStorageNotLow(true)
         .build()
 
-    WorkManager.getInstance(this).enqueue(request)
+private val parameters =
+    Data.Builder()
+        .build()
 
+fun Context.startImmediateLevelsSyncWork() {
+    val request =
+        OneTimeWorkRequestBuilder<SyncLevelsWork>()
+            .addTag(SyncLevelsWork.TAG)
+            .setConstraints(constraints)
+            .setInputData(parameters)
+            .setId(UUID.randomUUID())
+            .build()
+
+    WorkManager.getInstance(this).enqueue(request)
 }
 
 fun Context.startPeriodicLevelsSyncWork() {
-
-    val request = PeriodicWorkRequestBuilder<SyncLevelsWork>(24, TimeUnit.HOURS)
-        .addTag(SyncLevelsWork.TAG)
-        .setConstraints(constraints)
-        .setInputData(parameters)
-        .setId(UUID.randomUUID())
-        .build()
+    val request =
+        PeriodicWorkRequestBuilder<SyncLevelsWork>(24, TimeUnit.HOURS)
+            .addTag(SyncLevelsWork.TAG)
+            .setConstraints(constraints)
+            .setInputData(parameters)
+            .setId(UUID.randomUUID())
+            .build()
 
     WorkManager.getInstance(this)
         .enqueueUniquePeriodicWork(
             SyncLevelsWork.TAG,
             ExistingPeriodicWorkPolicy.KEEP,
-            request
+            request,
         )
-
 }
 
 class SyncLevelsWork(
@@ -62,7 +60,6 @@ class SyncLevelsWork(
     val params: WorkerParameters,
     val repository: LevelRepository,
 ) : CoroutineWorker(context, params) {
-
     companion object {
         const val TAG = "SyncLevelsWorker"
     }
@@ -79,5 +76,4 @@ class SyncLevelsWork(
         if (params.runAttemptCount > 2) return Result.failure()
         return Result.retry()
     }
-
 }

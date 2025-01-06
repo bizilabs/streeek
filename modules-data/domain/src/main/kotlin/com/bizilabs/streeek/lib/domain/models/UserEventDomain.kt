@@ -8,7 +8,7 @@ data class UserEventDomain(
     val createdAt: LocalDateTime,
     val actor: ActorDomain,
     val repo: EventRepositoryDomain,
-    val payload: EventPayloadDomain
+    val payload: EventPayloadDomain,
 )
 
 data class EventRepositoryDomain(

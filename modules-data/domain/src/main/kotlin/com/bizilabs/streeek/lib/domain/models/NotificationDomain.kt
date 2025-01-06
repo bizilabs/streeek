@@ -9,8 +9,8 @@ data class NotificationDomain(
     val message: String,
     val payload: String?,
     val createdAt: LocalDateTime,
-    val readAt: LocalDateTime?
-){
+    val readAt: LocalDateTime?,
+) {
     val createdAtMillis: Long
         get() = createdAt.datetimeUTC.toEpochMilliseconds()
 }

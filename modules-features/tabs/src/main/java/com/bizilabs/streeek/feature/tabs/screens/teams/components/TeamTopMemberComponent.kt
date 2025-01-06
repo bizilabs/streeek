@@ -31,7 +31,6 @@ import coil.compose.AsyncImage
 import com.bizilabs.streeek.lib.design.components.SafiCenteredColumn
 import com.bizilabs.streeek.lib.design.helpers.onSuccess
 import com.bizilabs.streeek.lib.design.helpers.success
-import com.bizilabs.streeek.lib.domain.extensions.asRank
 import com.bizilabs.streeek.lib.domain.models.TeamMemberDomain
 import com.bizilabs.streeek.lib.resources.SafiResources
 
@@ -41,29 +40,29 @@ fun TeamTopMemberComponent(
     modifier: Modifier = Modifier,
     member: TeamMemberDomain? = null,
 ) {
-
     val containerColor = if (isFirst) Color(0xFFE6A817) else MaterialTheme.colorScheme.success
     val contentColor = if (isFirst) Color.Black else MaterialTheme.colorScheme.onSuccess
 
     SafiCenteredColumn(
-        modifier = modifier
+        modifier = modifier,
     ) {
         AnimatedContent(
             targetState = member?.account,
-            label = "animate member"
+            label = "animate member",
         ) { account ->
             when {
                 account != null -> {
                     Box {
                         AsyncImage(
-                            modifier = Modifier
-                                .padding(top = 48.dp, bottom = 12.dp)
-                                .clip(CircleShape)
-                                .border(BorderStroke(2.dp, containerColor), CircleShape)
-                                .size(if (isFirst) 120.dp else 90.dp),
+                            modifier =
+                                Modifier
+                                    .padding(top = 48.dp, bottom = 12.dp)
+                                    .clip(CircleShape)
+                                    .border(BorderStroke(2.dp, containerColor), CircleShape)
+                                    .size(if (isFirst) 120.dp else 90.dp),
                             model = account.avatarUrl,
                             contentDescription = "user avatar url",
-                            contentScale = ContentScale.Crop
+                            contentScale = ContentScale.Crop,
                         )
                         Column(
                             modifier = Modifier.align(Alignment.TopCenter),
@@ -73,27 +72,29 @@ fun TeamTopMemberComponent(
                                     modifier = Modifier.size(48.dp),
                                     painter = painterResource(SafiResources.Drawables.Crown),
                                     contentDescription = "crown",
-                                    tint = containerColor
+                                    tint = containerColor,
                                 )
                             }
                         }
 
                         Card(
                             modifier = Modifier.align(Alignment.BottomCenter),
-                            colors = CardDefaults.cardColors(
-                                containerColor = containerColor,
-                                contentColor = contentColor
-                            )
+                            colors =
+                                CardDefaults.cardColors(
+                                    containerColor = containerColor,
+                                    contentColor = contentColor,
+                                ),
                         ) {
                             Text(
-                                modifier = Modifier
-                                    .padding(
-                                        vertical = 4.dp,
-                                        horizontal = 8.dp
-                                    ),
+                                modifier =
+                                    Modifier
+                                        .padding(
+                                            vertical = 4.dp,
+                                            horizontal = 8.dp,
+                                        ),
                                 text = member?.rank.toString(),
                                 style = MaterialTheme.typography.labelSmall,
-                                fontWeight = FontWeight.Bold
+                                fontWeight = FontWeight.Bold,
                             )
                         }
                     }
@@ -102,16 +103,17 @@ fun TeamTopMemberComponent(
                 else -> {
                     Card(colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)) {
                         SafiCenteredColumn(
-                            modifier = Modifier
-                                .padding(top = 48.dp, bottom = 12.dp)
-                                .clip(CircleShape)
-                                .border(BorderStroke(2.dp, containerColor), CircleShape)
-                                .size(if (isFirst) 120.dp else 90.dp)
-                                .background(MaterialTheme.colorScheme.onSurface.copy(0.25f)),
+                            modifier =
+                                Modifier
+                                    .padding(top = 48.dp, bottom = 12.dp)
+                                    .clip(CircleShape)
+                                    .border(BorderStroke(2.dp, containerColor), CircleShape)
+                                    .size(if (isFirst) 120.dp else 90.dp)
+                                    .background(MaterialTheme.colorScheme.onSurface.copy(0.25f)),
                         ) {
                             Icon(
                                 imageVector = Icons.Rounded.QuestionMark,
-                                contentDescription = "unknown member"
+                                contentDescription = "unknown member",
                             )
                         }
                     }
@@ -120,17 +122,18 @@ fun TeamTopMemberComponent(
         }
 
         SafiCenteredColumn(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 8.dp)
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(top = 8.dp),
         ) {
             Text(
                 text = member?.account?.username ?: "",
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
             )
             Text(
                 text = member?.let { "${it.points} EXP" } ?: "",
-                style = MaterialTheme.typography.labelSmall
+                style = MaterialTheme.typography.labelSmall,
             )
         }
     }

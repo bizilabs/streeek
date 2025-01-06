@@ -7,14 +7,12 @@ import kotlinx.coroutines.flow.Flow
 
 class PreferenceRepositoryImpl(
     private val localSource: LocalPreferenceSource,
-    private val remoteSource: RemotePreferencesSource
+    private val remoteSource: RemotePreferencesSource,
 ) : PreferenceRepository {
-
     override val isSyncingContributions: Flow<Boolean>
         get() = localSource.isSyncingContributions
 
     override suspend fun setIsSyncingContributions(isSyncing: Boolean) {
         localSource.setIsSyncingContributions(isSyncing = isSyncing)
     }
-
 }

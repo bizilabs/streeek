@@ -28,31 +28,32 @@ import org.koin.dsl.module
 
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "streeek.local")
 
-val LocalModule = module {
-    single<DataStore<Preferences>>(named("local")) { get<Context>().dataStore }
-    // room
-    single<StreeekDatabase> {
-        Room.databaseBuilder(
-            context = get(),
-            klass = StreeekDatabase::class.java,
-            name = StreeekDatabase.DATABASE_NAME
-        ).fallbackToDestructiveMigration()
-            .build()
+val LocalModule =
+    module {
+        single<DataStore<Preferences>>(named("local")) { get<Context>().dataStore }
+        // room
+        single<StreeekDatabase> {
+            Room.databaseBuilder(
+                context = get(),
+                klass = StreeekDatabase::class.java,
+                name = StreeekDatabase.DATABASE_NAME,
+            ).fallbackToDestructiveMigration()
+                .build()
+        }
+        // sources
+        single<PreferenceSource> { PreferenceSourceImpl(dataStore = get(named("local"))) }
+        single<LocalPreferenceSource> { LocalPreferenceSourceImpl(source = get()) }
+        single<AccountLocalSource> { AccountLocalSourceImpl(preferenceSource = get()) }
+        single<TeamLocalSource> { TeamLocalSourceImpl(source = get()) }
+        // contributions
+        single<ContributionDAO> { get<StreeekDatabase>().contributions }
+        single<ContributionsLocalSource> {
+            ContributionsLocalSourceImpl(dao = get(), preferenceSource = get())
+        }
+        // levels
+        single<LevelDAO> { get<StreeekDatabase>().levels }
+        single<LevelLocalSource> { LevelLocalSourceImpl(source = get()) }
+        // notifications
+        single<NotificationDAO> { get<StreeekDatabase>().notifications }
+        single<NotificationLocalSource> { NotificationLocalSourceImpl(dao = get()) }
     }
-    // sources
-    single<PreferenceSource> { PreferenceSourceImpl(dataStore = get(named("local"))) }
-    single<LocalPreferenceSource> { LocalPreferenceSourceImpl(source = get()) }
-    single<AccountLocalSource> { AccountLocalSourceImpl(preferenceSource = get()) }
-    single<TeamLocalSource> { TeamLocalSourceImpl(source = get()) }
-    // contributions
-    single<ContributionDAO> { get<StreeekDatabase>().contributions }
-    single<ContributionsLocalSource> {
-        ContributionsLocalSourceImpl(dao = get(), preferenceSource = get())
-    }
-    // levels
-    single<LevelDAO> { get<StreeekDatabase>().levels }
-    single<LevelLocalSource> { LevelLocalSourceImpl(source = get()) }
-    // notifications
-    single<NotificationDAO> { get<StreeekDatabase>().notifications }
-    single<NotificationLocalSource> { NotificationLocalSourceImpl(dao = get()) }
-}

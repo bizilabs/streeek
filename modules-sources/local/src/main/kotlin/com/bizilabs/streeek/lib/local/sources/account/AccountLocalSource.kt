@@ -9,21 +9,23 @@ import kotlinx.coroutines.flow.mapLatest
 
 interface AccountLocalSource {
     val account: Flow<AccountCache?>
+
     suspend fun updateAccount(account: AccountCache)
+
     suspend fun logout()
 }
 
 class AccountLocalSourceImpl(
-    private val preferenceSource: PreferenceSource
+    private val preferenceSource: PreferenceSource,
 ) : AccountLocalSource {
-
     object Keys {
         val account = stringPreferencesKey("account")
     }
 
     override val account: Flow<AccountCache?>
-        get() = preferenceSource.getNullable(key = Keys.account)
-            .mapLatest { it?.fromJsonToAccountCache() }
+        get() =
+            preferenceSource.getNullable(key = Keys.account)
+                .mapLatest { it?.fromJsonToAccountCache() }
 
     override suspend fun updateAccount(account: AccountCache) {
         preferenceSource.update(key = Keys.account, value = account.asJson())
@@ -32,5 +34,4 @@ class AccountLocalSourceImpl(
     override suspend fun logout() {
         preferenceSource.clear()
     }
-
 }

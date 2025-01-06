@@ -10,20 +10,23 @@ import com.bizilabs.streeek.lib.remote.models.supabase.JoinTeamInvitationDTO
 import com.bizilabs.streeek.lib.remote.models.supabase.TeamInvitationDTO
 import kotlinx.datetime.Instant
 
-fun TeamInvitationDTO.toDomain() = TeamInvitationDomain(
-    id = id,
-    code = token,
-    createdAt = Instant.parse(createdAt).datetimeUTC,
-    expiresAt = Instant.parse(expiresAt).datetimeUTC,
-    creatorId = creatorId
-)
+fun TeamInvitationDTO.toDomain() =
+    TeamInvitationDomain(
+        id = id,
+        code = token,
+        createdAt = Instant.parse(createdAt).datetimeUTC,
+        expiresAt = Instant.parse(expiresAt).datetimeUTC,
+        creatorId = creatorId,
+    )
 
-fun CreateTeamInvitationDTO.toDomain() = CreateTeamInvitationDomain(
-    code = token,
-    expiresAt = Instant.parse(expiresAt).datetimeUTC,
-)
+fun CreateTeamInvitationDTO.toDomain() =
+    CreateTeamInvitationDomain(
+        code = token,
+        expiresAt = Instant.parse(expiresAt).datetimeUTC,
+    )
 
-fun JoinTeamInvitationDTO.toDomain() = JoinTeamInvitationDomain(
-    teamId = teamId,
-    role = TeamMemberRole.valueOf(role.uppercase())
-)
+fun JoinTeamInvitationDTO.toDomain() =
+    JoinTeamInvitationDomain(
+        teamId = teamId,
+        role = TeamMemberRole.valueOf(role.uppercase()),
+    )

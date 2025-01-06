@@ -18,55 +18,60 @@ import com.bizilabs.streeek.lib.remote.models.GithubEventRepositoryDTO
 import kotlinx.datetime.Instant
 import kotlinx.serialization.json.Json
 
-val JsonSerializer = Json {
-    encodeDefaults = true
-    ignoreUnknownKeys = true
-    prettyPrint = true
-    isLenient = true
-    explicitNulls = false
-    classDiscriminator = "#class"
-}
+val JsonSerializer =
+    Json {
+        encodeDefaults = true
+        ignoreUnknownKeys = true
+        prettyPrint = true
+        isLenient = true
+        explicitNulls = false
+        classDiscriminator = "#class"
+    }
 
 private fun String.asGithubRepo(): GithubEventRepositoryDTO = JsonSerializer.decodeFromString(this)
+
 private fun String.asActor(): GithubActorDTO = JsonSerializer.decodeFromString(this)
-private fun String.asEventPayload(): EventPayloadDTO =
-    JsonSerializer.decodeFromString(EventPayloadSerializer, this)
 
-fun ContributionDTO.toDomain() = ContributionDomain(
-    id = id,
-    createdAt = Instant.parse(createdAt).datetimeSystem,
-    accountId = accountId,
-    githubEventId = githubEventId,
-    githubEventType = githubEventType,
-    githubEventDate = githubEventDate.asLocalDate(DateFormats.YYYY_MM_dd)?.asLocalDateTime() ?: SystemLocalDateTime,
-    githubEventRepo = githubEventRepo.asGithubRepo().toDomain(),
-    githubEventActor = githubEventActor.asActor().toDomain(),
-    githubEventPayload = githubEventPayload.asEventPayload().toDomain(),
-    points = points
-)
+private fun String.asEventPayload(): EventPayloadDTO = JsonSerializer.decodeFromString(EventPayloadSerializer, this)
 
-fun ContributionDomain.toCache() = ContributionCache(
-    id = id,
-    createdAt = createdAt.asString() ?: "",
-    accountId = accountId,
-    githubEventId = githubEventId,
-    githubEventType = githubEventType,
-    githubEventDate = githubEventDate.asString(DateFormats.YYYY_MM_dd) ?: "",
-    githubEventRepo = githubEventRepo.toDTO().asJson(),
-    githubEventActor = githubEventActor.toDTO().asJson(),
-    githubEventPayload = githubEventPayload.toDTO().asJson(),
-    points = points
-)
+fun ContributionDTO.toDomain() =
+    ContributionDomain(
+        id = id,
+        createdAt = Instant.parse(createdAt).datetimeSystem,
+        accountId = accountId,
+        githubEventId = githubEventId,
+        githubEventType = githubEventType,
+        githubEventDate = githubEventDate.asLocalDate(DateFormats.YYYY_MM_dd)?.asLocalDateTime() ?: SystemLocalDateTime,
+        githubEventRepo = githubEventRepo.asGithubRepo().toDomain(),
+        githubEventActor = githubEventActor.asActor().toDomain(),
+        githubEventPayload = githubEventPayload.asEventPayload().toDomain(),
+        points = points,
+    )
 
-fun ContributionCache.toDomain() = ContributionDomain(
-    id = id,
-    createdAt = createdAt.asDate()?.datetimeSystem ?: SystemLocalDateTime,
-    accountId = accountId,
-    githubEventId = githubEventId,
-    githubEventType = githubEventType,
-    githubEventDate = githubEventDate.asLocalDate(DateFormats.YYYY_MM_dd)?.asLocalDateTime() ?: SystemLocalDateTime,
-    githubEventRepo = githubEventRepo.asGithubRepo().toDomain(),
-    githubEventActor = githubEventActor.asActor().toDomain(),
-    githubEventPayload = githubEventPayload.asEventPayload().toDomain(),
-    points = points
-)
+fun ContributionDomain.toCache() =
+    ContributionCache(
+        id = id,
+        createdAt = createdAt.asString() ?: "",
+        accountId = accountId,
+        githubEventId = githubEventId,
+        githubEventType = githubEventType,
+        githubEventDate = githubEventDate.asString(DateFormats.YYYY_MM_dd) ?: "",
+        githubEventRepo = githubEventRepo.toDTO().asJson(),
+        githubEventActor = githubEventActor.toDTO().asJson(),
+        githubEventPayload = githubEventPayload.toDTO().asJson(),
+        points = points,
+    )
+
+fun ContributionCache.toDomain() =
+    ContributionDomain(
+        id = id,
+        createdAt = createdAt.asDate()?.datetimeSystem ?: SystemLocalDateTime,
+        accountId = accountId,
+        githubEventId = githubEventId,
+        githubEventType = githubEventType,
+        githubEventDate = githubEventDate.asLocalDate(DateFormats.YYYY_MM_dd)?.asLocalDateTime() ?: SystemLocalDateTime,
+        githubEventRepo = githubEventRepo.asGithubRepo().toDomain(),
+        githubEventActor = githubEventActor.asActor().toDomain(),
+        githubEventPayload = githubEventPayload.asEventPayload().toDomain(),
+        points = points,
+    )

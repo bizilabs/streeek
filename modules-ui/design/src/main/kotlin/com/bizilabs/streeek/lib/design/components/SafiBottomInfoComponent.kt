@@ -22,7 +22,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.max
 import com.bizilabs.streeek.lib.design.helpers.onSuccess
 import com.bizilabs.streeek.lib.design.helpers.success
 import com.bizilabs.streeek.lib.design.theme.SafiTheme
@@ -34,33 +33,36 @@ fun SafiBottomInfoComponent(
     modifier: Modifier = Modifier,
     containerColor: Color = MaterialTheme.colorScheme.surfaceVariant,
     contentColor: Color = MaterialTheme.colorScheme.onSurface,
-    action: @Composable (() -> Unit)? = null
+    action: @Composable (() -> Unit)? = null,
 ) {
     Card(
         modifier = modifier,
-        colors = CardDefaults.cardColors(
-            contentColor = contentColor,
-            containerColor = containerColor
-        )
+        colors =
+            CardDefaults.cardColors(
+                contentColor = contentColor,
+                containerColor = containerColor,
+            ),
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             Column(
-                modifier = Modifier
-                    .padding(16.dp)
-                    .weight(1f)
+                modifier =
+                    Modifier
+                        .padding(16.dp)
+                        .weight(1f),
             ) {
                 Text(
-                    text = title, style = MaterialTheme.typography.titleSmall,
-                    fontWeight = FontWeight.Bold
+                    text = title,
+                    style = MaterialTheme.typography.titleSmall,
+                    fontWeight = FontWeight.Bold,
                 )
                 Text(
                     text = message,
                     style = MaterialTheme.typography.bodySmall,
                     maxLines = 2,
-                    overflow = TextOverflow.Ellipsis
+                    overflow = TextOverflow.Ellipsis,
                 )
             }
             Box(modifier = Modifier.padding(8.dp)) {
@@ -98,7 +100,7 @@ private fun SafiBottomInfoComponentErrorPreview() {
                     title = "Error",
                     message = "Couldn't get needed details",
                     contentColor = MaterialTheme.colorScheme.onErrorContainer,
-                    containerColor = MaterialTheme.colorScheme.errorContainer
+                    containerColor = MaterialTheme.colorScheme.errorContainer,
                 ) {
                     TextButton(onClick = {}) {
                         Text(text = "Retry")
@@ -120,12 +122,12 @@ private fun SafiBottomInfoComponentSuccessPreview() {
                     title = "Error",
                     message = "Couldn't get needed details",
                     contentColor = MaterialTheme.colorScheme.onSuccess,
-                    containerColor = MaterialTheme.colorScheme.success
+                    containerColor = MaterialTheme.colorScheme.success,
                 ) {
                     TextButton(onClick = {}) {
                         Text(
                             text = "Continue",
-                            color = MaterialTheme.colorScheme.onSuccess
+                            color = MaterialTheme.colorScheme.onSuccess,
                         )
                     }
                 }

@@ -11,64 +11,72 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 
-fun PullRequestDTO.toDomain() = PullRequestDomain(
-    id = id,
-    url = url,
-    number = number,
-    title = title,
-    body = body,
-    user = user.toDomain(),
-    labels = labels.map { it.toDomain() },
-    createdAt = createdAt.asDate()?.toLocalDateTime(TimeZone.UTC) ?: Clock.System.now()
-        .toLocalDateTime(TimeZone.UTC),
-    updatedAt = updatedAt.asDate()?.toLocalDateTime(TimeZone.UTC) ?: Clock.System.now()
-        .toLocalDateTime(TimeZone.UTC),
-    comments = comments,
-    reviewComments = reviewComments,
-    commits = commits,
-    additions = additions,
-    deletions = deletions
-)
+fun PullRequestDTO.toDomain() =
+    PullRequestDomain(
+        id = id,
+        url = url,
+        number = number,
+        title = title,
+        body = body,
+        user = user.toDomain(),
+        labels = labels.map { it.toDomain() },
+        createdAt =
+            createdAt.asDate()?.toLocalDateTime(TimeZone.UTC) ?: Clock.System.now()
+                .toLocalDateTime(TimeZone.UTC),
+        updatedAt =
+            updatedAt.asDate()?.toLocalDateTime(TimeZone.UTC) ?: Clock.System.now()
+                .toLocalDateTime(TimeZone.UTC),
+        comments = comments,
+        reviewComments = reviewComments,
+        commits = commits,
+        additions = additions,
+        deletions = deletions,
+    )
 
-fun PullRequestDomain.toDTO() = PullRequestDTO(
-    id = id,
-    url = url,
-    number = number,
-    title = title,
-    body = body,
-    user = user.toDTO(),
-    labels = labels.map { it.toDTO() },
-    createdAt = createdAt.asString(DateFormats.ISO_8601_Z) ?: "",
-    updatedAt = updatedAt.asString(DateFormats.ISO_8601_Z) ?: "",
-    comments = comments,
-    reviewComments = reviewComments,
-    commits = commits,
-    additions = additions,
-    deletions = deletions
-)
+fun PullRequestDomain.toDTO() =
+    PullRequestDTO(
+        id = id,
+        url = url,
+        number = number,
+        title = title,
+        body = body,
+        user = user.toDTO(),
+        labels = labels.map { it.toDTO() },
+        createdAt = createdAt.asString(DateFormats.ISO_8601_Z) ?: "",
+        updatedAt = updatedAt.asString(DateFormats.ISO_8601_Z) ?: "",
+        comments = comments,
+        reviewComments = reviewComments,
+        commits = commits,
+        additions = additions,
+        deletions = deletions,
+    )
 
-fun MinPullRequestDTO.toDomain() = MinPullRequestDomain(
-    id = id,
-    url = url,
-    number = number,
-    title = title,
-    body = body,
-    user = user.toDomain(),
-    labels = labels.map { it.toDomain() },
-    createdAt = createdAt.asDate()?.toLocalDateTime(TimeZone.UTC) ?: Clock.System.now()
-        .toLocalDateTime(TimeZone.UTC),
-    updatedAt = updatedAt.asDate()?.toLocalDateTime(TimeZone.UTC) ?: Clock.System.now()
-        .toLocalDateTime(TimeZone.UTC),
-)
+fun MinPullRequestDTO.toDomain() =
+    MinPullRequestDomain(
+        id = id,
+        url = url,
+        number = number,
+        title = title,
+        body = body,
+        user = user.toDomain(),
+        labels = labels.map { it.toDomain() },
+        createdAt =
+            createdAt.asDate()?.toLocalDateTime(TimeZone.UTC) ?: Clock.System.now()
+                .toLocalDateTime(TimeZone.UTC),
+        updatedAt =
+            updatedAt.asDate()?.toLocalDateTime(TimeZone.UTC) ?: Clock.System.now()
+                .toLocalDateTime(TimeZone.UTC),
+    )
 
-fun MinPullRequestDomain.toDTO() = MinPullRequestDTO(
-    id = id,
-    url = url,
-    number = number,
-    title = title,
-    body = body,
-    user = user.toDTO(),
-    labels = labels.map { it.toDTO() },
-    createdAt = createdAt.asString(DateFormats.ISO_8601_Z) ?: "",
-    updatedAt = updatedAt.asString(DateFormats.ISO_8601_Z) ?: "",
-)
+fun MinPullRequestDomain.toDTO() =
+    MinPullRequestDTO(
+        id = id,
+        url = url,
+        number = number,
+        title = title,
+        body = body,
+        user = user.toDTO(),
+        labels = labels.map { it.toDTO() },
+        createdAt = createdAt.asString(DateFormats.ISO_8601_Z) ?: "",
+        updatedAt = updatedAt.asString(DateFormats.ISO_8601_Z) ?: "",
+    )

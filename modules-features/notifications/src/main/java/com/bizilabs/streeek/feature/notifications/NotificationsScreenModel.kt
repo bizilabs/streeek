@@ -10,13 +10,12 @@ import kotlinx.coroutines.launch
 data class NotificationsScreenState(
     val pastInitial: Boolean = false,
     val isSyncing: Boolean = false,
-    val notifications: List<NotificationDomain> = emptyList()
+    val notifications: List<NotificationDomain> = emptyList(),
 )
 
 class NotificationsScreenModel(
-    private val repository: NotificationRepository
+    private val repository: NotificationRepository,
 ) : StateScreenModel<NotificationsScreenState>(NotificationsScreenState()) {
-
     val notifications = repository.notifications
 
     fun onClickNotification(notification: NotificationDomain) {
@@ -24,5 +23,4 @@ class NotificationsScreenModel(
             repository.update(notification.copy(readAt = SystemLocalDateTime))
         }
     }
-
 }

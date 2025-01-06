@@ -11,7 +11,7 @@ data class GithubUserDTO(
     val email: String? = null,
     val bio: String,
     @SerialName("avatar_url")
-    val url: String
+    val url: String,
 )
 
 @Serializable
@@ -20,10 +20,10 @@ data class GithubActorDTO(
     @SerialName("login")
     val name: String,
     @SerialName("avatar_url")
-    val url: String
+    val url: String,
 )
 
 @Serializable
 data class GithubActorMinimalDTO(
-    val name: String
+    val name: String,
 )

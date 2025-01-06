@@ -12,20 +12,19 @@ import kotlinx.coroutines.flow.firstOrNull
 
 class TeamInvitationRepositoryImpl(
     private val remote: TeamInvitationRemoteSource,
-    private val accountLocalSource: AccountLocalSource
+    private val accountLocalSource: AccountLocalSource,
 ) : TeamInvitationRepository {
-
     private suspend fun getAccountId() = accountLocalSource.account.firstOrNull()?.id
 
     override suspend fun createInvitation(
         teamId: Long,
-        duration: Long
+        duration: Long,
     ): DataResult<CreateTeamInvitationDomain> {
         val accountId = getAccountId() ?: return DataResult.Error(message = "No account found")
         return remote.createInvitation(
             accountId = accountId,
             teamId = teamId,
-            duration = duration
+            duration = duration,
         ).asDataResult { it.toDomain() }
     }
 
@@ -39,5 +38,4 @@ class TeamInvitationRepositoryImpl(
         val accountId = getAccountId() ?: return DataResult.Error(message = "No account found")
         return remote.deleteInvitation(accountId = accountId, invitationId = id).asDataResult { it }
     }
-
 }

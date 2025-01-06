@@ -13,9 +13,8 @@ import kotlinx.coroutines.flow.mapLatest
 
 class LevelRepositoryImpl(
     private val localSource: LevelLocalSource,
-    private val remoteSource: LevelRemoteSource
+    private val remoteSource: LevelRemoteSource,
 ) : LevelRepository {
-
     override suspend fun getLevels(): DataResult<List<LevelDomain>> {
         return remoteSource.getLevels()
             .asDataResult { list -> list.map { it.toDomain() } }
@@ -31,5 +30,4 @@ class LevelRepositoryImpl(
     override suspend fun updateLevels(levels: List<LevelDomain>): DataResult<Boolean> {
         return localSource.updateLevels(levels.map { it.toCache() }).asDataResult { it }
     }
-
 }

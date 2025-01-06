@@ -18,12 +18,13 @@ import com.bizilabs.streeek.lib.design.theme.SafiTheme
 @Composable
 fun SafiContent(
     isNetworkConnected: Boolean = isSystemNetworkConnected(),
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background),
     ) {
         AnimatedVisibility(visible = !isNetworkConnected) {
             SafiNetworkComponent(isNetworkConnected = isNetworkConnected)
@@ -81,4 +82,3 @@ private fun SafiContentHasNoNetworkDarkPreview() {
         }
     }
 }
-

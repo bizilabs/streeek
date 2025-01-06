@@ -52,7 +52,7 @@ object AuthenticationScreen : Screen {
             state = state,
             onClickAuthenticate = screenModel::onClickAuthenticate,
             onUriReceived = screenModel::onUriReceived,
-            navigateToSetup = { navigator?.replace(screen) }
+            navigateToSetup = { navigator?.replace(screen) },
         )
     }
 }
@@ -64,59 +64,63 @@ fun AuthenticationScreenContent(
     onUriReceived: (Uri) -> Unit,
     navigateToSetup: () -> Unit,
 ) {
-
-    if (state.intent != null && state.fetchState == null)
+    if (state.intent != null && state.fetchState == null) {
         StartActivity(intent = state.intent)
+    }
 
-    if (state.uri == null)
+    if (state.uri == null) {
         HandleIntent(onUriReceived = onUriReceived)
+    }
 
-    if (state.navigateToTabs)
+    if (state.navigateToTabs) {
         navigateToSetup()
+    }
 
     Scaffold { paddingValues ->
         Column(
-            modifier = Modifier
-                .padding(paddingValues)
-                .fillMaxSize()
-                .padding(16.dp)
+            modifier =
+                Modifier
+                    .padding(paddingValues)
+                    .fillMaxSize()
+                    .padding(16.dp),
         ) {
             Row(modifier = Modifier.padding(8.dp)) {
                 Icon(
                     modifier = Modifier.size(24.dp),
                     painter = painterResource(SafiDrawables.Logo),
-                    contentDescription = ""
+                    contentDescription = "",
                 )
                 Spacer(modifier = Modifier.padding(8.dp))
                 Text(
                     text = stringResource(SafiStrings.AppName),
                     style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Black
+                    fontWeight = FontWeight.Black,
                 )
             }
             Text(
                 modifier = Modifier.padding(top = 16.dp),
                 text = "Welcome to Streeek",
                 style = MaterialTheme.typography.displaySmall,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
             )
             Text(
                 modifier = Modifier.fillMaxWidth(0.75f),
-                text = "Turn your GitHub contributions into a streak-chasing adventure"
+                text = "Turn your GitHub contributions into a streak-chasing adventure",
             )
 
             Column(
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxWidth()
+                modifier =
+                    Modifier
+                        .weight(1f)
+                        .fillMaxWidth(),
             ) {
                 Spacer(modifier = Modifier.weight(1f))
                 AnimatedVisibility(
-                    visible = (state.intent == null && state.uri == null).not()
+                    visible = (state.intent == null && state.uri == null).not(),
                 ) {
                     AnimatedContent(
                         targetState = state.fetchState,
-                        label = "animate auth state"
+                        label = "animate auth state",
                     ) { result ->
                         when (result) {
                             is FetchState.Error -> {
@@ -129,7 +133,7 @@ fun AuthenticationScreenContent(
                                     TextButton(onClick = onClickAuthenticate) {
                                         Text(
                                             text = "Retry",
-                                            color = MaterialTheme.colorScheme.onError
+                                            color = MaterialTheme.colorScheme.onError,
                                         )
                                     }
                                 }
@@ -145,7 +149,7 @@ fun AuthenticationScreenContent(
                                     TextButton(onClick = navigateToSetup) {
                                         Text(
                                             text = "Continue",
-                                            color = MaterialTheme.colorScheme.onSuccess
+                                            color = MaterialTheme.colorScheme.onSuccess,
                                         )
                                     }
                                 }
@@ -160,7 +164,7 @@ fun AuthenticationScreenContent(
                                 ) {
                                     CircularProgressIndicator(
                                         modifier = Modifier.size(24.dp),
-                                        color = MaterialTheme.colorScheme.onPrimary
+                                        color = MaterialTheme.colorScheme.onPrimary,
                                     )
                                 }
                             }
@@ -171,16 +175,15 @@ fun AuthenticationScreenContent(
 
             AnimatedVisibility(
                 modifier = Modifier.fillMaxWidth(),
-                visible = state.intent == null && state.uri == null
+                visible = state.intent == null && state.uri == null,
             ) {
                 Button(
                     modifier = Modifier.fillMaxWidth(),
-                    onClick = onClickAuthenticate
+                    onClick = onClickAuthenticate,
                 ) {
                     Text(text = "Authenticate")
                 }
             }
-
         }
     }
 }

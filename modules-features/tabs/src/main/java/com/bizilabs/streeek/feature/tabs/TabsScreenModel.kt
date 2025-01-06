@@ -20,29 +20,35 @@ import com.bizilabs.streeek.lib.domain.workers.startPeriodicTeamsSyncWork
 import kotlinx.coroutines.flow.update
 import org.koin.dsl.module
 
-val tabsModule = module {
-    factory {
-        TabsScreenModel(context = get(),)
+val tabsModule =
+    module {
+        factory {
+            TabsScreenModel(context = get())
+        }
+        includes(TeamsModule, FeedModule, AchievementsModule)
     }
-    includes(TeamsModule, FeedModule, AchievementsModule)
-}
 
 enum class Tabs {
-    TEAMS, FEED, ACHIEVEMENTS;
+    TEAMS,
+    FEED,
+    ACHIEVEMENTS,
+    ;
 
     val icon: Pair<ImageVector, ImageVector>
-        get() = when (this) {
-            FEED -> Pair(Icons.Outlined.Explore, Icons.Rounded.Explore)
-            TEAMS -> Pair(Icons.Outlined.PeopleAlt, Icons.Rounded.PeopleAlt)
-            ACHIEVEMENTS -> Pair(Icons.Outlined.EmojiEvents, Icons.Rounded.EmojiEvents)
-        }
+        get() =
+            when (this) {
+                FEED -> Pair(Icons.Outlined.Explore, Icons.Rounded.Explore)
+                TEAMS -> Pair(Icons.Outlined.PeopleAlt, Icons.Rounded.PeopleAlt)
+                ACHIEVEMENTS -> Pair(Icons.Outlined.EmojiEvents, Icons.Rounded.EmojiEvents)
+            }
 
     val label: String
-        get() = when (this) {
-            FEED -> "Feed"
-            TEAMS -> "Teams"
-            ACHIEVEMENTS -> "Achievements"
-        }
+        get() =
+            when (this) {
+                FEED -> "Feed"
+                TEAMS -> "Teams"
+                ACHIEVEMENTS -> "Achievements"
+            }
 }
 
 data class TabsScreenState(
@@ -53,7 +59,6 @@ data class TabsScreenState(
 class TabsScreenModel(
     private val context: Context,
 ) : StateScreenModel<TabsScreenState>(TabsScreenState()) {
-
     init {
         startWorkers()
     }
@@ -70,5 +75,4 @@ class TabsScreenModel(
     fun onValueChangeTab(tab: Tabs) {
         mutableState.update { it.copy(tab = tab) }
     }
-
 }

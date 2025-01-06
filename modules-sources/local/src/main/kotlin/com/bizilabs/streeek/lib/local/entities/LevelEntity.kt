@@ -11,5 +11,5 @@ data class LevelEntity(
     val number: Long,
     val minPoints: Long,
     val maxPoints: Long,
-    val createdAt: String
+    val createdAt: String,
 )

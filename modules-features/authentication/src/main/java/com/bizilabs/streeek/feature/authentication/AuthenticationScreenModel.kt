@@ -15,13 +15,12 @@ data class AuthenticationScreenState(
     val intent: Intent? = null,
     val uri: Uri? = null,
     val fetchState: FetchState<String>? = null,
-    val navigateToTabs: Boolean = false
+    val navigateToTabs: Boolean = false,
 )
 
 class AuthenticationScreenModel(
-    private val authenticationRepository: AuthenticationRepository
+    private val authenticationRepository: AuthenticationRepository,
 ) : StateScreenModel<AuthenticationScreenState>(AuthenticationScreenState()) {
-
     fun onClickAuthenticate() {
         mutableState.update { it.copy(fetchState = null) }
         getAuthenticationIntent()
@@ -43,14 +42,14 @@ class AuthenticationScreenModel(
         screenModelScope.launch {
             mutableState.update { it.copy(fetchState = FetchState.Loading) }
             val value = authenticationRepository.getAuthenticationToken(uri = uri)
-            val update = when (value) {
-                is DataResult.Error -> FetchState.Error(value.message)
-                is DataResult.Success -> FetchState.Success(value.data)
-            }
+            val update =
+                when (value) {
+                    is DataResult.Error -> FetchState.Error(value.message)
+                    is DataResult.Success -> FetchState.Success(value.data)
+                }
             mutableState.update { it.copy(fetchState = update) }
             delay(2500)
             mutableState.update { it.copy(navigateToTabs = update is FetchState.Success) }
         }
     }
-
 }

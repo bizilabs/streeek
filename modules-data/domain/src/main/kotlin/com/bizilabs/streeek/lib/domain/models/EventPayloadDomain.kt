@@ -8,17 +8,16 @@ sealed interface EventPayloadDomain {
 
 data class CommitCommentEventDomain(
     val action: String,
-    val comment: CommitCommentDomain
+    val comment: CommitCommentDomain,
 ) : EventPayloadDomain {
-    override fun getPoints(account: AccountDomain): Long =
-        if (action.equals("created", true)) 5 else 0
+    override fun getPoints(account: AccountDomain): Long = if (action.equals("created", true)) 5 else 0
 }
 
 data class CreateEventDomain(
     val ref: String?,
     val description: String,
     val refType: String,
-    val pusherType: String
+    val pusherType: String,
 ) : EventPayloadDomain {
     override fun getPoints(account: AccountDomain): Long =
         when {
@@ -37,13 +36,14 @@ data class CreateEventDomain(
 
 data class DeleteEventDomain(
     val ref: String,
-    val refType: String
+    val refType: String,
 ) : EventPayloadDomain {
-    override fun getPoints(account: AccountDomain): Long = when {
-        refType.equals("tag", true) -> -10
-        refType.equals("branch", true) -> -5
-        else -> 0
-    }
+    override fun getPoints(account: AccountDomain): Long =
+        when {
+            refType.equals("tag", true) -> -10
+            refType.equals("branch", true) -> -5
+            else -> 0
+        }
 }
 
 data class ForkEventDomain(val forkee: EventRepositoryDomain) : EventPayloadDomain {
@@ -51,7 +51,7 @@ data class ForkEventDomain(val forkee: EventRepositoryDomain) : EventPayloadDoma
 }
 
 data class GollumEventDomain(
-    val pages: List<GollumPageDomain>
+    val pages: List<GollumPageDomain>,
 ) : EventPayloadDomain {
     override fun getPoints(account: AccountDomain): Long = 20
 }
@@ -79,12 +79,13 @@ data class IssuesEventDomain(
 
 data class MemberEventDomain(
     val action: String,
-    val member: ActorDomain
+    val member: ActorDomain,
 ) : EventPayloadDomain {
-    override fun getPoints(account: AccountDomain): Long = when {
-        action.equals("added", true) -> 20
-        else -> 0
-    }
+    override fun getPoints(account: AccountDomain): Long =
+        when {
+            action.equals("added", true) -> 20
+            else -> 0
+        }
 }
 
 class PublicEventDomain() : EventPayloadDomain {
@@ -94,7 +95,7 @@ class PublicEventDomain() : EventPayloadDomain {
 data class PullRequestEventDomain(
     val action: String,
     val pullRequest: MinPullRequestDomain,
-    val reason: String?
+    val reason: String?,
 ) : EventPayloadDomain {
     override fun getPoints(account: AccountDomain): Long {
         return when {
@@ -129,7 +130,7 @@ data class PullRequestReviewCommentEventDomain(
 
 data class PullRequestReviewThreadEventDomain(
     val action: String,
-    val pullRequest: MinPullRequestDomain
+    val pullRequest: MinPullRequestDomain,
 ) : EventPayloadDomain {
     override fun getPoints(account: AccountDomain): Long {
         return when {
@@ -145,7 +146,7 @@ data class PushEventDomain(
     val size: Long,
     val distinctSize: Long,
     val ref: String,
-    val commits: List<CommitDomain>
+    val commits: List<CommitDomain>,
 ) : EventPayloadDomain {
     override fun getPoints(account: AccountDomain): Long {
         return commits.filter { it.distinct == true }.map { 5L }.sum()
@@ -154,7 +155,7 @@ data class PushEventDomain(
 
 data class ReleaseEventDomain(
     val action: String,
-    val release: ReleaseDomain
+    val release: ReleaseDomain,
 ) : EventPayloadDomain {
     override fun getPoints(account: AccountDomain): Long {
         return when {
@@ -166,7 +167,7 @@ data class ReleaseEventDomain(
 
 data class SponsorshipEventDomain(
     val action: String,
-    val effectiveDate: LocalDateTime
+    val effectiveDate: LocalDateTime,
 ) : EventPayloadDomain {
     override fun getPoints(account: AccountDomain): Long {
         return when {

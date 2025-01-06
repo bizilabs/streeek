@@ -11,52 +11,50 @@ import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import com.bizilabs.streeek.lib.domain.helpers.DataResult
-import com.bizilabs.streeek.lib.domain.models.TeamWithMembersDomain
 import com.bizilabs.streeek.lib.domain.models.updateOrCreate
-import com.bizilabs.streeek.lib.domain.repositories.AccountRepository
 import com.bizilabs.streeek.lib.domain.repositories.TeamRepository
 import kotlinx.coroutines.flow.first
 import java.util.UUID
 import java.util.concurrent.TimeUnit
 
-private val constraints = Constraints.Builder()
-    .setRequiredNetworkType(NetworkType.CONNECTED)
-    .setRequiresBatteryNotLow(true)
-    .setRequiresStorageNotLow(true)
-    .build()
-
-private val parameters = Data.Builder()
-    .build()
-
-fun Context.startImmediateSyncTeamsWork() {
-
-    val request = OneTimeWorkRequestBuilder<SyncTeamsWork>()
-        .addTag(SyncTeamsWork.TAG)
-        .setConstraints(constraints)
-        .setInputData(parameters)
-        .setId(UUID.randomUUID())
+private val constraints =
+    Constraints.Builder()
+        .setRequiredNetworkType(NetworkType.CONNECTED)
+        .setRequiresBatteryNotLow(true)
+        .setRequiresStorageNotLow(true)
         .build()
 
-    WorkManager.getInstance(this).enqueue(request)
+private val parameters =
+    Data.Builder()
+        .build()
 
+fun Context.startImmediateSyncTeamsWork() {
+    val request =
+        OneTimeWorkRequestBuilder<SyncTeamsWork>()
+            .addTag(SyncTeamsWork.TAG)
+            .setConstraints(constraints)
+            .setInputData(parameters)
+            .setId(UUID.randomUUID())
+            .build()
+
+    WorkManager.getInstance(this).enqueue(request)
 }
 
 fun Context.startPeriodicTeamsSyncWork() {
-
-    val request = PeriodicWorkRequestBuilder<SyncTeamsWork>(30, TimeUnit.MINUTES)
-        .addTag(SyncTeamsWork.TAG)
-        .setConstraints(constraints)
-        .setInputData(parameters)
-        .setId(UUID.randomUUID())
-        .build()
+    val request =
+        PeriodicWorkRequestBuilder<SyncTeamsWork>(30, TimeUnit.MINUTES)
+            .addTag(SyncTeamsWork.TAG)
+            .setConstraints(constraints)
+            .setInputData(parameters)
+            .setId(UUID.randomUUID())
+            .build()
 
     WorkManager.getInstance(this)
         .enqueueUniquePeriodicWork(
             SyncTeamsWork.TAG,
             ExistingPeriodicWorkPolicy.KEEP,
-            request
+            request,
         )
-
 }
 
 class SyncTeamsWork(
@@ -64,7 +62,6 @@ class SyncTeamsWork(
     val params: WorkerParameters,
     val repository: TeamRepository,
 ) : CoroutineWorker(context, params) {
-
     companion object {
         const val TAG = "SyncTeamsWorker"
     }
@@ -75,9 +72,10 @@ class SyncTeamsWork(
         if (remoteTeams is DataResult.Error) return getWorkerResult()
         val remoteTeamsList = (remoteTeams as DataResult.Success).data
         val remoteIds = remoteTeamsList.map { it.team.id }
-        for (cached in cachedTeamsMap.values){
-            if (cached.team.id !in remoteIds)
+        for (cached in cachedTeamsMap.values) {
+            if (cached.team.id !in remoteIds) {
                 repository.deleteTeamLocally(team = cached)
+            }
         }
         for (team in remoteTeamsList) {
             val current = cachedTeamsMap[team.team.id]
@@ -100,5 +98,4 @@ class SyncTeamsWork(
         if (params.runAttemptCount > 2) return Result.failure()
         return Result.retry()
     }
-
 }

@@ -8,9 +8,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.AccountCircle
-import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -24,7 +21,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.core.registry.rememberScreen
 import cafe.adriel.voyager.core.screen.Screen
@@ -33,8 +29,6 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import com.bizilabs.streeek.lib.common.models.FetchState
 import com.bizilabs.streeek.lib.common.navigation.SharedScreen
 import com.bizilabs.streeek.lib.design.components.SafiBottomInfoComponent
-import com.bizilabs.streeek.lib.design.components.SafiCenteredColumn
-import com.bizilabs.streeek.lib.design.components.SafiInfoSection
 import com.bizilabs.streeek.lib.design.helpers.onSuccess
 import com.bizilabs.streeek.lib.design.helpers.success
 import com.bizilabs.streeek.lib.resources.images.SafiDrawables
@@ -51,7 +45,7 @@ object SetupScreen : Screen {
         SetupScreenContent(
             state = state,
             onClickGetUserRetry = screenModel::onClickGetUserRetry,
-            onClickGetAccountRetry = screenModel::onClickGetAccountRetry
+            onClickGetAccountRetry = screenModel::onClickGetAccountRetry,
         ) {
             navigator?.replace(tabsScreen)
         }
@@ -63,52 +57,55 @@ fun SetupScreenContent(
     state: SetupScreenState,
     onClickGetUserRetry: () -> Unit,
     onClickGetAccountRetry: () -> Unit,
-    navigate: () -> Unit
+    navigate: () -> Unit,
 ) {
     Scaffold { paddingValues ->
         Column(
-            modifier = Modifier
-                .padding(paddingValues)
-                .fillMaxSize()
+            modifier =
+                Modifier
+                    .padding(paddingValues)
+                    .fillMaxSize(),
         ) {
             Column(
-                modifier = Modifier
-                    .padding(paddingValues)
-                    .fillMaxSize()
-                    .padding(16.dp)
+                modifier =
+                    Modifier
+                        .padding(paddingValues)
+                        .fillMaxSize()
+                        .padding(16.dp),
             ) {
                 Row(modifier = Modifier.padding(8.dp)) {
                     Icon(
                         modifier = Modifier.size(24.dp),
                         painter = painterResource(SafiDrawables.Logo),
-                        contentDescription = ""
+                        contentDescription = "",
                     )
                     Spacer(modifier = Modifier.padding(8.dp))
                     Text(
                         text = stringResource(SafiStrings.AppName),
                         style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Black
+                        fontWeight = FontWeight.Black,
                     )
                 }
                 Text(
                     modifier = Modifier.padding(top = 16.dp),
                     text = "Setting Up",
                     style = MaterialTheme.typography.displaySmall,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
                 )
                 Text(
                     modifier = Modifier.fillMaxWidth(0.75f),
-                    text = "Let’s get everything ready for your adventure!"
+                    text = "Let’s get everything ready for your adventure!",
                 )
                 Column(
-                    modifier = Modifier
-                        .weight(1f)
-                        .fillMaxWidth()
+                    modifier =
+                        Modifier
+                            .weight(1f)
+                            .fillMaxWidth(),
                 ) {
                     AnimatedContent(
                         modifier = Modifier.fillMaxSize(),
                         targetState = state.userState,
-                        label = "user_animation"
+                        label = "user_animation",
                     ) {
                         Column(modifier = Modifier.fillMaxSize()) {
                             Spacer(modifier = Modifier.weight(1f))
@@ -125,10 +122,10 @@ fun SetupScreenContent(
                                             ) {
                                                 Text(
                                                     text = "Retry",
-                                                    color = MaterialTheme.colorScheme.onError
+                                                    color = MaterialTheme.colorScheme.onError,
                                                 )
                                             }
-                                        }
+                                        },
                                     )
                                 }
 
@@ -141,7 +138,7 @@ fun SetupScreenContent(
                                     ) {
                                         CircularProgressIndicator(
                                             modifier = Modifier.size(24.dp),
-                                            color = MaterialTheme.colorScheme.onPrimary
+                                            color = MaterialTheme.colorScheme.onPrimary,
                                         )
                                     }
                                 }
@@ -150,7 +147,7 @@ fun SetupScreenContent(
                                     val user = it.value
                                     AnimatedContent(
                                         targetState = state.accountState,
-                                        label = "account_animation"
+                                        label = "account_animation",
                                     ) { accountState ->
                                         when (accountState) {
                                             is FetchState.Error -> {
@@ -163,10 +160,10 @@ fun SetupScreenContent(
                                                         TextButton(onClick = onClickGetAccountRetry) {
                                                             Text(
                                                                 text = "Retry",
-                                                                color = MaterialTheme.colorScheme.onError
+                                                                color = MaterialTheme.colorScheme.onError,
                                                             )
                                                         }
-                                                    }
+                                                    },
                                                 )
                                             }
 
@@ -179,7 +176,7 @@ fun SetupScreenContent(
                                                 ) {
                                                     CircularProgressIndicator(
                                                         modifier = Modifier.size(24.dp),
-                                                        color = MaterialTheme.colorScheme.onPrimary
+                                                        color = MaterialTheme.colorScheme.onPrimary,
                                                     )
                                                 }
                                             }
@@ -190,12 +187,12 @@ fun SetupScreenContent(
                                                     title = "Success",
                                                     message = "You're all set up ${account.username}",
                                                     containerColor = MaterialTheme.colorScheme.success,
-                                                    contentColor = MaterialTheme.colorScheme.onSuccess
+                                                    contentColor = MaterialTheme.colorScheme.onSuccess,
                                                 ) {
                                                     TextButton(onClick = navigate) {
                                                         Text(
                                                             text = "Continue",
-                                                            color = MaterialTheme.colorScheme.onSuccess
+                                                            color = MaterialTheme.colorScheme.onSuccess,
                                                         )
                                                     }
                                                 }

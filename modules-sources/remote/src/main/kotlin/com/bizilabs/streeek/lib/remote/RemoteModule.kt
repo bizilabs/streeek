@@ -33,47 +33,48 @@ import org.koin.dsl.module
 
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "streeek.remote")
 
-val RemoteModule = module {
-    single<HttpLoggingInterceptor> {
-        HttpLoggingInterceptor().apply {
-            setLevel(HttpLoggingInterceptor.Level.BODY)
+val RemoteModule =
+    module {
+        single<HttpLoggingInterceptor> {
+            HttpLoggingInterceptor().apply {
+                setLevel(HttpLoggingInterceptor.Level.BODY)
+            }
         }
+        single<ChuckerInterceptor> { ChuckerInterceptor(context = get()) }
+        single<AuthorizationInterceptor> { AuthorizationInterceptor(remotePreferencesSource = get()) }
+        single<HttpClient> {
+            createHttpClient(
+                chuckerInterceptor = get(),
+                loggingInterceptor = get(),
+                authorizationInterceptor = get(),
+            )
+        }
+        single<DataStore<Preferences>>(named("remote")) { get<Context>().dataStore }
+        // supabase
+        single { createSupabase() }
+        // sources
+        single<RemotePreferencesSource> { RemotePreferencesSourceImpl(dataStore = get(named("remote"))) }
+        single<AuthenticationRemoteSource> {
+            AuthenticationRemoteSourceImpl(
+                client = get(),
+                preferences = get(),
+            )
+        }
+        single<UserRemoteSource> { UserRemoteSourceImpl(client = get()) }
+        single<AccountRemoteSource> {
+            AccountRemoteSourceImpl(
+                supabase = get(),
+                remotePreferencesSource = get(),
+            )
+        }
+        single<ContributionsRemoteSource> {
+            ContributionsRemoteSourceImpl(
+                supabase = get(),
+                client = get(),
+            )
+        }
+        single<TeamRemoteSource> { TeamRemoteSourceImpl(supabase = get()) }
+        single<TeamInvitationRemoteSource> { TeamInvitationRemoteSourceImpl(supabase = get()) }
+        single<LevelRemoteSource> { LevelRemoteSourceImpl(supabase = get()) }
+        single<NotificationRemoteSource> { NotificationRemoteSourceImpl(supabase = get()) }
     }
-    single<ChuckerInterceptor> { ChuckerInterceptor(context = get()) }
-    single<AuthorizationInterceptor> { AuthorizationInterceptor(remotePreferencesSource = get()) }
-    single<HttpClient> {
-        createHttpClient(
-            chuckerInterceptor = get(),
-            loggingInterceptor = get(),
-            authorizationInterceptor = get()
-        )
-    }
-    single<DataStore<Preferences>>(named("remote")) { get<Context>().dataStore }
-    // supabase
-    single { createSupabase() }
-    // sources
-    single<RemotePreferencesSource> { RemotePreferencesSourceImpl(dataStore = get(named("remote"))) }
-    single<AuthenticationRemoteSource> {
-        AuthenticationRemoteSourceImpl(
-            client = get(),
-            preferences = get()
-        )
-    }
-    single<UserRemoteSource> { UserRemoteSourceImpl(client = get()) }
-    single<AccountRemoteSource> {
-        AccountRemoteSourceImpl(
-            supabase = get(),
-            remotePreferencesSource = get()
-        )
-    }
-    single<ContributionsRemoteSource> {
-        ContributionsRemoteSourceImpl(
-            supabase = get(),
-            client = get()
-        )
-    }
-    single<TeamRemoteSource> { TeamRemoteSourceImpl(supabase = get()) }
-    single<TeamInvitationRemoteSource> { TeamInvitationRemoteSourceImpl(supabase = get()) }
-    single<LevelRemoteSource> { LevelRemoteSourceImpl(supabase = get()) }
-    single<NotificationRemoteSource> { NotificationRemoteSourceImpl(supabase = get()) }
-}

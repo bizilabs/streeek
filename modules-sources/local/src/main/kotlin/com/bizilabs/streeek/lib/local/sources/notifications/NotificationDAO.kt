@@ -8,7 +8,6 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface NotificationDAO : BaseDAO<NotificationEntity> {
-
     @Query("SELECT * FROM notifications ORDER BY createdAtMillis DESC")
     fun getAll(): Flow<List<NotificationEntity>>
 
@@ -20,5 +19,4 @@ interface NotificationDAO : BaseDAO<NotificationEntity> {
 
     @Query("DELETE FROM notifications")
     suspend fun deleteAll()
-
 }

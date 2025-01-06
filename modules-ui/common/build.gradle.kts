@@ -20,5 +20,4 @@ dependencies {
 
     // paging
     implementation(libs.androidx.paging.compose)
-
 }

@@ -42,20 +42,21 @@ fun SafiInfoSection(
             text = title,
             maxLines = 1,
             fontSize = MaterialTheme.typography.bodyLarge.fontSize,
-            fontStyle = MaterialTheme.typography.bodyLarge.fontStyle
+            fontStyle = MaterialTheme.typography.bodyLarge.fontStyle,
         )
         Text(
-            modifier = Modifier
-                .padding(top = 8.dp)
-                .fillMaxWidth(0.6f),
+            modifier =
+                Modifier
+                    .padding(top = 8.dp)
+                    .fillMaxWidth(0.6f),
             text = description,
             textAlign = TextAlign.Center,
             fontSize = MaterialTheme.typography.labelSmall.fontSize,
-            fontStyle = MaterialTheme.typography.labelSmall.fontStyle
+            fontStyle = MaterialTheme.typography.labelSmall.fontStyle,
         )
         AnimatedVisibility(
             modifier = Modifier.padding(top = 16.dp),
-            visible = action != null
+            visible = action != null,
         ) {
             action?.invoke()
         }

@@ -13,7 +13,6 @@ import androidx.compose.material.icons.rounded.WarningAmber
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.ModalBottomSheetDefaults
 import androidx.compose.material3.ModalBottomSheetProperties
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -27,7 +26,6 @@ import androidx.compose.ui.window.SecureFlagPolicy
 import kotlinx.coroutines.launch
 
 sealed class DialogState(open val title: String, open val message: String) {
-
     data class Loading(override val title: String = "", override val message: String = "") :
         DialogState(title = title, message = message)
 
@@ -42,7 +40,6 @@ sealed class DialogState(open val title: String, open val message: String) {
 
     data class Caution(override val title: String, override val message: String) :
         DialogState(title = title, message = message)
-
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -51,7 +48,6 @@ fun SafiBottomDialog(
     state: DialogState?,
     onClickDismiss: () -> Unit,
 ) {
-
     val scope = rememberCoroutineScope()
     val bottomSheetState = rememberModalBottomSheetState()
 
@@ -65,26 +61,29 @@ fun SafiBottomDialog(
                 scope.launch { bottomSheetState.hide() }
                 onClickDismiss()
             },
-            properties = ModalBottomSheetProperties(
-                securePolicy =SecureFlagPolicy.Inherit,
-            )
+            properties =
+                ModalBottomSheetProperties(
+                    securePolicy = SecureFlagPolicy.Inherit,
+                ),
         ) {
             AnimatedContent(targetState = state, label = "dialog state") { dialog ->
                 Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp)
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
                 ) {
-                    if (dialog != null)
+                    if (dialog != null) {
                         when (dialog) {
                             is DialogState.Caution -> {
                                 SafiInfoSection(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(bottom = 32.dp),
+                                    modifier =
+                                        Modifier
+                                            .fillMaxWidth()
+                                            .padding(bottom = 32.dp),
                                     icon = Icons.Rounded.WarningAmber,
                                     title = dialog.title,
-                                    description = dialog.message
+                                    description = dialog.message,
                                 ) {
                                     TextButton(onClick = onClickDismiss) {
                                         Text(text = "Dismiss")
@@ -94,12 +93,13 @@ fun SafiBottomDialog(
 
                             is DialogState.Error -> {
                                 SafiInfoSection(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(bottom = 32.dp),
+                                    modifier =
+                                        Modifier
+                                            .fillMaxWidth()
+                                            .padding(bottom = 32.dp),
                                     icon = Icons.Rounded.Error,
                                     title = dialog.title,
-                                    description = dialog.message
+                                    description = dialog.message,
                                 ) {
                                     TextButton(onClick = onClickDismiss) {
                                         Text(text = "Dismiss")
@@ -109,12 +109,13 @@ fun SafiBottomDialog(
 
                             is DialogState.Info -> {
                                 SafiInfoSection(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(bottom = 32.dp),
+                                    modifier =
+                                        Modifier
+                                            .fillMaxWidth()
+                                            .padding(bottom = 32.dp),
                                     icon = Icons.Rounded.Info,
                                     title = dialog.title,
-                                    description = dialog.message
+                                    description = dialog.message,
                                 ) {
                                     TextButton(onClick = onClickDismiss) {
                                         Text(text = "Dismiss")
@@ -124,9 +125,10 @@ fun SafiBottomDialog(
 
                             is DialogState.Loading -> {
                                 SafiCenteredColumn(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(64.dp)
+                                    modifier =
+                                        Modifier
+                                            .fillMaxWidth()
+                                            .padding(64.dp),
                                 ) {
                                     CircularProgressIndicator()
                                 }
@@ -134,22 +136,22 @@ fun SafiBottomDialog(
 
                             is DialogState.Success -> {
                                 SafiInfoSection(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(bottom = 32.dp),
+                                    modifier =
+                                        Modifier
+                                            .fillMaxWidth()
+                                            .padding(bottom = 32.dp),
                                     icon = Icons.Rounded.CheckCircle,
                                     title = dialog.title,
-                                    description = dialog.message
+                                    description = dialog.message,
                                 ) {
                                     TextButton(onClick = onClickDismiss) {
                                         Text(text = "Dismiss")
                                     }
                                 }
                             }
-
                         }
+                    }
                 }
-
             }
         }
     }
@@ -162,7 +164,6 @@ fun SafiBottomDialog(
     onClickDismiss: () -> Unit,
     content: @Composable () -> Unit,
 ) {
-
     val scope = rememberCoroutineScope()
     val bottomSheetState = rememberModalBottomSheetState()
 
@@ -176,26 +177,29 @@ fun SafiBottomDialog(
                 scope.launch { bottomSheetState.hide() }
                 onClickDismiss()
             },
-            properties = ModalBottomSheetProperties(
-                securePolicy =SecureFlagPolicy.Inherit,
-            )
+            properties =
+                ModalBottomSheetProperties(
+                    securePolicy = SecureFlagPolicy.Inherit,
+                ),
         ) {
             AnimatedContent(targetState = state, label = "dialog state") { dialog ->
                 Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp)
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
                 ) {
-                    if (dialog != null)
+                    if (dialog != null) {
                         when (dialog) {
                             is DialogState.Caution -> {
                                 SafiInfoSection(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(bottom = 32.dp),
+                                    modifier =
+                                        Modifier
+                                            .fillMaxWidth()
+                                            .padding(bottom = 32.dp),
                                     icon = Icons.Rounded.WarningAmber,
                                     title = dialog.title,
-                                    description = dialog.message
+                                    description = dialog.message,
                                 ) {
                                     content()
                                 }
@@ -203,12 +207,13 @@ fun SafiBottomDialog(
 
                             is DialogState.Error -> {
                                 SafiInfoSection(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(bottom = 32.dp),
+                                    modifier =
+                                        Modifier
+                                            .fillMaxWidth()
+                                            .padding(bottom = 32.dp),
                                     icon = Icons.Rounded.Error,
                                     title = dialog.title,
-                                    description = dialog.message
+                                    description = dialog.message,
                                 ) {
                                     content()
                                 }
@@ -216,12 +221,13 @@ fun SafiBottomDialog(
 
                             is DialogState.Info -> {
                                 SafiInfoSection(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(bottom = 32.dp),
+                                    modifier =
+                                        Modifier
+                                            .fillMaxWidth()
+                                            .padding(bottom = 32.dp),
                                     icon = Icons.Rounded.Info,
                                     title = dialog.title,
-                                    description = dialog.message
+                                    description = dialog.message,
                                 ) {
                                     content()
                                 }
@@ -229,9 +235,10 @@ fun SafiBottomDialog(
 
                             is DialogState.Loading -> {
                                 SafiCenteredColumn(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(64.dp)
+                                    modifier =
+                                        Modifier
+                                            .fillMaxWidth()
+                                            .padding(64.dp),
                                 ) {
                                     CircularProgressIndicator()
                                 }
@@ -239,20 +246,20 @@ fun SafiBottomDialog(
 
                             is DialogState.Success -> {
                                 SafiInfoSection(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(bottom = 32.dp),
+                                    modifier =
+                                        Modifier
+                                            .fillMaxWidth()
+                                            .padding(bottom = 32.dp),
                                     icon = Icons.Rounded.CheckCircle,
                                     title = dialog.title,
-                                    description = dialog.message
+                                    description = dialog.message,
                                 ) {
                                     content()
                                 }
                             }
-
                         }
+                    }
                 }
-
             }
         }
     }

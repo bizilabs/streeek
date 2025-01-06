@@ -25,12 +25,12 @@ fun SafiPagingLoadState(
     state: LoadState,
     modifier: Modifier = Modifier,
     error: @Composable ((Throwable) -> Unit)? = null,
-    success: @Composable (Boolean) -> Unit = {}
+    success: @Composable (Boolean) -> Unit = {},
 ) {
     AnimatedContent(
         modifier = modifier,
         targetState = state,
-        label = "paging load state"
+        label = "paging load state",
     ) { value ->
         when (value) {
             LoadState.Loading -> {
@@ -41,9 +41,10 @@ fun SafiPagingLoadState(
 
             is LoadState.Error -> {
                 SafiCenteredColumn(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp)
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
                 ) {
                     error?.let { it(value.error) }
                 }
@@ -56,7 +57,6 @@ fun SafiPagingLoadState(
     }
 }
 
-
 @Preview("Paging Loading")
 @Preview(uiMode = UI_MODE_NIGHT_YES)
 @Composable
@@ -64,10 +64,11 @@ private fun SafiPagingContentLoadingPreview() {
     SafiTheme {
         Scaffold { innerPadding ->
             SafiPagingLoadState(
-                modifier = Modifier
-                    .padding(innerPadding)
-                    .fillMaxWidth(),
-                state = LoadState.Loading
+                modifier =
+                    Modifier
+                        .padding(innerPadding)
+                        .fillMaxWidth(),
+                state = LoadState.Loading,
             )
         }
     }
@@ -80,15 +81,16 @@ private fun SafiPagingContentErrorPreview() {
     SafiTheme {
         Scaffold { innerPadding ->
             SafiPagingLoadState(
-                modifier = Modifier
-                    .padding(innerPadding)
-                    .fillMaxWidth(),
+                modifier =
+                    Modifier
+                        .padding(innerPadding)
+                        .fillMaxWidth(),
                 state = LoadState.Error(Exception("Couldn't get page details")),
                 error = { throwable ->
                     TextButton(onClick = {}) {
                         Text(text = "retry")
                     }
-                }
+                },
             ) { }
         }
     }
@@ -101,32 +103,35 @@ private fun SafiPagingContentSuccessEndOfPaginationPreview() {
     SafiTheme {
         Scaffold { innerPadding ->
             SafiPagingLoadState(
-                modifier = Modifier
-                    .padding(innerPadding)
-                    .fillMaxWidth(),
+                modifier =
+                    Modifier
+                        .padding(innerPadding)
+                        .fillMaxWidth(),
                 state = LoadState.NotLoading(endOfPaginationReached = true),
             ) { endOfPagination ->
                 LazyColumn {
                     items(3) {
                         Card(modifier = Modifier.padding(4.dp), onClick = {}) {
                             Text(
-                                modifier = Modifier
-                                    .padding(8.dp)
-                                    .fillMaxWidth(),
-                                text = it.toString()
+                                modifier =
+                                    Modifier
+                                        .padding(8.dp)
+                                        .fillMaxWidth(),
+                                text = it.toString(),
                             )
                         }
                     }
                     item {
                         AnimatedVisibility(endOfPagination) {
                             SafiCenteredColumn(
-                                modifier = Modifier
-                                    .padding(16.dp)
-                                    .fillMaxWidth()
+                                modifier =
+                                    Modifier
+                                        .padding(16.dp)
+                                        .fillMaxWidth(),
                             ) {
                                 Text(
                                     text = "END OF PAGINATION",
-                                    style = MaterialTheme.typography.labelSmall
+                                    style = MaterialTheme.typography.labelSmall,
                                 )
                             }
                         }
@@ -144,28 +149,31 @@ private fun SafiPagingContentSuccessNotEndOfPaginationPreview() {
     SafiTheme {
         Scaffold { innerPadding ->
             SafiPagingLoadState(
-                modifier = Modifier
-                    .padding(innerPadding)
-                    .fillMaxWidth(),
+                modifier =
+                    Modifier
+                        .padding(innerPadding)
+                        .fillMaxWidth(),
                 state = LoadState.NotLoading(endOfPaginationReached = false),
             ) { endOfPagination ->
                 LazyColumn {
                     items(3) {
                         Card(modifier = Modifier.padding(4.dp), onClick = {}) {
                             Text(
-                                modifier = Modifier
-                                    .padding(8.dp)
-                                    .fillMaxWidth(),
-                                text = it.toString()
+                                modifier =
+                                    Modifier
+                                        .padding(8.dp)
+                                        .fillMaxWidth(),
+                                text = it.toString(),
                             )
                         }
                     }
                     item {
                         AnimatedVisibility(endOfPagination) {
                             SafiCenteredColumn(
-                                modifier = Modifier
-                                    .padding(16.dp)
-                                    .fillMaxWidth()
+                                modifier =
+                                    Modifier
+                                        .padding(16.dp)
+                                        .fillMaxWidth(),
                             ) {
                                 Text(text = "END OF PAGINATION")
                             }

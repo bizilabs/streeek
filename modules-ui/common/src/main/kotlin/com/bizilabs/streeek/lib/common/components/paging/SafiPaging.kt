@@ -7,24 +7,27 @@ import androidx.paging.LoadStates
 import androidx.paging.PagingData
 import androidx.paging.compose.LazyPagingItems
 
-fun <T : Any> getPagingDataLoading(): PagingData<T> = PagingData.from(
-    emptyList(),
-    sourceLoadStates = LoadStates(
-        refresh = LoadState.Loading,
-        prepend = LoadState.NotLoading(endOfPaginationReached = true),
-        append = LoadState.NotLoading(endOfPaginationReached = true)
+fun <T : Any> getPagingDataLoading(): PagingData<T> =
+    PagingData.from(
+        emptyList(),
+        sourceLoadStates =
+            LoadStates(
+                refresh = LoadState.Loading,
+                prepend = LoadState.NotLoading(endOfPaginationReached = true),
+                append = LoadState.NotLoading(endOfPaginationReached = true),
+            ),
     )
-)
 
-fun <T : Any> getPagingData(data: List<T> = emptyList()): PagingData<T> = PagingData.from(
-    data = data,
-    sourceLoadStates = LoadStates(
-        refresh = LoadState.NotLoading(endOfPaginationReached = true),
-        prepend = LoadState.NotLoading(endOfPaginationReached = true),
-        append = LoadState.NotLoading(endOfPaginationReached = true)
+fun <T : Any> getPagingData(data: List<T> = emptyList()): PagingData<T> =
+    PagingData.from(
+        data = data,
+        sourceLoadStates =
+            LoadStates(
+                refresh = LoadState.NotLoading(endOfPaginationReached = true),
+                prepend = LoadState.NotLoading(endOfPaginationReached = true),
+                append = LoadState.NotLoading(endOfPaginationReached = true),
+            ),
     )
-)
-
 
 @Composable
 fun <T : Any> SafiPagingComponent(
@@ -37,7 +40,7 @@ fun <T : Any> SafiPagingComponent(
     refreshEmpty: @Composable () -> Unit = {},
     appendError: @Composable ((Throwable) -> Unit)? = null,
     appendSuccess: @Composable (Boolean) -> Unit = {},
-    content: @Composable (T) -> Unit
+    content: @Composable (T) -> Unit,
 ) {
     SafiPagingLoadStates(
         modifier = modifier,
@@ -49,7 +52,7 @@ fun <T : Any> SafiPagingComponent(
         refreshError = refreshError,
         refreshEmpty = refreshEmpty,
         appendError = appendError,
-        appendSuccess = appendSuccess
+        appendSuccess = appendSuccess,
     ) { index ->
         val item = data[index]
         item?.let { content(it) }

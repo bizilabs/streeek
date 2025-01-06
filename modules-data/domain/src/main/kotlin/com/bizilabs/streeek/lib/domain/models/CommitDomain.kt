@@ -7,7 +7,7 @@ data class CommitDomain(
     val url: String,
     val author: ActorMinimalDomain,
     val message: String,
-    val distinct: Boolean?
+    val distinct: Boolean?,
 )
 
 data class CommitCommentDomain(
@@ -15,5 +15,5 @@ data class CommitCommentDomain(
     val createdAt: LocalDateTime,
     val updatedAt: LocalDateTime,
     val body: String,
-    val user: ActorDomain
+    val user: ActorDomain,
 )

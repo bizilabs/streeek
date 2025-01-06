@@ -10,18 +10,20 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 enum class LandingScreenDestination {
-    CURRENT, AUTHENTICATE, SETUP, TABS
+    CURRENT,
+    AUTHENTICATE,
+    SETUP,
+    TABS,
 }
 
 data class LandingScreenState(
-    val destination: LandingScreenDestination = LandingScreenDestination.CURRENT
+    val destination: LandingScreenDestination = LandingScreenDestination.CURRENT,
 )
 
 class LandingScreenModel(
     private val authenticationRepository: AuthenticationRepository,
-    private val accountRepository: AccountRepository
+    private val accountRepository: AccountRepository,
 ) : StateScreenModel<LandingScreenState>(LandingScreenState()) {
-
     init {
         checkNavigation()
     }
@@ -31,11 +33,12 @@ class LandingScreenModel(
             delay(1500)
             val authenticated = authenticationRepository.authenticated.first()
             val account = accountRepository.account.first()
-            val destination = when {
-                !authenticated -> LandingScreenDestination.AUTHENTICATE
-                account == null -> LandingScreenDestination.SETUP
-                else -> LandingScreenDestination.TABS
-            }
+            val destination =
+                when {
+                    !authenticated -> LandingScreenDestination.AUTHENTICATE
+                    account == null -> LandingScreenDestination.SETUP
+                    else -> LandingScreenDestination.TABS
+                }
             mutableState.update { it.copy(destination = destination) }
         }
     }

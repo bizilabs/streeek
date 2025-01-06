@@ -12,5 +12,5 @@ data class StreakDTO(
     @SerialName("longest_streak")
     val longestStreak: Int,
     @SerialName("last_updated")
-    val updatedAt: String
+    val updatedAt: String,
 )

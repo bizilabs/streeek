@@ -16,5 +16,4 @@ dependencies {
     // material
     implementation(libs.compose.material)
     implementation(libs.androidx.foundation.android)
-
 }

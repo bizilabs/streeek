@@ -12,13 +12,13 @@ import com.bizilabs.streeek.lib.design.helpers.getSafiColorScheme
 @Composable
 fun SafiTheme(
     isDarkThemeEnabled: Boolean = isSystemInDarkTheme(),
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
     val colorScheme = getColorScheme(darkTheme = isDarkThemeEnabled)
     val safiColorScheme = getSafiColorScheme(isDarkThemeEnabled = isDarkThemeEnabled)
     StatusAndNavigationBar(colorScheme = colorScheme, isDarkThemeEnabled = isDarkThemeEnabled)
     CompositionLocalProvider(
-        LocalSafiColorScheme provides safiColorScheme
+        LocalSafiColorScheme provides safiColorScheme,
     ) {
         MaterialTheme(colorScheme = colorScheme, content = content)
     }

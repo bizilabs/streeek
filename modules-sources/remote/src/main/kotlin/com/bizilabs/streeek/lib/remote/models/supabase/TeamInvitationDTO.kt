@@ -8,7 +8,7 @@ data class GetTeamInvitationsRequestDTO(
     @SerialName("p_team_id")
     val teamId: Long,
     @SerialName("p_account_id")
-    val accountId: Long
+    val accountId: Long,
 )
 
 @Serializable
@@ -20,7 +20,7 @@ data class TeamInvitationDTO(
     @SerialName("expires_at")
     val expiresAt: String,
     @SerialName("creator_account_id")
-    val creatorId: Long
+    val creatorId: Long,
 )
 
 @Serializable
@@ -30,14 +30,14 @@ data class CreateTeamInvitationRequestDTO(
     @SerialName("p_inviter_account_id")
     val accountId: Long,
     @SerialName("p_expires_in")
-    val duration: Long
+    val duration: Long,
 )
 
 @Serializable
 data class CreateTeamInvitationDTO(
     val token: String,
     @SerialName("expires_at")
-    val expiresAt: String
+    val expiresAt: String,
 )
 
 @Serializable
@@ -45,7 +45,7 @@ data class DeleteTeamInvitationRequestDTO(
     @SerialName("p_team_invitation_id")
     val invitationId: Long,
     @SerialName("p_account_id")
-    val accountId: Long
+    val accountId: Long,
 )
 
 @Serializable
@@ -53,12 +53,12 @@ data class JoinTeamInvitationRequestDTO(
     @SerialName("p_account_id")
     val accountId: Long,
     @SerialName("p_token")
-    val token: String
+    val token: String,
 )
 
 @Serializable
 data class JoinTeamInvitationDTO(
     @SerialName("team_id")
     val teamId: Long,
-    val role: String
+    val role: String,
 )

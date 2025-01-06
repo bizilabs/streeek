@@ -19,26 +19,26 @@ import com.bizilabs.streeek.lib.design.theme.SafiTheme
 @Composable
 fun SafiCenteredColumn(
     modifier: Modifier = Modifier,
-    content: @Composable ColumnScope.() -> Unit
+    content: @Composable ColumnScope.() -> Unit,
 ) {
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
-        content = content
+        content = content,
     )
 }
 
 @Composable
 fun SafiCenteredRow(
     modifier: Modifier = Modifier,
-    content: @Composable RowScope.() -> Unit
+    content: @Composable RowScope.() -> Unit,
 ) {
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center,
-        content = content
+        content = content,
     )
 }
 
@@ -48,9 +48,10 @@ private fun SafiCenteredColumnPreview() {
     SafiTheme {
         Scaffold {
             SafiCenteredColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(it)
+                modifier =
+                    Modifier
+                        .fillMaxSize()
+                        .padding(it),
             ) {
                 Text(text = "Safi Centered Column")
             }
@@ -58,16 +59,16 @@ private fun SafiCenteredColumnPreview() {
     }
 }
 
-
 @Preview
 @Composable
 private fun SafiCenteredRowPreview() {
     SafiTheme {
         Scaffold {
             SafiCenteredRow(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(it)
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(it),
             ) {
                 Text(text = "Safi CenteredRow")
             }

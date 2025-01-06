@@ -9,14 +9,14 @@ data class CommitDTO(
     val url: String,
     val author: GithubActorMinimalDTO,
     val message: String,
-    val distinct: Boolean? = true
+    val distinct: Boolean? = true,
 )
 
 @Serializable
 data class CommitStatsDTO(
     val additions: Long,
     val deletions: Long,
-    val total: Long
+    val total: Long,
 )
 
 @Serializable
@@ -27,5 +27,5 @@ data class CommitCommentDTO(
     @SerialName("updated_at")
     val updatedAt: String,
     val body: String,
-    val user: GithubActorDTO
+    val user: GithubActorDTO,
 )

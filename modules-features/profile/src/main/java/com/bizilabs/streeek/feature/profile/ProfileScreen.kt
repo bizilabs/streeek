@@ -19,7 +19,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -30,7 +29,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.core.registry.rememberScreen
 import cafe.adriel.voyager.core.registry.screenModule
@@ -44,9 +42,10 @@ import com.bizilabs.streeek.lib.design.components.SafiBottomDialog
 import com.bizilabs.streeek.lib.design.components.SafiCenteredColumn
 import com.bizilabs.streeek.lib.resources.strings.SafiStringLabels
 
-val featureProfile = screenModule {
-    register<SharedScreen.Profile> { ProfileScreen }
-}
+val featureProfile =
+    screenModule {
+        register<SharedScreen.Profile> { ProfileScreen }
+    }
 
 object ProfileScreen : Screen {
     @Composable
@@ -60,7 +59,7 @@ object ProfileScreen : Screen {
             onClickNavigateBackIcon = { navigator?.pop() },
             onClickLogout = screenModel::onClickLogout,
             navigateToLanding = { navigator?.replaceAll(landingScreen) },
-            onClickConfirmLogout = screenModel::onClickConfirmLogout
+            onClickConfirmLogout = screenModel::onClickConfirmLogout,
         )
     }
 }
@@ -74,23 +73,24 @@ fun ProfileScreenContent(
     navigateToLanding: () -> Unit,
     onClickConfirmLogout: (Boolean) -> Unit,
 ) {
-
     val scrollState = rememberScrollState()
 
     if (state.shouldNavigateToLanding) navigateToLanding()
 
-    if (state.shouldConfirmLogout)
+    if (state.shouldConfirmLogout) {
         SafiBottomDialog(
-            state = DialogState.Info(
-                title = "Logout",
-                message = "Are you sure you want to logout?"
-            ),
-            onClickDismiss = { onClickConfirmLogout(false) }
+            state =
+                DialogState.Info(
+                    title = "Logout",
+                    message = "Are you sure you want to logout?",
+                ),
+            onClickDismiss = { onClickConfirmLogout(false) },
         ) {
             Button(onClick = { onClickConfirmLogout(true) }) {
                 Text(text = "Yes")
             }
         }
+    }
 
     Scaffold(topBar = {
         TopAppBar(
@@ -98,7 +98,7 @@ fun ProfileScreenContent(
                 IconButton(onClick = onClickNavigateBackIcon) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
-                        contentDescription = null
+                        contentDescription = null,
                     )
                 }
             },
@@ -106,14 +106,14 @@ fun ProfileScreenContent(
                 Text(text = "Profile")
             },
         )
-
     }) { innerPadding ->
 
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-                .scrollable(state = scrollState, orientation = Orientation.Vertical)
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding)
+                    .scrollable(state = scrollState, orientation = Orientation.Vertical),
         ) {
             SafiCenteredColumn(modifier = Modifier.fillMaxWidth()) {
                 state.account?.let { account ->
@@ -121,15 +121,16 @@ fun ProfileScreenContent(
                         modifier = Modifier.padding(16.dp),
                         onClick = {},
                         shape = RoundedCornerShape(50),
-                        border = BorderStroke(1.dp, MaterialTheme.colorScheme.onBackground)
+                        border = BorderStroke(1.dp, MaterialTheme.colorScheme.onBackground),
                     ) {
                         AsyncImage(
-                            modifier = Modifier
-                                .size(150.dp)
-                                .clip(RoundedCornerShape(50)),
+                            modifier =
+                                Modifier
+                                    .size(150.dp)
+                                    .clip(RoundedCornerShape(50)),
                             model = state.account.avatarUrl,
                             contentDescription = "user avatar url",
-                            contentScale = ContentScale.Crop
+                            contentScale = ContentScale.Crop,
                         )
                     }
                     account.level?.let { level ->
@@ -141,23 +142,26 @@ fun ProfileScreenContent(
                     Text(
                         modifier = Modifier.fillMaxWidth(0.75f),
                         text = account.bio,
-                        textAlign = TextAlign.Center
+                        textAlign = TextAlign.Center,
                     )
-                    Text(text = buildString {
-                        append("Joined : ")
-                        append(account.createdAt)
-                    })
+                    Text(
+                        text =
+                            buildString {
+                                append("Joined : ")
+                                append(account.createdAt)
+                            },
+                    )
                 }
             }
             Button(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                onClick = onClickLogout
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                onClick = onClickLogout,
             ) {
                 Text(text = stringResource(SafiStringLabels.LogOut))
             }
         }
-
     }
 }

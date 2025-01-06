@@ -11,57 +11,52 @@ import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import com.bizilabs.streeek.lib.domain.helpers.DataResult
-import com.bizilabs.streeek.lib.domain.helpers.DateFormats
-import com.bizilabs.streeek.lib.domain.helpers.asString
 import com.bizilabs.streeek.lib.domain.helpers.isPastDue
 import com.bizilabs.streeek.lib.domain.models.ContributionDomain
 import com.bizilabs.streeek.lib.domain.models.UserEventDomain
 import com.bizilabs.streeek.lib.domain.repositories.ContributionRepository
 import com.bizilabs.streeek.lib.domain.repositories.PreferenceRepository
 import kotlinx.coroutines.flow.firstOrNull
-import kotlinx.datetime.Clock
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.todayIn
 import timber.log.Timber
 import java.util.UUID
 import java.util.concurrent.TimeUnit
 
-private val constraints = Constraints.Builder()
-    .setRequiredNetworkType(NetworkType.CONNECTED)
-    .setRequiresBatteryNotLow(true)
-    .setRequiresStorageNotLow(true)
-    .build()
+private val constraints =
+    Constraints.Builder()
+        .setRequiredNetworkType(NetworkType.CONNECTED)
+        .setRequiresBatteryNotLow(true)
+        .setRequiresStorageNotLow(true)
+        .build()
 
-private val parameters = Data.Builder()
-    .build()
+private val parameters =
+    Data.Builder()
+        .build()
 
 fun Context.startPeriodicDailySyncContributionsWork() {
-
-    val request = PeriodicWorkRequestBuilder<SyncDailyContributionsWork>(30, TimeUnit.MINUTES)
-        .addTag(SyncDailyContributionsWork.TAG)
-        .setConstraints(constraints)
-        .setInputData(parameters)
-        .setId(UUID.randomUUID())
-        .build()
+    val request =
+        PeriodicWorkRequestBuilder<SyncDailyContributionsWork>(30, TimeUnit.MINUTES)
+            .addTag(SyncDailyContributionsWork.TAG)
+            .setConstraints(constraints)
+            .setInputData(parameters)
+            .setId(UUID.randomUUID())
+            .build()
 
     WorkManager.getInstance(this)
         .enqueueUniquePeriodicWork(
             SyncDailyContributionsWork.TAG,
             ExistingPeriodicWorkPolicy.KEEP,
-            request
+            request,
         )
-
 }
 
 fun Context.startImmediateDailySyncContributionsWork() {
-
-    val request = OneTimeWorkRequestBuilder<SyncDailyContributionsWork>()
-        .addTag(SyncDailyContributionsWork.TAG)
-        .setId(UUID.randomUUID())
-        .build()
+    val request =
+        OneTimeWorkRequestBuilder<SyncDailyContributionsWork>()
+            .addTag(SyncDailyContributionsWork.TAG)
+            .setId(UUID.randomUUID())
+            .build()
 
     WorkManager.getInstance(this).enqueue(request)
-
 }
 
 class SyncDailyContributionsWork(
@@ -107,7 +102,7 @@ class SyncDailyContributionsWork(
                                 "createdAt" to it.createdAt.toString(),
                             )
                         }
-                    }"
+                    }",
                 )
                 if (events.isEmpty()) {
                     page = null
@@ -178,11 +173,10 @@ class SyncDailyContributionsWork(
             // return success if everything is okay
             preferences.setIsSyncingContributions(isSyncing = false)
             return Result.success()
-        } catch (e : Exception){
+        } catch (e: Exception) {
             preferences.setIsSyncingContributions(isSyncing = false)
             Timber.e(e, "Failed to Sync Daily Contributions")
             Result.failure()
         }
-
     }
 }

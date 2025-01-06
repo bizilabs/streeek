@@ -15,43 +15,48 @@ import kotlinx.coroutines.flow.mapLatest
 
 interface AuthenticationRemoteSource {
     val authenticated: Flow<Boolean>
+
     suspend fun updateAccessToken(token: String)
+
     suspend fun getAuthenticationIntent(): Intent
+
     suspend fun getAuthenticationToken(uri: Uri): NetworkResult<AccessTokenDTO>
 }
 
 class AuthenticationRemoteSourceImpl(
     private val client: HttpClient,
-    private val preferences: RemotePreferencesSource
+    private val preferences: RemotePreferencesSource,
 ) : AuthenticationRemoteSource {
-
     override val authenticated: Flow<Boolean>
         get() = preferences.accessToken.mapLatest { it != null }
 
     override suspend fun getAuthenticationIntent(): Intent {
-        val url = buildString {
-            append("https://github.com/login/oauth/authorize")
-            append("?client_id=${BuildConfig.GithubClientId}")
-            append("&scope=repo,user,project,read:org")
-            append("&redirect_uri=${BuildConfig.GithubClientRedirectUrl}")
-        }
+        val url =
+            buildString {
+                append("https://github.com/login/oauth/authorize")
+                append("?client_id=${BuildConfig.GithubClientId}")
+                append("&scope=repo,user,project,read:org")
+                append("&redirect_uri=${BuildConfig.GithubClientRedirectUrl}")
+            }
         return Intent(Intent.ACTION_VIEW, Uri.parse(url))
     }
 
     override suspend fun getAuthenticationToken(uri: Uri): NetworkResult<AccessTokenDTO> {
         val hasRedirectUrl = uri.toString().contains(BuildConfig.GithubClientRedirectUrl)
         if (hasRedirectUrl.not()) return NetworkResult.Failure(Exception("No redirect url found"))
-        val code = uri.getQueryParameter("code")
-            ?: return NetworkResult.Failure(Exception("No code found"))
+        val code =
+            uri.getQueryParameter("code")
+                ?: return NetworkResult.Failure(Exception("No code found"))
         return safeApiCall {
             client.submitForm(
                 url = "https://github.com/login/oauth/access_token",
-                formParameters = Parameters.build {
-                    append("client_id", BuildConfig.GithubClientId)
-                    append("client_secret", BuildConfig.GithubClientSecret)
-                    append("code", code)
-                },
-                encodeInQuery = true
+                formParameters =
+                    Parameters.build {
+                        append("client_id", BuildConfig.GithubClientId)
+                        append("client_secret", BuildConfig.GithubClientSecret)
+                        append("code", code)
+                    },
+                encodeInQuery = true,
             ) {
             }
         }

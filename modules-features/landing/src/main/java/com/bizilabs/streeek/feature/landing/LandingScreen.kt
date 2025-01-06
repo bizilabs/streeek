@@ -1,6 +1,5 @@
 package com.bizilabs.streeek.feature.landing
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -9,7 +8,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -26,9 +24,10 @@ import com.bizilabs.streeek.lib.common.navigation.SharedScreen
 import com.bizilabs.streeek.lib.design.components.SafiCenteredColumn
 import com.bizilabs.streeek.lib.resources.images.SafiDrawables
 
-val featureLanding = screenModule {
-    register<SharedScreen.Landing> { LandingScreen }
-}
+val featureLanding =
+    screenModule {
+        register<SharedScreen.Landing> { LandingScreen }
+    }
 
 object LandingScreen : Screen {
     @Composable
@@ -54,27 +53,31 @@ object LandingScreen : Screen {
 }
 
 @Composable
-fun LandingScreenContent(state: LandingScreenState, navigate: (LandingScreenDestination) -> Unit) {
-
+fun LandingScreenContent(
+    state: LandingScreenState,
+    navigate: (LandingScreenDestination) -> Unit,
+) {
     if (state.destination != LandingScreenDestination.CURRENT) navigate(state.destination)
 
     Scaffold { paddingValues ->
         SafiCenteredColumn(
-            modifier = Modifier
-                .padding(paddingValues)
-                .fillMaxSize()
+            modifier =
+                Modifier
+                    .padding(paddingValues)
+                    .fillMaxSize(),
         ) {
             Icon(
-                modifier = Modifier
-                    .padding(16.dp)
-                    .size(48.dp),
+                modifier =
+                    Modifier
+                        .padding(16.dp)
+                        .size(48.dp),
                 painter = painterResource(SafiDrawables.Logo),
                 contentDescription = "logo",
-                tint = MaterialTheme.colorScheme.onBackground
+                tint = MaterialTheme.colorScheme.onBackground,
             )
             LinearProgressIndicator(
                 modifier = Modifier.padding(16.dp).width(75.dp),
-                color = MaterialTheme.colorScheme.onBackground
+                color = MaterialTheme.colorScheme.onBackground,
             )
         }
     }

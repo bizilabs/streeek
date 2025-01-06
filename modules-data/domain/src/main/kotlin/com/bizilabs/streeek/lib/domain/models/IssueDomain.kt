@@ -12,5 +12,5 @@ data class IssueDomain(
     val labels: List<LabelDomain>,
     val createdAt: LocalDateTime,
     val updatedAt: LocalDateTime,
-    val closedAt: LocalDateTime?
+    val closedAt: LocalDateTime?,
 )

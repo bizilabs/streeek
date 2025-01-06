@@ -1,7 +1,6 @@
 package com.bizilabs.streeek.lib.domain.helpers
 
 import kotlinx.datetime.Clock
-import kotlinx.datetime.DatePeriod
 import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
@@ -19,10 +18,10 @@ import timber.log.Timber
 object DateFormats {
     const val ISO_8601_Z = "yyyy-MM-dd'T'HH:mm:ss'Z'"
     const val ISO_8601 = "yyyy-MM-dd'T'HH:mm:ss.SSSSSSXXX"
-    const val YYYY_MM_ddTHH_mm_ss = "yyyy-MM-dd'T'HH:mm:ss"
-    const val HH_mm = "HH:mm"
-    const val YYYY_MM_dd = "yyyy-MM-dd"
-    const val YYYY_MM_dd_T_HH_mm_ss_SSSSSS = "yyyy-MM-dd'T'HH:mm:ss.SSSSSS"
+    const val YYYY_MM_DDTHH_MM_SS = "yyyy-MM-dd'T'HH:mm:ss"
+    const val HH_MM = "HH:mm"
+    const val YYYY_MM_DD = "yyyy-MM-dd"
+    const val YYYY_MM_DD_T_HH_MM_SS_SSSSSS = "yyyy-MM-dd'T'HH:mm:ss.SSSSSS"
 }
 
 val SystemLocalDateTime: LocalDateTime
@@ -39,7 +38,6 @@ val Instant.datetimeSystem
 
 val LocalDateTime.asSystem
     get() = toInstant(TimeZone.currentSystemDefault())
-
 
 val LocalDateTime.datetimeUTC
     get() = toInstant(TimeZone.UTC)

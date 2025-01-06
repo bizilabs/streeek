@@ -66,7 +66,7 @@ object AchievementsScreen : Screen {
             onClickRefreshProfile = screenModel::onClickRefreshProfile,
             onClickAccount = {
                 navigator?.push(profileScreen)
-            }
+            },
         )
     }
 }
@@ -83,13 +83,14 @@ fun AchievementsScreenContent(
             state = state,
             onClickAccount = onClickAccount,
             onClickTab = onClickTab,
-            onClickRefreshProfile = onClickRefreshProfile
+            onClickRefreshProfile = onClickRefreshProfile,
         )
     }) { paddingValues ->
         SafiCenteredColumn(
-            modifier = Modifier
-                .padding(top = paddingValues.calculateTopPadding())
-                .fillMaxSize()
+            modifier =
+                Modifier
+                    .padding(top = paddingValues.calculateTopPadding())
+                    .fillMaxSize(),
         ) {
             AnimatedContent(targetState = state.tab, label = "animate achievements") { tab ->
                 when (tab) {
@@ -102,7 +103,7 @@ fun AchievementsScreenContent(
                     AchievementTab.LEVELS -> {
                         AchievementsLevelsScreenSection(
                             state = state,
-                            modifier = Modifier.fillMaxSize()
+                            modifier = Modifier.fillMaxSize(),
                         )
                     }
                 }
@@ -121,77 +122,84 @@ fun AchievementScreenHeader(
     Surface(modifier = Modifier.fillMaxWidth()) {
         Column(modifier = Modifier.fillMaxWidth()) {
             Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 IconButton(onClick = onClickAccount) {
                     Icon(
                         imageVector = Icons.Rounded.AccountCircle,
-                        contentDescription = "refresh profile"
+                        contentDescription = "refresh profile",
                     )
                 }
                 Text(
                     modifier = Modifier,
                     text = "Achievements".uppercase(),
                     style = MaterialTheme.typography.titleSmall,
-                    textAlign = TextAlign.Center
+                    textAlign = TextAlign.Center,
                 )
                 IconButton(onClick = onClickRefreshProfile) {
                     Icon(
                         imageVector = Icons.Rounded.Refresh,
-                        contentDescription = "refresh profile"
+                        contentDescription = "refresh profile",
                     )
                 }
             }
             Spacer(modifier = Modifier.padding(8.dp))
             SafiCenteredColumn(
-                modifier = Modifier
-                    .padding(16.dp)
-                    .fillMaxWidth()
+                modifier =
+                    Modifier
+                        .padding(16.dp)
+                        .fillMaxWidth(),
             ) {
                 state.account?.let { account ->
                     SafiProfileArc(
                         progress = account.points,
                         maxProgress = account.level?.maxPoints ?: account.points.plus(500),
                         modifier = Modifier.size(148.dp),
-                        tint = MaterialTheme.colorScheme.primary
+                        tint = MaterialTheme.colorScheme.primary,
                     ) {
                         AsyncImage(
-                            modifier = Modifier
-                                .size(128.dp)
-                                .clip(CircleShape)
-                                .background(Color.White),
+                            modifier =
+                                Modifier
+                                    .size(128.dp)
+                                    .clip(CircleShape)
+                                    .background(Color.White),
                             model = account.avatarUrl,
                             contentDescription = "user avatar url",
-                            contentScale = ContentScale.Crop
+                            contentScale = ContentScale.Crop,
                         )
                     }
                     Text(
                         modifier = Modifier.padding(top = 16.dp),
                         text = account.username,
-                        style = MaterialTheme.typography.titleLarge
+                        style = MaterialTheme.typography.titleLarge,
                     )
-                    Text(text = account.level?.name?.replaceFirstChar { it.uppercase() } ?: "",
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.onSurface.copy(0.5f))
                     Text(
-                        text = buildString {
-                            append("LV.")
-                            append(account.level?.number)
-                            append(" | ")
-                            append(account.points)
-                            append(" EXP")
-                        },
+                        text = account.level?.name?.replaceFirstChar { it.uppercase() } ?: "",
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.onSurface.copy(0.5f),
+                    )
+                    Text(
+                        text =
+                            buildString {
+                                append("LV.")
+                                append(account.level?.number)
+                                append(" | ")
+                                append(account.points)
+                                append(" EXP")
+                            },
                         style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.onSurface.copy(0.5f)
+                        color = MaterialTheme.colorScheme.onSurface.copy(0.5f),
                     )
                 }
             }
             TabRow(
-                modifier = Modifier.fillMaxWidth(), selectedTabIndex = state.tabs.indexOf(state.tab)
+                modifier = Modifier.fillMaxWidth(),
+                selectedTabIndex = state.tabs.indexOf(state.tab),
             ) {
                 state.tabs.forEach { tab ->
                     val isSelected = tab == state.tab
@@ -200,12 +208,12 @@ fun AchievementScreenHeader(
                         selected = isSelected,
                         onClick = { onClickTab(tab) },
                         selectedContentColor = MaterialTheme.colorScheme.primary,
-                        unselectedContentColor = MaterialTheme.colorScheme.onSurface.copy(0.25f)
+                        unselectedContentColor = MaterialTheme.colorScheme.onSurface.copy(0.25f),
                     ) {
                         SafiCenteredRow(modifier = Modifier.padding(16.dp)) {
                             Icon(
                                 imageVector = if (isSelected) selectedIcon else unselectedIcon,
-                                contentDescription = tab.label
+                                contentDescription = tab.label,
                             )
                             Spacer(modifier = Modifier.padding(8.dp))
                             Text(text = tab.label)
@@ -220,12 +228,12 @@ fun AchievementScreenHeader(
 @Composable
 fun AchievementsLevelsScreenSection(
     state: AchievementScreenState,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     AnimatedContent(
         modifier = modifier,
         targetState = state.levels,
-        label = "animated levels"
+        label = "animated levels",
     ) { levels ->
         when {
             levels.isEmpty() -> {
@@ -248,40 +256,47 @@ fun AchievementsLevelsScreenSection(
                         val isGreater = level.number > (current?.number ?: 0)
                         val isNext = level.number == (current?.number ?: 0) + 1
 
-                        val (containerColor, contentColor) = when {
-                            isSelected -> Pair(
-                                MaterialTheme.colorScheme.success,
-                                MaterialTheme.colorScheme.onSuccess
-                            )
+                        val (containerColor, contentColor) =
+                            when {
+                                isSelected ->
+                                    Pair(
+                                        MaterialTheme.colorScheme.success,
+                                        MaterialTheme.colorScheme.onSuccess,
+                                    )
 
-                            isGreater -> Pair(
-                                MaterialTheme.colorScheme.onSurface.copy(0.1f),
-                                MaterialTheme.colorScheme.onSurface
-                            )
+                                isGreater ->
+                                    Pair(
+                                        MaterialTheme.colorScheme.onSurface.copy(0.1f),
+                                        MaterialTheme.colorScheme.onSurface,
+                                    )
 
-                            isLesser -> Pair(
-                                MaterialTheme.colorScheme.success,
-                                MaterialTheme.colorScheme.onSuccess
-                            )
+                                isLesser ->
+                                    Pair(
+                                        MaterialTheme.colorScheme.success,
+                                        MaterialTheme.colorScheme.onSuccess,
+                                    )
 
-                            else -> Pair(
-                                MaterialTheme.colorScheme.primary,
-                                MaterialTheme.colorScheme.onPrimary
-                            )
-                        }
+                                else ->
+                                    Pair(
+                                        MaterialTheme.colorScheme.primary,
+                                        MaterialTheme.colorScheme.onPrimary,
+                                    )
+                            }
 
                         AnimatedVisibility(
                             modifier = Modifier.fillMaxWidth(),
-                            visible = isSelected or isLesser or isNext
+                            visible = isSelected or isLesser or isNext,
                         ) {
                             Card(
-                                modifier = Modifier
-                                    .padding(8.dp)
-                                    .fillMaxWidth(),
-                                colors = CardDefaults.cardColors(
-                                    containerColor = containerColor,
-                                    contentColor = contentColor
-                                )
+                                modifier =
+                                    Modifier
+                                        .padding(8.dp)
+                                        .fillMaxWidth(),
+                                colors =
+                                    CardDefaults.cardColors(
+                                        containerColor = containerColor,
+                                        contentColor = contentColor,
+                                    ),
                             ) {
                                 Column(modifier = Modifier.padding(16.dp)) {
                                     Text(
@@ -289,20 +304,18 @@ fun AchievementsLevelsScreenSection(
                                         text = level.number.asRank(),
                                         style = MaterialTheme.typography.titleSmall,
                                         textAlign = TextAlign.Center,
-                                        fontWeight = FontWeight.Black
+                                        fontWeight = FontWeight.Black,
                                     )
                                     Text(
                                         text = if (isGreater) "" else level.name.replaceFirstChar { it.uppercase() },
-                                        style = MaterialTheme.typography.labelLarge
+                                        style = MaterialTheme.typography.labelLarge,
                                     )
                                 }
                             }
                         }
-
                     }
                 }
             }
         }
     }
 }
-

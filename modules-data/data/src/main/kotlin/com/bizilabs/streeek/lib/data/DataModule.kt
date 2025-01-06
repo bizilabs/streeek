@@ -22,37 +22,38 @@ import com.bizilabs.streeek.lib.local.LocalModule
 import com.bizilabs.streeek.lib.remote.RemoteModule
 import org.koin.dsl.module
 
-val dataModule = module {
-    includes(RemoteModule, LocalModule)
-    single<AuthenticationRepository> { AuthenticationRepositoryImpl(remote = get()) }
-    single<UserRepository> { UserRepositoryImpl(remote = get(), accountLocalSource = get()) }
-    single<AccountRepository> {
-        AccountRepositoryImpl(
-            remote = get(),
-            local = get(),
-            contributionsLocalSource = get()
-        )
+val dataModule =
+    module {
+        includes(RemoteModule, LocalModule)
+        single<AuthenticationRepository> { AuthenticationRepositoryImpl(remote = get()) }
+        single<UserRepository> { UserRepositoryImpl(remote = get(), accountLocalSource = get()) }
+        single<AccountRepository> {
+            AccountRepositoryImpl(
+                remote = get(),
+                local = get(),
+                contributionsLocalSource = get(),
+            )
+        }
+        single<ContributionRepository> {
+            ContributionRepositoryImpl(
+                local = get(),
+                remote = get(),
+                accountLocalSource = get(),
+            )
+        }
+        single<PreferenceRepository> {
+            PreferenceRepositoryImpl(localSource = get(), remoteSource = get())
+        }
+        single<TeamRepository> {
+            TeamRepositoryImpl(remoteSource = get(), localSource = get(), accountLocalSource = get())
+        }
+        single<TeamInvitationRepository> {
+            TeamInvitationRepositoryImpl(remote = get(), accountLocalSource = get())
+        }
+        single<LevelRepository> {
+            LevelRepositoryImpl(remoteSource = get(), localSource = get())
+        }
+        single<NotificationRepository> {
+            NotificationRepositoryImpl(remoteSource = get(), localSource = get(), accountLocalSource = get())
+        }
     }
-    single<ContributionRepository> {
-        ContributionRepositoryImpl(
-            local = get(),
-            remote = get(),
-            accountLocalSource = get()
-        )
-    }
-    single<PreferenceRepository> {
-        PreferenceRepositoryImpl(localSource = get(), remoteSource = get())
-    }
-    single<TeamRepository> {
-        TeamRepositoryImpl(remoteSource = get(), localSource = get(), accountLocalSource = get())
-    }
-    single<TeamInvitationRepository> {
-        TeamInvitationRepositoryImpl(remote = get(), accountLocalSource = get())
-    }
-    single<LevelRepository> {
-        LevelRepositoryImpl(remoteSource = get(), localSource = get())
-    }
-    single<NotificationRepository> {
-        NotificationRepositoryImpl(remoteSource = get(), localSource = get(), accountLocalSource = get())
-    }
-}

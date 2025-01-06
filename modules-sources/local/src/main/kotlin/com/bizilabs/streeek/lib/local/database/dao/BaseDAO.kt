@@ -6,7 +6,6 @@ import androidx.room.OnConflictStrategy.Companion.REPLACE
 import androidx.room.Update
 
 interface BaseDAO<T> {
-
     @Insert(onConflict = REPLACE)
     suspend fun insert(item: T): Long
 
@@ -21,5 +20,4 @@ interface BaseDAO<T> {
 
     @Delete
     suspend fun delete(item: T)
-
 }

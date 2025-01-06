@@ -4,7 +4,6 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
@@ -26,14 +25,13 @@ fun SafiProfileArc(
     maxProgress: Long,
     modifier: Modifier = Modifier,
     tint: Color = MaterialTheme.colorScheme.success,
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
     // Circular Image with a progress bar effect
     Box(
         contentAlignment = Alignment.Center,
-        modifier = modifier
+        modifier = modifier,
     ) {
-
         Canvas(modifier = Modifier.fillMaxSize()) {
             val strokeWidth = 10.dp.toPx()
             val startAngle = 115f // Start at the top of the circle
@@ -45,7 +43,7 @@ fun SafiProfileArc(
                 startAngle = startAngle,
                 sweepAngle = 315f,
                 useCenter = false,
-                style = Stroke(width = strokeWidth, cap = StrokeCap.Round)
+                style = Stroke(width = strokeWidth, cap = StrokeCap.Round),
             )
 
             // Draw progress arc
@@ -54,12 +52,11 @@ fun SafiProfileArc(
                 startAngle = startAngle,
                 sweepAngle = sweepAngle,
                 useCenter = false,
-                style = Stroke(width = strokeWidth, cap = StrokeCap.Round)
+                style = Stroke(width = strokeWidth, cap = StrokeCap.Round),
             )
         }
 
         content()
-
     }
 }
 
@@ -72,8 +69,8 @@ private fun ProfileArcLightPreview() {
                 SafiProfileArc(
                     modifier = Modifier.size(150.dp),
                     progress = 200,
-                    maxProgress = 500
-                ){}
+                    maxProgress = 500,
+                ) {}
             }
         }
     }
@@ -88,8 +85,8 @@ private fun ProfileArcDarkPreview() {
                 SafiProfileArc(
                     modifier = Modifier.size(150.dp),
                     progress = 200,
-                    maxProgress = 500
-                ){}
+                    maxProgress = 500,
+                ) {}
             }
         }
     }

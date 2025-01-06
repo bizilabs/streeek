@@ -17,60 +17,75 @@ import io.ktor.client.request.get
 import io.ktor.client.request.url
 
 interface ContributionsRemoteSource {
-    suspend fun fetchEvent(username: String, id: String): NetworkResult<GithubUserEventDTO>
-    suspend fun fetchEvents(username: String, page: Int): NetworkResult<List<GithubUserEventDTO>>
+    suspend fun fetchEvent(
+        username: String,
+        id: String,
+    ): NetworkResult<GithubUserEventDTO>
+
+    suspend fun fetchEvents(
+        username: String,
+        page: Int,
+    ): NetworkResult<List<GithubUserEventDTO>>
 
     suspend fun fetchContribution(id: Long): NetworkResult<ContributionDTO>
-    suspend fun fetchContributions(accountId: Long, page: Int): NetworkResult<List<ContributionDTO>>
+
+    suspend fun fetchContributions(
+        accountId: Long,
+        page: Int,
+    ): NetworkResult<List<ContributionDTO>>
 
     suspend fun fetchContributionWithGithubEventId(githubEventId: String): NetworkResult<ContributionDTO?>
+
     suspend fun saveContribution(request: CreateContributionDTO): NetworkResult<ContributionDTO>
+
     suspend fun saveContribution(requests: List<CreateContributionDTO>): NetworkResult<List<ContributionDTO>>
 }
 
 class ContributionsRemoteSourceImpl(
     private val supabase: SupabaseClient,
-    private val client: HttpClient
+    private val client: HttpClient,
 ) : ContributionsRemoteSource {
     override suspend fun fetchEvent(
         username: String,
-        id: String
-    ): NetworkResult<GithubUserEventDTO> = safeApiCall {
-        client.get {
-            url(GithubEndpoint.Event(username = username, id = id).url)
+        id: String,
+    ): NetworkResult<GithubUserEventDTO> =
+        safeApiCall {
+            client.get {
+                url(GithubEndpoint.Event(username = username, id = id).url)
+            }
         }
-    }
 
     override suspend fun fetchEvents(
         username: String,
-        page: Int
-    ): NetworkResult<List<GithubUserEventDTO>> = safeApiCall {
-        client.get(GithubEndpoint.Events(username = username).url) {
-            url {
-                parameters.append("page", "$page")
+        page: Int,
+    ): NetworkResult<List<GithubUserEventDTO>> =
+        safeApiCall {
+            client.get(GithubEndpoint.Events(username = username).url) {
+                url {
+                    parameters.append("page", "$page")
+                }
             }
         }
-    }
 
     override suspend fun fetchContribution(id: Long): NetworkResult<ContributionDTO> =
         safeSupabaseCall {
             supabase
-                .from(Supabase.Tables.Contributions)
+                .from(Supabase.Tables.CONTRIBUTIONS)
                 .select { filter { ContributionDTO::id eq id } }
                 .decodeSingle()
         }
 
     override suspend fun fetchContributions(
         accountId: Long,
-        page: Int
+        page: Int,
     ): NetworkResult<List<ContributionDTO>> =
         safeSupabaseCall {
             val range = getRange(page = page)
             supabase
-                .from(Supabase.Tables.Contributions)
+                .from(Supabase.Tables.CONTRIBUTIONS)
                 .select {
                     filter { ContributionDTO::accountId eq accountId }
-                    order(ContributionDTO.Columns.AccountId, order = Order.DESCENDING)
+                    order(ContributionDTO.Columns.ACCOUNTID, order = Order.DESCENDING)
                     range(range.from, range.to)
                 }
                 .decodeList()
@@ -79,7 +94,7 @@ class ContributionsRemoteSourceImpl(
     override suspend fun fetchContributionWithGithubEventId(githubEventId: String): NetworkResult<ContributionDTO?> =
         safeSupabaseCall {
             supabase
-                .from(Supabase.Tables.Contributions)
+                .from(Supabase.Tables.CONTRIBUTIONS)
                 .select { filter { ContributionDTO::githubEventId eq githubEventId } }
                 .decodeSingleOrNull()
         }
@@ -87,7 +102,7 @@ class ContributionsRemoteSourceImpl(
     override suspend fun saveContribution(request: CreateContributionDTO): NetworkResult<ContributionDTO> =
         safeSupabaseCall {
             supabase
-                .from(Supabase.Tables.Contributions)
+                .from(Supabase.Tables.CONTRIBUTIONS)
                 .insert(request) { select() }
                 .decodeSingle()
         }
@@ -95,9 +110,8 @@ class ContributionsRemoteSourceImpl(
     override suspend fun saveContribution(requests: List<CreateContributionDTO>): NetworkResult<List<ContributionDTO>> =
         safeSupabaseCall {
             supabase
-                .from(Supabase.Tables.Contributions)
+                .from(Supabase.Tables.CONTRIBUTIONS)
                 .insert(requests) { select() }
                 .decodeList()
         }
-
 }

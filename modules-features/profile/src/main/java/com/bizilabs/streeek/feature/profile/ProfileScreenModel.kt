@@ -9,20 +9,20 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.koin.dsl.module
 
-val profileModule = module {
-    factory { ProfileScreenModel(accountRepository = get()) }
-}
+val profileModule =
+    module {
+        factory { ProfileScreenModel(accountRepository = get()) }
+    }
 
 data class ProfileScreenState(
     val account: AccountDomain? = null,
     val shouldConfirmLogout: Boolean = false,
-    val shouldNavigateToLanding: Boolean = false
+    val shouldNavigateToLanding: Boolean = false,
 )
 
 class ProfileScreenModel(
-    private val accountRepository: AccountRepository
+    private val accountRepository: AccountRepository,
 ) : StateScreenModel<ProfileScreenState>(ProfileScreenState()) {
-
     init {
         getAccount()
         observeAccount()
@@ -47,7 +47,7 @@ class ProfileScreenModel(
     }
 
     fun onClickConfirmLogout(confirm: Boolean) {
-        when(confirm){
+        when (confirm) {
             true -> onClickConfirmLogoutYes()
             false -> onClickConfirmLogoutNo()
         }
@@ -64,5 +64,4 @@ class ProfileScreenModel(
     fun onClickConfirmLogoutNo() {
         mutableState.update { it.copy(shouldConfirmLogout = false) }
     }
-
 }

@@ -18,29 +18,32 @@ import com.bizilabs.streeek.lib.domain.models.NotificationDomain
 @Composable
 fun NotificationItemComponent(
     notification: NotificationDomain,
-    onClickNotification: (NotificationDomain) -> Unit
+    onClickNotification: (NotificationDomain) -> Unit,
 ) {
     val isRead = notification.readAt != null
-    val containerColor = if (isRead)
-        MaterialTheme.colorScheme.background
-    else
-        MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)
+    val containerColor =
+        if (isRead) {
+            MaterialTheme.colorScheme.background
+        } else {
+            MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)
+        }
 
     Card(
         modifier = Modifier.fillMaxWidth(),
         onClick = { onClickNotification(notification) },
         shape = RectangleShape,
-        colors = CardDefaults.cardColors(
-            contentColor = MaterialTheme.colorScheme.onBackground,
-            containerColor = containerColor
-        )
+        colors =
+            CardDefaults.cardColors(
+                contentColor = MaterialTheme.colorScheme.onBackground,
+                containerColor = containerColor,
+            ),
     ) {
         Column(modifier = Modifier.fillMaxWidth()) {
             Column(modifier = Modifier.padding(16.dp)) {
                 Text(
                     text = notification.title,
                     style = MaterialTheme.typography.bodyLarge,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
                 )
                 Text(text = notification.message)
             }

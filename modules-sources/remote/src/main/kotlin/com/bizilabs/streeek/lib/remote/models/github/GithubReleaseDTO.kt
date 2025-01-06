@@ -11,5 +11,5 @@ data class GithubReleaseDTO(
     val body: String,
     @SerialName("html_url")
     val url: String,
-    val author: GithubActorDTO
+    val author: GithubActorDTO,
 )

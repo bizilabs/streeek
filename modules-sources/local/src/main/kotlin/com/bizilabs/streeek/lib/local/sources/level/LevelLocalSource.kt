@@ -10,14 +10,15 @@ import kotlinx.coroutines.flow.mapLatest
 
 interface LevelLocalSource {
     val levels: Flow<List<LevelCache>>
+
     suspend fun saveLevels(levels: List<LevelCache>): LocalResult<Boolean>
+
     suspend fun updateLevels(levels: List<LevelCache>): LocalResult<Boolean>
 }
 
 internal class LevelLocalSourceImpl(
-    private val source: LevelDAO
+    private val source: LevelDAO,
 ) : LevelLocalSource {
-
     override val levels: Flow<List<LevelCache>>
         get() = source.getLevels().mapLatest { list -> list.map { it.toCache() } }
 
@@ -32,5 +33,4 @@ internal class LevelLocalSourceImpl(
             source.updateLevels(levels.map { it.toEntity() })
             true
         }
-
 }

@@ -13,15 +13,16 @@ data class NotificationEntity(
     val payload: String?,
     val createdAt: String,
     val createdAtMillis: Long,
-    val readAt: String?
-){
-    internal fun toCache() = NotificationCache(
-        id = id,
-        title = title,
-        message = message,
-        payload = payload,
-        createdAt = createdAt,
-        createdAtMillis = createdAtMillis,
-        readAt = readAt
-    )
+    val readAt: String?,
+) {
+    internal fun toCache() =
+        NotificationCache(
+            id = id,
+            title = title,
+            message = message,
+            payload = payload,
+            createdAt = createdAt,
+            createdAtMillis = createdAtMillis,
+            readAt = readAt,
+        )
 }

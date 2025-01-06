@@ -8,13 +8,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector
 
 sealed interface FetchState<out T> {
-
     data class Error(val message: String) : FetchState<Nothing>
 
     data object Loading : FetchState<Nothing>
 
     data class Success<T>(val value: T) : FetchState<T>
-
 }
 
 @ConsistentCopyVisibility
@@ -27,7 +25,6 @@ data class FetchData internal constructor(
 )
 
 data object FetchDefaults {
-
     @Composable
     fun empty(
         icon: ImageVector = Icons.AutoMirrored.Rounded.ViewList,
@@ -40,7 +37,7 @@ data object FetchDefaults {
         image = image,
         title = title,
         message = message,
-        action = action
+        action = action,
     )
 
     @Composable
@@ -55,7 +52,7 @@ data object FetchDefaults {
         image = image,
         title = title,
         message = message,
-        action = action
+        action = action,
     )
 
     @Composable
@@ -70,7 +67,6 @@ data object FetchDefaults {
         image = image,
         title = title,
         message = message,
-        action = action
+        action = action,
     )
-
 }

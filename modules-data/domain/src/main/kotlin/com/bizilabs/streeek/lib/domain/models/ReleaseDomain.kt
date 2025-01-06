@@ -5,5 +5,5 @@ data class ReleaseDomain(
     val name: String,
     val body: String,
     val url: String,
-    val author: ActorDomain
+    val author: ActorDomain,
 )

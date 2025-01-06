@@ -8,7 +8,6 @@ import com.bizilabs.streeek.lib.domain.models.team.JoinTeamInvitationDomain
 import kotlinx.coroutines.flow.Flow
 
 interface TeamRepository {
-
     val teamId: Flow<Long?>
 
     val teams: Flow<Map<Long, TeamDetailsDomain>>
@@ -26,11 +25,14 @@ interface TeamRepository {
 
     suspend fun getAccountTeams(): DataResult<List<TeamWithDetailDomain>>
 
-    suspend fun getTeam(id: Long, page: Int) : DataResult<TeamWithMembersDomain>
+    suspend fun getTeam(
+        id: Long,
+        page: Int,
+    ): DataResult<TeamWithMembersDomain>
 
-    suspend fun joinTeam(token: String) : DataResult<JoinTeamInvitationDomain>
+    suspend fun joinTeam(token: String): DataResult<JoinTeamInvitationDomain>
 
-    suspend fun leaveTeam(teamId: Long) : DataResult<Boolean>
+    suspend fun leaveTeam(teamId: Long): DataResult<Boolean>
 
     suspend fun setSelectedTeam(team: TeamDetailsDomain)
 
@@ -41,5 +43,4 @@ interface TeamRepository {
     suspend fun updateTeamLocally(team: TeamDetailsDomain)
 
     suspend fun deleteTeamLocally(team: TeamDetailsDomain)
-
 }

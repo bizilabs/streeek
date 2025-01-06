@@ -16,5 +16,4 @@ dependencies {
 
     // paging
     implementation(libs.androidx.paging.runtime)
-
 }

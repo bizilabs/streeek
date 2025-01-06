@@ -5,13 +5,13 @@ data class UserDomain(
     val name: String,
     val email: String,
     val bio: String,
-    val url: String
+    val url: String,
 )
 
 data class ActorDomain(
     val id: Long,
     val name: String,
-    val url: String
+    val url: String,
 )
 
 data class ActorMinimalDomain(val name: String)

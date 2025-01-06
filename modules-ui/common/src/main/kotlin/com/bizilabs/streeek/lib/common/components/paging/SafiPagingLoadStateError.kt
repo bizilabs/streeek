@@ -1,7 +1,6 @@
 package com.bizilabs.streeek.lib.common.components.paging
 
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -23,20 +22,21 @@ fun SafiPagingLoadStateError(
     throwable: Throwable,
     modifier: Modifier = Modifier,
     defaultError: String = "error",
-    retry: () -> Unit
+    retry: () -> Unit,
 ) {
     SafiCenteredColumn(modifier = modifier) {
         Text(
             text = throwable.localizedMessage ?: defaultError,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 16.dp),
-            textAlign = TextAlign.Center
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(top = 16.dp),
+            textAlign = TextAlign.Center,
         )
         IconButton(onClick = retry) {
             Icon(
                 imageVector = Icons.Rounded.Refresh,
-                contentDescription = "refresh list"
+                contentDescription = "refresh list",
             )
         }
     }
@@ -50,9 +50,8 @@ private fun SafiPagingLoadStateErrorPreview() {
         Scaffold { innerPadding ->
             SafiPagingLoadStateError(
                 modifier = Modifier.padding(innerPadding),
-                throwable = Exception("Failed to load list")
+                throwable = Exception("Failed to load list"),
             ) { }
         }
     }
 }
-

@@ -10,5 +10,5 @@ data class LevelDomain(
     val number: Long,
     val maxPoints: Long,
     val minPoints: Long,
-    val createdAt: LocalDateTime
+    val createdAt: LocalDateTime,
 )

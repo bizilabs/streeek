@@ -9,12 +9,11 @@ sealed interface LocalResult<out T> {
     data class Error(val message: String) : LocalResult<Nothing>
 
     data class Success<T>(val data: T) : LocalResult<T>
-
 }
 
 suspend fun <T> safeTransaction(
     scope: CoroutineDispatcher = Dispatchers.IO,
-    block: suspend () -> T
+    block: suspend () -> T,
 ): LocalResult<T> {
     return withContext(scope) {
         try {

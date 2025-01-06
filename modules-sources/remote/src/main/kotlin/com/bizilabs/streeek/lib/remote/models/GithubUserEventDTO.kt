@@ -7,7 +7,7 @@ import kotlinx.serialization.Serializable
 data class GithubEventRepositoryDTO(
     val id: String,
     val name: String,
-    val url: String
+    val url: String,
 )
 
 @Serializable
@@ -18,5 +18,5 @@ data class GithubUserEventDTO(
     val createdAt: String,
     val actor: GithubActorDTO,
     val repo: GithubEventRepositoryDTO,
-    val payload: EventPayloadDTO
+    val payload: EventPayloadDTO,
 )

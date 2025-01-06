@@ -26,32 +26,33 @@ class NotificationRepositoryImpl(
     private val remoteSource: NotificationRemoteSource,
     private val accountLocalSource: AccountLocalSource,
 ) : NotificationRepository {
-
     private fun List<NotificationCache>.toDomain() = map { item -> item.toDomain() }
 
-    private fun Flow<List<NotificationCache>>.toDomain() =
-        mapLatest { list -> list.toDomain() }
+    private fun Flow<List<NotificationCache>>.toDomain() = mapLatest { list -> list.toDomain() }
 
     private suspend fun getAccount() = accountLocalSource.account.first()
 
     private suspend fun getAccountId() = getAccount()?.id?.toLong()
 
     override val notifications: Flow<PagingData<NotificationDomain>>
-        get() = Pager(
-            config = PagingConfig(pageSize = Paging.PAGE_SIZE, enablePlaceholders = false),
-            pagingSourceFactory = {
-                NotificationPagingSource(
-                    accountLocalSource = accountLocalSource,
-                    notificationRemoteSource = remoteSource,
-                    notificationLocalSource = localSource
-                )
-            }
-        ).flow
+        get() =
+            Pager(
+                config = PagingConfig(pageSize = Paging.PAGE_SIZE, enablePlaceholders = false),
+                pagingSourceFactory = {
+                    NotificationPagingSource(
+                        accountLocalSource = accountLocalSource,
+                        notificationRemoteSource = remoteSource,
+                        notificationLocalSource = localSource,
+                    )
+                },
+            ).flow
 
     override suspend fun getNotifications(page: Int): DataResult<List<NotificationDomain>> {
         val accountId = getAccountId() ?: return DataResult.Error("Couldn't get logged in account")
-        return when (val result =
-            remoteSource.fetchNotifications(accountId = accountId, page = page)) {
+        return when (
+            val result =
+                remoteSource.fetchNotifications(accountId = accountId, page = page)
+        ) {
             is NetworkResult.Failure -> DataResult.Error(result.exception.localizedMessage)
             is NetworkResult.Success -> DataResult.Success(data = result.data.map { it.toDomain() })
         }
@@ -60,15 +61,16 @@ class NotificationRepositoryImpl(
     override suspend fun create(
         title: String,
         message: String,
-        payload: String?
+        payload: String?,
     ): DataResult<NotificationDomain> {
         val accountId = getAccountId() ?: return DataResult.Error("Couldn't get logged in account")
-        val request = NotificationCreateDTO(
-            accountId = accountId,
-            title = title,
-            message = message,
-            payload = payload
-        )
+        val request =
+            NotificationCreateDTO(
+                accountId = accountId,
+                title = title,
+                message = message,
+                payload = payload,
+            )
         return when (val result = remoteSource.create(request = request)) {
             is NetworkResult.Failure -> DataResult.Error(result.exception.localizedMessage)
             is NetworkResult.Success -> {
@@ -101,5 +103,4 @@ class NotificationRepositoryImpl(
             }
         }
     }
-
 }

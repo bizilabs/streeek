@@ -16,7 +16,7 @@ data class AccountCache(
     val updatedAt: String,
     val points: Long,
     val level: LevelCache?,
-    val streak: StreakCache?
+    val streak: StreakCache?,
 ) {
     fun asJson(): String = Json.encodeToString(this)
 }

@@ -23,11 +23,11 @@ data class ContributionDTO(
     @SerialName("github_event_payload")
     val githubEventPayload: String,
     val points: Long,
-){
+) {
     object Columns {
-        const val Id = "id"
-        const val CreatedAt = "created_at"
-        const val AccountId = "account_id"
+        const val ID = "id"
+        const val CREATEDAT = "created_at"
+        const val ACCOUNTID = "account_id"
     }
 }
 

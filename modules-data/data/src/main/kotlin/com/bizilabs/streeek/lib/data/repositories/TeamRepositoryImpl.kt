@@ -23,20 +23,23 @@ import kotlinx.coroutines.flow.mapLatest
 class TeamRepositoryImpl(
     private val remoteSource: TeamRemoteSource,
     private val localSource: TeamLocalSource,
-    private val accountLocalSource: AccountLocalSource
+    private val accountLocalSource: AccountLocalSource,
 ) : TeamRepository {
-
     override val teamId: Flow<Long?>
         get() = localSource.teamId
 
     override val teams: Flow<Map<Long, TeamDetailsDomain>>
-        get() = localSource.teams.mapLatest { map ->
-            map.mapValues { it.value.toDomain() }
-        }
+        get() =
+            localSource.teams.mapLatest { map ->
+                map.mapValues { it.value.toDomain() }
+            }
 
     private suspend fun getAccountId() = accountLocalSource.account.firstOrNull()?.id
 
-    override suspend fun createTeam(name: String, public: Boolean): DataResult<Long> {
+    override suspend fun createTeam(
+        name: String,
+        public: Boolean,
+    ): DataResult<Long> {
         val account = getAccountId() ?: return DataResult.Error(message = "No account found")
         val request = CreateTeamRequestDTO(name = name, public = public, account = account)
         return remoteSource.createTeam(request = request).asDataResult { it }
@@ -45,7 +48,7 @@ class TeamRepositoryImpl(
     override suspend fun updateTeam(
         teamId: Long,
         name: String,
-        public: Boolean
+        public: Boolean,
     ): DataResult<Boolean> {
         val account = getAccountId() ?: return DataResult.Error(message = "No account found")
         val request =
@@ -59,7 +62,10 @@ class TeamRepositoryImpl(
             .asDataResult { list -> list.map { it.toDomain() } }
     }
 
-    override suspend fun getTeam(id: Long, page: Int): DataResult<TeamWithMembersDomain> {
+    override suspend fun getTeam(
+        id: Long,
+        page: Int,
+    ): DataResult<TeamWithMembersDomain> {
         val account = getAccountId() ?: return DataResult.Error(message = "No account found")
         return remoteSource.fetchTeam(teamId = id, accountId = account, page = page)
             .asDataResult { it.toDomain() }
@@ -98,5 +104,4 @@ class TeamRepositoryImpl(
     override suspend fun deleteTeamLocally(team: TeamDetailsDomain) {
         localSource.delete(team.toCache())
     }
-
 }

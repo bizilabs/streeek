@@ -14,5 +14,4 @@ object SafiStringLabels {
 object SafiStringMessages {
     val MessageTeamInvite = R.string.message_team_invite
     val NoNotifications = R.string.message_no_notifications
-
 }

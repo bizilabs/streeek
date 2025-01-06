@@ -17,5 +17,5 @@ data class GithubIssueDTO(
     @SerialName("updated_at")
     val updatedAt: String,
     @SerialName("closed_at")
-    val closedAt: String?
+    val closedAt: String?,
 )

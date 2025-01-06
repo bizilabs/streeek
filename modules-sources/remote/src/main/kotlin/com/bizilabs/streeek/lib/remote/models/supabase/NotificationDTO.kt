@@ -14,10 +14,10 @@ data class NotificationDTO(
     @SerialName("created_at")
     val createdAt: String,
     @SerialName("read_at")
-    val readAt: String?
-){
+    val readAt: String?,
+) {
     object Columns {
-        const val CreatedAt = "created_at"
+        val CreatedAt = "created_at"
     }
 }
 
@@ -30,5 +30,5 @@ data class NotificationCreateDTO(
     @SerialName("p_message")
     val message: String,
     @SerialName("p_payload")
-    val payload: String?
+    val payload: String?,
 )

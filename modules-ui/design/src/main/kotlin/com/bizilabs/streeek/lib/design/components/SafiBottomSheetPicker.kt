@@ -19,9 +19,8 @@ fun <T : Any> SafiBottomSheetPicker(
     onItemSelected: (T) -> Unit,
     name: @Composable (T) -> String,
     modifier: Modifier = Modifier,
-    title: String = "Select"
+    title: String = "Select",
 ) {
-
     val scope = rememberCoroutineScope()
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
@@ -53,9 +52,9 @@ fun <T : Any> SafiBottomSheetPicker(
                     item = value,
                     isSelected = isSelected,
                     onClick = block,
-                    text = name.invoke(value)
+                    text = name.invoke(value),
                 )
-            }
+            },
         )
     }
 }

@@ -12,14 +12,13 @@ interface LevelRemoteSource {
 }
 
 class LevelRemoteSourceImpl(
-    private val supabase: SupabaseClient
+    private val supabase: SupabaseClient,
 ) : LevelRemoteSource {
-
-    override suspend fun getLevels(): NetworkResult<List<LevelDTO>> = safeSupabaseCall {
-        supabase
-            .from(Supabase.Tables.Levels)
-            .select()
-            .decodeList()
-    }
-
+    override suspend fun getLevels(): NetworkResult<List<LevelDTO>> =
+        safeSupabaseCall {
+            supabase
+                .from(Supabase.Tables.LEVELS)
+                .select()
+                .decodeList()
+        }
 }

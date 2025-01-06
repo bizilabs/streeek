@@ -18,7 +18,7 @@ data class AccountDTO(
     @SerialName("created_at")
     val createdAt: String,
     @SerialName("updated_at")
-    val updatedAt: String
+    val updatedAt: String,
 )
 
 @Serializable
@@ -27,7 +27,7 @@ data class AccountFullDTO(
     @SerialName("total_points")
     val points: Long? = 0,
     val level: LevelDTO? = null,
-    val streak: StreakDTO? = null
+    val streak: StreakDTO? = null,
 )
 
 @Serializable
@@ -42,5 +42,5 @@ data class AccountCreateRequestDTO(
     @SerialName("created_at")
     val createdAt: String,
     @SerialName("updated_at")
-    val updatedAt: String
+    val updatedAt: String,
 )

@@ -15,21 +15,22 @@ import com.bizilabs.streeek.lib.design.atoms.SuccessLight
 @Immutable
 data class SafiColorScheme internal constructor(
     val success: Color = SuccessLight,
-    val onSuccess: Color = OnSuccessLight
+    val onSuccess: Color = OnSuccessLight,
 )
 
-internal val SafiLightColorScheme = SafiColorScheme(
-    success = SuccessLight,
-    onSuccess = OnSuccessLight
-)
+internal val SafiLightColorScheme =
+    SafiColorScheme(
+        success = SuccessLight,
+        onSuccess = OnSuccessLight,
+    )
 
-internal val SafiDarkColorScheme = SafiColorScheme(
-    success = SuccessDark,
-    onSuccess = OnSuccessDark
-)
+internal val SafiDarkColorScheme =
+    SafiColorScheme(
+        success = SuccessDark,
+        onSuccess = OnSuccessDark,
+    )
 
-fun getSafiColorScheme(isDarkThemeEnabled: Boolean) =
-    if (isDarkThemeEnabled) SafiDarkColorScheme else SafiLightColorScheme
+fun getSafiColorScheme(isDarkThemeEnabled: Boolean) = if (isDarkThemeEnabled) SafiDarkColorScheme else SafiLightColorScheme
 
 internal val LocalSafiColorScheme = staticCompositionLocalOf { SafiColorScheme() }
 
@@ -42,4 +43,3 @@ val ColorScheme.onSuccess: Color
     @Composable
     @ReadOnlyComposable
     get() = LocalSafiColorScheme.current.onSuccess
-

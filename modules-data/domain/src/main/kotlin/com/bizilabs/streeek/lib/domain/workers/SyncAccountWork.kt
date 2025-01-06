@@ -15,47 +15,48 @@ import com.bizilabs.streeek.lib.domain.repositories.AccountRepository
 import java.util.UUID
 import java.util.concurrent.TimeUnit
 
-private val constraints = Constraints.Builder()
-    .setRequiredNetworkType(NetworkType.CONNECTED)
-    .setRequiresBatteryNotLow(true)
-    .setRequiresStorageNotLow(true)
-    .build()
+private val constraints =
+    Constraints.Builder()
+        .setRequiredNetworkType(NetworkType.CONNECTED)
+        .setRequiresBatteryNotLow(true)
+        .setRequiresStorageNotLow(true)
+        .build()
 
 fun Context.startImmediateAccountSyncWork() {
+    val parameters =
+        Data.Builder()
+            .build()
 
-    val parameters = Data.Builder()
-        .build()
-
-    val request = OneTimeWorkRequestBuilder<SyncAccountWork>()
-        .addTag(SyncAccountWork.TAG)
-        .setConstraints(constraints)
-        .setInputData(parameters)
-        .setId(UUID.randomUUID())
-        .build()
+    val request =
+        OneTimeWorkRequestBuilder<SyncAccountWork>()
+            .addTag(SyncAccountWork.TAG)
+            .setConstraints(constraints)
+            .setInputData(parameters)
+            .setId(UUID.randomUUID())
+            .build()
 
     WorkManager.getInstance(this).enqueue(request)
-
 }
 
 fun Context.startPeriodicAccountSyncWork() {
+    val parameters =
+        Data.Builder()
+            .build()
 
-    val parameters = Data.Builder()
-        .build()
-
-    val request = PeriodicWorkRequestBuilder<SyncAccountWork>(30, TimeUnit.MINUTES)
-        .addTag(SyncAccountWork.TAG)
-        .setConstraints(constraints)
-        .setInputData(parameters)
-        .setId(UUID.randomUUID())
-        .build()
+    val request =
+        PeriodicWorkRequestBuilder<SyncAccountWork>(30, TimeUnit.MINUTES)
+            .addTag(SyncAccountWork.TAG)
+            .setConstraints(constraints)
+            .setInputData(parameters)
+            .setId(UUID.randomUUID())
+            .build()
 
     WorkManager.getInstance(this)
         .enqueueUniquePeriodicWork(
             SyncAccountWork.TAG,
             ExistingPeriodicWorkPolicy.KEEP,
-            request
+            request,
         )
-
 }
 
 class SyncAccountWork(
@@ -63,20 +64,18 @@ class SyncAccountWork(
     val params: WorkerParameters,
     val accountRepository: AccountRepository,
 ) : CoroutineWorker(context, params) {
-
     companion object {
         const val TAG = "SyncAccountWorker"
     }
 
     override suspend fun doWork(): Result {
-
         val result = accountRepository.syncAccount()
         if (result is DataResult.Error) {
-            if (params.runAttemptCount > 2)
+            if (params.runAttemptCount > 2) {
                 return Result.failure()
+            }
             return Result.retry()
         }
         return Result.success()
     }
-
 }

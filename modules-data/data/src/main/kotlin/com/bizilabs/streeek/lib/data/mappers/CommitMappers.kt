@@ -11,31 +11,35 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 
-fun CommitDTO.toDomain() = CommitDomain(
-    sha = sha,
-    url = url,
-    author = author.toDomain(),
-    message = message,
-    distinct = distinct
-)
+fun CommitDTO.toDomain() =
+    CommitDomain(
+        sha = sha,
+        url = url,
+        author = author.toDomain(),
+        message = message,
+        distinct = distinct,
+    )
 
-fun CommitDomain.toDTO() =
-    CommitDTO(sha = sha, url = url, author = author.toDTO(), message = message, distinct = distinct)
+fun CommitDomain.toDTO() = CommitDTO(sha = sha, url = url, author = author.toDTO(), message = message, distinct = distinct)
 
-fun CommitCommentDTO.toDomain() = CommitCommentDomain(
-    id = id,
-    createdAt = createdAt.asDate()?.toLocalDateTime(TimeZone.UTC) ?: Clock.System.now()
-        .toLocalDateTime(TimeZone.UTC),
-    updatedAt = updatedAt.asDate()?.toLocalDateTime(TimeZone.UTC) ?: Clock.System.now()
-        .toLocalDateTime(TimeZone.UTC),
-    body = body,
-    user = user.toDomain()
-)
+fun CommitCommentDTO.toDomain() =
+    CommitCommentDomain(
+        id = id,
+        createdAt =
+            createdAt.asDate()?.toLocalDateTime(TimeZone.UTC) ?: Clock.System.now()
+                .toLocalDateTime(TimeZone.UTC),
+        updatedAt =
+            updatedAt.asDate()?.toLocalDateTime(TimeZone.UTC) ?: Clock.System.now()
+                .toLocalDateTime(TimeZone.UTC),
+        body = body,
+        user = user.toDomain(),
+    )
 
-fun CommitCommentDomain.toDTO() = CommitCommentDTO(
-    id = id,
-    createdAt = createdAt.asString(DateFormats.ISO_8601_Z) ?: "",
-    updatedAt = updatedAt.asString(DateFormats.ISO_8601_Z) ?: "",
-    body = body,
-    user = user.toDTO()
-)
+fun CommitCommentDomain.toDTO() =
+    CommitCommentDTO(
+        id = id,
+        createdAt = createdAt.asString(DateFormats.ISO_8601_Z) ?: "",
+        updatedAt = updatedAt.asString(DateFormats.ISO_8601_Z) ?: "",
+        body = body,
+        user = user.toDTO(),
+    )

@@ -19,11 +19,12 @@ import org.koin.dsl.module
 import timber.log.Timber
 import kotlin.collections.get
 
-internal val TeamsModule = module {
-    factory<TeamsScreenModel> {
-        TeamsScreenModel(context = get(), repository = get())
+internal val TeamsModule =
+    module {
+        factory<TeamsScreenModel> {
+            TeamsScreenModel(context = get(), repository = get())
+        }
     }
-}
 
 data class TeamsScreenState(
     val isJoining: Boolean = false,
@@ -31,27 +32,28 @@ data class TeamsScreenState(
     val teamId: Long? = null,
     val teamsState: FetchListState<TeamWithDetailDomain> = FetchListState.Loading,
     val team: TeamDetailsDomain? = null,
-    val teams: List<TeamDetailsDomain> = emptyList()
+    val teams: List<TeamDetailsDomain> = emptyList(),
 ) {
     val list: List<TeamMemberDomain>
-        get() = when {
-            team == null -> emptyList()
-            team.page == 1 -> team.members.filterIndexed { index, _ -> index > 2 }
-            else -> team.members
-        }
+        get() =
+            when {
+                team == null -> emptyList()
+                team.page == 1 -> team.members.filterIndexed { index, _ -> index > 2 }
+                else -> team.members
+            }
 }
 
 class TeamsScreenModel(
     private val context: Context,
-    private val repository: TeamRepository
+    private val repository: TeamRepository,
 ) : StateScreenModel<TeamsScreenState>(TeamsScreenState()) {
-
-    private val selectedTeam = combine(repository.teamId, repository.teams) { id, map ->
-        Timber.d("Teams Map -> $map")
-        Timber.d("Selected Team being updated....")
-        Timber.d("Selected Team : ${mutableState.value.team}")
-        map[id]
-    }
+    private val selectedTeam =
+        combine(repository.teamId, repository.teams) { id, map ->
+            Timber.d("Teams Map -> $map")
+            Timber.d("Selected Team being updated....")
+            Timber.d("Selected Team : ${mutableState.value.team}")
+            map[id]
+        }
 
     init {
         observeTeams()
@@ -107,5 +109,4 @@ class TeamsScreenModel(
     fun onClickMenuRefreshTeam() {
         context.startImmediateSyncTeamsWork()
     }
-
 }

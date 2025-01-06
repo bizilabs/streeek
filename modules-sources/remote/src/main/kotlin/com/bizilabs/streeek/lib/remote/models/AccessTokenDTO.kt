@@ -10,5 +10,5 @@ data class AccessTokenDTO(
     @SerialName("scope")
     val scope: String,
     @SerialName("token_type")
-    val tokenType: String
+    val tokenType: String,
 )

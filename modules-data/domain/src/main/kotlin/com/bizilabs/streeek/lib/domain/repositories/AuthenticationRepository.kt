@@ -7,6 +7,8 @@ import kotlinx.coroutines.flow.Flow
 
 interface AuthenticationRepository {
     val authenticated: Flow<Boolean>
+
     suspend fun getAuthenticationIntent(): Intent
+
     suspend fun getAuthenticationToken(uri: Uri): DataResult<String>
 }

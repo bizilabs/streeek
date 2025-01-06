@@ -10,23 +10,25 @@ data class LevelCache(
     val number: Long,
     val maxPoints: Long,
     val minPoints: Long,
-    val createdAt: String
+    val createdAt: String,
 )
 
-fun LevelCache.toEntity() = LevelEntity(
-    id = id,
-    name = name,
-    number = number,
-    maxPoints = maxPoints,
-    minPoints = minPoints,
-    createdAt = createdAt
-)
+fun LevelCache.toEntity() =
+    LevelEntity(
+        id = id,
+        name = name,
+        number = number,
+        maxPoints = maxPoints,
+        minPoints = minPoints,
+        createdAt = createdAt,
+    )
 
-fun LevelEntity.toCache() = LevelCache(
-    id = id,
-    name = name,
-    number = number,
-    maxPoints = maxPoints,
-    minPoints = minPoints,
-    createdAt = createdAt
-)
+fun LevelEntity.toCache() =
+    LevelCache(
+        id = id,
+        name = name,
+        number = number,
+        maxPoints = maxPoints,
+        minPoints = minPoints,
+        createdAt = createdAt,
+    )

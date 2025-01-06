@@ -26,24 +26,26 @@ private data class SafiNetworkData(
     val icon: ImageVector,
     val label: Int,
     val backgroundColor: Color,
-    val onBackgroundColor: Color
+    val onBackgroundColor: Color,
 )
 
 @Composable
-private fun getNetworkData(isNetworkConnected: Boolean) = if (isNetworkConnected)
-    SafiNetworkData(
-        icon = Icons.Rounded.SignalWifi4Bar,
-        label = SafiStringLabels.NetworkConnectionYes,
-        backgroundColor = MaterialTheme.colorScheme.success,
-        onBackgroundColor = MaterialTheme.colorScheme.onSuccess
-    )
-else
-    SafiNetworkData(
-        icon = Icons.Rounded.SignalWifiConnectedNoInternet4,
-        label = SafiStringLabels.NetworkConnectionNo,
-        backgroundColor = MaterialTheme.colorScheme.error,
-        onBackgroundColor = MaterialTheme.colorScheme.onError
-    )
+private fun getNetworkData(isNetworkConnected: Boolean) =
+    if (isNetworkConnected) {
+        SafiNetworkData(
+            icon = Icons.Rounded.SignalWifi4Bar,
+            label = SafiStringLabels.NetworkConnectionYes,
+            backgroundColor = MaterialTheme.colorScheme.success,
+            onBackgroundColor = MaterialTheme.colorScheme.onSuccess,
+        )
+    } else {
+        SafiNetworkData(
+            icon = Icons.Rounded.SignalWifiConnectedNoInternet4,
+            label = SafiStringLabels.NetworkConnectionNo,
+            backgroundColor = MaterialTheme.colorScheme.error,
+            onBackgroundColor = MaterialTheme.colorScheme.onError,
+        )
+    }
 
 @Composable
 internal fun SafiNetworkComponent(isNetworkConnected: Boolean) {
@@ -53,12 +55,12 @@ internal fun SafiNetworkComponent(isNetworkConnected: Boolean) {
             Icon(
                 imageVector = data.icon,
                 contentDescription = stringResource(data.label),
-                tint = data.onBackgroundColor
+                tint = data.onBackgroundColor,
             )
             Spacer(modifier = Modifier.padding(4.dp))
             Text(
                 text = stringResource(data.label),
-                color = data.onBackgroundColor
+                color = data.onBackgroundColor,
             )
         }
     }
@@ -71,6 +73,7 @@ private fun SafiNetworkComponentLightNoInternetPreview() {
         SafiNetworkComponent(isNetworkConnected = true)
     }
 }
+
 @Preview
 @Composable
 private fun SafiNetworkComponentLightHasInternetPreview() {
@@ -86,6 +89,7 @@ private fun SafiNetworkComponentDarkNoInternetPreview() {
         SafiNetworkComponent(isNetworkConnected = true)
     }
 }
+
 @Preview
 @Composable
 private fun SafiNetworkComponentDarkHasInternetPreview() {

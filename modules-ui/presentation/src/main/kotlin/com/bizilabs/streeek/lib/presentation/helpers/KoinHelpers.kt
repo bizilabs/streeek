@@ -30,15 +30,20 @@ fun Application.initKoin(vararg modules: Module) {
     }
 }
 
-val PresentationModule = module {
-    includes(
-        landingModule, authenticationModule,
-        setupModule, tabsModule, profileModule,
-        FeatureTeamModule, FeatureNotificationModule
-    )
-    workerOf(::SyncTeamsWork)
-    workerOf(::SyncLevelsWork)
-    workerOf(::SyncAccountWork)
-    workerOf(::SyncContributionsWork)
-    workerOf(::SyncDailyContributionsWork)
-}
+val PresentationModule =
+    module {
+        includes(
+            landingModule,
+            authenticationModule,
+            setupModule,
+            tabsModule,
+            profileModule,
+            FeatureTeamModule,
+            FeatureNotificationModule,
+        )
+        workerOf(::SyncTeamsWork)
+        workerOf(::SyncLevelsWork)
+        workerOf(::SyncAccountWork)
+        workerOf(::SyncContributionsWork)
+        workerOf(::SyncDailyContributionsWork)
+    }

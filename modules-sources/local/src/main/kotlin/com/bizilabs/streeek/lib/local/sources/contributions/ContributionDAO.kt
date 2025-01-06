@@ -19,7 +19,7 @@ interface ContributionDAO : BaseDAO<ContributionEntity> {
             FROM contributions
             GROUP BY githubEventDate
         )
-    """
+    """,
     )
     fun getDistinctContributionsByDate(): Flow<List<ContributionEntity>>
 

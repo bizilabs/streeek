@@ -6,5 +6,5 @@ import kotlinx.serialization.Serializable
 data class StreakCache(
     val current: Int,
     val longest: Int,
-    val updatedAt: String
+    val updatedAt: String,
 )

@@ -13,9 +13,9 @@ fun isSystemNetworkConnected(): Boolean = _isSystemNetworkConnected()
 
 @Composable
 @ReadOnlyComposable
-internal fun _isSystemNetworkConnected() : Boolean {
+internal fun _isSystemNetworkConnected(): Boolean {
     val activity = (LocalContext.current as Activity)
-    val connectivityManager =  activity.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+    val connectivityManager = activity.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
     val activeNetworkInfo = connectivityManager.activeNetworkInfo
     return activeNetworkInfo != null && activeNetworkInfo.isConnected
 }

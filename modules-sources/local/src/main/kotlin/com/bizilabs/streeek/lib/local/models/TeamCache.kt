@@ -8,13 +8,13 @@ data class TeamDetailsCache(
     val page: Int,
     val members: List<TeamMemberCache>,
     val rank: TeamRankCache,
-    val top: Map<Long, TeamMemberCache>
+    val top: Map<Long, TeamMemberCache>,
 )
 
 @Serializable
 data class TeamRankCache(
     val previous: Long?,
-    val current: Long
+    val current: Long,
 )
 
 @Serializable
@@ -23,7 +23,7 @@ data class TeamCache(
     val name: String,
     val isPublic: Boolean,
     val count: Long,
-    val createdAt: String
+    val createdAt: String,
 )
 
 @Serializable
@@ -31,7 +31,7 @@ data class TeamMemberCache(
     val account: TeamMemberAccountCache,
     val level: TeamMemberLevelCache,
     val points: Long,
-    val rank: Long
+    val rank: Long,
 )
 
 @Serializable
@@ -40,7 +40,7 @@ data class TeamMemberAccountCache(
     val role: String,
     val username: String,
     val avatarUrl: String,
-    val createdAt: String
+    val createdAt: String,
 )
 
 @Serializable

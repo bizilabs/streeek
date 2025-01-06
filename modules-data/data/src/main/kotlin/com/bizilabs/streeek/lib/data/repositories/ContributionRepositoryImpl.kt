@@ -30,7 +30,6 @@ class ContributionRepositoryImpl(
     private val local: ContributionsLocalSource,
     private val accountLocalSource: AccountLocalSource,
 ) : ContributionRepository {
-
     override val contributions: Flow<List<ContributionDomain>>
         get() = local.contributions.mapLatest { list -> list.map { it.toDomain() } }
 
@@ -65,8 +64,10 @@ class ContributionRepositoryImpl(
     }
 
     override suspend fun getContributionWithGithubEventId(githubEventId: String): DataResult<ContributionDomain?> {
-        return when (val result =
-            remote.fetchContributionWithGithubEventId(githubEventId = githubEventId)) {
+        return when (
+            val result =
+                remote.fetchContributionWithGithubEventId(githubEventId = githubEventId)
+        ) {
             is NetworkResult.Failure -> DataResult.Error(result.exception.localizedMessage)
             is NetworkResult.Success -> DataResult.Success(data = result.data?.toDomain())
         }
@@ -80,8 +81,10 @@ class ContributionRepositoryImpl(
     }
 
     override suspend fun getContributions(page: Int): DataResult<List<ContributionDomain>> {
-        return when (val result =
-            remote.fetchContributions(accountId = getAccountId(), page = page)) {
+        return when (
+            val result =
+                remote.fetchContributions(accountId = getAccountId(), page = page)
+        ) {
             is NetworkResult.Failure -> DataResult.Error(result.exception.localizedMessage)
             is NetworkResult.Success -> DataResult.Success(data = result.data.map { it.toDomain() })
         }
@@ -96,7 +99,7 @@ class ContributionRepositoryImpl(
             githubEventRepo = repo.toDTO().asJson(),
             githubEventActor = actor.toDTO().asJson(),
             githubEventPayload = payload.toDTO().asJson(),
-            points = payload.getPoints(account = account)
+            points = payload.getPoints(account = account),
         )
 
     override fun getLocalContributionsByDate(date: LocalDate): Flow<List<ContributionDomain>> {
@@ -141,8 +144,10 @@ class ContributionRepositoryImpl(
     }
 
     override suspend fun saveContributionLocally(contributions: List<ContributionDomain>): DataResult<Boolean> {
-        return when (val result =
-            local.create(contributions = contributions.map { it.toCache() })) {
+        return when (
+            val result =
+                local.create(contributions = contributions.map { it.toCache() })
+        ) {
             is LocalResult.Error -> DataResult.Error(result.message)
             is LocalResult.Success -> DataResult.Success(data = result.data)
         }
@@ -165,11 +170,12 @@ class ContributionRepositoryImpl(
     }
 
     override suspend fun updateContributionLocally(contributions: List<ContributionDomain>): DataResult<Boolean> {
-        return when (val result =
-            local.update(contributions = contributions.map { it.toCache() })) {
+        return when (
+            val result =
+                local.update(contributions = contributions.map { it.toCache() })
+        ) {
             is LocalResult.Error -> DataResult.Error(result.message)
             is LocalResult.Success -> DataResult.Success(data = result.data)
         }
     }
-
 }

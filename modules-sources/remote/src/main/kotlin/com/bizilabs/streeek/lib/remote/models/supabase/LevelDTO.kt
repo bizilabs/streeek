@@ -16,7 +16,7 @@ data class LevelDTO(
     @SerialName("min_points")
     val minPoints: Long,
     @SerialName("created_at")
-    val createdAt: String
+    val createdAt: String,
 )
 
 @Serializable
@@ -24,5 +24,5 @@ data class GetLevelRequestDTO(
     @SerialName("p_page")
     val page: Int,
     @SerialName("p_page_size")
-    val size: Int = PAGE_SIZE
+    val size: Int = PAGE_SIZE,
 )

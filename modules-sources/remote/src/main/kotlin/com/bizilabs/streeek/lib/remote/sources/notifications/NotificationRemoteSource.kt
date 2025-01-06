@@ -13,22 +13,28 @@ import io.github.jan.supabase.postgrest.postgrest
 import io.github.jan.supabase.postgrest.query.Order
 
 interface NotificationRemoteSource {
-    suspend fun fetchNotifications(accountId: Long, page: Int): NetworkResult<List<NotificationDTO>>
+    suspend fun fetchNotifications(
+        accountId: Long,
+        page: Int,
+    ): NetworkResult<List<NotificationDTO>>
+
     suspend fun create(request: NotificationCreateDTO): NetworkResult<NotificationDTO>
+
     suspend fun update(notification: NotificationDTO): NetworkResult<NotificationDTO>
+
     suspend fun delete(notification: NotificationDTO): NetworkResult<Boolean>
 }
 
 internal class NotificationRemoteSourceImpl(
-    private val supabase: SupabaseClient
+    private val supabase: SupabaseClient,
 ) : NotificationRemoteSource {
     override suspend fun fetchNotifications(
         accountId: Long,
-        page: Int
+        page: Int,
     ): NetworkResult<List<NotificationDTO>> =
         safeSupabaseCall {
             supabase
-                .from(Supabase.Tables.Notifications)
+                .from(Supabase.Tables.NOTIFICATIONS)
                 .select {
                     filter { NotificationDTO::accountId eq accountId }
                     order(column = NotificationDTO.Columns.CreatedAt, order = Order.DESCENDING)
@@ -41,8 +47,8 @@ internal class NotificationRemoteSourceImpl(
         safeSupabaseCall {
             supabase.postgrest
                 .rpc(
-                    function = Supabase.Functions.Notifications.Create,
-                    parameters = request.asJsonObject()
+                    function = Supabase.Functions.Notifications.CREATE,
+                    parameters = request.asJsonObject(),
                 )
                 .decodeAs()
         }
@@ -50,14 +56,14 @@ internal class NotificationRemoteSourceImpl(
     override suspend fun update(notification: NotificationDTO): NetworkResult<NotificationDTO> =
         safeSupabaseCall {
             supabase
-                .from(Supabase.Tables.Notifications)
+                .from(Supabase.Tables.NOTIFICATIONS)
                 .update(
                     {
                         NotificationDTO::title setTo notification.title
                         NotificationDTO::message setTo notification.message
                         NotificationDTO::payload setTo notification.payload
                         NotificationDTO::readAt setTo notification.readAt
-                    }
+                    },
                 ) {
                     select()
                     filter {
@@ -69,7 +75,7 @@ internal class NotificationRemoteSourceImpl(
     override suspend fun delete(notification: NotificationDTO): NetworkResult<Boolean> =
         safeSupabaseCall {
             supabase
-                .from(Supabase.Tables.Notifications)
+                .from(Supabase.Tables.NOTIFICATIONS)
                 .delete {
                     filter {
                         NotificationDTO::id eq notification.id

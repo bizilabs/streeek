@@ -60,22 +60,22 @@ import com.bizilabs.streeek.lib.domain.models.TeamWithMembersDomain
 import com.bizilabs.streeek.lib.domain.models.team.TeamInvitationDomain
 import com.bizilabs.streeek.lib.resources.strings.SafiStrings
 
-val screenTeam = screenModule {
-    register<SharedScreen.Team> { parameters ->
-        TeamScreen(
-            parameters.isJoining,
-            parameters.teamId
-        )
+val screenTeam =
+    screenModule {
+        register<SharedScreen.Team> { parameters ->
+            TeamScreen(
+                parameters.isJoining,
+                parameters.teamId,
+            )
+        }
     }
-}
 
 class TeamScreen(
     val isJoining: Boolean,
-    val teamId: Long?
+    val teamId: Long?,
 ) : Screen {
     @Composable
     override fun Content() {
-
         val navigator = LocalNavigator.current
         val screenModel: TeamScreenModel = getScreenModel()
         screenModel.setNavigationVariables(isJoining = isJoining, teamId = teamId)
@@ -98,7 +98,7 @@ class TeamScreen(
             onClickActionCancel = screenModel::onClickManageCancelAction,
             onClickActionDelete = screenModel::onClickManageDeleteAction,
             onValueChangeTeamCode = screenModel::onValueChangeTeamCode,
-            onClickJoin = screenModel::onClickJoin
+            onClickJoin = screenModel::onClickJoin,
         )
     }
 }
@@ -124,27 +124,27 @@ fun TeamScreenContent(
     onValueChangeTeamCode: (String) -> Unit,
     onClickJoin: () -> Unit,
 ) {
-
     val activity = LocalContext.current as Activity
 
-    if (state.isOpen)
+    if (state.isOpen) {
         SafiBottomSheetPicker(
             title = stringResource(SafiStrings.SelectTeamVisibility),
             selected = state.value,
             list = state.visibilityOptions,
             onDismiss = { onValueChangePublicDropdown(false) },
             onItemSelected = { onValueChangePublic(it) },
-            name = { it.replaceFirstChar { it.uppercase() } }
+            name = { it.replaceFirstChar { it.uppercase() } },
         )
+    }
 
-
-    if (state.dialogState != null)
+    if (state.dialogState != null) {
         SafiBottomDialog(
             state = state.dialogState,
-            onClickDismiss = onClickDismissDialog
+            onClickDismiss = onClickDismissDialog,
         )
+    }
 
-    if (state.isInvitationsOpen)
+    if (state.isInvitationsOpen) {
         TeamInvitationBottomSheet(
             activity = activity,
             state = state,
@@ -152,34 +152,37 @@ fun TeamScreenContent(
             onClickInvitationGet = onClickInvitationGet,
             onClickInvitationRetry = onClickInvitationRetry,
             onClickInvitationCreate = onClickInvitationCreate,
-            onSwipeInvitationDelete = onSwipeInvitationDelete
+            onSwipeInvitationDelete = onSwipeInvitationDelete,
         )
+    }
 
     Scaffold(
         topBar = {
             TeamScreenHeaderComponent(
                 onClickBack = onClickBack,
                 state = state,
-                onClickMenuAction = onClickMenuAction
+                onClickMenuAction = onClickMenuAction,
             )
-        }
+        },
     ) { innerPadding ->
         AnimatedContent(
-            modifier = Modifier
-                .padding(innerPadding)
-                .fillMaxSize(),
+            modifier =
+                Modifier
+                    .padding(innerPadding)
+                    .fillMaxSize(),
             targetState = state.isJoining,
             label = "animate team joining",
         ) { joining ->
             when {
                 joining -> {
                     TeamJoiningSection(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(16.dp),
+                        modifier =
+                            Modifier
+                                .fillMaxSize()
+                                .padding(16.dp),
                         state = state,
                         onValueChangeTeamCode = onValueChangeTeamCode,
-                        onClickJoin = onClickJoin
+                        onClickJoin = onClickJoin,
                     )
                 }
 
@@ -187,7 +190,7 @@ fun TeamScreenContent(
                     AnimatedContent(
                         modifier = Modifier.fillMaxSize(),
                         targetState = state.isManagingTeam,
-                        label = ""
+                        label = "",
                     ) { isManaging ->
                         when (isManaging) {
                             true -> {
@@ -197,7 +200,7 @@ fun TeamScreenContent(
                                     onValueChangePublicDropdown = onValueChangePublicDropdown,
                                     onClickAction = onClickManageAction,
                                     onClickActionDelete = onClickActionDelete,
-                                    onClickActionCancel = onClickActionCancel
+                                    onClickActionCancel = onClickActionCancel,
                                 )
                             }
 
@@ -217,14 +220,14 @@ fun TeamScreenContent(
 private fun TeamScreenHeaderComponent(
     state: TeamScreenState,
     onClickBack: () -> Unit,
-    onClickMenuAction: (TeamMenuAction) -> Unit
+    onClickMenuAction: (TeamMenuAction) -> Unit,
 ) {
     TopAppBar(
         navigationIcon = {
             IconButton(onClick = onClickBack) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
-                    contentDescription = "Back"
+                    contentDescription = "Back",
                 )
             }
         },
@@ -233,7 +236,7 @@ private fun TeamScreenHeaderComponent(
             AnimatedContent(
                 modifier = Modifier.fillMaxWidth(),
                 targetState = state.isManagingTeam,
-                label = "animate_team_title"
+                label = "animate_team_title",
             ) { isManaging ->
                 when {
                     state.isJoining -> {
@@ -247,21 +250,22 @@ private fun TeamScreenHeaderComponent(
                     else -> {
                         if (team is FetchState.Success) {
                             Column(
-                                modifier = Modifier.fillMaxWidth()
+                                modifier = Modifier.fillMaxWidth(),
                             ) {
                                 Text(
                                     text = team.value.team.name,
                                     style = MaterialTheme.typography.titleLarge,
-                                    fontWeight = FontWeight.Bold
+                                    fontWeight = FontWeight.Bold,
                                 )
                                 val count = team.value.team.count
                                 Text(
-                                    text = buildString {
-                                        append(count)
-                                        append(" Member")
-                                        append(if (count > 1) "s" else "")
-                                    },
-                                    style = MaterialTheme.typography.labelMedium
+                                    text =
+                                        buildString {
+                                            append(count)
+                                            append(" Member")
+                                            append(if (count > 1) "s" else "")
+                                        },
+                                    style = MaterialTheme.typography.labelMedium,
                                 )
                             }
                         }
@@ -270,15 +274,14 @@ private fun TeamScreenHeaderComponent(
             }
         },
         actions = {
-
             var expanded by remember { mutableStateOf(false) }
 
             AnimatedVisibility(
-                visible = state.fetchState is FetchState.Success
+                visible = state.fetchState is FetchState.Success,
             ) {
-                if (state.fetchState is FetchState.Success)
+                if (state.fetchState is FetchState.Success) {
                     Box(
-                        modifier = Modifier
+                        modifier = Modifier,
                     ) {
                         IconButton(onClick = { expanded = !expanded }) {
                             Icon(Icons.Default.MoreVert, contentDescription = "More options")
@@ -286,7 +289,7 @@ private fun TeamScreenHeaderComponent(
                         DropdownMenu(
                             modifier = Modifier.defaultMinSize(minWidth = 150.dp),
                             expanded = expanded,
-                            onDismissRequest = { expanded = false }
+                            onDismissRequest = { expanded = false },
                         ) {
                             TeamMenuAction
                                 .get(role = state.fetchState.value.details.role)
@@ -297,32 +300,32 @@ private fun TeamScreenHeaderComponent(
                                         leadingIcon = {
                                             Icon(
                                                 imageVector = menu.icon,
-                                                contentDescription = null
+                                                contentDescription = null,
                                             )
                                         },
                                         onClick = {
                                             expanded = false
                                             onClickMenuAction(menu)
-                                        }
+                                        },
                                     )
                                 }
                         }
                     }
+                }
             }
-
-        }
+        },
     )
 }
 
 @Composable
 fun ViewTeamSection(state: FetchState<TeamWithMembersDomain>) {
     Column(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize(),
     ) {
         AnimatedContent(
             modifier = Modifier.fillMaxSize(),
             targetState = state,
-            label = ""
+            label = "",
         ) { result ->
             when (result) {
                 FetchState.Loading -> {
@@ -336,7 +339,7 @@ fun ViewTeamSection(state: FetchState<TeamWithMembersDomain>) {
                         SafiInfoSection(
                             icon = Icons.Rounded.People,
                             title = "Error",
-                            description = result.message
+                            description = result.message,
                         )
                     }
                 }
@@ -362,16 +365,17 @@ fun ManageTeamSection(
     onValueChangePublicDropdown: (Boolean) -> Unit,
     onClickAction: () -> Unit,
     onClickActionDelete: () -> Unit,
-    onClickActionCancel: () -> Unit
+    onClickActionCancel: () -> Unit,
 ) {
     Column(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize(),
     ) {
         TextField(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 16.dp)
-                .padding(horizontal = 16.dp),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(top = 16.dp)
+                    .padding(horizontal = 16.dp),
             value = state.name,
             onValueChange = onValueChangeName,
             label = {
@@ -380,9 +384,10 @@ fun ManageTeamSection(
         )
         Spacer(modifier = Modifier.padding(8.dp))
         TextField(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
             value = state.value.replaceFirstChar { it.uppercase() },
             readOnly = true,
             onValueChange = onValueChangeName,
@@ -397,27 +402,30 @@ fun ManageTeamSection(
         )
 
         Button(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 16.dp)
-                .padding(horizontal = 16.dp),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(top = 16.dp)
+                    .padding(horizontal = 16.dp),
             onClick = onClickAction,
-            enabled = state.isActionEnabled
+            enabled = state.isActionEnabled,
         ) {
             Text(text = if (state.teamId == null) "Create" else "Update")
         }
 
         AnimatedVisibility(
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f),
-            visible = state.isEditing
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .weight(1f),
+            visible = state.isEditing,
         ) {
             Column(modifier = Modifier.padding(horizontal = 16.dp)) {
                 OutlinedButton(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 8.dp),
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(top = 8.dp),
                     onClick = onClickActionCancel,
                 ) {
                     Text(text = "Cancel")
@@ -426,18 +434,19 @@ fun ManageTeamSection(
                 Spacer(modifier = Modifier.weight(1f))
 
                 Button(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 16.dp),
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 16.dp),
                     onClick = onClickActionDelete,
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.error,
-                        contentColor = MaterialTheme.colorScheme.onError
-                    )
+                    colors =
+                        ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.error,
+                            contentColor = MaterialTheme.colorScheme.onError,
+                        ),
                 ) {
                     Text(text = "Delete")
                 }
-
             }
         }
     }

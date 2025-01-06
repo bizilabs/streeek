@@ -9,29 +9,32 @@ import com.bizilabs.streeek.lib.domain.models.LevelDomain
 import com.bizilabs.streeek.lib.local.models.LevelCache
 import com.bizilabs.streeek.lib.remote.models.supabase.LevelDTO
 
-fun LevelDTO.toDomain() = LevelDomain(
-    id = id,
-    name = name,
-    number = number,
-    maxPoints = maxPoints,
-    minPoints = minPoints,
-    createdAt = createdAt.asDate(format = DateFormats.ISO_8601)?.datetimeSystem ?: SystemLocalDateTime,
-)
+fun LevelDTO.toDomain() =
+    LevelDomain(
+        id = id,
+        name = name,
+        number = number,
+        maxPoints = maxPoints,
+        minPoints = minPoints,
+        createdAt = createdAt.asDate(format = DateFormats.ISO_8601)?.datetimeSystem ?: SystemLocalDateTime,
+    )
 
-fun LevelDomain.toCache() = LevelCache(
-    id = id,
-    name = name,
-    number = number,
-    maxPoints = maxPoints,
-    minPoints = minPoints,
-    createdAt = createdAt.asString(format = DateFormats.ISO_8601_Z) ?: "",
-)
+fun LevelDomain.toCache() =
+    LevelCache(
+        id = id,
+        name = name,
+        number = number,
+        maxPoints = maxPoints,
+        minPoints = minPoints,
+        createdAt = createdAt.asString(format = DateFormats.ISO_8601_Z) ?: "",
+    )
 
-fun LevelCache.toDomain() = LevelDomain(
-    id = id,
-    name = name,
-    number = number,
-    maxPoints = maxPoints,
-    minPoints = minPoints,
-    createdAt = createdAt.asDate(format = DateFormats.ISO_8601_Z)?.datetimeSystem ?: SystemLocalDateTime,
-)
+fun LevelCache.toDomain() =
+    LevelDomain(
+        id = id,
+        name = name,
+        number = number,
+        maxPoints = maxPoints,
+        minPoints = minPoints,
+        createdAt = createdAt.asDate(format = DateFormats.ISO_8601_Z)?.datetimeSystem ?: SystemLocalDateTime,
+    )

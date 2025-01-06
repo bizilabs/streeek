@@ -9,15 +9,17 @@ import com.bizilabs.streeek.lib.remote.sources.auth.AuthenticationRemoteSource
 import kotlinx.coroutines.flow.Flow
 
 class AuthenticationRepositoryImpl(
-    private val remote: AuthenticationRemoteSource
+    private val remote: AuthenticationRemoteSource,
 ) : AuthenticationRepository {
     override val authenticated: Flow<Boolean>
         get() = remote.authenticated
+
     override suspend fun getAuthenticationIntent(): Intent {
         return remote.getAuthenticationIntent()
     }
+
     override suspend fun getAuthenticationToken(uri: Uri): DataResult<String> {
-        return when(val result = remote.getAuthenticationToken(uri = uri)){
+        return when (val result = remote.getAuthenticationToken(uri = uri)) {
             is NetworkResult.Failure -> {
                 val message = result.exception.message ?: "Failed getting authentication token"
                 DataResult.Error(message = message)

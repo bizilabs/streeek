@@ -13,7 +13,10 @@ import androidx.compose.ui.unit.dp
 import com.bizilabs.streeek.lib.design.theme.SafiTheme
 
 @Composable
-fun SafiCircularProgressIndicator(modifier: Modifier = Modifier, size: Dp = 24.dp) {
+fun SafiCircularProgressIndicator(
+    modifier: Modifier = Modifier,
+    size: Dp = 24.dp,
+) {
     CircularProgressIndicator(modifier = modifier.size(size))
 }
 

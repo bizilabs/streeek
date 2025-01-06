@@ -26,13 +26,17 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.koin.dsl.module
 
-val FeatureTeamModule = module {
-    factory { TeamScreenModel(teamRepository = get(), teamInvitationRepository = get()) }
-}
+val FeatureTeamModule =
+    module {
+        factory { TeamScreenModel(teamRepository = get(), teamInvitationRepository = get()) }
+    }
 
 enum class TeamMenuAction {
-
-    EDIT, DELETE, INVITE, LEAVE;
+    EDIT,
+    DELETE,
+    INVITE,
+    LEAVE,
+    ;
 
     companion object {
         fun get(role: TeamMemberRole): List<TeamMenuAction> {
@@ -44,21 +48,22 @@ enum class TeamMenuAction {
     }
 
     val label: String
-        get() = when (this) {
-            EDIT -> "Edit"
-            DELETE -> "Delete"
-            INVITE -> "Invite"
-            LEAVE -> "Leave"
-        }
+        get() =
+            when (this) {
+                EDIT -> "Edit"
+                DELETE -> "Delete"
+                INVITE -> "Invite"
+                LEAVE -> "Leave"
+            }
 
     val icon: ImageVector
-        get() = when (this) {
-            EDIT -> Icons.Rounded.Edit
-            DELETE -> Icons.Rounded.Delete
-            INVITE -> Icons.Rounded.People
-            LEAVE -> Icons.AutoMirrored.Rounded.ExitToApp
-        }
-
+        get() =
+            when (this) {
+                EDIT -> Icons.Rounded.Edit
+                DELETE -> Icons.Rounded.Delete
+                INVITE -> Icons.Rounded.People
+                LEAVE -> Icons.AutoMirrored.Rounded.ExitToApp
+            }
 }
 
 data class TeamScreenState(
@@ -88,33 +93,37 @@ data class TeamScreenState(
         get() = value.equals("public", true)
 
     val isActionEnabled: Boolean
-        get() = if (fetchState is FetchState.Success) {
-            val team = fetchState.value.team
-            name.isNotBlank() && (!team.name.equals(
-                name,
-                ignoreCase = false
-            ) || team.public != isPublic)
-        } else {
-            name.isNotBlank() && value.isNotBlank()
-        }
+        get() =
+            if (fetchState is FetchState.Success) {
+                val team = fetchState.value.team
+                name.isNotBlank() && (
+                    !team.name.equals(
+                        name,
+                        ignoreCase = false,
+                    ) || team.public != isPublic
+                )
+            } else {
+                name.isNotBlank() && value.isNotBlank()
+            }
 
     val isJoinActionEnabled: Boolean
         get() = token.length == 6 && dialogState == null
-
 }
 
 class TeamScreenModel(
     private val teamRepository: TeamRepository,
-    private val teamInvitationRepository: TeamInvitationRepository
+    private val teamInvitationRepository: TeamInvitationRepository,
 ) : StateScreenModel<TeamScreenState>(TeamScreenState()) {
-
-    fun setNavigationVariables(isJoining: Boolean, teamId: Long?) {
+    fun setNavigationVariables(
+        isJoining: Boolean,
+        teamId: Long?,
+    ) {
         if (state.value.hasAlreadyUpdatedNavVariables) return
         mutableState.update {
             it.copy(
                 isJoining = isJoining,
                 teamId = teamId,
-                hasAlreadyUpdatedNavVariables = true
+                hasAlreadyUpdatedNavVariables = true,
             )
         }
         teamId?.let { getTeam(id = it) }
@@ -124,18 +133,22 @@ class TeamScreenModel(
         mutableState.update { it.copy(dialogState = null) }
     }
 
-    private fun getTeam(id: Long, shouldSaveTeam: Boolean = false) {
+    private fun getTeam(
+        id: Long,
+        shouldSaveTeam: Boolean = false,
+    ) {
         screenModelScope.launch {
-            val update = when (val result = teamRepository.getTeam(id = id, page = 1)) {
-                is DataResult.Error -> FetchState.Error(result.message)
-                is DataResult.Success -> {
-                    val team = result.data.team
-                    onValueChangeName(name = team.name)
-                    onValueChangePublic(value = if (team.public) "public" else "private")
-                    if (shouldSaveTeam) saveTeam(team = result.data)
-                    FetchState.Success(result.data)
+            val update =
+                when (val result = teamRepository.getTeam(id = id, page = 1)) {
+                    is DataResult.Error -> FetchState.Error(result.message)
+                    is DataResult.Success -> {
+                        val team = result.data.team
+                        onValueChangeName(name = team.name)
+                        onValueChangePublic(value = if (team.public) "public" else "private")
+                        if (shouldSaveTeam) saveTeam(team = result.data)
+                        FetchState.Success(result.data)
+                    }
                 }
-            }
             mutableState.update { it.copy(fetchState = update) }
         }
     }
@@ -152,17 +165,18 @@ class TeamScreenModel(
         val public = value.isPublic
         mutableState.update { it.copy(dialogState = DialogState.Loading()) }
         screenModelScope.launch {
-            val update = when (val result = teamRepository.createTeam(name, public)) {
-                is DataResult.Error -> DialogState.Error(title = "Error", message = result.message)
-                is DataResult.Success -> {
-                    val teamId = result.data
-                    getTeam(id = teamId, shouldSaveTeam = true)
-                    DialogState.Success(
-                        title = "Success",
-                        message = "Created team successfully"
-                    )
+            val update =
+                when (val result = teamRepository.createTeam(name, public)) {
+                    is DataResult.Error -> DialogState.Error(title = "Error", message = result.message)
+                    is DataResult.Success -> {
+                        val teamId = result.data
+                        getTeam(id = teamId, shouldSaveTeam = true)
+                        DialogState.Success(
+                            title = "Success",
+                            message = "Created team successfully",
+                        )
+                    }
                 }
-            }
             mutableState.update { it.copy(dialogState = update) }
         }
     }
@@ -174,16 +188,17 @@ class TeamScreenModel(
         val public = value.isPublic
         mutableState.update { it.copy(dialogState = DialogState.Loading()) }
         screenModelScope.launch {
-            val update = when (val result = teamRepository.updateTeam(teamId, name, public)) {
-                is DataResult.Error -> DialogState.Error(title = "Error", message = result.message)
-                is DataResult.Success -> {
-                    getTeam(id = teamId)
-                    DialogState.Success(
-                        title = "Success",
-                        message = "Updated team successfully"
-                    )
+            val update =
+                when (val result = teamRepository.updateTeam(teamId, name, public)) {
+                    is DataResult.Error -> DialogState.Error(title = "Error", message = result.message)
+                    is DataResult.Success -> {
+                        getTeam(id = teamId)
+                        DialogState.Success(
+                            title = "Success",
+                            message = "Updated team successfully",
+                        )
+                    }
                 }
-            }
             mutableState.update { it.copy(dialogState = update) }
         }
     }
@@ -197,10 +212,11 @@ class TeamScreenModel(
                 is DataResult.Error -> {
                     mutableState.update {
                         it.copy(
-                            dialogState = DialogState.Error(
-                                title = "Error",
-                                message = result.message
-                            )
+                            dialogState =
+                                DialogState.Error(
+                                    title = "Error",
+                                    message = result.message,
+                                ),
                         )
                     }
                 }
@@ -210,10 +226,11 @@ class TeamScreenModel(
                         it.copy(
                             isJoining = false,
                             teamId = result.data.teamId,
-                            dialogState = DialogState.Success(
-                                title = "Success",
-                                message = "Joined team successfully as a ${result.data.role}"
-                            )
+                            dialogState =
+                                DialogState.Success(
+                                    title = "Success",
+                                    message = "Joined team successfully as a ${result.data.role}",
+                                ),
                         )
                     }
                     getTeam(id = result.data.teamId, shouldSaveTeam = true)
@@ -232,10 +249,11 @@ class TeamScreenModel(
                 is DataResult.Error -> {
                     mutableState.update {
                         it.copy(
-                            dialogState = DialogState.Error(
-                                title = "Error",
-                                message = result.message
-                            )
+                            dialogState =
+                                DialogState.Error(
+                                    title = "Error",
+                                    message = result.message,
+                                ),
                         )
                     }
                 }
@@ -243,10 +261,11 @@ class TeamScreenModel(
                 is DataResult.Success -> {
                     mutableState.update {
                         it.copy(
-                            dialogState = DialogState.Success(
-                                title = "Success",
-                                message = "Left team successfully. \nHope you come back soon!"
-                            )
+                            dialogState =
+                                DialogState.Success(
+                                    title = "Success",
+                                    message = "Left team successfully. \nHope you come back soon!",
+                                ),
                         )
                     }
                     delay(2000)
@@ -256,24 +275,29 @@ class TeamScreenModel(
         }
     }
 
-    //<editor-fold desc="team invitations">
+    // <editor-fold desc="team invitations">
     private fun createInvitationCode() {
         val teamId = state.value.teamId ?: return
         screenModelScope.launch {
-            if (state.value.invitationsState !is FetchListState.Success)
+            if (state.value.invitationsState !is FetchListState.Success) {
                 mutableState.update { it.copy(invitationsState = FetchListState.Loading) }
-            mutableState.update { it.copy(createInvitationState = FetchState.Loading) }
-            val update = when (val result = teamInvitationRepository.createInvitation(
-                teamId = teamId,
-                duration = 86400
-            )) {
-                is DataResult.Error -> {
-                    mutableState.update { it.copy(invitationsState = FetchListState.Error(message = result.message)) }
-                    FetchState.Error(result.message)
-                }
-
-                is DataResult.Success -> FetchState.Success(result.data)
             }
+            mutableState.update { it.copy(createInvitationState = FetchState.Loading) }
+            val update =
+                when (
+                    val result =
+                        teamInvitationRepository.createInvitation(
+                            teamId = teamId,
+                            duration = 86400,
+                        )
+                ) {
+                    is DataResult.Error -> {
+                        mutableState.update { it.copy(invitationsState = FetchListState.Error(message = result.message)) }
+                        FetchState.Error(result.message)
+                    }
+
+                    is DataResult.Success -> FetchState.Success(result.data)
+                }
             mutableState.update { it.copy(createInvitationState = update) }
             if (update is FetchState.Success) getInvitations()
             delay(5000)
@@ -284,25 +308,27 @@ class TeamScreenModel(
     private fun getInvitations() {
         val teamId = state.value.teamId ?: return
         screenModelScope.launch {
-            if (state.value.invitationsState is FetchListState.Success)
+            if (state.value.invitationsState is FetchListState.Success) {
                 mutableState.update { it.copy(isLoadingInvitationsPartially = true) }
-            else
+            } else {
                 mutableState.update { it.copy(invitationsState = FetchListState.Loading) }
+            }
             val update =
                 when (val result = teamInvitationRepository.getInvitations(teamId = teamId)) {
                     is DataResult.Error -> FetchListState.Error(result.message)
                     is DataResult.Success -> {
                         val list = result.data
-                        if (list.isEmpty())
+                        if (list.isEmpty()) {
                             FetchListState.Empty
-                        else
+                        } else {
                             FetchListState.Success(list = list)
+                        }
                     }
                 }
             mutableState.update {
                 it.copy(
                     invitationsState = update,
-                    isLoadingInvitationsPartially = false
+                    isLoadingInvitationsPartially = false,
                 )
             }
         }
@@ -317,10 +343,11 @@ class TeamScreenModel(
     }
 
     fun onClickInvitationRetry() {
-        if (state.value.invitationsState is FetchListState.Empty)
+        if (state.value.invitationsState is FetchListState.Empty) {
             createInvitationCode()
-        else
+        } else {
             getInvitations()
+        }
     }
 
     fun onClickInvitationCreate() {
@@ -340,9 +367,9 @@ class TeamScreenModel(
         }
     }
 
-    //</editor-fold>
+    // </editor-fold>
 
-    //<editor-fold desc="actions">
+    // <editor-fold desc="actions">
     fun onClickMenuAction(menu: TeamMenuAction) {
         when (menu) {
             TeamMenuAction.EDIT -> {
@@ -379,10 +406,11 @@ class TeamScreenModel(
     }
 
     fun onClickManageAction() {
-        if (state.value.teamId != null)
+        if (state.value.teamId != null) {
             updateTeam()
-        else
+        } else {
             createTeam()
+        }
     }
 
     fun onClickManageCancelAction() {
@@ -401,6 +429,5 @@ class TeamScreenModel(
         joinTeam()
     }
 
-    //</editor-fold>
-
+    // </editor-fold>
 }

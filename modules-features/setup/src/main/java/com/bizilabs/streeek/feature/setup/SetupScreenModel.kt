@@ -15,7 +15,7 @@ import kotlinx.coroutines.launch
 
 data class SetupScreenState(
     val userState: FetchState<UserDomain> = FetchState.Loading,
-    val accountState: FetchState<AccountDomain> = FetchState.Loading
+    val accountState: FetchState<AccountDomain> = FetchState.Loading,
 )
 
 class SetupScreenModel(
@@ -23,7 +23,6 @@ class SetupScreenModel(
     private val userRepository: UserRepository,
     private val accountRepository: AccountRepository,
 ) : StateScreenModel<SetupScreenState>(SetupScreenState()) {
-
     init {
         getUser()
     }
@@ -31,10 +30,11 @@ class SetupScreenModel(
     private fun getUser() {
         screenModelScope.launch {
             mutableState.update { it.copy(userState = FetchState.Loading) }
-            val update = when (val result = userRepository.getUser()) {
-                is DataResult.Error -> FetchState.Error(message = result.message)
-                is DataResult.Success -> FetchState.Success(value = result.data)
-            }
+            val update =
+                when (val result = userRepository.getUser()) {
+                    is DataResult.Error -> FetchState.Error(message = result.message)
+                    is DataResult.Success -> FetchState.Success(value = result.data)
+                }
             mutableState.update { it.copy(userState = update) }
             if (update is FetchState.Success) getAccount()
         }
@@ -51,34 +51,37 @@ class SetupScreenModel(
 
                 is DataResult.Success -> {
                     val account = result.data
-                    if (account == null)
+                    if (account == null) {
                         createAccount(user = user)
-                    else {
+                    } else {
                         syncContributions()
                         mutableState.update { it.copy(accountState = FetchState.Success(value = account)) }
                     }
                 }
             }
-
         }
     }
 
     private fun createAccount(user: UserDomain) {
         screenModelScope.launch {
             mutableState.update { it.copy(accountState = FetchState.Loading) }
-            val update = when (val result = accountRepository.createAccount(
-                githubId = user.id,
-                username = user.name,
-                email = user.email,
-                bio = user.bio,
-                avatarUrl = user.url
-            )) {
-                is DataResult.Error -> FetchState.Error(message = result.message)
-                is DataResult.Success -> {
-                    syncContributions()
-                    FetchState.Success(value = result.data)
+            val update =
+                when (
+                    val result =
+                        accountRepository.createAccount(
+                            githubId = user.id,
+                            username = user.name,
+                            email = user.email,
+                            bio = user.bio,
+                            avatarUrl = user.url,
+                        )
+                ) {
+                    is DataResult.Error -> FetchState.Error(message = result.message)
+                    is DataResult.Success -> {
+                        syncContributions()
+                        FetchState.Success(value = result.data)
+                    }
                 }
-            }
             mutableState.update { it.copy(accountState = update) }
         }
     }
@@ -91,8 +94,7 @@ class SetupScreenModel(
         getUser()
     }
 
-    fun onClickGetAccountRetry(){
+    fun onClickGetAccountRetry() {
         getAccount()
     }
-
 }

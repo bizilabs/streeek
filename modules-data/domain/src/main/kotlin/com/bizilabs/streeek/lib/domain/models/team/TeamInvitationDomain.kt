@@ -8,15 +8,15 @@ data class TeamInvitationDomain(
     val code: String,
     val createdAt: LocalDateTime,
     val expiresAt: LocalDateTime,
-    val creatorId: Long
+    val creatorId: Long,
 )
 
 data class CreateTeamInvitationDomain(
     val code: String,
-    val expiresAt: LocalDateTime
+    val expiresAt: LocalDateTime,
 )
 
 data class JoinTeamInvitationDomain(
     val teamId: Long,
-    val role: TeamMemberRole
+    val role: TeamMemberRole,
 )

@@ -12,7 +12,6 @@ import com.bizilabs.streeek.feature.team.screenTeam
 import com.bizilabs.streeek.lib.presentation.helpers.initTimber
 
 abstract class MainApplication : Application() {
-
     override fun onCreate() {
         super.onCreate()
         initTimber()
@@ -30,5 +29,4 @@ abstract class MainApplication : Application() {
             screenNotifications()
         }
     }
-
 }

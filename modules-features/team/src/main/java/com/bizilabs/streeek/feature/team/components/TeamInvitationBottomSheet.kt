@@ -42,7 +42,6 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -72,7 +71,7 @@ fun TeamInvitationBottomSheet(
     onClickInvitationCreate: () -> Unit,
     onClickInvitationRetry: () -> Unit,
     onSwipeInvitationDelete: (TeamInvitationDomain) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val scope = rememberCoroutineScope()
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
@@ -83,7 +82,7 @@ fun TeamInvitationBottomSheet(
         onDismissRequest = {
             scope.launch { if (sheetState.isVisible) sheetState.hide() }
             onDismissSheet()
-        }
+        },
     ) {
         Scaffold(
             modifier = Modifier.fillMaxSize(),
@@ -93,7 +92,7 @@ fun TeamInvitationBottomSheet(
                         IconButton(onClick = onDismissSheet) {
                             Icon(
                                 imageVector = Icons.Rounded.Close,
-                                contentDescription = "close invitations sheet"
+                                contentDescription = "close invitations sheet",
                             )
                         }
                     },
@@ -105,21 +104,21 @@ fun TeamInvitationBottomSheet(
                             IconButton(onClick = onClickInvitationGet) {
                                 Icon(
                                     imageVector = Icons.Rounded.Refresh,
-                                    contentDescription = "refresh invitations list"
+                                    contentDescription = "refresh invitations list",
                                 )
                             }
                         }
-
-                    }
+                    },
                 )
-            }
+            },
         ) { innerPadding ->
             AnimatedContent(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(innerPadding),
+                modifier =
+                    Modifier
+                        .fillMaxSize()
+                        .padding(innerPadding),
                 targetState = state.invitationsState,
-                label = "animated_invitations"
+                label = "animated_invitations",
             ) { result ->
                 when (result) {
                     FetchListState.Empty -> {
@@ -132,7 +131,7 @@ fun TeamInvitationBottomSheet(
                                     Button(onClick = onClickInvitationCreate) {
                                         Text(text = "Generate")
                                     }
-                                }
+                                },
                             )
                         }
                     }
@@ -153,7 +152,7 @@ fun TeamInvitationBottomSheet(
                                     Button(onClick = onClickInvitationRetry) {
                                         Text(text = "Retry")
                                     }
-                                }
+                                },
                             )
                         }
                     }
@@ -164,7 +163,7 @@ fun TeamInvitationBottomSheet(
                             state = state,
                             result = result,
                             onSwipeInvitationDelete = onSwipeInvitationDelete,
-                            onClickInvitationCreate = onClickInvitationCreate
+                            onClickInvitationCreate = onClickInvitationCreate,
                         )
                     }
                 }
@@ -179,22 +178,22 @@ private fun TeamInvitationsSection(
     state: TeamScreenState,
     result: FetchListState.Success<TeamInvitationDomain>,
     onSwipeInvitationDelete: (TeamInvitationDomain) -> Unit,
-    onClickInvitationCreate: () -> Unit
+    onClickInvitationCreate: () -> Unit,
 ) {
-
     val team = (state.fetchState as? FetchState.Success)?.value?.team
 
     Column(modifier = Modifier.fillMaxSize()) {
         AnimatedVisibility(
             modifier = Modifier.fillMaxWidth(),
-            visible = state.isLoadingInvitationsPartially
+            visible = state.isLoadingInvitationsPartially,
         ) {
             LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
         }
         LazyColumn(
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f)
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .weight(1f),
         ) {
             items(result.list) { invite ->
                 TeamInviteCardComponent(
@@ -208,19 +207,21 @@ private fun TeamInvitationsSection(
         }
         Column(modifier = Modifier.fillMaxWidth()) {
             AnimatedContent(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
                 targetState = state.createInvitationState,
-                label = "animate create invitation"
+                label = "animate create invitation",
             ) { result ->
                 when (result) {
                     FetchState.Loading -> {
                         SafiCenteredRow(modifier = Modifier.fillMaxWidth()) {
                             CircularProgressIndicator(
-                                modifier = Modifier
-                                    .size(48.dp)
-                                    .padding(16.dp)
+                                modifier =
+                                    Modifier
+                                        .size(48.dp)
+                                        .padding(16.dp),
                             )
                         }
                     }
@@ -229,7 +230,7 @@ private fun TeamInvitationsSection(
                         InfoCardComponent(
                             modifier = Modifier.fillMaxWidth(),
                             title = "Invite Code Error",
-                            message = result.message
+                            message = result.message,
                         ) {
                             Button(onClick = onClickInvitationCreate) {
                                 Text(text = "Retry")
@@ -242,20 +243,22 @@ private fun TeamInvitationsSection(
                             modifier = Modifier.fillMaxWidth(),
                             title = "Invite Code Success",
                             message = "Invite code created successfully",
-                            colors = CardDefaults.cardColors(
-                                containerColor = MaterialTheme.colorScheme.success,
-                                contentColor = MaterialTheme.colorScheme.onSuccess
-                            )
+                            colors =
+                                CardDefaults.cardColors(
+                                    containerColor = MaterialTheme.colorScheme.success,
+                                    contentColor = MaterialTheme.colorScheme.onSuccess,
+                                ),
                         ) {
                         }
                     }
 
                     null -> {
                         Button(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(16.dp),
-                            onClick = onClickInvitationCreate
+                            modifier =
+                                Modifier
+                                    .fillMaxWidth()
+                                    .padding(16.dp),
+                            onClick = onClickInvitationCreate,
                         ) {
                             Text(text = "Generate")
                         }
@@ -273,62 +276,65 @@ fun TeamInviteCardComponent(
     onSwipeInvitationDelete: () -> Unit,
     onClickShare: () -> Unit,
 ) {
-
-    val delete = SwipeAction(
-        icon = {
-            Icon(
-                imageVector = Icons.Filled.Delete,
-                contentDescription = "delete invitation",
-                tint = MaterialTheme.colorScheme.error
-            )
-        },
-        background = MaterialTheme.colorScheme.background,
-        onSwipe = onSwipeInvitationDelete
-    )
+    val delete =
+        SwipeAction(
+            icon = {
+                Icon(
+                    imageVector = Icons.Filled.Delete,
+                    contentDescription = "delete invitation",
+                    tint = MaterialTheme.colorScheme.error,
+                )
+            },
+            background = MaterialTheme.colorScheme.background,
+            onSwipe = onSwipeInvitationDelete,
+        )
 
     SwipeableActionsBox(
         modifier = modifier,
         startActions = listOf(delete),
-        endActions = listOf(delete)
+        endActions = listOf(delete),
     ) {
         Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp)
-                .padding(top = 8.dp)
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp)
+                    .padding(top = 8.dp),
         ) {
             SafiCenteredRow(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
             ) {
                 Column {
                     Text(
                         text = "${invite.code}",
                         style = MaterialTheme.typography.titleLarge,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.Bold,
                     )
                     Text(
                         modifier = Modifier.padding(top = 8.dp),
-                        text = buildString {
-                            append("Expires on ")
-                            append(
-                                invite.expiresAt.dayOfWeek.name
-                                    .lowercase()
-                                    .replaceFirstChar { it.uppercase() }
-                            )
-                            append(" , ")
-                            append(invite.expiresAt.dayOfMonth)
-                            append(" ")
-                            append(
-                                invite.expiresAt.month.name
-                                    .lowercase()
-                                    .replaceFirstChar { it.uppercase() }
-                            )
-                            append(" ")
-                            append(invite.expiresAt.year)
-                        },
-                        style = MaterialTheme.typography.labelLarge
+                        text =
+                            buildString {
+                                append("Expires on ")
+                                append(
+                                    invite.expiresAt.dayOfWeek.name
+                                        .lowercase()
+                                        .replaceFirstChar { it.uppercase() },
+                                )
+                                append(" , ")
+                                append(invite.expiresAt.dayOfMonth)
+                                append(" ")
+                                append(
+                                    invite.expiresAt.month.name
+                                        .lowercase()
+                                        .replaceFirstChar { it.uppercase() },
+                                )
+                                append(" ")
+                                append(invite.expiresAt.year)
+                            },
+                        style = MaterialTheme.typography.labelLarge,
                     )
                 }
 
@@ -337,7 +343,7 @@ fun TeamInviteCardComponent(
                 IconButton(onClick = onClickShare) {
                     Icon(
                         imageVector = Icons.Rounded.Share,
-                        contentDescription = "share invite code"
+                        contentDescription = "share invite code",
                     )
                 }
             }
@@ -345,15 +351,19 @@ fun TeamInviteCardComponent(
     }
 }
 
-private fun Activity.share(teamName: String, teamCode: String) {
-    val sendIntent: Intent = Intent().apply {
-        action = Intent.ACTION_SEND
-        putExtra(
-            Intent.EXTRA_TEXT,
-            getString(SafiStrings.Messages.MessageTeamInvite, teamCode, teamName, teamCode)
-        )
-        type = "text/plain"
-    }
+private fun Activity.share(
+    teamName: String,
+    teamCode: String,
+) {
+    val sendIntent: Intent =
+        Intent().apply {
+            action = Intent.ACTION_SEND
+            putExtra(
+                Intent.EXTRA_TEXT,
+                getString(SafiStrings.Messages.MessageTeamInvite, teamCode, teamName, teamCode),
+            )
+            type = "text/plain"
+        }
     val shareIntent = Intent.createChooser(sendIntent, "Share with")
     startActivity(shareIntent)
 }
@@ -370,29 +380,31 @@ fun InfoCardComponent(
     Card(
         modifier = modifier,
         colors = colors,
-        elevation = elevation
+        elevation = elevation,
     ) {
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
         ) {
             Column(
-                modifier = Modifier
-                    .weight(1f)
-                    .wrapContentHeight(),
+                modifier =
+                    Modifier
+                        .weight(1f)
+                        .wrapContentHeight(),
                 verticalArrangement = Arrangement.Center,
             ) {
                 Text(
                     text = title,
                     fontWeight = FontWeight.Bold,
-                    style = MaterialTheme.typography.labelLarge
+                    style = MaterialTheme.typography.labelLarge,
                 )
                 Text(
                     text = message,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
-                    style = MaterialTheme.typography.labelMedium
+                    style = MaterialTheme.typography.labelMedium,
                 )
             }
             action()
@@ -414,7 +426,7 @@ private fun InfoCardComponentLightPreview() {
                     TextButton(onClick = { }) {
                         Text(text = "Retry")
                     }
-                }
+                },
             )
         }
     }
