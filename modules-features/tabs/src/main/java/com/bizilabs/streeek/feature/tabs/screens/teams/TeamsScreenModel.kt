@@ -1,5 +1,6 @@
 package com.bizilabs.streeek.feature.tabs.screens.teams
 
+import android.content.Context
 import cafe.adriel.voyager.core.model.StateScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
 import com.bizilabs.streeek.lib.common.models.FetchListState
@@ -8,6 +9,7 @@ import com.bizilabs.streeek.lib.domain.models.TeamDomain
 import com.bizilabs.streeek.lib.domain.models.TeamMemberDomain
 import com.bizilabs.streeek.lib.domain.models.TeamWithDetailDomain
 import com.bizilabs.streeek.lib.domain.repositories.TeamRepository
+import com.bizilabs.streeek.lib.domain.workers.startImmediateSyncTeamsWork
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
@@ -19,7 +21,7 @@ import kotlin.collections.get
 
 internal val TeamsModule = module {
     factory<TeamsScreenModel> {
-        TeamsScreenModel(repository = get())
+        TeamsScreenModel(context = get(), repository = get())
     }
 }
 
@@ -30,9 +32,9 @@ data class TeamsScreenState(
     val teamsState: FetchListState<TeamWithDetailDomain> = FetchListState.Loading,
     val team: TeamDetailsDomain? = null,
     val teams: List<TeamDetailsDomain> = emptyList()
-){
+) {
     val list: List<TeamMemberDomain>
-        get() = when{
+        get() = when {
             team == null -> emptyList()
             team.page == 1 -> team.members.filterIndexed { index, _ -> index > 2 }
             else -> team.members
@@ -40,6 +42,7 @@ data class TeamsScreenState(
 }
 
 class TeamsScreenModel(
+    private val context: Context,
     private val repository: TeamRepository
 ) : StateScreenModel<TeamsScreenState>(TeamsScreenState()) {
 
@@ -99,6 +102,10 @@ class TeamsScreenModel(
         screenModelScope.launch {
             repository.setSelectedTeam(team = team)
         }
+    }
+
+    fun onClickMenuRefreshTeam() {
+        context.startImmediateSyncTeamsWork()
     }
 
 }

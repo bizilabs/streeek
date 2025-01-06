@@ -23,6 +23,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.People
+import androidx.compose.material.icons.rounded.Refresh
 import androidx.compose.material.icons.rounded.TransitEnterexit
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -72,6 +73,7 @@ object TeamsScreen : Screen {
             state = state,
             onClickMenuCreateTeam = screenModel::onClickMenuTeamCreate,
             onClickMenuJoinTeam = screenModel::onClickMenuTeamJoin,
+            onClickMenuRefreshTeam = screenModel::onClickMenuRefreshTeam,
             onClickTeam = screenModel::onClickTeam,
             onValueChangeTeam = screenModel::onValueChangeTeam
         ) { screen ->
@@ -86,6 +88,7 @@ fun TeamsScreenContent(
     state: TeamsScreenState,
     onClickMenuCreateTeam: () -> Unit,
     onClickMenuJoinTeam: () -> Unit,
+    onClickMenuRefreshTeam: () -> Unit,
     onClickTeam: (TeamDomain) -> Unit,
     onValueChangeTeam: (TeamDetailsDomain) -> Unit,
     navigate: (Screen) -> Unit
@@ -107,7 +110,8 @@ fun TeamsScreenContent(
                 modifier = Modifier.fillMaxWidth(),
                 onClickMenuCreateTeam = onClickMenuCreateTeam,
                 onClickMenuJoinTeam = onClickMenuJoinTeam,
-                onValueChangeTeam = onValueChangeTeam
+                onValueChangeTeam = onValueChangeTeam,
+                onClickMenuRefreshTeam = onClickMenuRefreshTeam
             )
         }
     ) { paddingValues ->
@@ -229,6 +233,7 @@ fun TeamsScreenContent(
 fun TeamsScreenHeaderSection(
     state: TeamsScreenState,
     onClickMenuCreateTeam: () -> Unit,
+    onClickMenuRefreshTeam: () -> Unit,
     onClickMenuJoinTeam: () -> Unit,
     onValueChangeTeam: (TeamDetailsDomain) -> Unit,
     modifier: Modifier = Modifier
@@ -259,11 +264,20 @@ fun TeamsScreenHeaderSection(
                 )
 
                 IconButton(
-                    modifier = Modifier.padding(horizontal = 16.dp),
+                    modifier = Modifier.padding(end = 16.dp),
                     onClick = onClickMenuCreateTeam
                 ) {
                     Icon(
                         imageVector = Icons.Rounded.Add,
+                        contentDescription = ""
+                    )
+                }
+                IconButton(
+                    modifier = Modifier.padding(end = 16.dp),
+                    onClick = onClickMenuRefreshTeam
+                ) {
+                    Icon(
+                        imageVector = Icons.Rounded.Refresh,
                         contentDescription = ""
                     )
                 }
@@ -272,7 +286,7 @@ fun TeamsScreenHeaderSection(
                 modifier = Modifier
                     .padding(vertical = 16.dp)
                     .fillMaxWidth(),
-                visible = state.teams.isNotEmpty()
+                visible = state.teams.isNotEmpty() && (state.teams.size != 1)
             ) {
                 val index = state.teams.indexOf(state.team)
 

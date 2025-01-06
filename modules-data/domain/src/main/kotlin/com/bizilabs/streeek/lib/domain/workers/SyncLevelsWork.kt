@@ -68,14 +68,10 @@ class SyncLevelsWork(
     }
 
     override suspend fun doWork(): Result {
-        Timber.d("Levels -> Starting work")
         val result = repository.getLevels()
         if (result is DataResult.Error) getWorkerResult()
-        Timber.d("Levels -> Result is not error")
         val list = (result as DataResult.Success).data
-        Timber.d("Levels -> $list")
         repository.saveLevels(levels = list)
-        Timber.d("Levels -> saved list successfully")
         return Result.success()
     }
 
