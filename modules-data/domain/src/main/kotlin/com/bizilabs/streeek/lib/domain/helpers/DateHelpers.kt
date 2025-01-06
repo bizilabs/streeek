@@ -54,7 +54,7 @@ fun String.asDate(format: String = DateFormats.ISO_8601_Z): Instant? {
 }
 
 @OptIn(FormatStringsInDatetimeFormats::class)
-fun String.asLocalDate(format: String = DateFormats.YYYY_MM_dd): LocalDate? {
+fun String.asLocalDate(format: String = DateFormats.YYYY_MM_DD): LocalDate? {
     Timber.d("Trying to parse String to LocalDate :\nVALUE = $this\nFORMAT= $format")
     return tryOrNull {
         val formatter = LocalDate.Format { byUnicodePattern(format) }
@@ -63,7 +63,7 @@ fun String.asLocalDate(format: String = DateFormats.YYYY_MM_dd): LocalDate? {
 }
 
 @OptIn(FormatStringsInDatetimeFormats::class)
-fun String.asLocalDateTime(format: String = DateFormats.YYYY_MM_dd): LocalDateTime? {
+fun String.asLocalDateTime(format: String = DateFormats.YYYY_MM_DD): LocalDateTime? {
     Timber.d("Trying to parse String to LocalDate :\nVALUE = $this\nFORMAT= $format")
     return tryOrNull {
         val formatter: DateTimeFormat<LocalDateTime> =

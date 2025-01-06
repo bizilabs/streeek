@@ -17,7 +17,7 @@ fun StreakDTO.toDomain(): StreakDomain =
             updatedAt
                 .replaceAfter(".", "")
                 .replace(".", "")
-                .asDate(format = DateFormats.YYYY_MM_ddTHH_mm_ss)
+                .asDate(format = DateFormats.YYYY_MM_DDTHH_MM_SS)
                 ?.datetimeSystem
                 ?: SystemLocalDateTime,
     )
