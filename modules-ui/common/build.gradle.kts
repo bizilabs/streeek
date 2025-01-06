@@ -18,4 +18,7 @@ dependencies {
     implementation(libs.bundles.voyager)
     // </editor-fold>
 
+    // paging
+    implementation(libs.androidx.paging.compose)
+
 }
