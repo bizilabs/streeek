@@ -117,10 +117,11 @@ data class PullRequestReviewEventDomain(
     val review: ReviewDomain,
     val pullRequest: MinPullRequestDomain,
 ) : EventPayloadDomain {
-    override fun getPoints(account: AccountDomain): Long = when {
-        action.equals("created", true) -> 20
-        else -> 5
-    }
+    override fun getPoints(account: AccountDomain): Long =
+        when {
+            action.equals("created", true) -> 20
+            else -> 5
+        }
 }
 
 data class PullRequestReviewCommentEventDomain(

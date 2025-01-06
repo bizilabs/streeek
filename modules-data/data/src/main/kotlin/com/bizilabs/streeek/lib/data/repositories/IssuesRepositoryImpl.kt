@@ -7,13 +7,13 @@ import com.bizilabs.streeek.lib.domain.models.CreateIssueDomain
 import com.bizilabs.streeek.lib.domain.models.IssueDomain
 import com.bizilabs.streeek.lib.domain.repositories.IssuesRepository
 import com.bizilabs.streeek.lib.local.sources.account.AccountLocalSource
-import com.bizilabs.streeek.lib.remote.models.CreateIssueDto
+import com.bizilabs.streeek.lib.remote.models.CreateIssueDTO
 import com.bizilabs.streeek.lib.remote.sources.issues.IssuesRemoteSource
 import kotlinx.coroutines.flow.first
 
 class IssuesRepositoryImpl(
     private val remoteSource: IssuesRemoteSource,
-    private val accountLocalSource: AccountLocalSource
+    private val accountLocalSource: AccountLocalSource,
 ) : IssuesRepository {
     override suspend fun createIssue(createIssueDomain: CreateIssueDomain): DataResult<IssueDomain> {
         return remoteSource.createIssue(createIssueDomain.toCreateIssue())
@@ -26,9 +26,10 @@ class IssuesRepositoryImpl(
             .asDataResult { list -> list.map { it.toDomain() } }
     }
 
-    private fun CreateIssueDomain.toCreateIssue(): CreateIssueDto = CreateIssueDto(
-        title = title,
-        body = body,
-        label = label
-    )
+    private fun CreateIssueDomain.toCreateIssue(): CreateIssueDTO =
+        CreateIssueDTO(
+            title = title,
+            body = body,
+            label = label,
+        )
 }
