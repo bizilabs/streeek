@@ -1,7 +1,9 @@
 package com.bizilabs.streeek.lib.common.components.paging
 
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
 import androidx.paging.LoadStates
 import androidx.paging.PagingData
@@ -35,7 +37,11 @@ fun <T : Any> SafiPagingComponent(
     modifier: Modifier = Modifier,
     prependError: @Composable ((Throwable) -> Unit)? = null,
     prependSuccess: @Composable (Boolean) -> Unit = {},
-    refreshLoading: @Composable () -> Unit = { SafiPagingLoadStateLoading() },
+    refreshLoading: @Composable () -> Unit = {
+        SafiPagingLoadStateLoading(
+            modifier = Modifier.padding(24.dp),
+        )
+    },
     refreshError: @Composable ((Throwable) -> Unit)? = null,
     refreshEmpty: @Composable () -> Unit = {},
     appendError: @Composable ((Throwable) -> Unit)? = null,

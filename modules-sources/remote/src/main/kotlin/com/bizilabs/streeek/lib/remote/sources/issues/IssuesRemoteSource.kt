@@ -20,10 +20,7 @@ interface IssuesRemoteSource {
         page: Int,
     ): NetworkResult<List<GithubIssueDTO>>
 
-    suspend fun fetchIssues(
-        page: Int,
-    ): NetworkResult<List<GithubIssueDTO>>
-
+    suspend fun fetchIssues(page: Int): NetworkResult<List<GithubIssueDTO>>
 }
 
 class IssuesRemoteSourceImpl(
@@ -56,5 +53,4 @@ class IssuesRemoteSourceImpl(
                 parameter("page", page)
             }
         }
-
 }

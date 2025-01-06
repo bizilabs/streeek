@@ -30,10 +30,11 @@ class IssuesPagingSource(
             accountLocalSource.account.firstOrNull()?.username
                 ?: return LoadResult.Error(Exception("Couldn't get logged in account"))
 
-        val result = when(isFetchingUserIssues){
-            true -> issuesRemoteSource.fetchUserIssues(username = username, page = page)
-            false -> issuesRemoteSource.fetchIssues(page = page)
-        }
+        val result =
+            when (isFetchingUserIssues) {
+                true -> issuesRemoteSource.fetchUserIssues(username = username, page = page)
+                false -> issuesRemoteSource.fetchIssues(page = page)
+            }
 
         if (result is NetworkResult.Failure) return LoadResult.Error(result.exception)
 

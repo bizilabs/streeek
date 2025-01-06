@@ -1,6 +1,5 @@
 package com.bizilabs.streeek.feature.profile
 
-import android.graphics.drawable.Icon
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.scrollable
@@ -16,7 +15,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.ChevronRight
-import androidx.compose.material.icons.rounded.QuestionMark
+import androidx.compose.material.icons.rounded.Feedback
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -166,9 +165,9 @@ fun ProfileScreenContent(
             }
 
             ProfileItemComponent(
-                icon = Icons.Rounded.QuestionMark,
-                label = "Issues",
-                onClickCardIssues = onClickCardIssues
+                icon = Icons.Rounded.Feedback,
+                label = "Feedback",
+                onClickCardIssues = onClickCardIssues,
             )
 
             Button(
@@ -188,19 +187,20 @@ fun ProfileScreenContent(
 private fun ProfileItemComponent(
     icon: ImageVector,
     label: String,
-    onClickCardIssues: () -> Unit
+    onClickCardIssues: () -> Unit,
 ) {
     Card(
-        modifier = Modifier
-            .padding(16.dp)
-            .fillMaxWidth(),
+        modifier =
+            Modifier
+                .padding(16.dp)
+                .fillMaxWidth(),
         onClick = onClickCardIssues,
     ) {
         Row(
             modifier =
-            Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
+                Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
             Row {

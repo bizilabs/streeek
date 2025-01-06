@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.Flow
 interface IssuesRepository {
     val issues: Flow<PagingData<IssueDomain>>
 
-    fun getIssues(isFetchingUserIssues: Boolean) : Flow<PagingData<IssueDomain>>
+    fun getIssues(isFetchingUserIssues: Boolean): Flow<PagingData<IssueDomain>>
+
     suspend fun createIssue(createIssueDomain: CreateIssueDomain): DataResult<IssueDomain>
 }
