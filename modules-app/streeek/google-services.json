@@ -26,9 +26,9 @@
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1057795255678:android:05bdcf4a0287606160d72f",
+        "mobilesdk_app_id": "1:1057795255678:android:302500f0e7dfc8d260d72f",
         "android_client_info": {
-          "package_name": "com.bizilabs.app.streeek.mobile.minimal"
+          "package_name": "com.bizilabs.app.streeek.mobile.debug"
         }
       },
       "oauth_client": [],
