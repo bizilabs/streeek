@@ -29,10 +29,10 @@ android {
                 "proguard-rules.pro",
             )
         }
-        val beta by creating {
-            applicationIdSuffix = ".beta"
-            versionNameSuffix = "-beta"
-        }
+//        val beta by creating {
+//            applicationIdSuffix = ".beta"
+//            versionNameSuffix = "-beta"
+//        }
     }
 }
 
