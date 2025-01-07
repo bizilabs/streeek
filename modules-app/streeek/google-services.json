@@ -26,7 +26,26 @@
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1057795255678:android:302500f0e7dfc8d260d72f",
+        "mobilesdk_app_id": "1:1057795255678:android:d363e05e7fbe66c660d72f",
+        "android_client_info": {
+          "package_name": "com.bizilabs.app.streeek.mobile.beta"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC0AkWtWKU_-5zAHvH1YasJ-mPFwhqyR30"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1057795255678:android:d28c01af7dc0519160d72f",
         "android_client_info": {
           "package_name": "com.bizilabs.app.streeek.mobile.debug"
         }
