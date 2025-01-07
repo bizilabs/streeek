@@ -4,6 +4,7 @@ import com.bizilabs.streeek.lib.data.repositories.AccountRepositoryImpl
 import com.bizilabs.streeek.lib.data.repositories.AuthenticationRepositoryImpl
 import com.bizilabs.streeek.lib.data.repositories.ContributionRepositoryImpl
 import com.bizilabs.streeek.lib.data.repositories.IssuesRepositoryImpl
+import com.bizilabs.streeek.lib.data.repositories.LabelRepositoryImpl
 import com.bizilabs.streeek.lib.data.repositories.LevelRepositoryImpl
 import com.bizilabs.streeek.lib.data.repositories.NotificationRepositoryImpl
 import com.bizilabs.streeek.lib.data.repositories.PreferenceRepositoryImpl
@@ -13,7 +14,8 @@ import com.bizilabs.streeek.lib.data.repositories.UserRepositoryImpl
 import com.bizilabs.streeek.lib.domain.repositories.AccountRepository
 import com.bizilabs.streeek.lib.domain.repositories.AuthenticationRepository
 import com.bizilabs.streeek.lib.domain.repositories.ContributionRepository
-import com.bizilabs.streeek.lib.domain.repositories.IssuesRepository
+import com.bizilabs.streeek.lib.domain.repositories.IssueRepository
+import com.bizilabs.streeek.lib.domain.repositories.LabelRepository
 import com.bizilabs.streeek.lib.domain.repositories.LevelRepository
 import com.bizilabs.streeek.lib.domain.repositories.NotificationRepository
 import com.bizilabs.streeek.lib.domain.repositories.PreferenceRepository
@@ -58,7 +60,10 @@ val dataModule =
         single<NotificationRepository> {
             NotificationRepositoryImpl(remoteSource = get(), localSource = get(), accountLocalSource = get())
         }
-        single<IssuesRepository> {
+        single<IssueRepository> {
             IssuesRepositoryImpl(remoteSource = get(), accountLocalSource = get())
+        }
+        single<LabelRepository> {
+            LabelRepositoryImpl(remoteSource = get())
         }
     }

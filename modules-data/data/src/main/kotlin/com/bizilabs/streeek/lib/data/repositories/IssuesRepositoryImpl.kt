@@ -11,7 +11,7 @@ import com.bizilabs.streeek.lib.data.paging.PagingHelpers
 import com.bizilabs.streeek.lib.domain.helpers.DataResult
 import com.bizilabs.streeek.lib.domain.models.CreateIssueDomain
 import com.bizilabs.streeek.lib.domain.models.IssueDomain
-import com.bizilabs.streeek.lib.domain.repositories.IssuesRepository
+import com.bizilabs.streeek.lib.domain.repositories.IssueRepository
 import com.bizilabs.streeek.lib.local.sources.account.AccountLocalSource
 import com.bizilabs.streeek.lib.remote.sources.issues.IssuesRemoteSource
 import kotlinx.coroutines.flow.Flow
@@ -19,7 +19,7 @@ import kotlinx.coroutines.flow.Flow
 class IssuesRepositoryImpl(
     private val remoteSource: IssuesRemoteSource,
     private val accountLocalSource: AccountLocalSource,
-) : IssuesRepository {
+) : IssueRepository {
     override val issues: Flow<PagingData<IssueDomain>>
         get() =
             Pager(

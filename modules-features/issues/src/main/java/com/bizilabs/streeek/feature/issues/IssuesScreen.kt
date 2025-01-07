@@ -1,12 +1,14 @@
 package com.bizilabs.streeek.feature.issues
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
@@ -38,12 +40,14 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
+import cafe.adriel.voyager.core.registry.rememberScreen
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.getScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import coil.compose.AsyncImage
 import com.bizilabs.streeek.lib.common.components.paging.SafiPagingComponent
 import com.bizilabs.streeek.lib.common.helpers.fromHex
+import com.bizilabs.streeek.lib.common.navigation.SharedScreen
 import com.bizilabs.streeek.lib.domain.helpers.toTimeAgo
 import com.bizilabs.streeek.lib.domain.models.IssueDomain
 import com.bizilabs.streeek.lib.resources.strings.SafiStrings
@@ -52,6 +56,7 @@ object IssuesScreen : Screen {
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.current
+        val screenIssue = rememberScreen(SharedScreen.Issue())
         val screenModel = getScreenModel<IssuesScreenModel>()
         val state by screenModel.state.collectAsStateWithLifecycle()
         val issues = screenModel.issues.collectAsLazyPagingItems()
@@ -59,8 +64,9 @@ object IssuesScreen : Screen {
             state = state,
             issues = issues,
             onClickNavigateBack = { navigator?.pop() },
-            onClickAddIssue = {},
-        )
+            onClickIssue = screenModel::onClickIssue,
+            onClickAddIssue = { navigator?.push(screenIssue) },
+        ){ screen -> navigator?.push(screen) }
     }
 }
 
@@ -71,7 +77,12 @@ fun IssuesScreenContent(
     issues: LazyPagingItems<IssueDomain>,
     onClickNavigateBack: () -> Unit,
     onClickAddIssue: () -> Unit,
+    onClickIssue: (IssueDomain) -> Unit,
+    navigate:(Screen) -> Unit,
 ) {
+
+    if (state.issue != null) navigate(rememberScreen(SharedScreen.Issue(id = state.issue.id)))
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -113,7 +124,9 @@ fun IssuesScreenContent(
                     .fillMaxSize(),
             data = issues,
         ) { issue ->
-            Column {
+            Column(
+                modifier = Modifier.clickable { onClickIssue(issue) },
+            ) {
                 Column(
                     modifier =
                         Modifier
@@ -155,6 +168,7 @@ fun IssuesScreenContent(
                                 LazyRow {
                                     items(issue.labels) { label ->
                                         Card(
+                                            modifier = Modifier.padding(end = 4.dp),
                                             colors =
                                                 CardDefaults.cardColors(
                                                     containerColor = Color.fromHex(label.color),

@@ -6,7 +6,7 @@ import com.bizilabs.streeek.lib.domain.models.CreateIssueDomain
 import com.bizilabs.streeek.lib.domain.models.IssueDomain
 import kotlinx.coroutines.flow.Flow
 
-interface IssuesRepository {
+interface IssueRepository {
     val issues: Flow<PagingData<IssueDomain>>
 
     fun getIssues(isFetchingUserIssues: Boolean): Flow<PagingData<IssueDomain>>

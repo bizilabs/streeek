@@ -29,7 +29,7 @@ class IssuesRemoteSourceImpl(
     override suspend fun createIssue(request: CreateIssueDTO): NetworkResult<GithubIssueDTO> =
         safeApiCall {
             client.post {
-                url(GithubEndpoint.Issues.url)
+                url(GithubEndpoint.Repository.Issues.url)
                 setBody(body = request)
             }
         }
@@ -40,7 +40,7 @@ class IssuesRemoteSourceImpl(
     ): NetworkResult<List<GithubIssueDTO>> =
         safeApiCall {
             client.get {
-                url(GithubEndpoint.Issues.url)
+                url(GithubEndpoint.Repository.Issues.url)
                 parameter("creator", username)
                 parameter("page", page)
             }
@@ -49,7 +49,7 @@ class IssuesRemoteSourceImpl(
     override suspend fun fetchIssues(page: Int): NetworkResult<List<GithubIssueDTO>> =
         safeApiCall {
             client.get {
-                url(GithubEndpoint.Issues.url)
+                url(GithubEndpoint.Repository.Issues.url)
                 parameter("page", page)
             }
         }

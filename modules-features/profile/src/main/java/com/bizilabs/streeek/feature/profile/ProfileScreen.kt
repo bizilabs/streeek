@@ -1,5 +1,6 @@
 package com.bizilabs.streeek.feature.profile
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.scrollable
@@ -166,7 +167,8 @@ fun ProfileScreenContent(
 
             ProfileItemComponent(
                 icon = Icons.Rounded.Feedback,
-                label = "Feedback",
+                title = "Feedback",
+                message = "For any feedback or suggestions",
                 onClickCardIssues = onClickCardIssues,
             )
 
@@ -186,7 +188,8 @@ fun ProfileScreenContent(
 @Composable
 private fun ProfileItemComponent(
     icon: ImageVector,
-    label: String,
+    title: String,
+    message: String = "",
     onClickCardIssues: () -> Unit,
 ) {
     Card(
@@ -203,12 +206,21 @@ private fun ProfileItemComponent(
                     .padding(16.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
-            Row {
-                Icon(imageVector = icon, contentDescription = label)
-                Text(modifier = Modifier.padding(start = 16.dp), text = label)
+            Row(modifier = Modifier.weight(1f)) {
+                Icon(imageVector = icon, contentDescription = title)
+                Column(Modifier.padding(start = 16.dp)) {
+                    Text(modifier = Modifier.fillMaxWidth(), text = title)
+                    AnimatedVisibility(visible = message.isNotEmpty()) {
+                        Text(
+                            modifier = Modifier.fillMaxWidth(),
+                            text = message,
+                            style = MaterialTheme.typography.labelMedium,
+                        )
+                    }
+                }
             }
 
-            Icon(imageVector = Icons.Rounded.ChevronRight, contentDescription = label)
+            Icon(imageVector = Icons.Rounded.ChevronRight, contentDescription = title)
         }
     }
 }

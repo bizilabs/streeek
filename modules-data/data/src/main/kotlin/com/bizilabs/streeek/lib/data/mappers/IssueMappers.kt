@@ -46,5 +46,5 @@ fun CreateIssueDomain.toDTO(): CreateIssueDTO =
     CreateIssueDTO(
         title = title,
         body = body,
-        label = label,
+        labels = labels,
     )

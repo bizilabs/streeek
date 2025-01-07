@@ -18,4 +18,6 @@ sealed class SharedScreen : ScreenProvider {
     object Notifications : SharedScreen()
 
     object Issues : SharedScreen()
+
+    data class Issue(val id: Long? = null) : SharedScreen()
 }
