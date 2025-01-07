@@ -16,6 +16,7 @@ import com.bizilabs.streeek.lib.domain.models.AccountDomain
 import com.bizilabs.streeek.lib.domain.models.TeamMemberRole
 import com.bizilabs.streeek.lib.domain.models.TeamWithMembersDomain
 import com.bizilabs.streeek.lib.domain.models.asTeamDetails
+import com.bizilabs.streeek.lib.domain.models.sortedByRank
 import com.bizilabs.streeek.lib.domain.models.team.CreateTeamInvitationDomain
 import com.bizilabs.streeek.lib.domain.models.team.JoinTeamInvitationDomain
 import com.bizilabs.streeek.lib.domain.models.team.TeamInvitationDomain
@@ -148,8 +149,8 @@ class TeamScreenModel(
                         val team = result.data.team
                         onValueChangeName(name = team.name)
                         onValueChangePublic(value = if (team.public) "public" else "private")
-                        if (shouldSaveTeam) saveTeam(team = result.data)
-                        FetchState.Success(result.data)
+                        if (shouldSaveTeam) saveTeam(team = result.data.copy(members = result.data.members))
+                        FetchState.Success(result.data.copy(members = result.data.members.sortedByRank()))
                     }
                 }
             mutableState.update { it.copy(fetchState = update) }

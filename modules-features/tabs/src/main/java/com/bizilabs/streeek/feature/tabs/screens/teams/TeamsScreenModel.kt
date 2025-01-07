@@ -8,6 +8,7 @@ import com.bizilabs.streeek.lib.domain.models.TeamDetailsDomain
 import com.bizilabs.streeek.lib.domain.models.TeamDomain
 import com.bizilabs.streeek.lib.domain.models.TeamMemberDomain
 import com.bizilabs.streeek.lib.domain.models.TeamWithDetailDomain
+import com.bizilabs.streeek.lib.domain.models.sortedByRank
 import com.bizilabs.streeek.lib.domain.repositories.TeamRepository
 import com.bizilabs.streeek.lib.domain.workers.startImmediateSyncTeamsWork
 import kotlinx.coroutines.delay
@@ -35,12 +36,15 @@ data class TeamsScreenState(
     val teams: List<TeamDetailsDomain> = emptyList(),
     val showConfetti: Boolean = false
 ) {
+
     val list: List<TeamMemberDomain>
         get() =
             when {
                 team == null -> emptyList()
                 team.page == 1 -> team.members.filterIndexed { index, _ -> index > 2 }
-                else -> team.members
+                    .sortedByRank()
+
+                else -> team.members.sortedByRank()
             }
 }
 
@@ -78,8 +82,8 @@ class TeamsScreenModel(
         }
     }
 
-    private fun showConfetti(){
-        screenModelScope.launch{
+    private fun showConfetti() {
+        screenModelScope.launch {
             mutableState.update { it.copy(showConfetti = true) }
             delay(2000)
             mutableState.update { it.copy(showConfetti = false) }

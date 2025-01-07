@@ -101,6 +101,9 @@ data class TeamMemberDomain(
     val rank: Long,
 )
 
+fun List<TeamMemberDomain>.sortedByRank(): List<TeamMemberDomain> =
+    sortedWith(compareBy<TeamMemberDomain> { it.rank }.thenBy { it.account.username.lowercase() })
+
 data class TeamMemberAccountDomain(
     val avatarUrl: String,
     val createdAt: LocalDateTime,
