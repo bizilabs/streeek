@@ -4,6 +4,7 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -23,10 +24,12 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.ScrollableTabRow
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
@@ -36,6 +39,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -293,27 +297,32 @@ fun TeamsScreenHeaderSection(
                 visible = state.teams.isNotEmpty() && (state.teams.size != 1),
             ) {
                 val index = state.teams.indexOf(state.team)
-
-                TabRow(
-                    modifier = Modifier.fillMaxWidth(),
-                    selectedTabIndex = index,
-                ) {
-                    state.teams.forEach {
-                        val selected = it.team.id == state.team?.team?.id
-                        Tab(selected = selected, onClick = { onValueChangeTeam(it) }) {
-                            Text(
-                                modifier = Modifier.padding(8.dp),
-                                text = it.team.name,
-                                color =
+                Column(modifier = Modifier.fillMaxWidth()) {
+                    ScrollableTabRow(
+                        modifier = Modifier.fillMaxWidth(),
+                        edgePadding = 0.dp,
+                        selectedTabIndex = index,
+                        divider = {}
+                    ) {
+                        state.teams.forEach {
+                            val selected = it.team.id == state.team?.team?.id
+                            Tab(selected = selected, onClick = { onValueChangeTeam(it) }) {
+                                Text(
+                                    modifier = Modifier.padding(8.dp),
+                                    text = it.team.name,
+                                    color =
                                     if (selected) {
                                         MaterialTheme.colorScheme.primary
                                     } else {
                                         MaterialTheme.colorScheme.onSurface.copy(0.75f)
                                     },
-                            )
+                                )
+                            }
                         }
                     }
+                    HorizontalDivider(modifier = Modifier.fillMaxWidth())
                 }
+
             }
             AnimatedVisibility(
                 modifier = Modifier.fillMaxWidth(),

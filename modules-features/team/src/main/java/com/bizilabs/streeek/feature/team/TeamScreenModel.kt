@@ -92,6 +92,9 @@ data class TeamScreenState(
     val isPublic: Boolean
         get() = value.equals("public", true)
 
+    val isValidName: Boolean
+        get() = name.isNotBlank() && name.matches("^[a-z]+$".toRegex())
+
     val isActionEnabled: Boolean
         get() =
             if (fetchState is FetchState.Success) {
@@ -103,7 +106,7 @@ data class TeamScreenState(
                     ) || team.public != isPublic
                 )
             } else {
-                name.isNotBlank() && value.isNotBlank()
+                isValidName && value.isNotBlank()
             }
 
     val isJoinActionEnabled: Boolean
