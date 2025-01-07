@@ -33,7 +33,7 @@ jobs:
       - name: Sign Release APK
         uses: r0adkll/sign-android-release@v1
         with:
-          releaseDirectory: app/build/outputs/apk/release
+          releaseDirectory: modules-app/streeek/build/outputs/apk/release
           signingKeyBase64: ${{ secrets.SIGNING_KEY }}
           alias: ${{ secrets.ALIAS }}
           keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
@@ -45,4 +45,4 @@ jobs:
           appId: ${{ secrets.FIREBASE_APP_ID }}
           serviceCredentialsFileContent: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
           groups: internal
-          file: app/build/outputs/apk/release/app-release.apk
+          file: modules-app/streeek/build/outputs/apk/release/app-release.apk
