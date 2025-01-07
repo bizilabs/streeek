@@ -14,6 +14,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.bizilabs.streeek.feature.team.TeamScreenState
+import com.bizilabs.streeek.lib.common.helpers.requestFocusOnGainingVisibility
 import com.bizilabs.streeek.lib.design.components.SafiCenteredRow
 import com.bizilabs.streeek.lib.design.components.SafiOTPField
 
@@ -42,13 +43,15 @@ fun TeamJoiningSection(
                 modifier =
                     Modifier
                         .fillMaxWidth(0.75f)
-                        .padding(vertical = 24.dp),
+                        .padding(vertical = 24.dp)
+                        .requestFocusOnGainingVisibility(),
                 text = state.token,
                 onClickDone = onClickJoin,
                 keyboardOptions =
                     KeyboardOptions(
                         keyboardType = KeyboardType.NumberPassword,
                         imeAction = ImeAction.Done,
+                        showKeyboardOnFocus = true,
                     ),
                 isEnabled = state.dialogState == null,
             ) { text, bool ->

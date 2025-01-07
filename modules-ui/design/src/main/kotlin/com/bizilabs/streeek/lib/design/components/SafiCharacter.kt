@@ -39,7 +39,7 @@ fun SafiCharacter(
             modifier
                 .border(
                     border =
-                        if (index == text.lastIndex) {
+                        if (index == text.length) {
                             BorderStroke(2.dp, MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f))
                         } else {
                             BorderStroke(0.dp, Color.Transparent)
@@ -77,7 +77,7 @@ private fun SafiCharacterPreview() {
 private fun SafiCharacterPreviewFocused() {
     SafiTheme {
         Surface {
-            SafiCharacter(modifier = Modifier.padding(16.dp), index = 2, text = "123")
+            SafiCharacter(modifier = Modifier.padding(16.dp), index = 2, text = "12")
         }
     }
 }
