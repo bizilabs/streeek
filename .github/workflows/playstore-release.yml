@@ -43,5 +43,5 @@ jobs:
         with:
           serviceAccountJsonPlainText: ${{ secrets.PLAYSTORE_SERVICE_ACCOUNT }}
           packageName: com.bizilabs.app.streeek.mobile
-          releaseFiles: modules-app/streeek/build/outputs/bundle/release/app-release.aab
+          releaseFiles: modules-app/streeek/build/outputs/bundle/release/streeek-release.aab
           track: internal
