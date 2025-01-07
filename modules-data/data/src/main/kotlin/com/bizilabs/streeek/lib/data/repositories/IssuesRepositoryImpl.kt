@@ -6,9 +6,11 @@ import androidx.paging.PagingData
 import com.bizilabs.streeek.lib.data.mappers.asDataResult
 import com.bizilabs.streeek.lib.data.mappers.toDTO
 import com.bizilabs.streeek.lib.data.mappers.toDomain
+import com.bizilabs.streeek.lib.data.paging.IssueCommentPagingSource
 import com.bizilabs.streeek.lib.data.paging.IssuesPagingSource
 import com.bizilabs.streeek.lib.data.paging.PagingHelpers
 import com.bizilabs.streeek.lib.domain.helpers.DataResult
+import com.bizilabs.streeek.lib.domain.models.CommentDomain
 import com.bizilabs.streeek.lib.domain.models.CreateIssueDomain
 import com.bizilabs.streeek.lib.domain.models.IssueDomain
 import com.bizilabs.streeek.lib.domain.repositories.IssueRepository
@@ -23,7 +25,11 @@ class IssuesRepositoryImpl(
     override val issues: Flow<PagingData<IssueDomain>>
         get() =
             Pager(
-                config = PagingConfig(pageSize = PagingHelpers.PAGE_SIZE, enablePlaceholders = false),
+                config =
+                    PagingConfig(
+                        pageSize = PagingHelpers.PAGE_SIZE,
+                        enablePlaceholders = false,
+                    ),
                 pagingSourceFactory = {
                     IssuesPagingSource(
                         isFetchingUserIssues = false,
@@ -33,6 +39,10 @@ class IssuesRepositoryImpl(
                 },
             ).flow
 
+    override suspend fun getIssue(id: Long): DataResult<IssueDomain> {
+        return remoteSource.fetchIssue(number = id).asDataResult { it.toDomain() }
+    }
+
     override fun getIssues(isFetchingUserIssues: Boolean): Flow<PagingData<IssueDomain>> =
         Pager(
             config = PagingConfig(pageSize = PagingHelpers.PAGE_SIZE, enablePlaceholders = false),
@@ -40,6 +50,17 @@ class IssuesRepositoryImpl(
                 IssuesPagingSource(
                     isFetchingUserIssues = isFetchingUserIssues,
                     accountLocalSource = accountLocalSource,
+                    issuesRemoteSource = remoteSource,
+                )
+            },
+        ).flow
+
+    override fun getIssueComments(issueNumber: Long): Flow<PagingData<CommentDomain>> =
+        Pager(
+            config = PagingConfig(pageSize = PagingHelpers.PAGE_SIZE, enablePlaceholders = false),
+            pagingSourceFactory = {
+                IssueCommentPagingSource(
+                    issueNumber = issueNumber,
                     issuesRemoteSource = remoteSource,
                 )
             },

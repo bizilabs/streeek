@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
@@ -66,7 +65,7 @@ object IssuesScreen : Screen {
             onClickNavigateBack = { navigator?.pop() },
             onClickIssue = screenModel::onClickIssue,
             onClickAddIssue = { navigator?.push(screenIssue) },
-        ){ screen -> navigator?.push(screen) }
+        ) { screen -> navigator?.push(screen) }
     }
 }
 
@@ -78,10 +77,9 @@ fun IssuesScreenContent(
     onClickNavigateBack: () -> Unit,
     onClickAddIssue: () -> Unit,
     onClickIssue: (IssueDomain) -> Unit,
-    navigate:(Screen) -> Unit,
+    navigate: (Screen) -> Unit,
 ) {
-
-    if (state.issue != null) navigate(rememberScreen(SharedScreen.Issue(id = state.issue.id)))
+    if (state.issue != null) navigate(rememberScreen(SharedScreen.Issue(id = state.issue.number)))
 
     Scaffold(
         topBar = {
@@ -148,12 +146,19 @@ fun IssuesScreenContent(
                         )
 
                         Column(modifier = Modifier.weight(1f)) {
+                            Row {
+                                Text(
+                                    text = "#${issue.number} • ",
+                                    fontSize = MaterialTheme.typography.labelMedium.fontSize,
+                                )
+                                Text(
+                                    text = issue.createdAt.toTimeAgo(),
+                                    fontSize = MaterialTheme.typography.labelMedium.fontSize,
+                                )
+                            }
+
                             Text(
-                                text = issue.createdAt.toTimeAgo(),
-                                style = MaterialTheme.typography.labelMedium,
-                            )
-                            Text(
-                                modifier = Modifier.padding(vertical = 8.dp),
+                                modifier = Modifier.padding(vertical = 4.dp),
                                 text = issue.title,
                                 maxLines = 2,
                                 overflow = TextOverflow.Ellipsis,

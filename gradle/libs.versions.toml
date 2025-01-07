@@ -251,3 +251,4 @@ supabase = [
     "supabase-auth", "supabase-realtime", "supabase-postgrest",
     "supabase-storage", "supabase-functions"
 ]
+paging = ["androidx-paging-runtime", "androidx-paging-compose"]

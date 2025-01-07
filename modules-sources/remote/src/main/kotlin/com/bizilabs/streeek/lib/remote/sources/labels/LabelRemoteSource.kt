@@ -14,7 +14,7 @@ interface LabelRemoteSource {
 }
 
 class LabelRemoteSourceImpl(
-    private val client: HttpClient
+    private val client: HttpClient,
 ) : LabelRemoteSource {
     override suspend fun fetchLabels(page: Int): NetworkResult<List<GithubLabelDTO>> =
         safeApiCall {
