@@ -1,5 +1,3 @@
-import org.gradle.kotlin.dsl.android
-
 plugins {
     id("bizilabs.convention.feature")
 }
@@ -16,4 +14,6 @@ dependencies {
     // material
     implementation(libs.compose.material)
     implementation(libs.androidx.foundation.android)
+    // confetti
+    implementation(libs.confetti)
 }

@@ -33,6 +33,7 @@ data class TeamsScreenState(
     val teamsState: FetchListState<TeamWithDetailDomain> = FetchListState.Loading,
     val team: TeamDetailsDomain? = null,
     val teams: List<TeamDetailsDomain> = emptyList(),
+    val showConfetti: Boolean = false
 ) {
     val list: List<TeamMemberDomain>
         get() =
@@ -64,6 +65,7 @@ class TeamsScreenModel(
         screenModelScope.launch {
             selectedTeam.collectLatest { value ->
                 mutableState.update { it.copy(team = value) }
+                if (value?.rank?.current == 1L) showConfetti()
             }
         }
     }
@@ -73,6 +75,14 @@ class TeamsScreenModel(
             repository.teams.collectLatest { map ->
                 mutableState.update { it.copy(teams = map.values.toList()) }
             }
+        }
+    }
+
+    private fun showConfetti(){
+        screenModelScope.launch{
+            mutableState.update { it.copy(showConfetti = true) }
+            delay(2000)
+            mutableState.update { it.copy(showConfetti = false) }
         }
     }
 
