@@ -12,7 +12,7 @@ data class AccountDTO(
     val githubId: Long,
     val username: String,
     val email: String,
-    val bio: String,
+    val bio: String?,
     @SerialName("avatar_url")
     val avatarUrl: String,
     @SerialName("created_at")

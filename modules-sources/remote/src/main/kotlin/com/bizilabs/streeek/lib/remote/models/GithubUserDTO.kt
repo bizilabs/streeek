@@ -9,7 +9,7 @@ data class GithubUserDTO(
     @SerialName("login")
     val name: String,
     val email: String? = null,
-    val bio: String,
+    val bio: String? = null,
     @SerialName("avatar_url")
     val url: String,
 )

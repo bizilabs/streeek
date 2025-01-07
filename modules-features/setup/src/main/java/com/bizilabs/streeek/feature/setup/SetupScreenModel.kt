@@ -72,7 +72,7 @@ class SetupScreenModel(
                             githubId = user.id,
                             username = user.name,
                             email = user.email,
-                            bio = user.bio,
+                            bio = user.bio ?: "",
                             avatarUrl = user.url,
                         )
                 ) {
