@@ -34,15 +34,15 @@ data class TeamsScreenState(
     val teamsState: FetchListState<TeamWithDetailDomain> = FetchListState.Loading,
     val team: TeamDetailsDomain? = null,
     val teams: List<TeamDetailsDomain> = emptyList(),
-    val showConfetti: Boolean = false
+    val showConfetti: Boolean = false,
 ) {
-
     val list: List<TeamMemberDomain>
         get() =
             when {
                 team == null -> emptyList()
-                team.page == 1 -> team.members.filterIndexed { index, _ -> index > 2 }
-                    .sortedByRank()
+                team.page == 1 ->
+                    team.members.filterIndexed { index, _ -> index > 2 }
+                        .sortedByRank()
 
                 else -> team.members.sortedByRank()
             }

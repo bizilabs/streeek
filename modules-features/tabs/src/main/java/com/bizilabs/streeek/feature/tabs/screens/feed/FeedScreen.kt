@@ -65,7 +65,6 @@ import com.kizitonwose.calendar.core.CalendarDay
 import com.kizitonwose.calendar.core.CalendarMonth
 import com.kizitonwose.calendar.core.now
 import kotlinx.datetime.LocalDate
-import timber.log.Timber
 
 object FeedScreen : Screen {
     @Composable
@@ -126,9 +125,9 @@ fun FeedScreenContent(
                             true -> {
                                 HorizontalCalendar(
                                     modifier =
-                                    Modifier
-                                        .fillMaxWidth()
-                                        .padding(horizontal = 8.dp, vertical = 8.dp),
+                                        Modifier
+                                            .fillMaxWidth()
+                                            .padding(horizontal = 8.dp, vertical = 8.dp),
                                     dayContent = { day: CalendarDay ->
                                         CalendarItem(
                                             hasContribution = state.dates.contains(day.date),
@@ -142,9 +141,9 @@ fun FeedScreenContent(
                                     monthHeader = {
                                         MonthHeader(
                                             modifier =
-                                            Modifier
-                                                .fillMaxWidth()
-                                                .padding(vertical = 8.dp),
+                                                Modifier
+                                                    .fillMaxWidth()
+                                                    .padding(vertical = 8.dp),
                                             calendarMonth = it,
                                         )
                                     },
@@ -158,9 +157,9 @@ fun FeedScreenContent(
                                             hasContribution = state.dates.contains(weekDay.date),
                                             isMonthView = isMonthView,
                                             modifier =
-                                            Modifier
-                                                .fillMaxWidth()
-                                                .padding(horizontal = 8.dp, vertical = 8.dp),
+                                                Modifier
+                                                    .fillMaxWidth()
+                                                    .padding(horizontal = 8.dp, vertical = 8.dp),
                                             day = weekDay.date,
                                             selectedDate = date,
                                             onClickDate = onClickDate,
