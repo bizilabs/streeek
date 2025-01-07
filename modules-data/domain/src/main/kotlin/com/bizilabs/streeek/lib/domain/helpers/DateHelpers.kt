@@ -137,6 +137,6 @@ fun LocalDateTime.toTimeAgo(): String {
             val weeks = duration.inWholeDays / 7
             if (weeks == 1L) "1 week ago" else "$weeks weeks ago"
         }
-        else -> this.date.asString(format = DateFormats.YYYY_MM_DD) ?: ""
+        else -> this.date.asString(format = DateFormats.DD_MM_YYYY) ?: ""
     }
 }

@@ -46,6 +46,7 @@ import com.bizilabs.streeek.lib.common.navigation.SharedScreen
 import com.bizilabs.streeek.lib.design.components.DialogState
 import com.bizilabs.streeek.lib.design.components.SafiBottomDialog
 import com.bizilabs.streeek.lib.design.components.SafiCenteredColumn
+import com.bizilabs.streeek.lib.domain.helpers.toTimeAgo
 import com.bizilabs.streeek.lib.resources.strings.SafiStringLabels
 
 val featureProfile =
@@ -159,7 +160,7 @@ fun ProfileScreenContent(
                         text =
                             buildString {
                                 append("Joined : ")
-                                append(account.createdAt)
+                                append(account.createdAt.toTimeAgo())
                             },
                     )
                 }
