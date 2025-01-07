@@ -41,7 +41,7 @@ jobs:
       - name: Deploy to Playstore
         uses: r0adkll/upload-google-play@v1
         with:
-          serviceAccountJsonPlainText: ${{ secrets.SERVICE_ACCOUNT_JSON }}
+          serviceAccountJsonPlainText: ${{ secrets.PLAYSTORE_SERVICE_ACCOUNT }}
           packageName: com.bizilabs.app.streeek.mobile
           releaseFiles: app/build/outputs/bundle/release/app-release.aab
           track: internal
