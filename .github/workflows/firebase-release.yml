@@ -32,19 +32,19 @@ jobs:
         uses: gradle/gradle-build-action@v3
 
       - name: Assemble APK
-        run: ./gradlew assembleBeta
+        run: ./gradlew assembleRelease
 
       - name: Sign Release APK
         uses: r0adkll/sign-android-release@v1
         with:
-          releaseDirectory: modules-app/streeek/build/outputs/apk/beta
+          releaseDirectory: modules-app/streeek/build/outputs/apk/release
           signingKeyBase64: ${{ secrets.SIGNING_KEY }}
           alias: ${{ secrets.ALIAS }}
           keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
           keyPassword: ${{ secrets.KEY_PASSWORD }}
 
       - name: Check APK name
-        run: ls modules-app/streeek/build/outputs/apk/beta
+        run: ls modules-app/streeek/build/outputs/apk/release
 
       - name: Deploy to Firebase
         uses: wzieba/Firebase-Distribution-Github-Action@v1
@@ -52,4 +52,4 @@ jobs:
           appId: ${{ secrets.FIREBASE_APP_ID }}
           serviceCredentialsFileContent: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
           groups: internal
-          file: modules-app/streeek/build/outputs/apk/beta/streeek-release.apk
+          file: modules-app/streeek/build/outputs/apk/release/streeek-release.apk
