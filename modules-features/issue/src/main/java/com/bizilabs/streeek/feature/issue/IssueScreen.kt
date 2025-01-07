@@ -124,10 +124,7 @@ fun IssueScreenContent(
 
                 else -> {
                     SafiPagingComponent(
-                        modifier =
-                            Modifier
-                                .padding(innerPadding)
-                                .fillMaxSize(),
+                        modifier = Modifier.fillMaxSize(),
                         data = comments,
                         refreshEmpty = {
                             SafiInfoSection(
@@ -145,7 +142,7 @@ fun IssueScreenContent(
                                     Modifier
                                         .fillMaxWidth()
                                         .padding(horizontal = 16.dp)
-                                        .padding(bottom = 8.dp),
+                                        .padding(vertical = 8.dp),
                             ) {
                                 Row(
                                     modifier = Modifier.fillMaxWidth(),
