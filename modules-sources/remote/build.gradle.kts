@@ -29,7 +29,7 @@ android {
             buildConfigField("String", "SupabaseUrl", "\"${properties.getProperty("supabase.url")}\"")
             buildConfigField("String", "SupabaseKey", "\"${properties.getProperty("supabase.key")}\"")
         }
-        named("beta"){
+        named("beta") {
             // github secrets
             buildConfigField("String", "GithubClientId", "\"${properties.getProperty("github.client.id")}\"")
             buildConfigField("String", "GithubClientName", "\"${properties.getProperty("github.client.name")}\"")
