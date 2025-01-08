@@ -101,11 +101,11 @@ data class TeamScreenState(
             if (fetchState is FetchState.Success) {
                 val team = fetchState.value.team
                 name.isNotBlank() && (
-                    !team.name.equals(
-                        name,
-                        ignoreCase = false,
-                    ) || team.public != isPublic
-                )
+                        !team.name.equals(
+                            name,
+                            ignoreCase = false,
+                        ) || team.public != isPublic
+                        )
             } else {
                 isValidName && value.isNotBlank()
             }
@@ -171,7 +171,12 @@ class TeamScreenModel(
         screenModelScope.launch {
             val update =
                 when (val result = teamRepository.createTeam(name, public)) {
-                    is DataResult.Error -> DialogState.Error(title = "Error", message = result.message)
+                    is DataResult.Error ->
+                        DialogState.Error(
+                            title = "Error",
+                            message = result.message,
+                        )
+
                     is DataResult.Success -> {
                         val teamId = result.data
                         getTeam(id = teamId, shouldSaveTeam = true)
@@ -194,7 +199,12 @@ class TeamScreenModel(
         screenModelScope.launch {
             val update =
                 when (val result = teamRepository.updateTeam(teamId, name, public)) {
-                    is DataResult.Error -> DialogState.Error(title = "Error", message = result.message)
+                    is DataResult.Error ->
+                        DialogState.Error(
+                            title = "Error",
+                            message = result.message,
+                        )
+
                     is DataResult.Success -> {
                         getTeam(id = teamId)
                         DialogState.Success(
@@ -217,10 +227,12 @@ class TeamScreenModel(
                     mutableState.update {
                         it.copy(
                             dialogState =
-                                DialogState.Error(
-                                    title = "Error",
-                                    message = result.message,
-                                ),
+                            DialogState.Error(
+                                title = "Team Doesn't Exist",
+                                message =
+                                "You have entered an invalid code, please double check" +
+                                        " or ask the admin to share the correct code.",
+                            ),
                         )
                     }
                 }
@@ -231,10 +243,10 @@ class TeamScreenModel(
                             isJoining = false,
                             teamId = result.data.teamId,
                             dialogState =
-                                DialogState.Success(
-                                    title = "Success",
-                                    message = "Joined team successfully as a ${result.data.role}",
-                                ),
+                            DialogState.Success(
+                                title = "Success",
+                                message = "Joined team successfully as a ${result.data.role}",
+                            ),
                         )
                     }
                     getTeam(id = result.data.teamId, shouldSaveTeam = true)
@@ -254,10 +266,10 @@ class TeamScreenModel(
                     mutableState.update {
                         it.copy(
                             dialogState =
-                                DialogState.Error(
-                                    title = "Error",
-                                    message = result.message,
-                                ),
+                            DialogState.Error(
+                                title = "Error",
+                                message = result.message,
+                            ),
                         )
                     }
                 }
@@ -266,10 +278,10 @@ class TeamScreenModel(
                     mutableState.update {
                         it.copy(
                             dialogState =
-                                DialogState.Success(
-                                    title = "Success",
-                                    message = "Left team successfully. \nHope you come back soon!",
-                                ),
+                            DialogState.Success(
+                                title = "Success",
+                                message = "Left team successfully. \nHope you come back soon!",
+                            ),
                         )
                     }
                     delay(2000)
@@ -296,7 +308,14 @@ class TeamScreenModel(
                         )
                 ) {
                     is DataResult.Error -> {
-                        mutableState.update { it.copy(invitationsState = FetchListState.Error(message = result.message)) }
+                        mutableState.update {
+                            it.copy(
+                                invitationsState =
+                                FetchListState.Error(
+                                    message = result.message,
+                                ),
+                            )
+                        }
                         FetchState.Error(result.message)
                     }
 
