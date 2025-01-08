@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - chore/release-action
 
 concurrency:
   group: ${{ github.workflow }} - ${{ github.ref }}
@@ -31,9 +30,10 @@ jobs:
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v3
 
-      - name: Set Version Code
+      - name: Set Version Code and Version Name
         run: |
           echo "VERSION_CODE=$(git rev-list --count HEAD)" >> $GITHUB_ENV
+          echo "VERSION_NAME=$(git rev-list --count HEAD)" >> $GITHUB_ENV
 
       - name: Assemble APK
         run: ./gradlew assembleBeta
