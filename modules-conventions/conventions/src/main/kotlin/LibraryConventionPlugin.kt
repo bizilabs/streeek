@@ -23,6 +23,7 @@ class LibraryConventionPlugin : Plugin<Project> {
             extensions.configure<LibraryExtension> {
                 configureKotlinAndroid(this)
                 defaultConfig.targetSdk = AndroidSdk.targetSdk
+                buildTypes.create("beta")
             }
             val libs = extensions.getByType<VersionCatalogsExtension>().named("libs")
             configurations.configureEach {

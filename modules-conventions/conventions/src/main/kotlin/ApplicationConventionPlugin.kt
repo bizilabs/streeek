@@ -24,6 +24,18 @@ class ApplicationConventionPlugin : Plugin<Project> {
             extensions.configure<ApplicationExtension> {
                 configureKotlinAndroid(this)
                 defaultConfig.targetSdk = AndroidSdk.targetSdk
+                buildTypes {
+                    create("beta") {
+                        applicationIdSuffix = ".beta"
+                        versionNameSuffix = "-beta"
+                        isMinifyEnabled = true
+                        isShrinkResources = true
+                        proguardFiles(
+                            getDefaultProguardFile("proguard-android-optimize.txt"),
+                            "proguard-rules.pro",
+                        )
+                    }
+                }
             }
             val libs = extensions.getByType<VersionCatalogsExtension>().named("libs")
             dependencies {

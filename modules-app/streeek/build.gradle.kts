@@ -34,10 +34,6 @@ android {
 //                variant.outputFileName = "streeek-release.apk"
 //            }
         }
-//        val beta by creating {
-//            applicationIdSuffix = ".beta"
-//            versionNameSuffix = "-beta"
-//        }
     }
 }
 
