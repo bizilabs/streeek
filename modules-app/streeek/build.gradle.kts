@@ -13,7 +13,7 @@ android {
     defaultConfig {
         applicationId = "com.bizilabs.app.streeek.mobile"
         versionCode = System.getenv("VERSION_CODE")?.toInt() ?: 2
-        versionName = System.getenv("VERSION_CODE")?.toString() ?: "0.0.2"
+        versionName = System.getenv("VERSION_NAME")?.toString() ?: "0.0.2"
     }
 }
 
