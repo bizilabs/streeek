@@ -25,6 +25,18 @@ class ApplicationConventionPlugin : Plugin<Project> {
                 configureKotlinAndroid(this)
                 defaultConfig.targetSdk = AndroidSdk.targetSdk
                 buildTypes {
+                    debug {
+                        applicationIdSuffix = ".debug"
+                        versionNameSuffix = "-debug"
+                    }
+                    release {
+                        isMinifyEnabled = true
+                        isShrinkResources = true
+                        proguardFiles(
+                            getDefaultProguardFile("proguard-android-optimize.txt"),
+                            "proguard-rules.pro",
+                        )
+                    }
                     create("beta") {
                         applicationIdSuffix = ".beta"
                         versionNameSuffix = "-beta"

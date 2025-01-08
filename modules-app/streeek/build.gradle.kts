@@ -12,28 +12,8 @@ android {
 
     defaultConfig {
         applicationId = "com.bizilabs.app.streeek.mobile"
-        versionCode = 2
-        versionName = "0.0.2"
-    }
-
-    buildTypes {
-        debug {
-            applicationIdSuffix = ".debug"
-            versionNameSuffix = "-debug"
-        }
-        release {
-            isMinifyEnabled = true
-            isShrinkResources = true
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro",
-            )
-//            applicationVariants.all {
-//                val variant =
-//                    this.outputs as com.android.build.gradle.internal.api.BaseVariantOutputImpl
-//                variant.outputFileName = "streeek-release.apk"
-//            }
-        }
+        versionCode = System.getenv("VERSION_CODE")?.toInt() ?: 2
+        versionName = System.getenv("VERSION_CODE")?.toString() ?: "0.0.2"
     }
 }
 
