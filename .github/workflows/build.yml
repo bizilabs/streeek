@@ -79,4 +79,4 @@ jobs:
           cache-read-only: false
 
       - name: Run build with Gradle Wrapper
-        run: ./gradlew buildDebug
+        run: ./gradlew buildBeta
