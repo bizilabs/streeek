@@ -28,21 +28,8 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro",
             )
-            applicationVariants.all {
-                val variant = this
-                variant.outputs
-                    .map { it as com.android.build.gradle.internal.api.BaseVariantOutputImpl }
-                    .filter {
-                        val names = it.name.split("-")
-                        it.name.lowercase().contains(names[0], true) && it.name.lowercase().contains(names[1], true)
-                    }
-                    .forEach { output ->
-                        val outputFileName = "streeek-release.apk"
-                        output.outputFileName = outputFileName
-                    }
-            }
-
-//            val variant =
+//            applicationVariants.all {
+//                val variant =
 //                    this.outputs as com.android.build.gradle.internal.api.BaseVariantOutputImpl
 //                variant.outputFileName = "streeek-release.apk"
 //            }
