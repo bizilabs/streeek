@@ -28,6 +28,11 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro",
             )
+            applicationVariants.all {
+                val variant =
+                    this.outputs as com.android.build.gradle.internal.api.BaseVariantOutputImpl
+                variant.outputFileName = "streeek-release.apk"
+            }
         }
 //        val beta by creating {
 //            applicationIdSuffix = ".beta"
