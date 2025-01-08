@@ -61,4 +61,4 @@ jobs:
           appId: ${{ secrets.FIREBASE_APP_ID }}
           serviceCredentialsFileContent: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
           groups: internal
-          file: modules-app/streeek/build/outputs/apk/release/streeek-release.apk
+          file: modules-app/streeek/build/outputs/apk/release/streeek-release-unsigned-signed.apk
