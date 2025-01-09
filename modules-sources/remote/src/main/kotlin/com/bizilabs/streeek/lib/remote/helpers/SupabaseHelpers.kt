@@ -45,6 +45,12 @@ object Supabase {
             }
         }
     }
+
+    object ErrorMessages {
+        const val BAD_REQUEST_EXCEPTION =
+            "You have entered an invalid code, please double check or " +
+                "ask the admin to share the correct code."
+    }
 }
 
 private val serializer =
@@ -89,7 +95,7 @@ suspend fun <T> safeSupabaseCall(
         NetworkResult.Failure(Exception("Resource Not Found!"))
     } catch (e: BadRequestRestException) {
         Timber.e(e, "Bad Request.")
-        NetworkResult.Failure(Exception("You have entered an invalid code, please double check or ask the admin to share the correct code."))
+        NetworkResult.Failure(Exception(Supabase.ErrorMessages.BAD_REQUEST_EXCEPTION))
     } catch (e: Exception) {
         Timber.e(e, "Supabase Call Failed")
         val message = e.message.toValidErrorMessage(default = defaultErrorMessage)
