@@ -5,7 +5,7 @@ CREATE TABLE accounts (
     username VARCHAR(255) unique not null,
     email VARCHAR(255),
     bio TEXT,
-    url TEXT,
+    avatar_url TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
