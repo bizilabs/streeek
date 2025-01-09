@@ -3,9 +3,9 @@
 <p align="center"><img width=12% src=".github/images/logo.webp"></p>
 
 # Streeek
-![GitHub Repo stars](https://img.shields.io:/github/stars/bizilabs/streeek?style=for-the-badge) ![GitHub tag (latest by date)](https://img.shields.io:/github/v/tag/bizilabs/streeek?style=for-the-badge) ![GitHub branch checks state](https://img.shields.io:/github/checks-status/bizilabs/streeek/main?style=for-the-badge)
+![GitHub Repo stars](https://img.shields.io:/github/stars/bizilabs/streeek?style=for-the-badge) ![GitHub tag (latest by date)](https://img.shields.io:/github/v/tag/bizilabs/streeek?style=for-the-badge) ![GitHub branch checks state](https://img.shields.io:/github/checks-status/bizilabs/streeek/main?style=for-the-badge) 
 
-[![Download it on Google Play](<img src=".github/images/google_play_store.png" width="200" hspace="2" alt="auth" />)](https://play.google.com/store/apps/details?id=com.bizilabs.app.streeek.mobile&pcampaignid=web_share)
+[<img src=".github/images/google_play_store.png" width="160" alt="auth" />](https://play.google.com/store/apps/details?id=com.bizilabs.app.streeek.mobile&pcampaignid=web_share)
 
 [Overview](#overview) •
 [Features](#features) •
