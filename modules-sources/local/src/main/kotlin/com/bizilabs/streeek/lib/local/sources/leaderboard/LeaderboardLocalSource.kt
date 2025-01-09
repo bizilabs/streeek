@@ -11,7 +11,6 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
 interface LeaderboardLocalSource {
-
     val syncing: Flow<Boolean>
 
     val selected: Flow<String?>
@@ -27,13 +26,11 @@ interface LeaderboardLocalSource {
     suspend fun update(leaderboard: LeaderboardCache)
 
     suspend fun delete(leaderboard: LeaderboardCache)
-
 }
 
 internal class LeaderboardLocalSourceImpl(
-    private val source: PreferenceSource
+    private val source: PreferenceSource,
 ) : LeaderboardLocalSource {
-
     private val leaderboardKey = stringPreferencesKey("leaderboard.id")
     private val leaderboardSyncKey = booleanPreferencesKey("leaderboard.sync")
     private val leaderboardsKey = stringPreferencesKey("leaderboard.list")
@@ -45,9 +42,10 @@ internal class LeaderboardLocalSourceImpl(
         get() = source.getNullable(key = leaderboardKey)
 
     override val leaderboards: Flow<Map<String, LeaderboardCache>>
-        get() = source.getNullable(key = leaderboardsKey).mapLatest { json ->
-            json?.let { Json.decodeFromString(it) } ?: emptyMap()
-        }
+        get() =
+            source.getNullable(key = leaderboardsKey).mapLatest { json ->
+                json?.let { Json.decodeFromString(it) } ?: emptyMap()
+            }
 
     private suspend fun getMutableMap() = leaderboards.first().toMutableMap()
 
@@ -63,26 +61,21 @@ internal class LeaderboardLocalSourceImpl(
         source.update(leaderboardKey, leaderboard.name)
     }
 
-    override suspend fun create(
-        leaderboard: LeaderboardCache
-    ) {
+    override suspend fun create(leaderboard: LeaderboardCache) {
         val map = getMutableMap()
         map[leaderboard.name] = leaderboard
-        saveMutableMap(map)    }
+        saveMutableMap(map)
+    }
 
-    override suspend fun update(
-        leaderboard: LeaderboardCache
-    ) {
+    override suspend fun update(leaderboard: LeaderboardCache) {
         val map = getMutableMap()
         map[leaderboard.name] = leaderboard
-        saveMutableMap(map)    }
+        saveMutableMap(map)
+    }
 
-    override suspend fun delete(
-        leaderboard: LeaderboardCache
-    ) {
+    override suspend fun delete(leaderboard: LeaderboardCache) {
         val map = getMutableMap()
         map.remove(leaderboard.name)
         saveMutableMap(map)
     }
-
 }

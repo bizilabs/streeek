@@ -63,7 +63,6 @@ class SyncLeaderboardWork(
     val params: WorkerParameters,
     val repository: LeaderboardRepository,
 ) : CoroutineWorker(context, params) {
-
     companion object {
         const val TAG = "SyncLeaderboardWorker"
     }
@@ -89,6 +88,12 @@ class SyncLeaderboardWork(
         val monthly = (monthlyResult as DataResult.Success).data
         val monthlyUpdate = cached[monthly.name]?.updateOrCreate(value = monthly) ?: monthly
         repository.update(leaderboard = monthlyUpdate)
+        // sync ultimate leaderboard
+        val ultimateResult = repository.getUltimate(page = 1)
+        if (ultimateResult is DataResult.Error) return getWorkerResult()
+        val ultimate = (ultimateResult as DataResult.Success).data
+        val ultimateUpdate = cached[ultimate.name]?.updateOrCreate(value = ultimate) ?: ultimate
+        repository.update(leaderboard = ultimateUpdate)
         // set selected
         val selectedId = repository.selectedLeaderBoardId.firstOrNull()
         val selected = cached[selectedId] ?: dailyUpdate
@@ -103,5 +108,4 @@ class SyncLeaderboardWork(
         if (params.runAttemptCount > 2) return Result.failure()
         return Result.retry()
     }
-
 }

@@ -17,9 +17,8 @@ import kotlinx.coroutines.flow.mapLatest
 internal class LeaderboardRepositoryImpl(
     private val remoteSource: LeaderboardRemoteSource,
     private val localSource: LeaderboardLocalSource,
-    accountLocalSource: AccountLocalSource
+    accountLocalSource: AccountLocalSource,
 ) : LeaderboardRepository, AccountHelper(source = accountLocalSource) {
-
     override val syncing: Flow<Boolean>
         get() = localSource.syncing
 
@@ -27,9 +26,10 @@ internal class LeaderboardRepositoryImpl(
         get() = localSource.selected
 
     override val leaderboards: Flow<Map<String, LeaderboardDomain>>
-        get() = localSource.leaderboards.mapLatest { map ->
-            map.mapValues { it.value.toDomain() }
-        }
+        get() =
+            localSource.leaderboards.mapLatest { map ->
+                map.mapValues { it.value.toDomain() }
+            }
 
     override suspend fun setIsSyncing(isSyncing: Boolean) {
         localSource.setIsSyncing(isSyncing = isSyncing)
@@ -51,6 +51,12 @@ internal class LeaderboardRepositoryImpl(
         val accountId = getAccountId() ?: return DataResult.Error("Couldn't find account")
         return remoteSource.fetchMonthlyLeaderboard(accountId = accountId, page = page)
             .asDataResult { it.toDomain(name = Leaderboard.MONTHLY.name, page = page) }
+    }
+
+    override suspend fun getUltimate(page: Int): DataResult<LeaderboardDomain> {
+        val accountId = getAccountId() ?: return DataResult.Error("Couldn't find account")
+        return remoteSource.fetchMonthlyLeaderboard(accountId = accountId, page = page)
+            .asDataResult { it.toDomain(name = Leaderboard.ULTIMATE.name, page = page) }
     }
 
     override suspend fun update(leaderboard: LeaderboardDomain) {

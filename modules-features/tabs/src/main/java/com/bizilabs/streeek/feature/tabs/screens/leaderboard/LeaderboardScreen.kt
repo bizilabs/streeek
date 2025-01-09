@@ -12,20 +12,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Add
-import androidx.compose.material.icons.rounded.People
-import androidx.compose.material.icons.rounded.Refresh
-import androidx.compose.material.icons.rounded.TransitEnterexit
+import androidx.compose.material.icons.rounded.Leaderboard
+import androidx.compose.material3.Badge
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.ScrollableTabRow
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
+import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -43,7 +39,11 @@ import com.bizilabs.streeek.feature.tabs.screens.leaderboard.components.Leaderbo
 import com.bizilabs.streeek.feature.tabs.screens.leaderboard.components.TeamTopMemberComponent
 import com.bizilabs.streeek.lib.common.navigation.SharedScreen
 import com.bizilabs.streeek.lib.design.components.SafiCenteredColumn
+import com.bizilabs.streeek.lib.design.components.SafiCenteredRow
+import com.bizilabs.streeek.lib.design.components.SafiCircularProgressIndicator
 import com.bizilabs.streeek.lib.design.components.SafiInfoSection
+import com.bizilabs.streeek.lib.design.helpers.onSuccess
+import com.bizilabs.streeek.lib.design.helpers.success
 import com.bizilabs.streeek.lib.domain.models.LeaderboardDomain
 import nl.dionsegijn.konfetti.compose.KonfettiView
 import nl.dionsegijn.konfetti.core.Party
@@ -61,9 +61,6 @@ object LeaderboardScreen : Screen {
 
         LeaderboardScreenContent(
             state = state,
-            onClickMenuCreateTeam = screenModel::onClickMenuTeamCreate,
-            onClickMenuJoinTeam = screenModel::onClickMenuTeamJoin,
-            onClickMenuRefreshTeam = screenModel::onClickMenuRefreshTeam,
             onValueChangeLeaderboard = screenModel::onValueChangeLeaderboard,
         ) { screen ->
             navigator?.push(screen)
@@ -75,9 +72,6 @@ object LeaderboardScreen : Screen {
 @Composable
 fun LeaderboardScreenContent(
     state: LeaderboardScreenState,
-    onClickMenuCreateTeam: () -> Unit,
-    onClickMenuJoinTeam: () -> Unit,
-    onClickMenuRefreshTeam: () -> Unit,
     onValueChangeLeaderboard: (LeaderboardDomain) -> Unit,
     navigate: (Screen) -> Unit,
 ) {
@@ -96,10 +90,7 @@ fun LeaderboardScreenContent(
                 LeaderboardScreenHeaderSection(
                     state = state,
                     modifier = Modifier.fillMaxWidth(),
-                    onClickMenuCreateTeam = onClickMenuCreateTeam,
-                    onClickMenuJoinTeam = onClickMenuJoinTeam,
                     onValueChangeLeaderboard = onValueChangeLeaderboard,
-                    onClickMenuRefreshTeam = onClickMenuRefreshTeam,
                 )
             },
         ) { paddingValues ->
@@ -110,37 +101,30 @@ fun LeaderboardScreenContent(
                         .padding(top = paddingValues.calculateTopPadding())
                         .fillMaxSize(),
                 targetState = state.leaderboard,
-            ) { team ->
-                when (team) {
+            ) { leaderboard ->
+                when (leaderboard) {
                     null -> {
                         SafiCenteredColumn(modifier = Modifier.fillMaxSize()) {
                             SafiInfoSection(
-                                icon = Icons.Rounded.People,
-                                title = "Empty",
-                                description = "Join a team to continue",
-                            )
+                                icon = Icons.Rounded.Leaderboard,
+                                title = "Crunching",
+                                description = "It's about to get real. Prepare yourself!",
+                            ) {
+                                SafiCircularProgressIndicator()
+                            }
                         }
                     }
 
                     else -> {
-                        if (state.list.isEmpty()) {
-                            SafiCenteredColumn(modifier = Modifier.fillMaxSize()) {
-                                SafiInfoSection(
-                                    icon = Icons.Rounded.People,
-                                    title = "No Other Members",
-                                    description = "You're only ${state.leaderboard?.list?.size} members in this team, invite others to continue.",
-                                ) {
-                                }
+                        LazyColumn(modifier = Modifier.fillMaxSize()) {
+                            items(state.list) { member ->
+                                LeaderboardItemComponent(member = member)
                             }
-                        } else {
-                            LazyColumn {
-                                items(state.list) { member ->
-                                    LeaderboardItemComponent(member = member)
-                                }
-                                item {
+                            item {
+                                SafiCenteredRow(modifier = Modifier.fillMaxWidth()) {
                                     Button(
                                         modifier = Modifier.padding(16.dp),
-                                        onClick = {  },
+                                        onClick = { },
                                     ) {
                                         Text(text = "View More")
                                     }
@@ -185,13 +169,10 @@ fun LeaderboardScreenContent(
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun LeaderboardScreenHeaderSection(
     state: LeaderboardScreenState,
-    onClickMenuCreateTeam: () -> Unit,
-    onClickMenuRefreshTeam: () -> Unit,
-    onClickMenuJoinTeam: () -> Unit,
     onValueChangeLeaderboard: (LeaderboardDomain) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -203,41 +184,12 @@ fun LeaderboardScreenHeaderSection(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                IconButton(
-                    modifier = Modifier.padding(horizontal = 16.dp),
-                    onClick = onClickMenuJoinTeam,
-                ) {
-                    Icon(
-                        imageVector = Icons.Rounded.TransitEnterexit,
-                        contentDescription = "",
-                    )
-                }
-
                 Text(
-                    modifier = Modifier.weight(1f),
+                    modifier = Modifier.weight(1f).padding(vertical = 16.dp),
                     text = "Leaderboard".uppercase(),
                     style = MaterialTheme.typography.titleSmall,
                     textAlign = TextAlign.Center,
                 )
-
-                IconButton(
-                    modifier = Modifier.padding(end = 16.dp),
-                    onClick = onClickMenuCreateTeam,
-                ) {
-                    Icon(
-                        imageVector = Icons.Rounded.Add,
-                        contentDescription = "",
-                    )
-                }
-                IconButton(
-                    modifier = Modifier.padding(end = 16.dp),
-                    onClick = onClickMenuRefreshTeam,
-                ) {
-                    Icon(
-                        imageVector = Icons.Rounded.Refresh,
-                        contentDescription = "",
-                    )
-                }
             }
             AnimatedVisibility(
                 modifier =
@@ -248,25 +200,53 @@ fun LeaderboardScreenHeaderSection(
             ) {
                 val index = state.leaderboards.indexOf(state.leaderboard)
                 Column(modifier = Modifier.fillMaxWidth()) {
-                    ScrollableTabRow(
+                    TabRow(
                         modifier = Modifier.fillMaxWidth(),
-                        edgePadding = 0.dp,
                         selectedTabIndex = index,
                         divider = {},
                     ) {
                         state.leaderboards.forEach { leaderboard ->
                             val selected = leaderboard.name == state.leaderboard?.name
-                            Tab(selected = selected, onClick = { onValueChangeLeaderboard(leaderboard) }) {
-                                Text(
-                                    modifier = Modifier.padding(8.dp),
-                                    text = leaderboard.name.lowercase().replaceFirstChar { it.uppercase() },
-                                    color =
-                                        if (selected) {
-                                            MaterialTheme.colorScheme.primary
-                                        } else {
-                                            MaterialTheme.colorScheme.onSurface.copy(0.75f)
-                                        },
-                                )
+                            Tab(
+                                selected = selected,
+                                onClick = { onValueChangeLeaderboard(leaderboard) },
+                            ) {
+                                Box {
+                                    Text(
+                                        modifier = Modifier.padding(vertical = 8.dp, horizontal = 24.dp),
+                                        text =
+                                            leaderboard.name.lowercase()
+                                                .replaceFirstChar { it.uppercase() },
+                                        color =
+                                            if (selected) {
+                                                MaterialTheme.colorScheme.primary
+                                            } else {
+                                                MaterialTheme.colorScheme.onSurface.copy(0.75f)
+                                            },
+                                    )
+                                    Column(
+                                        modifier =
+                                            Modifier
+                                                .align(Alignment.TopEnd)
+                                                .padding(bottom = 24.dp),
+                                    ) {
+                                        AnimatedVisibility(
+                                            visible = !selected,
+                                        ) {
+                                            Badge(
+                                                modifier = Modifier.padding(horizontal = 8.dp),
+                                                containerColor = MaterialTheme.colorScheme.success,
+                                                contentColor = MaterialTheme.colorScheme.onSuccess,
+                                            ) {
+                                                Text(
+                                                    modifier = Modifier.padding(1.dp),
+                                                    text = "${leaderboard.rank.current.position}",
+                                                    style = MaterialTheme.typography.labelSmall,
+                                                )
+                                            }
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
@@ -282,7 +262,7 @@ fun LeaderboardScreenHeaderSection(
                         modifier =
                             Modifier
                                 .fillMaxWidth()
-                                .padding(vertical = 16.dp),
+                                .padding(bottom = 16.dp),
                     ) {
                         TeamTopMemberComponent(
                             isFirst = false,

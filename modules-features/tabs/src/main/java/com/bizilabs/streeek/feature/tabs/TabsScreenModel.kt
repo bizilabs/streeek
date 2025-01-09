@@ -64,7 +64,7 @@ data class TabsScreenState(
 
 class TabsScreenModel(
     private val context: Context,
-    private val leaderboardRepository: LeaderboardRepository
+    private val leaderboardRepository: LeaderboardRepository,
 ) : StateScreenModel<TabsScreenState>(TabsScreenState()) {
     init {
         startWorkers()

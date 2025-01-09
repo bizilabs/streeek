@@ -7,5 +7,5 @@ data class RankDetailsDomain(
 
 data class RankDomain(
     val position: Long,
-    val points: Long
+    val points: Long,
 )

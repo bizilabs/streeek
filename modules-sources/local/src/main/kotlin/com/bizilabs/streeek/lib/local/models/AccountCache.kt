@@ -28,5 +28,5 @@ data class AccountLightCache(
     val id: Long,
     val username: String,
     val avatarUrl: String,
-    val createdAt: String
+    val createdAt: String,
 )

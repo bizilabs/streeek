@@ -6,7 +6,6 @@ import cafe.adriel.voyager.core.model.screenModelScope
 import com.bizilabs.streeek.lib.domain.models.LeaderboardAccountDomain
 import com.bizilabs.streeek.lib.domain.models.LeaderboardDomain
 import com.bizilabs.streeek.lib.domain.repositories.LeaderboardRepository
-import com.bizilabs.streeek.lib.domain.workers.startImmediateSyncLeaderboardWork
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
@@ -68,7 +67,7 @@ class LeaderboardScreenModel(
         }
     }
 
-    private fun observeSyncingLeaderboards(){
+    private fun observeSyncingLeaderboards() {
         screenModelScope.launch {
             repository.syncing.collectLatest { value ->
                 mutableState.update { it.copy(isSyncing = value) }
@@ -92,29 +91,9 @@ class LeaderboardScreenModel(
         }
     }
 
-    fun onClickMenuTeamCreate() {
-        screenModelScope.launch {
-            mutableState.update { it.copy(isCreating = true) }
-            delay(250)
-            mutableState.update { it.copy(isCreating = false) }
-        }
-    }
-
-    fun onClickMenuTeamJoin() {
-        screenModelScope.launch {
-            mutableState.update { it.copy(isJoining = true) }
-            delay(250)
-            mutableState.update { it.copy(isJoining = false) }
-        }
-    }
-
     fun onValueChangeLeaderboard(leaderboard: LeaderboardDomain) {
         screenModelScope.launch {
             repository.set(leaderboard = leaderboard)
         }
-    }
-
-    fun onClickMenuRefreshTeam() {
-        context.startImmediateSyncLeaderboardWork()
     }
 }

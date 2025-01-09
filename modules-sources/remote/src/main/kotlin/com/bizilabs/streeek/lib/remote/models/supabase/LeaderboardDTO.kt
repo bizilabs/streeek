@@ -9,7 +9,7 @@ import kotlinx.serialization.Serializable
 data class LeaderboardDTO(
     @SerialName("account_info")
     val current: RankDTO,
-    val leaderboard: List<LeaderboardAccountDTO>
+    val leaderboard: List<LeaderboardAccountDTO>,
 )
 
 @Serializable
@@ -26,5 +26,5 @@ data class LeaderboardRequestDTO(
     @SerialName("p_page")
     val page: Int,
     @SerialName("p_page_size")
-    val pageSize: Int = PAGE_SIZE
+    val pageSize: Int = PAGE_SIZE,
 )

@@ -11,5 +11,5 @@ data class RankDetailsCache(
 @Serializable
 data class RankCache(
     val points: Long,
-    val rank: Long
+    val rank: Long,
 )

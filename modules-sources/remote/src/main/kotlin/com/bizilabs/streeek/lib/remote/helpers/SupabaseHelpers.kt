@@ -17,7 +17,6 @@ import timber.log.Timber
 internal object Supabase {
     object Tables {
         const val ACCOUNTS = "accounts"
-        const val ACCOUNTPOINTS = "account_points"
         const val CONTRIBUTIONS = "contributions"
         const val LEVELS = "levels"
         const val NOTIFICATIONS = "notifications"
@@ -49,6 +48,7 @@ internal object Supabase {
             const val DAILY = "get_daily_leaderboard_with_account"
             const val WEEKLY = "get_weekly_leaderboard_with_account"
             const val MONTHLY = "get_monthly_leaderboard_with_account"
+            const val ULTIMATE = "get_all_time_leaderboard_with_account"
         }
     }
 

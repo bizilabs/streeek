@@ -5,7 +5,6 @@ import com.bizilabs.streeek.lib.domain.models.LeaderboardDomain
 import kotlinx.coroutines.flow.Flow
 
 interface LeaderboardRepository {
-
     val syncing: Flow<Boolean>
 
     val selectedLeaderBoardId: Flow<String?>
@@ -20,8 +19,9 @@ interface LeaderboardRepository {
 
     suspend fun getMonthly(page: Int): DataResult<LeaderboardDomain>
 
+    suspend fun getUltimate(page: Int): DataResult<LeaderboardDomain>
+
     suspend fun update(leaderboard: LeaderboardDomain)
 
     suspend fun set(leaderboard: LeaderboardDomain)
-
 }
