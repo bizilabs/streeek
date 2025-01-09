@@ -93,7 +93,7 @@ internal class TeamRemoteSourceImpl(
         accountId: Long,
         token: String,
     ): NetworkResult<JoinTeamInvitationDTO> =
-        safeSupabaseCall {
+        safeSupabaseCall("Failed to joining team.") {
             val parameters =
                 JoinTeamInvitationRequestDTO(accountId = accountId, token = token).asJsonObject()
             supabase.postgrest.rpc(

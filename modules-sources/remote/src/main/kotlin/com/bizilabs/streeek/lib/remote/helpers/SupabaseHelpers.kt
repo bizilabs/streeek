@@ -4,6 +4,7 @@ import com.bizilabs.streeek.lib.remote.BuildConfig
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.auth.Auth
 import io.github.jan.supabase.createSupabaseClient
+import io.github.jan.supabase.exceptions.NotFoundRestException
 import io.github.jan.supabase.functions.Functions
 import io.github.jan.supabase.postgrest.Postgrest
 import io.github.jan.supabase.realtime.Realtime
@@ -67,12 +68,27 @@ fun createSupabase(): SupabaseClient =
         defaultSerializer = serializer
     }
 
-suspend fun <T> safeSupabaseCall(block: suspend () -> T): NetworkResult<T> {
+private fun String?.toValidErrorMessage(default: String): String {
+    return when {
+        this.isNullOrBlank() -> default
+        this.contains(BuildConfig.SupabaseUrl) -> this.replace(BuildConfig.SupabaseUrl, "********")
+        else -> this
+    }
+}
+
+suspend fun <T> safeSupabaseCall(
+    defaultErrorMessage: String = "supabase failed",
+    block: suspend () -> T,
+): NetworkResult<T> {
     return try {
         val data = block()
         NetworkResult.Success(data)
+    } catch (e: NotFoundRestException) {
+        Timber.e(e, "Resource not found.")
+        NetworkResult.Failure(Exception("Resource Not Found!"))
     } catch (e: Exception) {
         Timber.e(e, "Supabase Call Failed")
-        NetworkResult.Failure(e)
+        val message = e.message.toValidErrorMessage(default = defaultErrorMessage)
+        NetworkResult.Failure(Exception(message))
     }
 }
