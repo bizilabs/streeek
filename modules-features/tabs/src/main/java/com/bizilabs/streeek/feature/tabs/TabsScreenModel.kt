@@ -10,22 +10,28 @@ import androidx.compose.material.icons.rounded.Explore
 import androidx.compose.material.icons.rounded.PeopleAlt
 import androidx.compose.ui.graphics.vector.ImageVector
 import cafe.adriel.voyager.core.model.StateScreenModel
+import cafe.adriel.voyager.core.model.screenModelScope
 import com.bizilabs.streeek.feature.tabs.screens.achievements.AchievementsModule
 import com.bizilabs.streeek.feature.tabs.screens.feed.FeedModule
-import com.bizilabs.streeek.feature.tabs.screens.teams.TeamsModule
+import com.bizilabs.streeek.feature.tabs.screens.teams.LeaderboardModule
+import com.bizilabs.streeek.lib.domain.repositories.LeaderboardRepository
+import com.bizilabs.streeek.lib.domain.workers.startImmediateSyncLeaderboardWork
 import com.bizilabs.streeek.lib.domain.workers.startPeriodicAccountSyncWork
 import com.bizilabs.streeek.lib.domain.workers.startPeriodicDailySyncContributionsWork
 import com.bizilabs.streeek.lib.domain.workers.startPeriodicLevelsSyncWork
 import com.bizilabs.streeek.lib.domain.workers.startPeriodicTeamsSyncWork
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import org.koin.dsl.module
+import timber.log.Timber
 
-val tabsModule =
+val FeatureTabsModule =
     module {
         factory {
-            TabsScreenModel(context = get())
+            TabsScreenModel(context = get(), leaderboardRepository = get())
         }
-        includes(TeamsModule, FeedModule, AchievementsModule)
+        includes(LeaderboardModule, FeedModule, AchievementsModule)
     }
 
 enum class Tabs {
@@ -58,9 +64,19 @@ data class TabsScreenState(
 
 class TabsScreenModel(
     private val context: Context,
+    private val leaderboardRepository: LeaderboardRepository
 ) : StateScreenModel<TabsScreenState>(TabsScreenState()) {
     init {
         startWorkers()
+        observeLeaderboard()
+    }
+
+    private fun observeLeaderboard() {
+        screenModelScope.launch {
+            leaderboardRepository.leaderboards.collectLatest { map ->
+                Timber.d("Kawabanga -> $map")
+            }
+        }
     }
 
     private fun startWorkers() {
@@ -68,6 +84,7 @@ class TabsScreenModel(
             startPeriodicTeamsSyncWork()
             startPeriodicLevelsSyncWork()
             startPeriodicAccountSyncWork()
+            startImmediateSyncLeaderboardWork()
             startPeriodicDailySyncContributionsWork()
         }
     }

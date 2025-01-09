@@ -6,6 +6,14 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
+data class AccountLightDTO(
+    val id: Long,
+    val username: String,
+    val avatar_url: String,
+    val created_at: String,
+)
+
+@Serializable
 data class AccountDTO(
     val id: Long,
     @SerialName("github_id")

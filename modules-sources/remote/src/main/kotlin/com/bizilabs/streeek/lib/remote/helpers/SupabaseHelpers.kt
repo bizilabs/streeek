@@ -14,7 +14,7 @@ import io.github.jan.supabase.storage.Storage
 import kotlinx.serialization.json.Json
 import timber.log.Timber
 
-object Supabase {
+internal object Supabase {
     object Tables {
         const val ACCOUNTS = "accounts"
         const val ACCOUNTPOINTS = "account_points"
@@ -43,6 +43,10 @@ object Supabase {
                 const val DELETE = "delete_team_invitation"
                 const val CREATE = "create_team_invite_code"
             }
+        }
+
+        object Leaderboard {
+            const val DAILY = "get_daily_leaderboard_with_account"
         }
     }
 

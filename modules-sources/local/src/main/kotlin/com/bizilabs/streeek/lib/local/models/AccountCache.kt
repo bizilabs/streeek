@@ -22,3 +22,11 @@ data class AccountCache(
 }
 
 internal fun String.fromJsonToAccountCache(): AccountCache = Json.decodeFromString(this)
+
+@Serializable
+data class AccountLightCache(
+    val id: Long,
+    val username: String,
+    val avatarUrl: String,
+    val createdAt: String
+)

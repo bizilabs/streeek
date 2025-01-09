@@ -48,35 +48,35 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.getScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import coil.compose.AsyncImage
+import com.bizilabs.streeek.feature.tabs.screens.teams.components.LeaderboardItemComponent
 import com.bizilabs.streeek.feature.tabs.screens.teams.components.TeamTopMemberComponent
 import com.bizilabs.streeek.lib.common.navigation.SharedScreen
 import com.bizilabs.streeek.lib.design.components.SafiCenteredColumn
 import com.bizilabs.streeek.lib.design.components.SafiCenteredRow
 import com.bizilabs.streeek.lib.design.components.SafiInfoSection
 import com.bizilabs.streeek.lib.domain.extensions.asRank
+import com.bizilabs.streeek.lib.domain.models.LeaderboardDomain
 import com.bizilabs.streeek.lib.domain.models.TeamDetailsDomain
-import com.bizilabs.streeek.lib.domain.models.TeamDomain
 import nl.dionsegijn.konfetti.compose.KonfettiView
 import nl.dionsegijn.konfetti.core.Party
 import nl.dionsegijn.konfetti.core.Position
 import nl.dionsegijn.konfetti.core.emitter.Emitter
 import java.util.concurrent.TimeUnit
 
-object TeamsScreen : Screen {
+object LeaderboardScreen : Screen {
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.current
 
-        val screenModel: TeamsScreenModel = getScreenModel()
+        val screenModel: LeaderboardScreenModel = getScreenModel()
         val state by screenModel.state.collectAsStateWithLifecycle()
 
-        TeamsScreenContent(
+        LeaderboardScreenContent(
             state = state,
             onClickMenuCreateTeam = screenModel::onClickMenuTeamCreate,
             onClickMenuJoinTeam = screenModel::onClickMenuTeamJoin,
             onClickMenuRefreshTeam = screenModel::onClickMenuRefreshTeam,
-            onClickTeam = screenModel::onClickTeam,
-            onValueChangeTeam = screenModel::onValueChangeTeam,
+            onValueChangeLeaderboard = screenModel::onValueChangeLeaderboard,
         ) { screen ->
             navigator?.push(screen)
         }
@@ -85,13 +85,12 @@ object TeamsScreen : Screen {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TeamsScreenContent(
-    state: TeamsScreenState,
+fun LeaderboardScreenContent(
+    state: LeaderboardScreenState,
     onClickMenuCreateTeam: () -> Unit,
     onClickMenuJoinTeam: () -> Unit,
     onClickMenuRefreshTeam: () -> Unit,
-    onClickTeam: (TeamDomain) -> Unit,
-    onValueChangeTeam: (TeamDetailsDomain) -> Unit,
+    onValueChangeLeaderboard: (LeaderboardDomain) -> Unit,
     navigate: (Screen) -> Unit,
 ) {
     if (state.isCreating) {
@@ -102,20 +101,16 @@ fun TeamsScreenContent(
         navigate(rememberScreen(SharedScreen.Team(isJoining = true, teamId = null)))
     }
 
-    if (state.teamId != null) {
-        navigate(rememberScreen(SharedScreen.Team(isJoining = false, teamId = state.teamId)))
-    }
-
     Box(modifier = Modifier.fillMaxSize()) {
         Scaffold(
             modifier = Modifier.fillMaxSize(),
             topBar = {
-                TeamsScreenHeaderSection(
+                LeaderboardScreenHeaderSection(
                     state = state,
                     modifier = Modifier.fillMaxWidth(),
                     onClickMenuCreateTeam = onClickMenuCreateTeam,
                     onClickMenuJoinTeam = onClickMenuJoinTeam,
-                    onValueChangeTeam = onValueChangeTeam,
+                    onValueChangeLeaderboard = onValueChangeLeaderboard,
                     onClickMenuRefreshTeam = onClickMenuRefreshTeam,
                 )
             },
@@ -126,7 +121,7 @@ fun TeamsScreenContent(
                     Modifier
                         .padding(top = paddingValues.calculateTopPadding())
                         .fillMaxSize(),
-                targetState = state.team,
+                targetState = state.leaderboard,
             ) { team ->
                 when (team) {
                     null -> {
@@ -145,90 +140,19 @@ fun TeamsScreenContent(
                                 SafiInfoSection(
                                     icon = Icons.Rounded.People,
                                     title = "No Other Members",
-                                    description = "You're only three members in this team, invite others to continue.",
+                                    description = "You're only ${state.leaderboard?.list?.size} members in this team, invite others to continue.",
                                 ) {
-                                    Button(
-                                        modifier = Modifier.padding(16.dp),
-                                        onClick = { state.team?.let { it -> onClickTeam(it.team) } },
-                                    ) {
-                                        Text(text = "Invite More")
-                                    }
                                 }
                             }
                         } else {
                             LazyColumn {
                                 items(state.list) { member ->
-                                    Card(
-                                        modifier =
-                                            Modifier
-                                                .padding(horizontal = 16.dp)
-                                                .padding(top = 8.dp)
-                                                .fillMaxWidth(),
-                                        colors = CardDefaults.cardColors(),
-                                    ) {
-                                        SafiCenteredRow(
-                                            modifier = Modifier.fillMaxWidth(),
-                                        ) {
-                                            Card(
-                                                modifier = Modifier.padding(16.dp),
-                                                shape = RoundedCornerShape(20),
-                                                border =
-                                                    BorderStroke(
-                                                        1.dp,
-                                                        MaterialTheme.colorScheme.onSurface,
-                                                    ),
-                                            ) {
-                                                AsyncImage(
-                                                    modifier =
-                                                        Modifier
-                                                            .size(52.dp)
-                                                            .clip(RoundedCornerShape(20)),
-                                                    model = member.account.avatarUrl,
-                                                    contentDescription = "user avatar url",
-                                                    contentScale = ContentScale.Crop,
-                                                )
-                                            }
-
-                                            Column {
-                                                AnimatedVisibility(visible = member.account.role.isAdmin) {
-                                                    Text(
-                                                        text = member.account.role.label,
-                                                        style = MaterialTheme.typography.bodySmall,
-                                                    )
-                                                }
-                                                Text(
-                                                    text = member.account.username,
-                                                    fontWeight = MaterialTheme.typography.titleMedium.fontWeight,
-                                                    fontSize = MaterialTheme.typography.titleMedium.fontSize,
-                                                )
-                                                Text(
-                                                    text =
-                                                        buildString {
-                                                            append(member.points)
-                                                            append(" pts")
-                                                        },
-                                                )
-                                            }
-
-                                            Spacer(modifier = Modifier.weight(1f))
-
-                                            Text(
-                                                modifier = Modifier.padding(16.dp),
-                                                text = member.rank.asRank(),
-                                                fontSize =
-                                                    if (member.rank < 100) {
-                                                        MaterialTheme.typography.titleLarge.fontSize
-                                                    } else {
-                                                        MaterialTheme.typography.bodyLarge.fontSize
-                                                    },
-                                            )
-                                        }
-                                    }
+                                    LeaderboardItemComponent(member = member)
                                 }
                                 item {
                                     Button(
                                         modifier = Modifier.padding(16.dp),
-                                        onClick = { state.team?.let { it -> onClickTeam(it.team) } },
+                                        onClick = {  },
                                     ) {
                                         Text(text = "View More")
                                     }
@@ -275,12 +199,12 @@ fun TeamsScreenContent(
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun TeamsScreenHeaderSection(
-    state: TeamsScreenState,
+fun LeaderboardScreenHeaderSection(
+    state: LeaderboardScreenState,
     onClickMenuCreateTeam: () -> Unit,
     onClickMenuRefreshTeam: () -> Unit,
     onClickMenuJoinTeam: () -> Unit,
-    onValueChangeTeam: (TeamDetailsDomain) -> Unit,
+    onValueChangeLeaderboard: (LeaderboardDomain) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Surface(modifier = modifier) {
@@ -332,9 +256,9 @@ fun TeamsScreenHeaderSection(
                     Modifier
                         .padding(vertical = 16.dp)
                         .fillMaxWidth(),
-                visible = state.teams.isNotEmpty() && (state.teams.size != 1),
+                visible = state.leaderboards.isNotEmpty() && (state.leaderboards.size != 1),
             ) {
-                val index = state.teams.indexOf(state.team)
+                val index = state.leaderboards.indexOf(state.leaderboard)
                 Column(modifier = Modifier.fillMaxWidth()) {
                     ScrollableTabRow(
                         modifier = Modifier.fillMaxWidth(),
@@ -342,12 +266,12 @@ fun TeamsScreenHeaderSection(
                         selectedTabIndex = index,
                         divider = {},
                     ) {
-                        state.teams.forEach {
-                            val selected = it.team.id == state.team?.team?.id
-                            Tab(selected = selected, onClick = { onValueChangeTeam(it) }) {
+                        state.leaderboards.forEach { leaderboard ->
+                            val selected = leaderboard.name == state.leaderboard?.name
+                            Tab(selected = selected, onClick = { onValueChangeLeaderboard(leaderboard) }) {
                                 Text(
                                     modifier = Modifier.padding(8.dp),
-                                    text = it.team.name,
+                                    text = leaderboard.name.lowercase().replaceFirstChar { it.uppercase() },
                                     color =
                                         if (selected) {
                                             MaterialTheme.colorScheme.primary
@@ -363,9 +287,9 @@ fun TeamsScreenHeaderSection(
             }
             AnimatedVisibility(
                 modifier = Modifier.fillMaxWidth(),
-                visible = state.team != null,
+                visible = state.leaderboard != null,
             ) {
-                if (state.team != null) {
+                if (state.leaderboard != null) {
                     Row(
                         modifier =
                             Modifier
@@ -378,12 +302,12 @@ fun TeamsScreenHeaderSection(
                                 Modifier
                                     .weight(1f)
                                     .padding(top = 48.dp),
-                            member = state.team.top[1],
+                            member = state.leaderboard.top[1],
                         )
                         TeamTopMemberComponent(
                             isFirst = true,
                             modifier = Modifier.weight(1f),
-                            member = state.team.top[0],
+                            member = state.leaderboard.top[0],
                         )
                         TeamTopMemberComponent(
                             isFirst = false,
@@ -391,7 +315,7 @@ fun TeamsScreenHeaderSection(
                                 Modifier
                                     .weight(1f)
                                     .padding(top = 48.dp),
-                            member = state.team.top[2],
+                            member = state.leaderboard.top[2],
                         )
                     }
                 }
