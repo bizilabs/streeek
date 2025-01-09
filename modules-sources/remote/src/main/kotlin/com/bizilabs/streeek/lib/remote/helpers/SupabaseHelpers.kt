@@ -4,6 +4,7 @@ import com.bizilabs.streeek.lib.remote.BuildConfig
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.auth.Auth
 import io.github.jan.supabase.createSupabaseClient
+import io.github.jan.supabase.exceptions.BadRequestRestException
 import io.github.jan.supabase.exceptions.NotFoundRestException
 import io.github.jan.supabase.functions.Functions
 import io.github.jan.supabase.postgrest.Postgrest
@@ -86,6 +87,9 @@ suspend fun <T> safeSupabaseCall(
     } catch (e: NotFoundRestException) {
         Timber.e(e, "Resource not found.")
         NetworkResult.Failure(Exception("Resource Not Found!"))
+    } catch (e: BadRequestRestException) {
+        Timber.e(e, "Bad Request.")
+        NetworkResult.Failure(Exception("You have entered an invalid code, please double check or ask the admin to share the correct code."))
     } catch (e: Exception) {
         Timber.e(e, "Supabase Call Failed")
         val message = e.message.toValidErrorMessage(default = defaultErrorMessage)
