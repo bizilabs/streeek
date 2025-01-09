@@ -8,7 +8,7 @@
 [Overview](#overview) •
 [Features](#features) •
 [Screenshots](#screenshots) •
-[Contributing](#contributing) •
+[Contributing](#-contributing)
 
 </div>
 
@@ -39,11 +39,13 @@ Why don't you give it a try? :wink: :wink:
 |:-----------------------------------------------------------------------------------------:|:-------------------------------------------------------------------------------:|:---------------------------------------------------------------------------------------:|:----------------------------------------------------------------------------------------:|
 | <img src=".github/images/screens/authentication.png" width="200" hspace="2" alt="auth" /> | <img src=".github/images/screens/feed.png" width="200" hspace="2" alt="feed" /> | <img src=".github/images/screens/leaderboard.png" width="200" hspace="2" alt="feed" />  | <img src=".github/images/screens/achievements.png" width="200" hspace="2" alt="feed" />  |
 
-## Contributing
+## 🤩 Contributing
 
 ![GitHub contributors](https://img.shields.io:/github/contributors/bizilabs/streeek?style=for-the-badge) ![GitHub last commit](https://img.shields.io:/github/last-commit/bizilabs/streeek?style=for-the-badge) [![Good first issues](https://img.shields.io/github/issues/bizilabs/streeek/good%20first%20issue?style=for-the-badge)](https://github.com/bizilabs/streeek/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22) ![GitHub](https://img.shields.io:/github/license/bizilabs/streeek?style=for-the-badge) ![GitHub issues](https://img.shields.io:/github/issues-raw/bizilabs/streeek?style=for-the-badge) ![GitHub pull requests](https://img.shields.io:/github/issues-pr/bizilabs/streeek?style=for-the-badge)
 
-Your contributions are especially welcome.
-Whether it comes in the form of code patches, ideas, discussion, bug reports, encouragement or criticism, your input is needed.
+A contributions guideline will be coming soon in the meantime, appreciate the project? For a comprehensive guide on setting up the project, refer to the [setup](docs/SETUP.md) documentation. Happy coding  
+Here's how you can help:
 
-For any further question please reach out or open a discussion.
+- 🌟 Star        : Give it a star at the top right. It means a lot!
+- 😎 Contribute  : Found a bug or have a new feature idea? Create an issue [here](https://github.com/bizilabs/streeek/issues/new).
+- 💬 Feedback    : Have suggestions and you're not sure? Open an issue or start a discussion.
