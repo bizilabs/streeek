@@ -48,6 +48,7 @@ internal object Supabase {
         object Leaderboard {
             const val DAILY = "get_daily_leaderboard_with_account"
             const val WEEKLY = "get_weekly_leaderboard_with_account"
+            const val MONTHLY = "get_monthly_leaderboard_with_account"
         }
     }
 

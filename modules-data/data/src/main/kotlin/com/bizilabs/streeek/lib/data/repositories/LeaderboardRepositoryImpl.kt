@@ -47,6 +47,12 @@ internal class LeaderboardRepositoryImpl(
             .asDataResult { it.toDomain(name = Leaderboard.WEEKLY.name, page = page) }
     }
 
+    override suspend fun getMonthly(page: Int): DataResult<LeaderboardDomain> {
+        val accountId = getAccountId() ?: return DataResult.Error("Couldn't find account")
+        return remoteSource.fetchMonthlyLeaderboard(accountId = accountId, page = page)
+            .asDataResult { it.toDomain(name = Leaderboard.MONTHLY.name, page = page) }
+    }
+
     override suspend fun update(leaderboard: LeaderboardDomain) {
         localSource.update(leaderboard.toCache())
     }

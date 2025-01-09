@@ -1,4 +1,4 @@
-package com.bizilabs.streeek.feature.tabs.screens.teams.components
+package com.bizilabs.streeek.feature.tabs.screens.leaderboard.components
 
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke

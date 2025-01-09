@@ -83,6 +83,12 @@ class SyncLeaderboardWork(
         val weekly = (weeklyResult as DataResult.Success).data
         val weeklyUpdate = cached[weekly.name]?.updateOrCreate(value = weekly) ?: weekly
         repository.update(leaderboard = weeklyUpdate)
+        // sync monthly leaderboard
+        val monthlyResult = repository.getMonthly(page = 1)
+        if (monthlyResult is DataResult.Error) return getWorkerResult()
+        val monthly = (monthlyResult as DataResult.Success).data
+        val monthlyUpdate = cached[monthly.name]?.updateOrCreate(value = monthly) ?: monthly
+        repository.update(leaderboard = monthlyUpdate)
         // set selected
         val selectedId = repository.selectedLeaderBoardId.firstOrNull()
         val selected = cached[selectedId] ?: dailyUpdate

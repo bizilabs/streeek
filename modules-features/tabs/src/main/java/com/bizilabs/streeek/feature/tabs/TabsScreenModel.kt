@@ -13,7 +13,7 @@ import cafe.adriel.voyager.core.model.StateScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
 import com.bizilabs.streeek.feature.tabs.screens.achievements.AchievementsModule
 import com.bizilabs.streeek.feature.tabs.screens.feed.FeedModule
-import com.bizilabs.streeek.feature.tabs.screens.teams.LeaderboardModule
+import com.bizilabs.streeek.feature.tabs.screens.leaderboard.LeaderboardModule
 import com.bizilabs.streeek.lib.domain.repositories.LeaderboardRepository
 import com.bizilabs.streeek.lib.domain.workers.startImmediateSyncLeaderboardWork
 import com.bizilabs.streeek.lib.domain.workers.startPeriodicAccountSyncWork

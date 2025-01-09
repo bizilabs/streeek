@@ -1,4 +1,4 @@
-package com.bizilabs.streeek.feature.tabs.screens.teams.components
+package com.bizilabs.streeek.feature.tabs.screens.leaderboard.components
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
@@ -32,7 +32,6 @@ import com.bizilabs.streeek.lib.design.components.SafiCenteredColumn
 import com.bizilabs.streeek.lib.design.helpers.onSuccess
 import com.bizilabs.streeek.lib.design.helpers.success
 import com.bizilabs.streeek.lib.domain.models.LeaderboardAccountDomain
-import com.bizilabs.streeek.lib.domain.models.TeamMemberDomain
 import com.bizilabs.streeek.lib.resources.SafiResources
 
 @Composable

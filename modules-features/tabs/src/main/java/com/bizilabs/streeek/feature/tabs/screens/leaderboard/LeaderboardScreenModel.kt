@@ -1,4 +1,4 @@
-package com.bizilabs.streeek.feature.tabs.screens.teams
+package com.bizilabs.streeek.feature.tabs.screens.leaderboard
 
 import android.content.Context
 import cafe.adriel.voyager.core.model.StateScreenModel

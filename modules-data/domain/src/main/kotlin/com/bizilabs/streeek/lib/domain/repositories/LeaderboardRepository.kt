@@ -18,6 +18,8 @@ interface LeaderboardRepository {
 
     suspend fun getWeekly(page: Int): DataResult<LeaderboardDomain>
 
+    suspend fun getMonthly(page: Int): DataResult<LeaderboardDomain>
+
     suspend fun update(leaderboard: LeaderboardDomain)
 
     suspend fun set(leaderboard: LeaderboardDomain)
