@@ -21,7 +21,7 @@ fun SafiDropdownComponent(
     value: String,
     onValueChange: (String) -> Unit,
     onClickAction: () -> Unit,
-)  {
+) {
     Box(
         modifier
             .fillMaxWidth()
