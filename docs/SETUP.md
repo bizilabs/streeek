@@ -5,6 +5,14 @@ Follow the steps below to ensure a smooth setup process.
 
 In order to setup the project properly we'll need a github app and supabase account
 
+# Table Of Contents
+- [Fork & Clone](#fork--clone-) 
+  - [Fork Repository](#fork-the-repository) 
+  - [Clone Repository](#clone-the-repository) 
+- [Create Github App](#create-github-app) 
+  - [Navigate to OAuth apps](#navigating) 
+  - [Create an OAuth apps](#creating) 
+
 ## Fork & Clone 
 ### Fork the Repository
 
@@ -17,7 +25,7 @@ In order to setup the project properly we'll need a github app and supabase acco
 | <img src="../.github/images/setup/github/fork.png" width="300"> |
 
 
-### Fork & Clone Repository
+### Clone The Repository
 
 - Copy the URL of your forked repository e.g. `https://github.com/<your-username>/<repository-name>.git`.
   - while forking the repository you can change the repository name if you wish :wink:.
@@ -38,6 +46,7 @@ In order to setup the project properly we'll need a github app and supabase acco
 
 Create a github app
 
+### Navigating
 - Click on your `profile` image on the top right
 
 | Click Profile                                                            | 
@@ -62,6 +71,7 @@ Create a github app
 |-----------------------------------------------------------------------------|
 | <img src="../.github/images/setup/github/click_oauth_apps.png" width="300"> |
 
+### Creating
 - Fill the `Register a new OAuth app` with app name, homepage url and description of your choosing and set callback url to <font color="red">`streeek://app.mobile`</font> like in the example below.
 > :warning:  **Important:**  Ensure the callback url is : `streeek://app.mobile`.
 
@@ -70,7 +80,7 @@ Create a github app
 | <img src="../.github/images/setup/github/register_application.png" width="300"> |
 
 - Click on `Register application`
-- You'll be presented with you application page where you can update the details and view your `Client ID`
+- You'll be presented with your application page where you can update the details and view your `Client ID`
 
 | Application                                                            | 
 |------------------------------------------------------------------------|
@@ -82,7 +92,7 @@ Create a github app
 |--------------------------------------------------------------------------|
 | <img src="../.github/images/setup/github/client_secret.png" width="300"> |
 
-- Now that you have created your github app save the following details in your `local.properties` folder 
+- Now that you have created your github app, save the following details in your `local.properties` folder 
 
     ```properties
     # Declare Github Secrets
@@ -91,3 +101,4 @@ Create a github app
     github.client.secret=your-github-app-client-secret
     github.client.redirect.url=streeek://app.mobile
     ```
+  
