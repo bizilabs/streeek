@@ -21,7 +21,7 @@ In order to setup the project properly we'll need a github app and supabase acco
   - [Create Functions](#create-functions)
   - [Create Cron Jobs](#create-cron-jobs)
 - [Finally](#android-studio)
-- [Android Studio](#android-studio)
+- [Final Finally](#-contributions)
 
 ## Fork & Clone 
 ### Fork the Repository
