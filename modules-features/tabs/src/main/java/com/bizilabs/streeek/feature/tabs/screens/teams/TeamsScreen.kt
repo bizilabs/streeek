@@ -151,7 +151,7 @@ fun TeamsScreenContent(
                                         modifier = Modifier.padding(16.dp),
                                         onClick = { state.team?.let { it -> onClickTeam(it.team) } },
                                     ) {
-                                        Text(text = "View More")
+                                        Text(text = "Invite More")
                                     }
                                 }
                             }

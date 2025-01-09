@@ -3,7 +3,6 @@ package com.bizilabs.streeek.feature.team
 import android.app.Activity
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -12,13 +11,11 @@ import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.icons.rounded.KeyboardArrowDown
 import androidx.compose.material.icons.rounded.People
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -57,6 +54,7 @@ import com.bizilabs.streeek.lib.common.navigation.SharedScreen
 import com.bizilabs.streeek.lib.design.components.SafiBottomDialog
 import com.bizilabs.streeek.lib.design.components.SafiBottomSheetPicker
 import com.bizilabs.streeek.lib.design.components.SafiCenteredColumn
+import com.bizilabs.streeek.lib.design.components.SafiDropdownComponent
 import com.bizilabs.streeek.lib.design.components.SafiInfoSection
 import com.bizilabs.streeek.lib.domain.models.TeamWithMembersDomain
 import com.bizilabs.streeek.lib.domain.models.team.TeamInvitationDomain
@@ -385,37 +383,13 @@ fun ManageTeamSection(
             },
         )
         Spacer(modifier = Modifier.padding(8.dp))
-        Box(
-            Modifier
-                .fillMaxWidth()
-                .wrapContentHeight(),
-        ) {
-            TextField(
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp),
-                value = state.value.replaceFirstChar { it.uppercase() },
-                readOnly = true,
-                onValueChange = onValueChangeName,
-                label = {
-                    Text(text = "Visibility")
-                },
-                trailingIcon = {
-                    IconButton(onClick = { onValueChangePublicDropdown(true) }) {
-                        Icon(Icons.Rounded.KeyboardArrowDown, "")
-                    }
-                },
-            )
-            // Transparent clickable overlay
-            Box(
-                modifier =
-                    Modifier
-                        .matchParentSize()
-                        .padding(horizontal = 16.dp)
-                        .clickable(onClick = { onValueChangePublicDropdown(true) }),
-            )
-        }
+
+        SafiDropdownComponent(
+            modifier = Modifier,
+            value = state.value.replaceFirstChar { it.uppercase() },
+            onValueChange = onValueChangeName,
+            onClickAction = { onValueChangePublicDropdown(true) },
+        )
 
         Button(
             modifier =
