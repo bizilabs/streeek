@@ -13,6 +13,8 @@ interface LeaderboardRemoteSource {
 
     suspend fun fetchDailyLeaderboard(accountId: Long, page: Int): NetworkResult<LeaderboardDTO>
 
+    suspend fun fetchWeeklyLeaderboard(accountId: Long, page: Int): NetworkResult<LeaderboardDTO>
+
 }
 
 class LeaderboardRemoteSourceImpl(val supabase: SupabaseClient) : LeaderboardRemoteSource {
@@ -24,6 +26,19 @@ class LeaderboardRemoteSourceImpl(val supabase: SupabaseClient) : LeaderboardRem
         supabase.postgrest
             .rpc(
                 function = Supabase.Functions.Leaderboard.DAILY,
+                parameters = request.asJsonObject(),
+            )
+            .decodeAs()
+    }
+
+    override suspend fun fetchWeeklyLeaderboard(
+        accountId: Long,
+        page: Int
+    ): NetworkResult<LeaderboardDTO> = safeSupabaseCall {
+        val request = LeaderboardRequestDTO(accountId = accountId, page = page)
+        supabase.postgrest
+            .rpc(
+                function = Supabase.Functions.Leaderboard.WEEKLY,
                 parameters = request.asJsonObject(),
             )
             .decodeAs()

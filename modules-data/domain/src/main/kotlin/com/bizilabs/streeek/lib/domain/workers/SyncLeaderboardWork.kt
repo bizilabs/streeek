@@ -11,10 +11,10 @@ import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import com.bizilabs.streeek.lib.domain.helpers.DataResult
-import com.bizilabs.streeek.lib.domain.models.LeaderboardDomain
 import com.bizilabs.streeek.lib.domain.models.updateOrCreate
 import com.bizilabs.streeek.lib.domain.repositories.LeaderboardRepository
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
 import java.util.UUID
 import java.util.concurrent.TimeUnit
 
@@ -71,12 +71,23 @@ class SyncLeaderboardWork(
     override suspend fun doWork(): Result {
         repository.setIsSyncing(isSyncing = true)
         val cached = repository.leaderboards.first().toMutableMap()
+        // sync daily leaderboard
         val dailyResult = repository.getDaily(page = 1)
         if (dailyResult is DataResult.Error) return getWorkerResult()
         val daily = (dailyResult as DataResult.Success).data
         val dailyUpdate = cached[daily.name]?.updateOrCreate(value = daily) ?: daily
         repository.update(leaderboard = dailyUpdate)
-        repository.set(leaderboard = dailyUpdate)
+        // sync weekly leaderboard
+        val weeklyResult = repository.getWeekly(page = 1)
+        if (weeklyResult is DataResult.Error) return getWorkerResult()
+        val weekly = (weeklyResult as DataResult.Success).data
+        val weeklyUpdate = cached[weekly.name]?.updateOrCreate(value = weekly) ?: weekly
+        repository.update(leaderboard = weeklyUpdate)
+        // set selected
+        val selectedId = repository.selectedLeaderBoardId.firstOrNull()
+        val selected = cached[selectedId] ?: dailyUpdate
+        repository.set(leaderboard = selected)
+        // finish
         repository.setIsSyncing(isSyncing = false)
         return Result.success()
     }

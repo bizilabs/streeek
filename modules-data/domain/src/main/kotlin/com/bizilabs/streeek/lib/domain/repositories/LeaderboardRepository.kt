@@ -16,6 +16,8 @@ interface LeaderboardRepository {
 
     suspend fun getDaily(page: Int): DataResult<LeaderboardDomain>
 
+    suspend fun getWeekly(page: Int): DataResult<LeaderboardDomain>
+
     suspend fun update(leaderboard: LeaderboardDomain)
 
     suspend fun set(leaderboard: LeaderboardDomain)
