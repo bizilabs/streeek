@@ -4,9 +4,11 @@ import android.content.Context
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.EmojiEvents
 import androidx.compose.material.icons.outlined.Explore
+import androidx.compose.material.icons.outlined.Leaderboard
 import androidx.compose.material.icons.outlined.PeopleAlt
 import androidx.compose.material.icons.rounded.EmojiEvents
 import androidx.compose.material.icons.rounded.Explore
+import androidx.compose.material.icons.rounded.Leaderboard
 import androidx.compose.material.icons.rounded.PeopleAlt
 import androidx.compose.ui.graphics.vector.ImageVector
 import cafe.adriel.voyager.core.model.StateScreenModel
@@ -14,6 +16,7 @@ import cafe.adriel.voyager.core.model.screenModelScope
 import com.bizilabs.streeek.feature.tabs.screens.achievements.AchievementsModule
 import com.bizilabs.streeek.feature.tabs.screens.feed.FeedModule
 import com.bizilabs.streeek.feature.tabs.screens.leaderboard.LeaderboardModule
+import com.bizilabs.streeek.feature.tabs.screens.teams.TeamsListModule
 import com.bizilabs.streeek.lib.domain.repositories.LeaderboardRepository
 import com.bizilabs.streeek.lib.domain.workers.startImmediateSyncLeaderboardWork
 import com.bizilabs.streeek.lib.domain.workers.startPeriodicAccountSyncWork
@@ -31,10 +34,11 @@ val FeatureTabsModule =
         factory {
             TabsScreenModel(context = get(), leaderboardRepository = get())
         }
-        includes(LeaderboardModule, FeedModule, AchievementsModule)
+        includes(LeaderboardModule, FeedModule, AchievementsModule, TeamsListModule)
     }
 
 enum class Tabs {
+    LEADERBOARD,
     TEAMS,
     FEED,
     ACHIEVEMENTS,
@@ -44,6 +48,7 @@ enum class Tabs {
         get() =
             when (this) {
                 FEED -> Pair(Icons.Outlined.Explore, Icons.Rounded.Explore)
+                LEADERBOARD -> Pair(Icons.Outlined.Leaderboard, Icons.Rounded.Leaderboard)
                 TEAMS -> Pair(Icons.Outlined.PeopleAlt, Icons.Rounded.PeopleAlt)
                 ACHIEVEMENTS -> Pair(Icons.Outlined.EmojiEvents, Icons.Rounded.EmojiEvents)
             }
@@ -52,6 +57,7 @@ enum class Tabs {
         get() =
             when (this) {
                 FEED -> "Feed"
+                LEADERBOARD -> "Leaderboard"
                 TEAMS -> "Teams"
                 ACHIEVEMENTS -> "Achievements"
             }
