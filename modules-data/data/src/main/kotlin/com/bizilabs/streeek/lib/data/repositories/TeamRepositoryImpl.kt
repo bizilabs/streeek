@@ -13,6 +13,7 @@ import com.bizilabs.streeek.lib.domain.repositories.TeamRepository
 import com.bizilabs.streeek.lib.local.helpers.LocalResult
 import com.bizilabs.streeek.lib.local.sources.account.AccountLocalSource
 import com.bizilabs.streeek.lib.local.sources.team.TeamLocalSource
+import com.bizilabs.streeek.lib.remote.helpers.NetworkResult
 import com.bizilabs.streeek.lib.remote.models.supabase.CreateTeamRequestDTO
 import com.bizilabs.streeek.lib.remote.models.supabase.UpdateTeamRequestDTO
 import com.bizilabs.streeek.lib.remote.sources.team.TeamRemoteSource
@@ -107,6 +108,12 @@ class TeamRepositoryImpl(
 
     override suspend fun deleteTeam(teamId: Long): DataResult<Boolean> {
         val account = getAccountId() ?: return DataResult.Error(message = "No account found")
-        return remoteSource.deleteTeam(accountId = account, teamId = teamId).asDataResult { it }
+        return when (val result = remoteSource.deleteTeam(accountId = account, teamId = teamId)) {
+            is NetworkResult.Failure -> DataResult.Error(result.exception.localizedMessage)
+            is NetworkResult.Success -> {
+                localSource.delete(teamId)
+                DataResult.Success(result.data)
+            }
+        }
     }
 }
