@@ -21,7 +21,7 @@ class LeaderboardPagingSource(
     private val leaderboard: LeaderboardDomain,
     private val leaderboardRemoteSource: LeaderboardRemoteSource,
     private val leaderboardLocalSource: LeaderboardLocalSource,
-    private val accountLocalSource: AccountLocalSource
+    private val accountLocalSource: AccountLocalSource,
 ) : PagingSource<Int, LeaderboardAccountDomain>() {
     override fun getRefreshKey(state: PagingState<Int, LeaderboardAccountDomain>): Int? {
         return state.anchorPosition?.let { anchorPosition ->
@@ -43,28 +43,32 @@ class LeaderboardPagingSource(
             return LoadResult.Page(data = leaderboard.list, prevKey = prev, nextKey = next)
         }
 
-        val result = when (Leaderboard.valueOf(leaderboard.name.uppercase())) {
-            Leaderboard.DAILY -> leaderboardRemoteSource.fetchDailyLeaderboard(
-                accountId = accountId,
-                page = page
-            )
+        val result =
+            when (Leaderboard.valueOf(leaderboard.name.uppercase())) {
+                Leaderboard.DAILY ->
+                    leaderboardRemoteSource.fetchDailyLeaderboard(
+                        accountId = accountId,
+                        page = page,
+                    )
 
-            Leaderboard.WEEKLY -> leaderboardRemoteSource.fetchWeeklyLeaderboard(
-                accountId = accountId,
-                page = page
-            )
+                Leaderboard.WEEKLY ->
+                    leaderboardRemoteSource.fetchWeeklyLeaderboard(
+                        accountId = accountId,
+                        page = page,
+                    )
 
-            Leaderboard.MONTHLY -> leaderboardRemoteSource.fetchMonthlyLeaderboard(
-                accountId = accountId,
-                page = page
-            )
+                Leaderboard.MONTHLY ->
+                    leaderboardRemoteSource.fetchMonthlyLeaderboard(
+                        accountId = accountId,
+                        page = page,
+                    )
 
-            Leaderboard.ULTIMATE -> leaderboardRemoteSource.fetchUltimateLeaderboard(
-                accountId = accountId,
-                page = page
-            )
-        }
-
+                Leaderboard.ULTIMATE ->
+                    leaderboardRemoteSource.fetchUltimateLeaderboard(
+                        accountId = accountId,
+                        page = page,
+                    )
+            }
 
         if (result is NetworkResult.Failure) return LoadResult.Error(result.exception)
 

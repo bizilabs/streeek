@@ -17,7 +17,7 @@ data class LeaderboardDomain(
     val name: String,
     val rank: RankDetailsDomain,
     val list: List<LeaderboardAccountDomain>,
-    val top: Map<Long, LeaderboardAccountDomain>
+    val top: Map<Long, LeaderboardAccountDomain>,
 )
 
 fun LeaderboardDomain?.updateOrCreate(value: LeaderboardDomain): LeaderboardDomain {
@@ -28,7 +28,7 @@ fun LeaderboardDomain?.updateOrCreate(value: LeaderboardDomain): LeaderboardDoma
                 page = value.page,
                 list = value.list,
                 rank = rank.copy(previous = rank.current, current = value.rank.current),
-                top = if (page == 1) getTopMembersMap() else emptyMap()
+                top = if (page == 1) getTopMembersMap() else emptyMap(),
             )
     }
 }

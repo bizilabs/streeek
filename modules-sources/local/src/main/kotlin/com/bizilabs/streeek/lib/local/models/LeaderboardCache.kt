@@ -8,8 +8,7 @@ data class LeaderboardCache(
     val name: String,
     val rank: RankDetailsCache,
     val list: List<LeaderboardAccountCache>,
-    val top: Map<Long, LeaderboardAccountCache>
-
+    val top: Map<Long, LeaderboardAccountCache>,
 )
 
 @Serializable

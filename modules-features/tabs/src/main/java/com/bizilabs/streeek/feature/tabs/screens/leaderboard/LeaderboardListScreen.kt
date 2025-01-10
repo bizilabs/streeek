@@ -35,7 +35,6 @@ import cafe.adriel.voyager.core.registry.rememberScreen
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.getScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
-import com.bizilabs.streeek.feature.tabs.screens.leaderboard.components.LeaderboardItemComponent
 import com.bizilabs.streeek.feature.tabs.screens.leaderboard.components.TeamTopMemberComponent
 import com.bizilabs.streeek.lib.common.components.LeaderboardComponent
 import com.bizilabs.streeek.lib.common.navigation.SharedScreen
@@ -64,7 +63,7 @@ object LeaderboardListScreen : Screen {
         LeaderboardListScreenContent(
             state = state,
             onValueChangeLeaderboard = screenModel::onValueChangeLeaderboard,
-            onClickViewMore = screenModel::onClickViewMore
+            onClickViewMore = screenModel::onClickViewMore,
         ) { screen ->
             navigator?.push(screen)
         }
@@ -79,10 +78,11 @@ fun LeaderboardListScreenContent(
     onClickViewMore: () -> Unit,
     navigate: (Screen) -> Unit,
 ) {
-
-    if (state.leaderboardName != null) navigate(
-        rememberScreen(SharedScreen.Leaderboard(name = state.leaderboardName))
-    )
+    if (state.leaderboardName != null) {
+        navigate(
+            rememberScreen(SharedScreen.Leaderboard(name = state.leaderboardName)),
+        )
+    }
 
     Box(modifier = Modifier.fillMaxSize()) {
         Scaffold(
@@ -124,9 +124,8 @@ fun LeaderboardListScreenContent(
                                     username = member.account.username,
                                     points = member.rank.points,
                                     rank = member.rank.position.asRank(),
-                                    modifier = Modifier.fillMaxWidth()
+                                    modifier = Modifier.fillMaxWidth(),
                                 ) {
-
                                 }
                             }
                             item {

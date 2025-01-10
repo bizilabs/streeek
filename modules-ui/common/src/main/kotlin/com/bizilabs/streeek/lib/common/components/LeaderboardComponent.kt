@@ -33,48 +33,51 @@ fun LeaderboardComponent(
     Card(
         modifier = modifier,
         onClick = onClick,
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.background,
-            contentColor = MaterialTheme.colorScheme.onBackground
-        ),
-        shape = ShapeDefaults.ExtraSmall
+        colors =
+            CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.background,
+                contentColor = MaterialTheme.colorScheme.onBackground,
+            ),
+        shape = ShapeDefaults.ExtraSmall,
     ) {
         Column(
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
         ) {
             Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 16.dp),
-                verticalAlignment = Alignment.CenterVertically
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 16.dp),
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
                     modifier = Modifier.padding(16.dp),
-                    text = rank
+                    text = rank,
                 )
                 AsyncImage(
                     modifier =
-                    Modifier
-                        .size(48.dp)
-                        .clip(CircleShape),
+                        Modifier
+                            .size(48.dp)
+                            .clip(CircleShape),
                     model = imageUrl,
                     contentDescription = "user avatar url",
-                    contentScale = ContentScale.Crop
+                    contentScale = ContentScale.Crop,
                 )
                 Column(
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(start = 16.dp)
+                    modifier =
+                        Modifier
+                            .weight(1f)
+                            .padding(start = 16.dp),
                 ) {
                     Text(
                         text = username,
                         style = MaterialTheme.typography.bodyLarge,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.Bold,
                     )
                     Text(
                         text = "$points EXP",
                         style = MaterialTheme.typography.labelLarge,
-                        fontWeight = FontWeight.Normal
+                        fontWeight = FontWeight.Normal,
                     )
                 }
             }

@@ -13,5 +13,4 @@ dependencies {
 
     // coil
     implementation(libs.bundles.coil)
-
 }

@@ -1,7 +1,5 @@
 package com.bizilabs.streeek.feature.leaderboard
 
-import androidx.paging.LoadState
-import androidx.paging.LoadStates
 import androidx.paging.PagingData
 import cafe.adriel.voyager.core.model.StateScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
@@ -26,13 +24,12 @@ val FeatureLeaderboard =
 data class LeaderboardScreenState(
     val hasPassedNavigationArgument: Boolean = false,
     val name: String? = null,
-    val leaderboard: LeaderboardDomain? = null
+    val leaderboard: LeaderboardDomain? = null,
 )
 
 class LeaderboardScreenModel(
-    private val repository: LeaderboardRepository
+    private val repository: LeaderboardRepository,
 ) : StateScreenModel<LeaderboardScreenState>(LeaderboardScreenState()) {
-
     private var _pages = MutableStateFlow(getPagingDataLoading<LeaderboardAccountDomain>())
     val pages: StateFlow<PagingData<LeaderboardAccountDomain>> = _pages.asStateFlow()
 
@@ -53,5 +50,4 @@ class LeaderboardScreenModel(
             _pages.update { paging }
         }
     }
-
 }

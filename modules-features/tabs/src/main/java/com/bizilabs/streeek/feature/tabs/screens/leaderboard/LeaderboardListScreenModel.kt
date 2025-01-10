@@ -94,7 +94,7 @@ class LeaderboardListScreenModel(
         }
     }
 
-    fun onClickViewMore(){
+    fun onClickViewMore()  {
         screenModelScope.launch {
             mutableState.update { it.copy(leaderboardName = mutableState.value.leaderboard?.name) }
             delay(250)

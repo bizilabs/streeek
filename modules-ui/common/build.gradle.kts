@@ -22,5 +22,4 @@ dependencies {
     // coil
     implementation(libs.bundles.coil)
     // </editor-fold>
-
 }

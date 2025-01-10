@@ -39,7 +39,7 @@ fun LeaderboardDTO.toDomain(
             previous = null,
         ),
     list = leaderboard.map { it.toDomain() },
-    top = if (page == 1) getTopMembersMap() else emptyMap()
+    top = if (page == 1) getTopMembersMap() else emptyMap(),
 )
 
 private fun LeaderboardDTO.getTopMembersMap(): Map<Long, LeaderboardAccountDomain> {
@@ -56,7 +56,7 @@ fun LeaderboardDomain.toCache() =
         name = name,
         rank = rank.toCache(),
         list = list.map { it.toCache() },
-        top = top.mapValues { it.value.toCache() }
+        top = top.mapValues { it.value.toCache() },
     )
 
 fun LeaderboardCache.toDomain() =
@@ -65,5 +65,5 @@ fun LeaderboardCache.toDomain() =
         name = name,
         rank = rank.toDomain(),
         list = list.map { it.toDomain() },
-        top = top.mapValues { it.value.toDomain() }
+        top = top.mapValues { it.value.toDomain() },
     )

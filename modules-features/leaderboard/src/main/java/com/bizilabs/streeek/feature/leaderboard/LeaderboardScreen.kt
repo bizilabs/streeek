@@ -48,7 +48,7 @@ data class LeaderboardScreen(val name: String) : Screen {
         LeaderboardScreenContent(
             state = state,
             data = data,
-            onClickNavigateBack = { navigator?.pop() }
+            onClickNavigateBack = { navigator?.pop() },
         )
     }
 }
@@ -60,7 +60,6 @@ fun LeaderboardScreenContent(
     data: LazyPagingItems<LeaderboardAccountDomain>,
     onClickNavigateBack: () -> Unit,
 ) {
-
     Scaffold(
         topBar = {
             TopAppBar(
@@ -68,7 +67,7 @@ fun LeaderboardScreenContent(
                     IconButton(onClick = onClickNavigateBack) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
-                            contentDescription = "navigate back"
+                            contentDescription = "navigate back",
                         )
                     }
                 },
@@ -89,27 +88,26 @@ fun LeaderboardScreenContent(
                             fontWeight = FontWeight.Normal,
                         )
                     }
-                }
+                },
             )
-        }
+        },
     ) { innerPadding ->
 
         SafiPagingComponent(
-            modifier = Modifier
-                .padding(innerPadding)
-                .fillMaxSize(),
-            data = data
+            modifier =
+                Modifier
+                    .padding(innerPadding)
+                    .fillMaxSize(),
+            data = data,
         ) { item ->
             LeaderboardComponent(
                 imageUrl = item.account.avatarUrl,
                 username = item.account.username,
                 points = item.rank.points,
                 rank = item.rank.position.asRank(),
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
             ) {
-
             }
         }
     }
-
 }
