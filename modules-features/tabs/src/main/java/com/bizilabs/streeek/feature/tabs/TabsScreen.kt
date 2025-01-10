@@ -23,7 +23,6 @@ import cafe.adriel.voyager.koin.getScreenModel
 import com.bizilabs.streeek.feature.tabs.screens.achievements.AchievementsScreen
 import com.bizilabs.streeek.feature.tabs.screens.feed.FeedScreen
 import com.bizilabs.streeek.feature.tabs.screens.leaderboard.LeaderboardListScreen
-import com.bizilabs.streeek.feature.tabs.screens.leaderboard.LeaderboardScreen
 import com.bizilabs.streeek.feature.tabs.screens.teams.TeamsListScreen
 import com.bizilabs.streeek.lib.common.navigation.SharedScreen
 import com.bizilabs.streeek.lib.design.helpers.SetupNavigationBarColor
@@ -99,7 +98,7 @@ fun TabsScreenContent(
             val screen =
                 when (tab) {
                     Tabs.FEED -> FeedScreen
-                    Tabs.LEADERBOARD -> LeaderboardScreen
+                    Tabs.LEADERBOARD -> LeaderboardListScreen
                     Tabs.TEAMS -> TeamsListScreen
                     Tabs.ACHIEVEMENTS -> AchievementsScreen
                 }

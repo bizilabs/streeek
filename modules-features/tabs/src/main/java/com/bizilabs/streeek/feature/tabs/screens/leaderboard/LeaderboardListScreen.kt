@@ -35,7 +35,6 @@ import cafe.adriel.voyager.core.registry.rememberScreen
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.getScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
-<<<<<<<< HEAD:modules-features/tabs/src/main/java/com/bizilabs/streeek/feature/tabs/screens/leaderboard/LeaderboardListScreen.kt
 import com.bizilabs.streeek.feature.tabs.screens.leaderboard.components.TeamTopMemberComponent
 import com.bizilabs.streeek.lib.common.components.LeaderboardComponent
 import com.bizilabs.streeek.lib.common.navigation.SharedScreen
@@ -46,13 +45,6 @@ import com.bizilabs.streeek.lib.design.components.SafiInfoSection
 import com.bizilabs.streeek.lib.design.helpers.onSuccess
 import com.bizilabs.streeek.lib.design.helpers.success
 import com.bizilabs.streeek.lib.domain.extensions.asRank
-========
-import com.bizilabs.streeek.feature.tabs.screens.leaderboard.components.LeaderboardItemComponent
-import com.bizilabs.streeek.feature.tabs.screens.leaderboard.components.TeamTopMemberComponent
-import com.bizilabs.streeek.lib.common.navigation.SharedScreen
-import com.bizilabs.streeek.lib.design.components.SafiCenteredColumn
-import com.bizilabs.streeek.lib.design.components.SafiInfoSection
->>>>>>>> 5de296a (leaderboard : adds monthly leaderboard rankings):modules-features/tabs/src/main/java/com/bizilabs/streeek/feature/tabs/screens/leaderboard/LeaderboardScreen.kt
 import com.bizilabs.streeek.lib.domain.models.LeaderboardDomain
 import nl.dionsegijn.konfetti.compose.KonfettiView
 import nl.dionsegijn.konfetti.core.Party
