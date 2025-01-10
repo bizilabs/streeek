@@ -46,7 +46,7 @@ jobs:
           echo "Curent Version Code is: $version_code"
           ((version_code++))
           echo "VERSION_CODE=$version_code" >> $GITHUB_ENV
-          echo "$version_code" > ./modules-app/streeek/VERSION)
+          echo "$version_code" > ./modules-app/streeek/VERSION
           
           echo "New Version Code is: $version_code"
 
