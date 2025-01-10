@@ -43,4 +43,6 @@ interface TeamRepository {
     suspend fun updateTeamLocally(team: TeamDetailsDomain)
 
     suspend fun deleteTeamLocally(team: TeamDetailsDomain)
+
+    suspend fun deleteTeam(teamId: Long): DataResult<Boolean>
 }

@@ -104,4 +104,9 @@ class TeamRepositoryImpl(
     override suspend fun deleteTeamLocally(team: TeamDetailsDomain) {
         localSource.delete(team.toCache())
     }
+
+    override suspend fun deleteTeam(teamId: Long): DataResult<Boolean> {
+        val account = getAccountId() ?: return DataResult.Error(message = "No account found")
+        return remoteSource.deleteTeam(accountId = account, teamId = teamId).asDataResult { it }
+    }
 }
