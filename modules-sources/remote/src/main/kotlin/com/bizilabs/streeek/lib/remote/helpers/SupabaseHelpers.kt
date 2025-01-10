@@ -14,10 +14,9 @@ import io.github.jan.supabase.storage.Storage
 import kotlinx.serialization.json.Json
 import timber.log.Timber
 
-object Supabase {
+internal object Supabase {
     object Tables {
         const val ACCOUNTS = "accounts"
-        const val ACCOUNTPOINTS = "account_points"
         const val CONTRIBUTIONS = "contributions"
         const val LEVELS = "levels"
         const val NOTIFICATIONS = "notifications"
@@ -43,6 +42,13 @@ object Supabase {
                 const val DELETE = "delete_team_invitation"
                 const val CREATE = "create_team_invite_code"
             }
+        }
+
+        object Leaderboard {
+            const val DAILY = "get_daily_leaderboard_with_account"
+            const val WEEKLY = "get_weekly_leaderboard_with_account"
+            const val MONTHLY = "get_monthly_leaderboard_with_account"
+            const val ULTIMATE = "get_all_time_leaderboard_with_account"
         }
     }
 

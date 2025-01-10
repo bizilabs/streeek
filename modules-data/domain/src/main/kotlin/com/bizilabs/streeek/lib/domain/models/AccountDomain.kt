@@ -15,3 +15,10 @@ data class AccountDomain(
     val level: LevelDomain?,
     val streak: StreakDomain?,
 )
+
+data class AccountLightDomain(
+    val id: Long,
+    val username: String,
+    val avatarUrl: String,
+    val createdAt: LocalDateTime,
+)

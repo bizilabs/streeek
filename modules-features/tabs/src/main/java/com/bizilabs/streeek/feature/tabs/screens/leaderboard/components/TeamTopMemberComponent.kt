@@ -1,4 +1,4 @@
-package com.bizilabs.streeek.feature.tabs.screens.teams.components
+package com.bizilabs.streeek.feature.tabs.screens.leaderboard.components
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
@@ -31,14 +31,14 @@ import coil.compose.AsyncImage
 import com.bizilabs.streeek.lib.design.components.SafiCenteredColumn
 import com.bizilabs.streeek.lib.design.helpers.onSuccess
 import com.bizilabs.streeek.lib.design.helpers.success
-import com.bizilabs.streeek.lib.domain.models.TeamMemberDomain
+import com.bizilabs.streeek.lib.domain.models.LeaderboardAccountDomain
 import com.bizilabs.streeek.lib.resources.SafiResources
 
 @Composable
 fun TeamTopMemberComponent(
     isFirst: Boolean,
     modifier: Modifier = Modifier,
-    member: TeamMemberDomain? = null,
+    member: LeaderboardAccountDomain? = null,
 ) {
     val containerColor = if (isFirst) Color(0xFFE6A817) else MaterialTheme.colorScheme.success
     val contentColor = if (isFirst) Color.Black else MaterialTheme.colorScheme.onSuccess
@@ -92,7 +92,7 @@ fun TeamTopMemberComponent(
                                             vertical = 4.dp,
                                             horizontal = 8.dp,
                                         ),
-                                text = member?.rank.toString(),
+                                text = member?.rank?.position.toString(),
                                 style = MaterialTheme.typography.labelSmall,
                                 fontWeight = FontWeight.Bold,
                             )
@@ -132,7 +132,7 @@ fun TeamTopMemberComponent(
                 fontWeight = FontWeight.Bold,
             )
             Text(
-                text = member?.let { "${it.points} EXP" } ?: "",
+                text = member?.let { "${it.rank.points} EXP" } ?: "",
                 style = MaterialTheme.typography.labelSmall,
             )
         }

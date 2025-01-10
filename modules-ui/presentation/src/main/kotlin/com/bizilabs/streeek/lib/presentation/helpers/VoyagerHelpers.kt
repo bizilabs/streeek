@@ -7,6 +7,7 @@ import com.bizilabs.streeek.feature.authentication.featureAuthentication
 import com.bizilabs.streeek.feature.issue.screenIssue
 import com.bizilabs.streeek.feature.issues.screenIssues
 import com.bizilabs.streeek.feature.landing.featureLanding
+import com.bizilabs.streeek.feature.leaderboard.ScreenLeaderboard
 import com.bizilabs.streeek.feature.notifications.screenNotifications
 import com.bizilabs.streeek.feature.profile.featureProfile
 import com.bizilabs.streeek.feature.setup.featureSetup
@@ -24,5 +25,6 @@ fun Application.initVoyager() {
         screenNotifications()
         screenIssues()
         screenIssue()
+        ScreenLeaderboard()
     }
 }

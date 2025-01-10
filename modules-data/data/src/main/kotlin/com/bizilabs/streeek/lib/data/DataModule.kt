@@ -5,6 +5,7 @@ import com.bizilabs.streeek.lib.data.repositories.AuthenticationRepositoryImpl
 import com.bizilabs.streeek.lib.data.repositories.ContributionRepositoryImpl
 import com.bizilabs.streeek.lib.data.repositories.IssuesRepositoryImpl
 import com.bizilabs.streeek.lib.data.repositories.LabelRepositoryImpl
+import com.bizilabs.streeek.lib.data.repositories.LeaderboardRepositoryImpl
 import com.bizilabs.streeek.lib.data.repositories.LevelRepositoryImpl
 import com.bizilabs.streeek.lib.data.repositories.NotificationRepositoryImpl
 import com.bizilabs.streeek.lib.data.repositories.PreferenceRepositoryImpl
@@ -16,6 +17,7 @@ import com.bizilabs.streeek.lib.domain.repositories.AuthenticationRepository
 import com.bizilabs.streeek.lib.domain.repositories.ContributionRepository
 import com.bizilabs.streeek.lib.domain.repositories.IssueRepository
 import com.bizilabs.streeek.lib.domain.repositories.LabelRepository
+import com.bizilabs.streeek.lib.domain.repositories.LeaderboardRepository
 import com.bizilabs.streeek.lib.domain.repositories.LevelRepository
 import com.bizilabs.streeek.lib.domain.repositories.NotificationRepository
 import com.bizilabs.streeek.lib.domain.repositories.PreferenceRepository
@@ -65,5 +67,8 @@ val dataModule =
         }
         single<LabelRepository> {
             LabelRepositoryImpl(remoteSource = get())
+        }
+        single<LeaderboardRepository> {
+            LeaderboardRepositoryImpl(remoteSource = get(), localSource = get(), accountLocalSource = get())
         }
     }
