@@ -87,6 +87,17 @@ jobs:
         env:
           BUILD_TOOLS_VERSION: ${{ env.BUILD_TOOL_VERSION }}
 
+      - name: Generate Release notes
+        run: |
+          RELEASE_NOTES="${{ github.event.release.body }}"
+          TARGET_DIR="distribution/whatsnew"
+          TARGET_FILE="whatsnew-en-US"
+          
+          mkdir -p "$TARGET_DIR"
+          
+          echo "$RELEASE_NOTES" >> "$TARGET_DIR/$TARGET_FILE"
+          echo "Release notes appended to $TARGET_DIR/$TARGET_FILE."
+
       - name: Deploy to Playstore
         uses: r0adkll/upload-google-play@v1
         with:
@@ -94,3 +105,4 @@ jobs:
           packageName: com.bizilabs.app.streeek.mobile
           releaseFiles: modules-app/streeek/build/outputs/bundle/release/streeek-release.aab
           track: internal
+          whatsNewDirectory: distribution/whatsnew/whatsnew-en-US
