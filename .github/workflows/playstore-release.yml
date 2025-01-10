@@ -41,6 +41,8 @@ jobs:
           echo "version name is: $version_name"
 
       - name: Set Version Code
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           version_code=$(cat ./modules-app/streeek/VERSION)
           echo "Current Version Code is: $version_code"
