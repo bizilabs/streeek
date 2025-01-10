@@ -4,7 +4,7 @@ on:
   release:
     types:
       - released
-  push:
+
 concurrency:
   group: ${{ github.workflow }} - ${{ github.ref }}
   cancel-in-progress: true
@@ -36,19 +36,25 @@ jobs:
 
       - name: Set Version Name
         run: |
-          version_name=10
+          version_name=${{ github.event.release.name }}
           echo "VERSION_NAME=$version_name" >> $GITHUB_ENV
           echo "version name is: $version_name"
 
       - name: Set Version Code
         run: |
-          version_code=$(cat  ./modules-app/streeek/VERSION)
-          echo "Curent Version Code is: $version_code"
+          version_code=$(cat ./modules-app/streeek/VERSION)
+          echo "Current Version Code is: $version_code"
           ((version_code++))
           echo "VERSION_CODE=$version_code" >> $GITHUB_ENV
           echo "$version_code" > ./modules-app/streeek/VERSION
           
           echo "New Version Code is: $version_code"
+          
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add ./modules-app/streeek/VERSION
+          git commit -m "Bump version code $version_code"
+          git push
 
       - name: Bundle AAB
         run: ./gradlew bundleRelease
