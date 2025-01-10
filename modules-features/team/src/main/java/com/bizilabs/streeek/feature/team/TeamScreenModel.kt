@@ -13,6 +13,8 @@ import com.bizilabs.streeek.lib.common.models.FetchState
 import com.bizilabs.streeek.lib.design.components.DialogState
 import com.bizilabs.streeek.lib.domain.helpers.DataResult
 import com.bizilabs.streeek.lib.domain.models.AccountDomain
+import com.bizilabs.streeek.lib.domain.models.TeamDetailsDomain
+import com.bizilabs.streeek.lib.domain.models.TeamMemberDomain
 import com.bizilabs.streeek.lib.domain.models.TeamMemberRole
 import com.bizilabs.streeek.lib.domain.models.TeamWithMembersDomain
 import com.bizilabs.streeek.lib.domain.models.asTeamDetails
@@ -86,6 +88,8 @@ data class TeamScreenState(
     val invitationsState: FetchListState<TeamInvitationDomain> = FetchListState.Loading,
     val createInvitationState: FetchState<CreateTeamInvitationDomain>? = null,
     val joinTeamState: FetchState<JoinTeamInvitationDomain>? = null,
+    val team: TeamDetailsDomain? = null,
+    val showConfetti: Boolean = false,
 ) {
     val isManagingTeam: Boolean
         get() = isEditing || teamId == null
@@ -112,6 +116,17 @@ data class TeamScreenState(
 
     val isJoinActionEnabled: Boolean
         get() = token.length == 6 && dialogState == null
+
+    val list: List<TeamMemberDomain>
+        get() =
+            when {
+                team == null -> emptyList()
+                team.page == 1 ->
+                    team.members.filterIndexed { index, _ -> index > 2 }
+                        .sortedByRank()
+
+                else -> team.members.sortedByRank()
+            }
 }
 
 class TeamScreenModel(
