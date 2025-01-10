@@ -51,17 +51,18 @@ import nl.dionsegijn.konfetti.core.Position
 import nl.dionsegijn.konfetti.core.emitter.Emitter
 import java.util.concurrent.TimeUnit
 
-object LeaderboardScreen : Screen {
+object LeaderboardListScreen : Screen {
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.current
 
-        val screenModel: LeaderboardScreenModel = getScreenModel()
+        val screenModel: LeaderboardListScreenModel = getScreenModel()
         val state by screenModel.state.collectAsStateWithLifecycle()
 
-        LeaderboardScreenContent(
+        LeaderboardListScreenContent(
             state = state,
             onValueChangeLeaderboard = screenModel::onValueChangeLeaderboard,
+            onClickViewMore = screenModel::onClickViewMore
         ) { screen ->
             navigator?.push(screen)
         }
@@ -70,24 +71,22 @@ object LeaderboardScreen : Screen {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LeaderboardScreenContent(
-    state: LeaderboardScreenState,
+fun LeaderboardListScreenContent(
+    state: LeaderboardListScreenState,
     onValueChangeLeaderboard: (LeaderboardDomain) -> Unit,
+    onClickViewMore: () -> Unit,
     navigate: (Screen) -> Unit,
 ) {
-    if (state.isCreating) {
-        navigate(rememberScreen(SharedScreen.Team(isJoining = false, teamId = null)))
-    }
 
-    if (state.isJoining) {
-        navigate(rememberScreen(SharedScreen.Team(isJoining = true, teamId = null)))
-    }
+    if (state.leaderboardName != null) navigate(
+        rememberScreen(SharedScreen.Leaderboard(name = state.leaderboardName))
+    )
 
     Box(modifier = Modifier.fillMaxSize()) {
         Scaffold(
             modifier = Modifier.fillMaxSize(),
             topBar = {
-                LeaderboardScreenHeaderSection(
+                LeaderboardListScreenHeaderSection(
                     state = state,
                     modifier = Modifier.fillMaxWidth(),
                     onValueChangeLeaderboard = onValueChangeLeaderboard,
@@ -124,7 +123,7 @@ fun LeaderboardScreenContent(
                                 SafiCenteredRow(modifier = Modifier.fillMaxWidth()) {
                                     Button(
                                         modifier = Modifier.padding(16.dp),
-                                        onClick = { },
+                                        onClick = onClickViewMore,
                                     ) {
                                         Text(text = "View More")
                                     }
@@ -171,8 +170,8 @@ fun LeaderboardScreenContent(
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun LeaderboardScreenHeaderSection(
-    state: LeaderboardScreenState,
+fun LeaderboardListScreenHeaderSection(
+    state: LeaderboardListScreenState,
     onValueChangeLeaderboard: (LeaderboardDomain) -> Unit,
     modifier: Modifier = Modifier,
 ) {

@@ -5,6 +5,7 @@ import com.bizilabs.streeek.feature.authentication.authenticationModule
 import com.bizilabs.streeek.feature.issue.FeatureIssueModule
 import com.bizilabs.streeek.feature.issues.FeatureIssuesModule
 import com.bizilabs.streeek.feature.landing.landingModule
+import com.bizilabs.streeek.feature.leaderboard.FeatureLeaderboard
 import com.bizilabs.streeek.feature.notifications.FeatureNotificationModule
 import com.bizilabs.streeek.feature.profile.profileModule
 import com.bizilabs.streeek.feature.setup.setupModule
@@ -45,6 +46,7 @@ val PresentationModule =
             FeatureNotificationModule,
             FeatureIssuesModule,
             FeatureIssueModule,
+            FeatureLeaderboard,
         )
         workerOf(::SyncTeamsWork)
         workerOf(::SyncLevelsWork)

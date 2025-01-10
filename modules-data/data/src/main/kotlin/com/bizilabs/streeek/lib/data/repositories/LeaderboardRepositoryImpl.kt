@@ -1,11 +1,17 @@
 package com.bizilabs.streeek.lib.data.repositories
 
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
 import com.bizilabs.streeek.lib.data.helper.AccountHelper
 import com.bizilabs.streeek.lib.data.mappers.asDataResult
 import com.bizilabs.streeek.lib.data.mappers.toCache
 import com.bizilabs.streeek.lib.data.mappers.toDomain
+import com.bizilabs.streeek.lib.data.paging.LeaderboardPagingSource
+import com.bizilabs.streeek.lib.data.paging.PagingHelpers
 import com.bizilabs.streeek.lib.domain.helpers.DataResult
 import com.bizilabs.streeek.lib.domain.models.Leaderboard
+import com.bizilabs.streeek.lib.domain.models.LeaderboardAccountDomain
 import com.bizilabs.streeek.lib.domain.models.LeaderboardDomain
 import com.bizilabs.streeek.lib.domain.repositories.LeaderboardRepository
 import com.bizilabs.streeek.lib.local.sources.account.AccountLocalSource
@@ -17,7 +23,7 @@ import kotlinx.coroutines.flow.mapLatest
 internal class LeaderboardRepositoryImpl(
     private val remoteSource: LeaderboardRemoteSource,
     private val localSource: LeaderboardLocalSource,
-    accountLocalSource: AccountLocalSource,
+    private val accountLocalSource: AccountLocalSource,
 ) : LeaderboardRepository, AccountHelper(source = accountLocalSource) {
     override val syncing: Flow<Boolean>
         get() = localSource.syncing
@@ -33,6 +39,20 @@ internal class LeaderboardRepositoryImpl(
 
     override suspend fun setIsSyncing(isSyncing: Boolean) {
         localSource.setIsSyncing(isSyncing = isSyncing)
+    }
+
+    override suspend fun getPagedData(leaderboard: LeaderboardDomain): Flow<PagingData<LeaderboardAccountDomain>> {
+        return Pager(
+            config = PagingConfig(pageSize = PagingHelpers.PAGE_SIZE, enablePlaceholders = false),
+            pagingSourceFactory = {
+                LeaderboardPagingSource(
+                    leaderboard = leaderboard,
+                    accountLocalSource = accountLocalSource,
+                    leaderboardLocalSource = localSource,
+                    leaderboardRemoteSource = remoteSource,
+                )
+            },
+        ).flow
     }
 
     override suspend fun getDaily(page: Int): DataResult<LeaderboardDomain> {

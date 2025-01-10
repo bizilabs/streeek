@@ -17,15 +17,14 @@ import kotlin.collections.get
 
 internal val LeaderboardModule =
     module {
-        factory<LeaderboardScreenModel> {
-            LeaderboardScreenModel(context = get(), repository = get())
+        factory<LeaderboardListScreenModel> {
+            LeaderboardListScreenModel(context = get(), repository = get())
         }
     }
 
-data class LeaderboardScreenState(
-    val isJoining: Boolean = false,
-    val isCreating: Boolean = false,
+data class LeaderboardListScreenState(
     val isSyncing: Boolean = false,
+    val leaderboardName: String? = null,
     val leaderboard: LeaderboardDomain? = null,
     val leaderboards: List<LeaderboardDomain> = emptyList(),
     val showConfetti: Boolean = false,
@@ -39,10 +38,10 @@ data class LeaderboardScreenState(
             }
 }
 
-class LeaderboardScreenModel(
+class LeaderboardListScreenModel(
     private val context: Context,
     private val repository: LeaderboardRepository,
-) : StateScreenModel<LeaderboardScreenState>(LeaderboardScreenState()) {
+) : StateScreenModel<LeaderboardListScreenState>(LeaderboardListScreenState()) {
     private val selectedLeaderboard =
         combine(repository.selectedLeaderBoardId, repository.leaderboards) { id, map ->
             Timber.d("Leaderboard Map -> $map")
@@ -94,6 +93,14 @@ class LeaderboardScreenModel(
     fun onValueChangeLeaderboard(leaderboard: LeaderboardDomain) {
         screenModelScope.launch {
             repository.set(leaderboard = leaderboard)
+        }
+    }
+
+    fun onClickViewMore(){
+        screenModelScope.launch {
+            mutableState.update { it.copy(leaderboardName = mutableState.value.leaderboard?.name) }
+            delay(250)
+            mutableState.update { it.copy(leaderboardName = null) }
         }
     }
 }
