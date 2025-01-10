@@ -329,7 +329,7 @@ class TeamScreenModel(
                         )
                     }
                     delay(2000)
-                    mutableState.update { it.copy(dialogState = null, shouldNavigateBack = true) }
+                    mutableState.update { it.copy(dialogState = null) }
                 }
             }
         }
