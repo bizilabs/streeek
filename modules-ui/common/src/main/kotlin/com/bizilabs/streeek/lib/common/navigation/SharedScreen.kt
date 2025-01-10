@@ -20,4 +20,6 @@ sealed class SharedScreen : ScreenProvider {
     object Issues : SharedScreen()
 
     data class Issue(val id: Long? = null) : SharedScreen()
+
+    data class Leaderboard(val name: String) : SharedScreen()
 }

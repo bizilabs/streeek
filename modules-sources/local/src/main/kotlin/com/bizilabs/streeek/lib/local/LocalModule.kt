@@ -11,6 +11,8 @@ import com.bizilabs.streeek.lib.local.sources.account.AccountLocalSourceImpl
 import com.bizilabs.streeek.lib.local.sources.contributions.ContributionDAO
 import com.bizilabs.streeek.lib.local.sources.contributions.ContributionsLocalSource
 import com.bizilabs.streeek.lib.local.sources.contributions.ContributionsLocalSourceImpl
+import com.bizilabs.streeek.lib.local.sources.leaderboard.LeaderboardLocalSource
+import com.bizilabs.streeek.lib.local.sources.leaderboard.LeaderboardLocalSourceImpl
 import com.bizilabs.streeek.lib.local.sources.level.LevelDAO
 import com.bizilabs.streeek.lib.local.sources.level.LevelLocalSource
 import com.bizilabs.streeek.lib.local.sources.level.LevelLocalSourceImpl
@@ -45,6 +47,7 @@ val LocalModule =
         single<LocalPreferenceSource> { LocalPreferenceSourceImpl(source = get()) }
         single<AccountLocalSource> { AccountLocalSourceImpl(preferenceSource = get()) }
         single<TeamLocalSource> { TeamLocalSourceImpl(source = get()) }
+        single<LeaderboardLocalSource> { LeaderboardLocalSourceImpl(source = get()) }
         // contributions
         single<ContributionDAO> { get<StreeekDatabase>().contributions }
         single<ContributionsLocalSource> {
