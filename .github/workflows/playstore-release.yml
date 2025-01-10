@@ -15,7 +15,7 @@ jobs:
 
     steps:
       - name: Checkout Project Sources
-        uses: actions/chekout@v4
+        uses: actions/checkout@v4
 
       - name: Create local.properties
         run: echo "${{secrets.LOCAL_PROPERTIES }}" > $GITHUB_WORKSPACE/local.properties
@@ -34,9 +34,11 @@ jobs:
 
       - name: Set Version Code and Version Name
         run: |
-          echo "VERSION_CODE=$(git rev-list --count HEAD)" >> $GITHUB_ENV
-          echo "VERSION_NAME=${{ github.event.release.name }}" >> $GITHUB_ENV
-          echo Last build tool version is: $BUILD_TOOL_VERSION
+          VERSION_CODE=$(git rev-list --count HEAD)
+          VERSION_NAME=${{ github.event.release.name }}
+          echo "VERSION_CODE=$VERSION_CODE" >> $GITHUB_ENV
+          echo "VERSION_NAME=$VERSION_NAME" >> $GITHUB_ENV
+          echo version code is: $VERSION_CODE and version name is: $VERSION_NAME
 
       - name: Bundle AAB
         run: ./gradlew bundleRelease
