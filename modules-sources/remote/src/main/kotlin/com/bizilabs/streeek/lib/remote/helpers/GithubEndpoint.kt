@@ -30,6 +30,5 @@ sealed class GithubEndpoint(private val route: String) {
         object Labels : GithubEndpoint(route = "/repos/bizilabs/streeek/labels")
 
         object SearchIssues : GithubEndpoint(route = "/search/issues")
-
     }
 }

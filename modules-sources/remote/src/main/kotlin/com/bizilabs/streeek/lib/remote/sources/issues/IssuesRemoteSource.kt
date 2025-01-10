@@ -24,8 +24,10 @@ interface IssuesRemoteSource {
 
     suspend fun fetchIssues(page: Int): NetworkResult<List<GithubIssueDTO>>
 
-    suspend fun searchIssues(searchQuery: String, page: Int): NetworkResult<SearchGithubIssuesDTO>
-
+    suspend fun searchIssues(
+        searchQuery: String,
+        page: Int,
+    ): NetworkResult<SearchGithubIssuesDTO>
 
     suspend fun fetchIssue(number: Long): NetworkResult<GithubIssueDTO>
 
@@ -68,14 +70,17 @@ class IssuesRemoteSourceImpl(
 
     override suspend fun searchIssues(
         searchQuery: String,
-        page: Int
-    ): NetworkResult<SearchGithubIssuesDTO> = safeApiCall {
-        client.get {
-            url(GithubEndpoint.Repository.SearchIssues.url)
-            parameter("q", "repo:${GithubEndpoint.Repository.SearchIssues.repoRoute} $searchQuery in:title OR $searchQuery in:body") //in:title OR CTA in:body if you need to search in Both
+        page: Int,
+    ): NetworkResult<SearchGithubIssuesDTO> =
+        safeApiCall {
+            client.get {
+                url(GithubEndpoint.Repository.SearchIssues.url)
+                parameter(
+                    "q",
+                    "repo:${GithubEndpoint.Repository.SearchIssues.repoRoute} $searchQuery in:title OR $searchQuery in:body",
+                ) // in:title OR CTA in:body if you need to search in Both
+            }
         }
-    }
-
 
     override suspend fun fetchIssue(number: Long): NetworkResult<GithubIssueDTO> =
         safeApiCall {

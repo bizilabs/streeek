@@ -13,7 +13,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
-import androidx.compose.material.icons.outlined.Warning
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -66,11 +65,12 @@ object IssuesScreen : Screen {
         val state by screenModel.state.collectAsStateWithLifecycle()
 
         val isSearching by screenModel.isSearching.collectAsStateWithLifecycle()
-        val issues = if (isSearching) {
-            screenModel.searchResults.collectAsLazyPagingItems()
-        } else {
-            screenModel.issues.collectAsLazyPagingItems()
-        }
+        val issues =
+            if (isSearching) {
+                screenModel.searchResults.collectAsLazyPagingItems()
+            } else {
+                screenModel.issues.collectAsLazyPagingItems()
+            }
 
         IssuesScreenContent(
             state = state,
@@ -116,7 +116,6 @@ fun IssuesScreenContent(
                             )
                         }
                     }
-
                 },
                 title = {
                     if (isSearching) {
@@ -156,9 +155,10 @@ fun IssuesScreenContent(
         },
     ) { innerPadding ->
         SafiPagingComponent(
-            modifier = Modifier
-                .padding(innerPadding)
-                .fillMaxSize(),
+            modifier =
+                Modifier
+                    .padding(innerPadding)
+                    .fillMaxSize(),
             data = issues,
         ) { issue ->
             IssueItem(issue, onClickIssue)
@@ -172,19 +172,21 @@ fun IssueItem(
     onClickIssue: (IssueDomain) -> Unit,
 ) {
     Column(
-        modifier = Modifier
-            .clickable { onClickIssue(issue) }
-            .padding(16.dp),
+        modifier =
+            Modifier
+                .clickable { onClickIssue(issue) }
+                .padding(16.dp),
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             AsyncImage(
-                modifier = Modifier
-                    .padding(end = 16.dp)
-                    .size(48.dp)
-                    .clip(CircleShape),
+                modifier =
+                    Modifier
+                        .padding(end = 16.dp)
+                        .size(48.dp)
+                        .clip(CircleShape),
                 model = issue.user.url,
                 contentDescription = "Avatar Image URL",
             )

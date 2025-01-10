@@ -32,7 +32,7 @@ class IssuesScreenModel(
 
     private var searchJob: Job? = null
 
-    private val _searchQuery = MutableStateFlow("")
+    private val searchQuery = MutableStateFlow("")
 
     private val _searchResults = MutableStateFlow<PagingData<IssueDomain>>(PagingData.empty())
     val searchResults: StateFlow<PagingData<IssueDomain>> = _searchResults.asStateFlow()
@@ -40,42 +40,42 @@ class IssuesScreenModel(
     private val _isSearching = MutableStateFlow(false)
     val isSearching: StateFlow<Boolean> = _isSearching.asStateFlow()
 
-
     fun updateSearchQuery(query: String) {
-        _searchQuery.value = query
+        searchQuery.value = query
         searchJob?.cancel()
 
-        searchJob = screenModelScope.launch {
-            _searchQuery
-                .debounce(300)
-                .distinctUntilChanged()
-                .onEach { Timber.d("_searchQuery emitted: $it") }
-                .flatMapLatest { query ->
-                    _isSearching.value = query.isNotEmpty()
-                    flow {
-                        try {
-                            val resultFlow = if (query.isNotEmpty()) {
-                                repository.searchIssues(query, isFetchingUserIssues = false)
-                            }
-                            else {
-                                repository.getIssues(isFetchingUserIssues = false)
-                            }
-                            resultFlow.cachedIn(screenModelScope).collect { pagingData ->
-                                emit(pagingData)
-                            }
-                        } catch (e: Exception) {
-                            emit(PagingData.empty())
-                        } finally {
-                            if (query == _searchQuery.value) {
-                                _isSearching.value = false
+        searchJob =
+            screenModelScope.launch {
+                searchQuery
+                    .debounce(300)
+                    .distinctUntilChanged()
+                    .onEach { Timber.d("_searchQuery emitted: $it") }
+                    .flatMapLatest { query ->
+                        _isSearching.value = query.isNotEmpty()
+                        flow {
+                            try {
+                                val resultFlow =
+                                    if (query.isNotEmpty()) {
+                                        repository.searchIssues(query, isFetchingUserIssues = false)
+                                    } else {
+                                        repository.getIssues(isFetchingUserIssues = false)
+                                    }
+                                resultFlow.cachedIn(screenModelScope).collect { pagingData ->
+                                    emit(pagingData)
+                                }
+                            } catch (e: Exception) {
+                                emit(PagingData.empty())
+                            } finally {
+                                if (query == searchQuery.value) {
+                                    _isSearching.value = false
+                                }
                             }
                         }
                     }
-                }
-                .collect { pagingData ->
-                    _searchResults.value = pagingData
-                }
-        }
+                    .collect { pagingData ->
+                        _searchResults.value = pagingData
+                    }
+            }
     }
 
     fun onClickIssue(issue: IssueDomain) {

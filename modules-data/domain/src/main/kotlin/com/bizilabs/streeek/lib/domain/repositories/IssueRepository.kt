@@ -14,7 +14,7 @@ interface IssueRepository {
 
     fun searchIssues(
         searchQuery: String,
-        isFetchingUserIssues: Boolean
+        isFetchingUserIssues: Boolean,
     ): Flow<PagingData<IssueDomain>>
 
     fun getIssueComments(issueNumber: Long): Flow<PagingData<CommentDomain>>

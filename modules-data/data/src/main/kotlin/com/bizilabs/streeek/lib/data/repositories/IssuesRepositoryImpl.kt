@@ -27,10 +27,10 @@ class IssuesRepositoryImpl(
         get() =
             Pager(
                 config =
-                PagingConfig(
-                    pageSize = PagingHelpers.PAGE_SIZE,
-                    enablePlaceholders = false,
-                ),
+                    PagingConfig(
+                        pageSize = PagingHelpers.PAGE_SIZE,
+                        enablePlaceholders = false,
+                    ),
                 pagingSourceFactory = {
                     IssuesPagingSource(
                         isFetchingUserIssues = false,
@@ -58,7 +58,7 @@ class IssuesRepositoryImpl(
 
     override fun searchIssues(
         searchQuery: String,
-        isFetchingUserIssues: Boolean
+        isFetchingUserIssues: Boolean,
     ): Flow<PagingData<IssueDomain>> =
         Pager(
             config = PagingConfig(pageSize = PagingHelpers.PAGE_SIZE, enablePlaceholders = false),
@@ -70,7 +70,6 @@ class IssuesRepositoryImpl(
                 )
             },
         ).flow
-
 
     override fun getIssueComments(issueNumber: Long): Flow<PagingData<CommentDomain>> =
         Pager(

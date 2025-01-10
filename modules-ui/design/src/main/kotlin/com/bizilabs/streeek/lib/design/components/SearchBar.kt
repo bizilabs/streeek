@@ -13,7 +13,6 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
@@ -34,7 +33,7 @@ fun SearchBar(
     }
     TextField(
         value = query,
-        leadingIcon  = {
+        leadingIcon = {
             Icon(
                 imageVector = Icons.Default.Search,
                 contentDescription = "Search",
@@ -61,7 +60,7 @@ fun SearchBar(
                 focusedIndicatorColor = Color.Transparent,
                 unfocusedIndicatorColor = Color.Transparent,
             ),
-        modifier = modifier.fillMaxWidth() .focusRequester(focusRequester),
+        modifier = modifier.fillMaxWidth().focusRequester(focusRequester),
     )
 }
 

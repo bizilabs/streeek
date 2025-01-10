@@ -4,11 +4,9 @@ import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.bizilabs.streeek.lib.data.mappers.toDomain
 import com.bizilabs.streeek.lib.domain.models.IssueDomain
-import com.bizilabs.streeek.lib.local.sources.account.AccountLocalSource
 import com.bizilabs.streeek.lib.remote.helpers.NetworkResult
 import com.bizilabs.streeek.lib.remote.models.GithubIssueDTO
 import com.bizilabs.streeek.lib.remote.sources.issues.IssuesRemoteSource
-import kotlinx.coroutines.flow.firstOrNull
 import timber.log.Timber
 
 class SearchIssuesPagingSource(
