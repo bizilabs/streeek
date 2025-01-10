@@ -25,9 +25,12 @@ import com.bizilabs.streeek.lib.domain.models.team.TeamInvitationDomain
 import com.bizilabs.streeek.lib.domain.repositories.TeamInvitationRepository
 import com.bizilabs.streeek.lib.domain.repositories.TeamRepository
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.koin.dsl.module
+import timber.log.Timber
 
 val FeatureTeamModule =
     module {
@@ -133,6 +136,14 @@ class TeamScreenModel(
     private val teamRepository: TeamRepository,
     private val teamInvitationRepository: TeamInvitationRepository,
 ) : StateScreenModel<TeamScreenState>(TeamScreenState()) {
+    private val clickedTeam =
+        combine(teamRepository.teamId, teamRepository.teams) { id, map ->
+            Timber.d("Team Map -> $map")
+            Timber.d("Clicked Team being updated....")
+            Timber.d("Clicked Team : ${mutableState.value.team}")
+            map[id]
+        }
+
     fun setNavigationVariables(
         isJoining: Boolean,
         teamId: Long?,
@@ -145,7 +156,27 @@ class TeamScreenModel(
                 hasAlreadyUpdatedNavVariables = true,
             )
         }
-        teamId?.let { getTeam(id = it) }
+        teamId?.let {
+            getTeam(id = it)
+            observeTeamDetails()
+        }
+    }
+
+    private fun observeTeamDetails() {
+        screenModelScope.launch {
+            clickedTeam.collectLatest { value ->
+                mutableState.update { it.copy(team = value) }
+                if (value?.rank?.current == 1L) showConfetti()
+            }
+        }
+    }
+
+    private fun showConfetti() {
+        screenModelScope.launch {
+            mutableState.update { it.copy(showConfetti = true) }
+            delay(2000)
+            mutableState.update { it.copy(showConfetti = false) }
+        }
     }
 
     private fun dismissDialog() {
