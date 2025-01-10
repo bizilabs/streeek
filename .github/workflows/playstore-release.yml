@@ -49,12 +49,14 @@ jobs:
           echo "$version_code" > ./modules-app/streeek/VERSION
           
           echo "New Version Code is: $version_code"
-          
+
+          git fetch origin main
+          git checkout main
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add ./modules-app/streeek/VERSION
           git commit -m "Bump version code $version_code"
-          git push
+          git push origin main
 
       - name: Bundle AAB
         run: ./gradlew bundleRelease
