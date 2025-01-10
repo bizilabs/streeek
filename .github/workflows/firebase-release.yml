@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - main
-
+      - fix/release-actions
 concurrency:
   group: ${{ github.workflow }} - ${{ github.ref }}
   cancel-in-progress: true
@@ -16,6 +16,8 @@ jobs:
     steps:
       - name: Checkout project sources
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Create local.properties
         run: echo "${{secrets.LOCAL_PROPERTIES }}" > $GITHUB_WORKSPACE/local.properties

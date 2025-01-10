@@ -16,6 +16,8 @@ jobs:
     steps:
       - name: Checkout Project Sources
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Create local.properties
         run: echo "${{secrets.LOCAL_PROPERTIES }}" > $GITHUB_WORKSPACE/local.properties
