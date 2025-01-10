@@ -52,10 +52,11 @@ jobs:
           
           echo "New Version Code is: $version_code"
 
-          git fetch origin main
-          git checkout main
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
+          git remote set-url origin https://${GIT_AUTH_TOKEN}@github.com/${{ github.repository }}
+          git fetch origin main
+          git checkout main
           git add ./modules-app/streeek/VERSION
           git commit -m "Bump version code $version_code"
           git push origin main
