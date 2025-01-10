@@ -6,6 +6,7 @@ import com.bizilabs.streeek.lib.remote.helpers.safeApiCall
 import com.bizilabs.streeek.lib.remote.models.CommentDTO
 import com.bizilabs.streeek.lib.remote.models.CreateIssueDTO
 import com.bizilabs.streeek.lib.remote.models.GithubIssueDTO
+import com.bizilabs.streeek.lib.remote.models.SearchGithubIssuesDTO
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
 import io.ktor.client.request.parameter
@@ -22,6 +23,9 @@ interface IssuesRemoteSource {
     ): NetworkResult<List<GithubIssueDTO>>
 
     suspend fun fetchIssues(page: Int): NetworkResult<List<GithubIssueDTO>>
+
+    suspend fun searchIssues(searchQuery: String, page: Int): NetworkResult<SearchGithubIssuesDTO>
+
 
     suspend fun fetchIssue(number: Long): NetworkResult<GithubIssueDTO>
 
@@ -61,6 +65,17 @@ class IssuesRemoteSourceImpl(
                 parameter("page", page)
             }
         }
+
+    override suspend fun searchIssues(
+        searchQuery: String,
+        page: Int
+    ): NetworkResult<SearchGithubIssuesDTO> = safeApiCall {
+        client.get {
+            url(GithubEndpoint.Repository.SearchIssues.url)
+            parameter("q", "repo:${GithubEndpoint.Repository.SearchIssues.repoRoute} $searchQuery in:title")
+        }
+    }
+
 
     override suspend fun fetchIssue(number: Long): NetworkResult<GithubIssueDTO> =
         safeApiCall {

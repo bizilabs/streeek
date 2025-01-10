@@ -12,6 +12,11 @@ interface IssueRepository {
 
     fun getIssues(isFetchingUserIssues: Boolean): Flow<PagingData<IssueDomain>>
 
+    fun searchIssues(
+        searchQuery: String,
+        isFetchingUserIssues: Boolean
+    ): Flow<PagingData<IssueDomain>>
+
     fun getIssueComments(issueNumber: Long): Flow<PagingData<CommentDomain>>
 
     suspend fun getIssue(id: Long): DataResult<IssueDomain>

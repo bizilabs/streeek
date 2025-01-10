@@ -9,6 +9,7 @@ import com.bizilabs.streeek.lib.data.mappers.toDomain
 import com.bizilabs.streeek.lib.data.paging.IssueCommentPagingSource
 import com.bizilabs.streeek.lib.data.paging.IssuesPagingSource
 import com.bizilabs.streeek.lib.data.paging.PagingHelpers
+import com.bizilabs.streeek.lib.data.paging.SearchIssuesPagingSource
 import com.bizilabs.streeek.lib.domain.helpers.DataResult
 import com.bizilabs.streeek.lib.domain.models.CommentDomain
 import com.bizilabs.streeek.lib.domain.models.CreateIssueDomain
@@ -26,10 +27,10 @@ class IssuesRepositoryImpl(
         get() =
             Pager(
                 config =
-                    PagingConfig(
-                        pageSize = PagingHelpers.PAGE_SIZE,
-                        enablePlaceholders = false,
-                    ),
+                PagingConfig(
+                    pageSize = PagingHelpers.PAGE_SIZE,
+                    enablePlaceholders = false,
+                ),
                 pagingSourceFactory = {
                     IssuesPagingSource(
                         isFetchingUserIssues = false,
@@ -54,6 +55,22 @@ class IssuesRepositoryImpl(
                 )
             },
         ).flow
+
+    override fun searchIssues(
+        searchQuery: String,
+        isFetchingUserIssues: Boolean
+    ): Flow<PagingData<IssueDomain>> =
+        Pager(
+            config = PagingConfig(pageSize = PagingHelpers.PAGE_SIZE, enablePlaceholders = false),
+            pagingSourceFactory = {
+                SearchIssuesPagingSource(
+                    searchQuery = searchQuery,
+                    isFetchingUserIssues = isFetchingUserIssues,
+                    issuesRemoteSource = remoteSource,
+                )
+            },
+        ).flow
+
 
     override fun getIssueComments(issueNumber: Long): Flow<PagingData<CommentDomain>> =
         Pager(

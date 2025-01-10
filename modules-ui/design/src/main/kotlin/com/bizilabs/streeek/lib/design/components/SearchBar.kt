@@ -11,7 +11,12 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 
 @Composable
@@ -19,9 +24,14 @@ fun SearchBar(
     query: String,
     onQueryChanged: (String) -> Unit,
     onClose: () -> Unit,
-    placeholder: String = "Search...",
+    placeholder: String = "Search issue...",
     modifier: Modifier = Modifier,
 ) {
+    val focusRequester = remember { FocusRequester() }
+
+    LaunchedEffect(Unit) {
+        focusRequester.requestFocus()
+    }
     TextField(
         value = query,
         onValueChange = onQueryChanged,
@@ -45,7 +55,7 @@ fun SearchBar(
                 focusedIndicatorColor = Color.Transparent,
                 unfocusedIndicatorColor = Color.Transparent,
             ),
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth() .focusRequester(focusRequester),
     )
 }
 

@@ -13,6 +13,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
+import androidx.compose.material.icons.outlined.Warning
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -39,7 +40,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import cafe.adriel.voyager.core.registry.rememberScreen
@@ -54,6 +54,7 @@ import com.bizilabs.streeek.lib.design.components.SearchAction
 import com.bizilabs.streeek.lib.design.components.SearchBar
 import com.bizilabs.streeek.lib.domain.helpers.toTimeAgo
 import com.bizilabs.streeek.lib.domain.models.IssueDomain
+import com.bizilabs.streeek.lib.domain.models.LabelDomain
 import com.bizilabs.streeek.lib.resources.strings.SafiStrings
 
 object IssuesScreen : Screen {
@@ -63,13 +64,21 @@ object IssuesScreen : Screen {
         val screenIssue = rememberScreen(SharedScreen.Issue())
         val screenModel = getScreenModel<IssuesScreenModel>()
         val state by screenModel.state.collectAsStateWithLifecycle()
-        val issues = screenModel.issues.collectAsLazyPagingItems()
+
+        val isSearching by screenModel.isSearching.collectAsStateWithLifecycle()
+        val issues = if (isSearching) {
+            screenModel.searchResults.collectAsLazyPagingItems()
+        } else {
+            screenModel.issues.collectAsLazyPagingItems()
+        }
+
         IssuesScreenContent(
             state = state,
             issues = issues,
             onClickNavigateBack = { navigator?.pop() },
             onClickIssue = screenModel::onClickIssue,
             onClickAddIssue = { navigator?.push(screenIssue) },
+            onSearchQueryChanged = screenModel::updateSearchQuery,
         ) { screen -> navigator?.push(screen) }
     }
 }
@@ -82,59 +91,45 @@ fun IssuesScreenContent(
     onClickNavigateBack: () -> Unit,
     onClickAddIssue: () -> Unit,
     onClickIssue: (IssueDomain) -> Unit,
+    onSearchQueryChanged: (String) -> Unit,
     navigate: (Screen) -> Unit,
 ) {
     var isSearching by remember { mutableStateOf(false) }
     var searchQuery by remember { mutableStateOf("") }
-    // Track whether to load more data or not
-    val shouldFetchMore by remember { mutableStateOf(true) }
 
-    // Filter the issues based on the search query
-
-    val filteredIssues =
-        issues.itemSnapshotList.items.filter {
-            it.title.contains(searchQuery, ignoreCase = true)
-        }
-
-    // Function to load the next page
-
-    fun fetchNextPageIfNeeded() {
-        // Check if the current page has no results, and if we are not already fetching more
-        if (filteredIssues.isEmpty() && shouldFetchMore) {
-            // Attempt to load the next page
-            if (issues.loadState.append !is LoadState.Loading) {
-                issues.retry()
-            }
-        }
+    // Handle navigation to a specific issue
+    if (state.issue != null) {
+        navigate(rememberScreen(SharedScreen.Issue(id = state.issue.number)))
     }
 
-    // Fetch the next page if needed
-    fetchNextPageIfNeeded()
-
-    // Update navigation when a specific issue is selected
-    if (state.issue != null) navigate(rememberScreen(SharedScreen.Issue(id = state.issue.number)))
     Scaffold(
         topBar = {
             TopAppBar(
                 navigationIcon = {
-                    IconButton(
-                        modifier = Modifier.padding(),
-                        onClick = onClickNavigateBack,
-                    ) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
-                            contentDescription = "navigate back",
-                        )
+                    if (!isSearching) { // Show back button only when not searching
+                        IconButton(
+                            onClick = onClickNavigateBack,
+                        ) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
+                                contentDescription = "Navigate Back",
+                            )
+                        }
                     }
+
                 },
                 title = {
                     if (isSearching) {
                         SearchBar(
                             query = searchQuery,
-                            onQueryChanged = { searchQuery = it },
+                            onQueryChanged = { newQuery ->
+                                searchQuery = newQuery
+                                onSearchQueryChanged(newQuery)
+                            },
                             onClose = {
                                 isSearching = false
                                 searchQuery = ""
+                                onSearchQueryChanged("")
                             },
                         )
                     } else {
@@ -156,96 +151,90 @@ fun IssuesScreenContent(
                 containerColor = MaterialTheme.colorScheme.primary,
                 contentColor = MaterialTheme.colorScheme.onPrimary,
             ) {
-                Icon(imageVector = Icons.Rounded.Add, contentDescription = "add issue")
+                Icon(imageVector = Icons.Rounded.Add, contentDescription = "Add Issue")
             }
         },
     ) { innerPadding ->
         SafiPagingComponent(
-            modifier =
-                Modifier
-                    .padding(innerPadding)
-                    .fillMaxSize(),
+            modifier = Modifier
+                .padding(innerPadding)
+                .fillMaxSize(),
             data = issues,
         ) { issue ->
+            IssueItem(issue, onClickIssue)
+        }
+    }
+}
 
-            // Render the filtered issues
-            if (filteredIssues.contains(issue)) {
-                Column(
-                    modifier = Modifier.clickable { onClickIssue(issue) },
+@Composable
+fun IssueItem(
+    issue: IssueDomain,
+    onClickIssue: (IssueDomain) -> Unit,
+) {
+    Column(
+        modifier = Modifier
+            .clickable { onClickIssue(issue) }
+            .padding(16.dp),
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            AsyncImage(
+                modifier = Modifier
+                    .padding(end = 16.dp)
+                    .size(48.dp)
+                    .clip(CircleShape),
+                model = issue.user.url,
+                contentDescription = "Avatar Image URL",
+            )
+
+            Column(modifier = Modifier.weight(1f)) {
+                Row {
+                    Text(
+                        text = "#${issue.number} • ",
+                        fontSize = MaterialTheme.typography.labelMedium.fontSize,
+                    )
+                    Text(
+                        text = issue.createdAt.toTimeAgo(),
+                        fontSize = MaterialTheme.typography.labelMedium.fontSize,
+                    )
+                }
+
+                Text(
+                    modifier = Modifier.padding(vertical = 4.dp),
+                    text = issue.title,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
+                    fontWeight = FontWeight.Bold,
+                )
+
+                AnimatedVisibility(
+                    visible = issue.labels.isNotEmpty(),
                 ) {
-                    Column(
-                        modifier =
-                            Modifier
-                                .fillMaxWidth()
-                                .padding(16.dp),
-                    ) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            verticalAlignment = Alignment.CenterVertically,
-                        ) {
-                            AsyncImage(
-                                modifier =
-                                    Modifier
-                                        .padding(end = 16.dp)
-                                        .size(48.dp)
-                                        .clip(CircleShape),
-                                model = issue.user.url,
-                                contentDescription = "avatar image url",
-                            )
-
-                            Column(modifier = Modifier.weight(1f)) {
-                                Row {
-                                    Text(
-                                        text = "#${issue.number} • ",
-                                        fontSize = MaterialTheme.typography.labelMedium.fontSize,
-                                    )
-                                    Text(
-                                        text = issue.createdAt.toTimeAgo(),
-                                        fontSize = MaterialTheme.typography.labelMedium.fontSize,
-                                    )
-                                }
-
-                                Text(
-                                    modifier = Modifier.padding(vertical = 4.dp),
-                                    text = issue.title,
-                                    maxLines = 2,
-                                    overflow = TextOverflow.Ellipsis,
-                                    fontWeight = FontWeight.Bold,
-                                )
-
-                                AnimatedVisibility(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    visible = issue.labels.isNotEmpty(),
-                                ) {
-                                    LazyRow {
-                                        items(issue.labels) { label ->
-                                            Card(
-                                                modifier = Modifier.padding(end = 4.dp),
-                                                colors =
-                                                    CardDefaults.cardColors(
-                                                        containerColor = Color.fromHex(label.color),
-                                                    ),
-                                            ) {
-                                                Text(
-                                                    modifier =
-                                                        Modifier.padding(
-                                                            vertical = 4.dp,
-                                                            horizontal = 8.dp,
-                                                        ),
-                                                    text = label.name,
-                                                    style = MaterialTheme.typography.labelSmall,
-                                                    color = Color.Black,
-                                                )
-                                            }
-                                        }
-                                    }
-                                }
-                            }
+                    LazyRow {
+                        items(issue.labels) { label ->
+                            LabelCard(label)
                         }
                     }
-                    HorizontalDivider(modifier = Modifier.fillMaxWidth())
                 }
             }
         }
+    }
+    HorizontalDivider(modifier = Modifier.fillMaxWidth())
+}
+
+@Composable
+fun LabelCard(label: LabelDomain) {
+    Card(
+        modifier = Modifier.padding(end = 4.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.fromHex(label.color)),
+    ) {
+        Text(
+            modifier = Modifier.padding(vertical = 4.dp, horizontal = 8.dp),
+            text = label.name,
+            style = MaterialTheme.typography.labelSmall,
+            color = Color.Black,
+        )
     }
 }

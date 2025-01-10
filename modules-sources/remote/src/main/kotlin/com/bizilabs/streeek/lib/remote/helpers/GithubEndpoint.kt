@@ -8,6 +8,8 @@ sealed class GithubEndpoint(private val route: String) {
                 append(route)
             }
 
+    val repoRoute = "bizilabs/streeek"
+
     object User : GithubEndpoint(route = "/user")
 
     data class Event(val username: String, val id: String) :
@@ -17,12 +19,17 @@ sealed class GithubEndpoint(private val route: String) {
         GithubEndpoint(route = "/users/$username/events")
 
     object Repository {
-        data class Issues(val id: Long) : GithubEndpoint(route = "/repos/bizilabs/streeek/issues/$id") {
+        data class Issues(val id: Long) :
+            GithubEndpoint(route = "/repos/bizilabs/streeek/issues/$id") {
             companion object : GithubEndpoint(route = "/repos/bizilabs/streeek/issues")
 
-            inner class Comments : GithubEndpoint(route = "/repos/bizilabs/streeek/issues/$id/comments")
+            inner class Comments :
+                GithubEndpoint(route = "/repos/bizilabs/streeek/issues/$id/comments")
         }
 
         object Labels : GithubEndpoint(route = "/repos/bizilabs/streeek/labels")
+
+        object SearchIssues : GithubEndpoint(route = "/search/issues")
+
     }
 }
