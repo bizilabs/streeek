@@ -39,7 +39,10 @@ interface TeamRemoteSource {
         teamId: Long,
     ): NetworkResult<Boolean>
 
-    suspend fun deleteTeam(accountId: Long, teamId: Long): NetworkResult<Boolean>
+    suspend fun deleteTeam(
+        accountId: Long,
+        teamId: Long,
+    ): NetworkResult<Boolean>
 }
 
 internal class TeamRemoteSourceImpl(
@@ -86,7 +89,7 @@ internal class TeamRemoteSourceImpl(
                 GetTeamRequestDTO(
                     teamId = teamId,
                     accountId = accountId,
-                    page = page
+                    page = page,
                 ).asJsonObject()
             supabase.postgrest
                 .rpc(
@@ -122,14 +125,16 @@ internal class TeamRemoteSourceImpl(
             true
         }
 
-    override suspend fun deleteTeam(accountId: Long, teamId: Long): NetworkResult<Boolean> =
+    override suspend fun deleteTeam(
+        accountId: Long,
+        teamId: Long,
+    ): NetworkResult<Boolean> =
         safeSupabaseCall {
             val parameters = AccountTeamRequestDTO(account = accountId, team = teamId)
             supabase.postgrest.rpc(
                 function = Supabase.Functions.Teams.DELETE,
-                parameters = parameters.asJsonObject()
+                parameters = parameters.asJsonObject(),
             )
             true
         }
-
 }
