@@ -72,7 +72,7 @@ class IssuesRemoteSourceImpl(
     ): NetworkResult<SearchGithubIssuesDTO> = safeApiCall {
         client.get {
             url(GithubEndpoint.Repository.SearchIssues.url)
-            parameter("q", "repo:${GithubEndpoint.Repository.SearchIssues.repoRoute} $searchQuery in:title")
+            parameter("q", "repo:${GithubEndpoint.Repository.SearchIssues.repoRoute} $searchQuery in:title OR $searchQuery in:body") //in:title OR CTA in:body if you need to search in Both
         }
     }
 
