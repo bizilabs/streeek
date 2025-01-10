@@ -20,7 +20,7 @@ fun SearchBar(
     onQueryChanged: (String) -> Unit,
     onClose: () -> Unit,
     placeholder: String = "Search...",
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     TextField(
         value = query,
@@ -28,30 +28,38 @@ fun SearchBar(
         placeholder = { Text(placeholder) },
         trailingIcon = {
             IconButton(onClick = onClose) {
-                Icon(Icons.Default.Close, contentDescription = "Clear search")
+                Icon(
+                    imageVector = Icons.Default.Close,
+                    contentDescription = "Clear search",
+                )
             }
         },
         singleLine = true,
         textStyle = MaterialTheme.typography.titleSmall,
-        colors = TextFieldDefaults.colors(
-            focusedContainerColor = MaterialTheme.colorScheme.surface,
-            unfocusedContainerColor = MaterialTheme.colorScheme.surface,
-            focusedTextColor = MaterialTheme.colorScheme.onSurface,
-            unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
-            focusedIndicatorColor = Color.Transparent,
-            unfocusedIndicatorColor = Color.Transparent
-        ),
-        modifier = modifier.fillMaxWidth()
+        colors =
+            TextFieldDefaults.colors(
+                focusedContainerColor = MaterialTheme.colorScheme.surface,
+                unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+                focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
+                focusedIndicatorColor = Color.Transparent,
+                unfocusedIndicatorColor = Color.Transparent,
+            ),
+        modifier = modifier.fillMaxWidth(),
     )
 }
 
 @Composable
- fun SearchAction(isSearching: Boolean, onToggleSearch: (Boolean) -> Unit) {
+fun SearchAction(
+    isSearching: Boolean,
+    onToggleSearch: (Boolean) -> Unit,
+) {
     if (!isSearching) {
         IconButton(onClick = { onToggleSearch(true) }) {
-            Icon(Icons.Default.Search, contentDescription = "Search")
+            Icon(
+                imageVector = Icons.Default.Search,
+                contentDescription = "Search",
+            )
         }
     }
 }
-
-

@@ -84,19 +84,20 @@ fun IssuesScreenContent(
     onClickIssue: (IssueDomain) -> Unit,
     navigate: (Screen) -> Unit,
 ) {
-
     var isSearching by remember { mutableStateOf(false) }
     var searchQuery by remember { mutableStateOf("") }
-
     // Track whether to load more data or not
     val shouldFetchMore by remember { mutableStateOf(true) }
 
     // Filter the issues based on the search query
-    val filteredIssues = issues.itemSnapshotList.items.filter {
-        it.title.contains(searchQuery, ignoreCase = true)
-    }
+
+    val filteredIssues =
+        issues.itemSnapshotList.items.filter {
+            it.title.contains(searchQuery, ignoreCase = true)
+        }
 
     // Function to load the next page
+
     fun fetchNextPageIfNeeded() {
         // Check if the current page has no results, and if we are not already fetching more
         if (filteredIssues.isEmpty() && shouldFetchMore) {
@@ -126,8 +127,7 @@ fun IssuesScreenContent(
                         )
                     }
                 },
-                title =
-                {
+                title = {
                     if (isSearching) {
                         SearchBar(
                             query = searchQuery,
@@ -135,17 +135,19 @@ fun IssuesScreenContent(
                             onClose = {
                                 isSearching = false
                                 searchQuery = ""
-                            }
+                            },
                         )
                     } else {
                         Text(
                             text = stringResource(SafiStrings.Labels.Issues).uppercase(),
                             style = MaterialTheme.typography.titleSmall,
-                            modifier = Modifier.padding(start = 16.dp)
+                            modifier = Modifier.padding(start = 16.dp),
                         )
                     }
                 },
-                actions = { SearchAction(isSearching) { isSearching = it } }
+                actions = {
+                    SearchAction(isSearching) { isSearching = it }
+                },
             )
         },
         floatingActionButton = {
@@ -160,9 +162,9 @@ fun IssuesScreenContent(
     ) { innerPadding ->
         SafiPagingComponent(
             modifier =
-            Modifier
-                .padding(innerPadding)
-                .fillMaxSize(),
+                Modifier
+                    .padding(innerPadding)
+                    .fillMaxSize(),
             data = issues,
         ) { issue ->
 
@@ -172,19 +174,21 @@ fun IssuesScreenContent(
                     modifier = Modifier.clickable { onClickIssue(issue) },
                 ) {
                     Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp),
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
                     ) {
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             verticalAlignment = Alignment.CenterVertically,
                         ) {
                             AsyncImage(
-                                modifier = Modifier
-                                    .padding(end = 16.dp)
-                                    .size(48.dp)
-                                    .clip(CircleShape),
+                                modifier =
+                                    Modifier
+                                        .padding(end = 16.dp)
+                                        .size(48.dp)
+                                        .clip(CircleShape),
                                 model = issue.user.url,
                                 contentDescription = "avatar image url",
                             )
@@ -217,15 +221,17 @@ fun IssuesScreenContent(
                                         items(issue.labels) { label ->
                                             Card(
                                                 modifier = Modifier.padding(end = 4.dp),
-                                                colors = CardDefaults.cardColors(
-                                                    containerColor = Color.fromHex(label.color),
-                                                ),
+                                                colors =
+                                                    CardDefaults.cardColors(
+                                                        containerColor = Color.fromHex(label.color),
+                                                    ),
                                             ) {
                                                 Text(
-                                                    modifier = Modifier.padding(
-                                                        vertical = 4.dp,
-                                                        horizontal = 8.dp
-                                                    ),
+                                                    modifier =
+                                                        Modifier.padding(
+                                                            vertical = 4.dp,
+                                                            horizontal = 8.dp,
+                                                        ),
                                                     text = label.name,
                                                     style = MaterialTheme.typography.labelSmall,
                                                     color = Color.Black,
