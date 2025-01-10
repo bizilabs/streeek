@@ -335,6 +335,10 @@ class TeamScreenModel(
         }
     }
 
+    private fun deleteTeam(){
+
+    }
+
     // <editor-fold desc="team invitations">
     private fun createInvitationCode() {
         val teamId = state.value.teamId ?: return

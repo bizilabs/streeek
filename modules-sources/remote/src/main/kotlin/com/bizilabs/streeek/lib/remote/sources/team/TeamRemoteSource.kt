@@ -14,6 +14,7 @@ import com.bizilabs.streeek.lib.remote.models.supabase.TeamWithMembersDTO
 import com.bizilabs.streeek.lib.remote.models.supabase.UpdateTeamRequestDTO
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.postgrest.postgrest
+import io.github.jan.supabase.postgrest.rpc
 
 interface TeamRemoteSource {
     suspend fun getAccountTeams(accountId: Long): NetworkResult<List<TeamWithDetailDTO>>
@@ -37,6 +38,8 @@ interface TeamRemoteSource {
         accountId: Long,
         teamId: Long,
     ): NetworkResult<Boolean>
+
+    suspend fun deleteTeam(accountId: Long, teamId: Long): NetworkResult<Boolean>
 }
 
 internal class TeamRemoteSourceImpl(
@@ -80,7 +83,11 @@ internal class TeamRemoteSourceImpl(
     ): NetworkResult<TeamWithMembersDTO> =
         safeSupabaseCall {
             val parameters =
-                GetTeamRequestDTO(teamId = teamId, accountId = accountId, page = page).asJsonObject()
+                GetTeamRequestDTO(
+                    teamId = teamId,
+                    accountId = accountId,
+                    page = page
+                ).asJsonObject()
             supabase.postgrest
                 .rpc(
                     function = Supabase.Functions.Teams.GETMEMBERSWITHACCOUNT,
@@ -114,4 +121,15 @@ internal class TeamRemoteSourceImpl(
             )
             true
         }
+
+    override suspend fun deleteTeam(accountId: Long, teamId: Long): NetworkResult<Boolean> =
+        safeSupabaseCall {
+            val parameters = AccountTeamRequestDTO(account = accountId, team = teamId)
+            supabase.postgrest.rpc(
+                function = Supabase.Functions.Teams.DELETE,
+                parameters = parameters.asJsonObject()
+            )
+            true
+        }
+
 }
