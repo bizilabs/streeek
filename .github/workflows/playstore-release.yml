@@ -36,7 +36,7 @@ jobs:
 
       - name: Set Version Name
         run: |
-          version_name=${{ github.event.release.name }}
+          version_name=10
           echo "VERSION_NAME=$version_name" >> $GITHUB_ENV
           echo "version name is: $version_name"
 
