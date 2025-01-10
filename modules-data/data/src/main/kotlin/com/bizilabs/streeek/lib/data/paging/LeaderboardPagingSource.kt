@@ -4,6 +4,7 @@ import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.bizilabs.streeek.lib.data.mappers.toCache
 import com.bizilabs.streeek.lib.data.mappers.toDomain
+import com.bizilabs.streeek.lib.data.paging.PagingHelpers.START_PAGE
 import com.bizilabs.streeek.lib.domain.models.Leaderboard
 import com.bizilabs.streeek.lib.domain.models.LeaderboardAccountDomain
 import com.bizilabs.streeek.lib.domain.models.LeaderboardDomain
@@ -69,20 +70,19 @@ class LeaderboardPagingSource(
 
         val data = (result as NetworkResult.Success).data.toDomain(name = leaderboard.name, page = page)
         val cache = leaderboard.updateOrCreate(value = data).toCache()
-        leaderboardLocalSource.update(cache)
+        if (page == START_PAGE) leaderboardLocalSource.update(cache)
 
         val list = data.list
 
         val nextKey =
             when {
-                list.isEmpty() -> null
-                list.size < PagingHelpers.PAGE_SIZE -> null
+                list.isEmpty() || list.size < PagingHelpers.PAGE_SIZE -> null
                 else -> page.plus(1)
             }
 
         Timber.d("Leaderboard -> $list")
 
-        val previousKey = if (page == PagingHelpers.START_PAGE) null else page.minus(1)
+        val previousKey = if (page == START_PAGE) null else page.minus(1)
 
         return LoadResult.Page(data = list, prevKey = previousKey, nextKey = nextKey)
     }

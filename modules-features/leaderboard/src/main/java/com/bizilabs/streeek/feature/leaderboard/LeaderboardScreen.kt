@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
-import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -15,20 +14,19 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
 import cafe.adriel.voyager.core.registry.screenModule
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.getScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
-import com.bizilabs.streeek.lib.common.navigation.SharedScreen
-import androidx.compose.runtime.getValue
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
-import androidx.paging.compose.LazyPagingItems
-import androidx.paging.compose.collectAsLazyPagingItems
+import com.bizilabs.streeek.lib.common.components.LeaderboardComponent
 import com.bizilabs.streeek.lib.common.components.paging.SafiPagingComponent
+import com.bizilabs.streeek.lib.common.navigation.SharedScreen
 import com.bizilabs.streeek.lib.domain.extensions.asRank
 import com.bizilabs.streeek.lib.domain.models.LeaderboardAccountDomain
 
@@ -102,23 +100,16 @@ fun LeaderboardScreenContent(
                 .fillMaxSize(),
             data = data
         ) { item ->
-            Card(
-                modifier = Modifier
-                    .padding(horizontal = 16.dp)
-                    .padding(top = 8.dp),
-                onClick = {}
+            LeaderboardComponent(
+                imageUrl = item.account.avatarUrl,
+                username = item.account.username,
+                points = item.rank.points,
+                rank = item.rank.position.asRank(),
+                modifier = Modifier.fillMaxWidth()
             ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp)
-                ) {
-                    Text(text = item.account.username)
-                    Text(text = item.rank.position.asRank())
-                }
+
             }
         }
-
     }
 
 }

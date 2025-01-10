@@ -37,6 +37,7 @@ import cafe.adriel.voyager.koin.getScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import com.bizilabs.streeek.feature.tabs.screens.leaderboard.components.LeaderboardItemComponent
 import com.bizilabs.streeek.feature.tabs.screens.leaderboard.components.TeamTopMemberComponent
+import com.bizilabs.streeek.lib.common.components.LeaderboardComponent
 import com.bizilabs.streeek.lib.common.navigation.SharedScreen
 import com.bizilabs.streeek.lib.design.components.SafiCenteredColumn
 import com.bizilabs.streeek.lib.design.components.SafiCenteredRow
@@ -44,6 +45,7 @@ import com.bizilabs.streeek.lib.design.components.SafiCircularProgressIndicator
 import com.bizilabs.streeek.lib.design.components.SafiInfoSection
 import com.bizilabs.streeek.lib.design.helpers.onSuccess
 import com.bizilabs.streeek.lib.design.helpers.success
+import com.bizilabs.streeek.lib.domain.extensions.asRank
 import com.bizilabs.streeek.lib.domain.models.LeaderboardDomain
 import nl.dionsegijn.konfetti.compose.KonfettiView
 import nl.dionsegijn.konfetti.core.Party
@@ -117,7 +119,15 @@ fun LeaderboardListScreenContent(
                     else -> {
                         LazyColumn(modifier = Modifier.fillMaxSize()) {
                             items(state.list) { member ->
-                                LeaderboardItemComponent(member = member)
+                                LeaderboardComponent(
+                                    imageUrl = member.account.avatarUrl,
+                                    username = member.account.username,
+                                    points = member.rank.points,
+                                    rank = member.rank.position.asRank(),
+                                    modifier = Modifier.fillMaxWidth()
+                                ) {
+
+                                }
                             }
                             item {
                                 SafiCenteredRow(modifier = Modifier.fillMaxWidth()) {

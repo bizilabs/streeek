@@ -15,9 +15,12 @@ dependencies {
     // </editor-fold>
 
     // <editor-fold desc="libraries">
+    // voyager
     implementation(libs.bundles.voyager)
-    // </editor-fold>
-
     // paging
     implementation(libs.androidx.paging.compose)
+    // coil
+    implementation(libs.bundles.coil)
+    // </editor-fold>
+
 }

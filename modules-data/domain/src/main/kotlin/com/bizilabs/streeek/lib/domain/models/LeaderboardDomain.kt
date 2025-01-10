@@ -17,16 +17,8 @@ data class LeaderboardDomain(
     val name: String,
     val rank: RankDetailsDomain,
     val list: List<LeaderboardAccountDomain>,
-) {
-    val top: Map<Int, LeaderboardAccountDomain>
-        get() {
-            val map = mutableMapOf<Int, LeaderboardAccountDomain>()
-            list.getOrNull(0)?.let { map[0] = it }
-            list.getOrNull(1)?.let { map[1] = it }
-            list.getOrNull(2)?.let { map[2] = it }
-            return map
-        }
-}
+    val top: Map<Long, LeaderboardAccountDomain>
+)
 
 fun LeaderboardDomain?.updateOrCreate(value: LeaderboardDomain): LeaderboardDomain {
     return when {
@@ -36,6 +28,15 @@ fun LeaderboardDomain?.updateOrCreate(value: LeaderboardDomain): LeaderboardDoma
                 page = value.page,
                 list = value.list,
                 rank = rank.copy(previous = rank.current, current = value.rank.current),
+                top = if (page == 1) getTopMembersMap() else emptyMap()
             )
     }
+}
+
+fun LeaderboardDomain.getTopMembersMap(): Map<Long, LeaderboardAccountDomain> {
+    val map = mutableMapOf<Long, LeaderboardAccountDomain>()
+    list.getOrNull(0)?.let { map[0] = it }
+    list.getOrNull(1)?.let { map[1] = it }
+    list.getOrNull(2)?.let { map[2] = it }
+    return map
 }

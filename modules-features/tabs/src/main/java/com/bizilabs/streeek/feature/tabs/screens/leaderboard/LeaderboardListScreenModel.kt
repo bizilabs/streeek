@@ -44,9 +44,6 @@ class LeaderboardListScreenModel(
 ) : StateScreenModel<LeaderboardListScreenState>(LeaderboardListScreenState()) {
     private val selectedLeaderboard =
         combine(repository.selectedLeaderBoardId, repository.leaderboards) { id, map ->
-            Timber.d("Leaderboard Map -> $map")
-            Timber.d("Selected Leaderboard being updated....")
-            Timber.d("Selected Leaderboard : ${mutableState.value.leaderboard}")
             map[id]
         }
 
@@ -60,6 +57,7 @@ class LeaderboardListScreenModel(
         screenModelScope.launch {
             selectedLeaderboard.collectLatest { value ->
                 mutableState.update { it.copy(leaderboard = value) }
+                Timber.d("Top -> ${value?.top}")
                 val position = value?.rank?.current?.position
                 position?.let { if (it <= 10L) showConfetti() }
             }
