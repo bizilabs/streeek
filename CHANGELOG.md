@@ -37,6 +37,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - Deleting a team
+- Standardizes screen headers
 
 [unreleased]: https://github.com/bizilabs/streeek/compare/0.0.3...HEAD
 [0.0.3]: https://github.com/bizilabs/streeek/releases/v0.0.2...v0.0.3

@@ -43,7 +43,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.core.registry.screenModule
@@ -61,6 +60,7 @@ import com.bizilabs.streeek.lib.design.components.SafiBottomSheetPicker
 import com.bizilabs.streeek.lib.design.components.SafiCenteredColumn
 import com.bizilabs.streeek.lib.design.components.SafiDropdownComponent
 import com.bizilabs.streeek.lib.design.components.SafiInfoSection
+import com.bizilabs.streeek.lib.design.components.SafiTopBarHeader
 import com.bizilabs.streeek.lib.domain.models.team.TeamInvitationDomain
 import com.bizilabs.streeek.lib.resources.strings.SafiStrings
 import nl.dionsegijn.konfetti.compose.KonfettiView
@@ -217,7 +217,10 @@ fun TeamScreenContent(
                             }
 
                             false -> {
-                                ViewTeamSection(state = state, onClickInviteMore = onClickInviteMore)
+                                ViewTeamSection(
+                                    state = state,
+                                    onClickInviteMore = onClickInviteMore,
+                                )
                             }
                         }
                     }
@@ -252,34 +255,26 @@ private fun TeamScreenHeaderComponent(
             ) { isManaging ->
                 when {
                     state.isJoining -> {
-                        Text(text = "Join Team")
+                        SafiTopBarHeader(title = "Join Team")
                     }
 
                     isManaging -> {
-                        Text(text = "Create Team")
+                        SafiTopBarHeader(title = "Create Team")
                     }
 
                     else -> {
                         if (team is FetchState.Success) {
-                            Column(
+                            val count = team.value.team.count
+                            SafiTopBarHeader(
                                 modifier = Modifier.fillMaxWidth(),
-                            ) {
-                                Text(
-                                    text = team.value.team.name,
-                                    style = MaterialTheme.typography.titleLarge,
-                                    fontWeight = FontWeight.Bold,
-                                )
-                                val count = team.value.team.count
-                                Text(
-                                    text =
-                                        buildString {
-                                            append(count)
-                                            append(" Member")
-                                            append(if (count > 1) "s" else "")
-                                        },
-                                    style = MaterialTheme.typography.labelMedium,
-                                )
-                            }
+                                title = team.value.team.name,
+                                subtitle =
+                                    buildString {
+                                        append(count)
+                                        append(" Member")
+                                        append(if (count > 1) "s" else "")
+                                    },
+                            )
                         }
                     }
                 }

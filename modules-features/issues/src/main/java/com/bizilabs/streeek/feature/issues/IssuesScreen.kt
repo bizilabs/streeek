@@ -55,6 +55,7 @@ import com.bizilabs.streeek.lib.common.navigation.SharedScreen
 import com.bizilabs.streeek.lib.design.components.SafiInfoSection
 import com.bizilabs.streeek.lib.design.components.SafiSearchAction
 import com.bizilabs.streeek.lib.design.components.SafiSearchBar
+import com.bizilabs.streeek.lib.design.components.SafiTopBarHeader
 import com.bizilabs.streeek.lib.domain.helpers.toTimeAgo
 import com.bizilabs.streeek.lib.domain.models.IssueDomain
 import com.bizilabs.streeek.lib.domain.models.LabelDomain
@@ -136,10 +137,9 @@ fun IssuesScreenContent(
                             },
                         )
                     } else {
-                        Text(
-                            text = stringResource(SafiStrings.Labels.Issues).uppercase(),
-                            style = MaterialTheme.typography.titleSmall,
+                        SafiTopBarHeader(
                             modifier = Modifier.padding(start = 16.dp),
+                            title = stringResource(SafiStrings.Labels.Issues),
                         )
                     }
                 },

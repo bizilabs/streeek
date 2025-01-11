@@ -27,8 +27,8 @@ import com.bizilabs.streeek.lib.design.theme.SafiTheme
 fun SafiTopBarHeader(
     title: String,
     modifier: Modifier = Modifier,
-    description: String? = null,
-    align: TextAlign = TextAlign.Start
+    subtitle: String? = null,
+    align: TextAlign = TextAlign.Start,
 ) {
     Column(modifier = modifier) {
         Text(
@@ -36,17 +36,18 @@ fun SafiTopBarHeader(
             text = title.uppercase(),
             style = MaterialTheme.typography.titleSmall,
             fontWeight = FontWeight.Bold,
-            textAlign = align
+            textAlign = align,
         )
         AnimatedVisibility(
-            modifier = Modifier.fillMaxWidth(), visible = description != null
+            modifier = Modifier.fillMaxWidth(),
+            visible = subtitle != null,
         ) {
             Text(
                 modifier = Modifier.padding(),
-                text = description ?: "",
+                text = subtitle ?: "",
                 style = MaterialTheme.typography.labelSmall,
                 fontWeight = FontWeight.Normal,
-                textAlign = align
+                textAlign = align,
             )
         }
     }
@@ -57,7 +58,7 @@ private fun SafiTopBarHeaderSample() {
     SafiTopBarHeader(
         modifier = Modifier.fillMaxWidth(),
         title = "Title",
-        description = "A sample description"
+        subtitle = "A sample description",
     )
 }
 
@@ -68,13 +69,13 @@ private fun SafiTopBarHeaderSampleGuide() {
         SafiTopBarHeader(
             modifier = Modifier.fillMaxWidth(),
             title = "Title".uppercase(),
-            description = "A sample description"
+            subtitle = "A sample description",
         )
         // don't make the description uppercase
         SafiTopBarHeader(
             modifier = Modifier.fillMaxWidth(),
             title = "Title",
-            description = "A sample description".uppercase()
+            subtitle = "A sample description".uppercase(),
         )
     }
 }
@@ -107,7 +108,7 @@ private fun SafiTopBarHeaderCenteredPreview() {
             TopAppBar(title = {
                 SafiTopBarHeader(
                     title = "Leaderboard",
-                    align = TextAlign.Center
+                    align = TextAlign.Center,
                 )
             })
         }) { _ -> }
@@ -125,7 +126,7 @@ private fun SafiTopBarHeaderWithDescriptionPreview() {
             TopAppBar(title = {
                 SafiTopBarHeader(
                     title = "Leaderboard",
-                    description = "This is a leaderboard"
+                    subtitle = "This is a leaderboard",
                 )
             })
         }) { _ -> }

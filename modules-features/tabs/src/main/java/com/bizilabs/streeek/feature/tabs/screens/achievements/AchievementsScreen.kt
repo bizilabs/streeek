@@ -49,6 +49,7 @@ import com.bizilabs.streeek.lib.common.navigation.SharedScreen
 import com.bizilabs.streeek.lib.design.components.SafiCenteredColumn
 import com.bizilabs.streeek.lib.design.components.SafiCenteredRow
 import com.bizilabs.streeek.lib.design.components.SafiProfileArc
+import com.bizilabs.streeek.lib.design.components.SafiTopBarHeader
 import com.bizilabs.streeek.lib.design.helpers.onSuccess
 import com.bizilabs.streeek.lib.design.helpers.success
 import com.bizilabs.streeek.lib.domain.extensions.asRank
@@ -135,11 +136,10 @@ fun AchievementScreenHeader(
                         contentDescription = "refresh profile",
                     )
                 }
-                Text(
-                    modifier = Modifier,
-                    text = "Achievements".uppercase(),
-                    style = MaterialTheme.typography.titleSmall,
-                    textAlign = TextAlign.Center,
+                SafiTopBarHeader(
+                    modifier = Modifier.weight(1f),
+                    title = "Achievements",
+                    align = TextAlign.Center,
                 )
                 IconButton(onClick = onClickRefreshProfile) {
                     Icon(

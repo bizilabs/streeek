@@ -54,6 +54,7 @@ import com.bizilabs.streeek.lib.common.navigation.SharedScreen
 import com.bizilabs.streeek.lib.design.components.SafiCenteredColumn
 import com.bizilabs.streeek.lib.design.components.SafiCenteredRow
 import com.bizilabs.streeek.lib.design.components.SafiInfoSection
+import com.bizilabs.streeek.lib.design.components.SafiTopBarHeader
 import com.bizilabs.streeek.lib.design.helpers.onSuccess
 import com.bizilabs.streeek.lib.design.helpers.success
 import com.bizilabs.streeek.lib.domain.helpers.dayShort
@@ -410,30 +411,17 @@ private fun FeedHeader(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Text(
-            modifier =
-                Modifier
-                    .padding(start = 24.dp)
-                    .weight(1f),
-            text =
-                if (state.isToday) {
-                    "Today"
-                } else {
-                    selectedDate.month.name.lowercase()
-                        .replaceFirstChar { it.uppercase() }
-                },
-            fontWeight = FontWeight.Bold,
-            fontSize = MaterialTheme.typography.titleLarge.fontSize,
+        SafiTopBarHeader(
+            modifier = Modifier.padding(start = 24.dp).weight(1f),
+            title = if (state.isToday) "Today" else selectedDate.month.name,
         )
-
-        val streak = state.account?.streak
 
         SafiCenteredRow(
             modifier = Modifier.padding(horizontal = 16.dp),
         ) {
             Text(
                 modifier = Modifier.padding(end = 8.dp),
-                text = (streak?.current ?: 0).toString(),
+                text = (state.account?.streak?.current ?: 0).toString(),
                 fontWeight = FontWeight.Bold,
                 fontSize = MaterialTheme.typography.titleMedium.fontSize,
             )

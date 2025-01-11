@@ -46,6 +46,7 @@ import com.bizilabs.streeek.lib.common.navigation.SharedScreen
 import com.bizilabs.streeek.lib.design.components.DialogState
 import com.bizilabs.streeek.lib.design.components.SafiBottomDialog
 import com.bizilabs.streeek.lib.design.components.SafiCenteredColumn
+import com.bizilabs.streeek.lib.design.components.SafiTopBarHeader
 import com.bizilabs.streeek.lib.domain.helpers.toTimeAgo
 import com.bizilabs.streeek.lib.resources.strings.SafiStringLabels
 
@@ -116,7 +117,7 @@ fun ProfileScreenContent(
                 }
             },
             title = {
-                Text(text = "Profile")
+                SafiTopBarHeader(title = "Profile")
             },
         )
     }) { innerPadding ->
