@@ -68,7 +68,9 @@ private fun TeamWithMembersDomain.getTopMembersMap(): Map<Long, TeamMemberDomain
 data class TeamRankDomain(
     val previous: Long?,
     val current: Long,
-)
+) {
+    val currentIsHigher: Boolean = if (previous != null) current > previous else true
+}
 
 data class TeamWithMembersDomain(
     val members: List<TeamMemberDomain>,

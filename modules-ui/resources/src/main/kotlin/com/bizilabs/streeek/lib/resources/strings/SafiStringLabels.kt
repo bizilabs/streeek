@@ -10,6 +10,7 @@ object SafiStringLabels {
     val Notifications = R.string.label_notifications
     val Issues = R.string.label_issues
     val NoNotifications = R.string.label_no_notifications
+    val Teams = R.string.teams
 }
 
 object SafiStringMessages {

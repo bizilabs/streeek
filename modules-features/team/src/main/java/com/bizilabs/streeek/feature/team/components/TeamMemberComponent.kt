@@ -1,5 +1,6 @@
 package com.bizilabs.streeek.feature.team.components
 
+import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Column
@@ -16,6 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
@@ -33,13 +35,21 @@ import com.bizilabs.streeek.lib.domain.models.TeamWithMembersDomain
 
 @Composable
 fun TeamMemberComponent(member: TeamMemberDomain) {
+    val context = LocalContext.current
     Card(
         modifier =
             Modifier
                 .padding(horizontal = 16.dp)
                 .padding(top = 8.dp)
                 .fillMaxWidth(),
-        colors = CardDefaults.cardColors(),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.onSurface.copy(0.1f)),
+        onClick = {
+            Toast.makeText(
+                context,
+                "Coming soon...\nYou'll be able to stalk ${member.account.username}",
+                Toast.LENGTH_SHORT,
+            ).show()
+        },
     ) {
         SafiCenteredRow(
             modifier = Modifier.fillMaxWidth(),

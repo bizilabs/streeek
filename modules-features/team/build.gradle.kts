@@ -13,4 +13,6 @@ dependencies {
     implementation(libs.bundles.coil)
     // saket-swipe
     implementation(libs.saket.swipe)
+    // confetti
+    implementation(libs.confetti)
 }

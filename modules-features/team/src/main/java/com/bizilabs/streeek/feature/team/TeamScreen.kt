@@ -6,11 +6,13 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -28,6 +30,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
@@ -36,6 +39,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -49,6 +53,7 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import com.bizilabs.streeek.feature.team.components.TeamInvitationBottomSheet
 import com.bizilabs.streeek.feature.team.components.TeamJoiningSection
 import com.bizilabs.streeek.feature.team.components.TeamMemberComponent
+import com.bizilabs.streeek.feature.team.components.TeamTopMemberComponent
 import com.bizilabs.streeek.lib.common.models.FetchState
 import com.bizilabs.streeek.lib.common.navigation.SharedScreen
 import com.bizilabs.streeek.lib.design.components.SafiBottomDialog
@@ -56,9 +61,13 @@ import com.bizilabs.streeek.lib.design.components.SafiBottomSheetPicker
 import com.bizilabs.streeek.lib.design.components.SafiCenteredColumn
 import com.bizilabs.streeek.lib.design.components.SafiDropdownComponent
 import com.bizilabs.streeek.lib.design.components.SafiInfoSection
-import com.bizilabs.streeek.lib.domain.models.TeamWithMembersDomain
 import com.bizilabs.streeek.lib.domain.models.team.TeamInvitationDomain
 import com.bizilabs.streeek.lib.resources.strings.SafiStrings
+import nl.dionsegijn.konfetti.compose.KonfettiView
+import nl.dionsegijn.konfetti.core.Party
+import nl.dionsegijn.konfetti.core.Position
+import nl.dionsegijn.konfetti.core.emitter.Emitter
+import java.util.concurrent.TimeUnit
 
 val screenTeam =
     screenModule {
@@ -99,11 +108,11 @@ class TeamScreen(
             onClickActionDelete = screenModel::onClickManageDeleteAction,
             onValueChangeTeamCode = screenModel::onValueChangeTeamCode,
             onClickJoin = screenModel::onClickJoin,
+            onClickInviteMore = {},
         )
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TeamScreenContent(
     state: TeamScreenState,
@@ -123,8 +132,11 @@ fun TeamScreenContent(
     onSwipeInvitationDelete: (TeamInvitationDomain) -> Unit,
     onValueChangeTeamCode: (String) -> Unit,
     onClickJoin: () -> Unit,
+    onClickInviteMore: () -> Unit,
 ) {
     val activity = LocalContext.current as Activity
+
+    if (state.shouldNavigateBack) onClickBack()
 
     if (state.isOpen) {
         SafiBottomSheetPicker(
@@ -205,7 +217,7 @@ fun TeamScreenContent(
                             }
 
                             false -> {
-                                ViewTeamSection(state = state.fetchState)
+                                ViewTeamSection(state = state, onClickInviteMore = onClickInviteMore)
                             }
                         }
                     }
@@ -318,13 +330,16 @@ private fun TeamScreenHeaderComponent(
 }
 
 @Composable
-fun ViewTeamSection(state: FetchState<TeamWithMembersDomain>) {
+fun ViewTeamSection(
+    state: TeamScreenState,
+    onClickInviteMore: () -> Unit,
+) {
     Column(
         modifier = Modifier.fillMaxSize(),
     ) {
         AnimatedContent(
             modifier = Modifier.fillMaxSize(),
-            targetState = state,
+            targetState = state.fetchState,
             label = "",
         ) { result ->
             when (result) {
@@ -345,12 +360,136 @@ fun ViewTeamSection(state: FetchState<TeamWithMembersDomain>) {
                 }
 
                 is FetchState.Success -> {
-                    val data = result.value
-                    val members = data.members
-                    LazyColumn {
-                        items(members) { member ->
-                            TeamMemberComponent(member = member)
+                    TeamDetailsSection(
+                        state = state,
+                        onClickInviteMore = onClickInviteMore,
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun TeamDetailsSection(
+    state: TeamScreenState,
+    onClickInviteMore: () -> Unit,
+) {
+    Box(modifier = Modifier.fillMaxSize()) {
+        LazyColumn(modifier = Modifier.fillMaxSize()) {
+            item {
+                TeamsScreenTopSection(
+                    state = state,
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .wrapContentHeight(),
+                )
+            }
+            if (state.list.isEmpty()) {
+                item {
+                    SafiCenteredColumn(
+                        modifier =
+                            Modifier
+                                .fillMaxSize()
+                                .align(Alignment.Center),
+                    ) {
+                        SafiInfoSection(
+                            icon = Icons.Rounded.People,
+                            title = "No Other Members",
+                            description = "You're only ${state.team?.members?.size} members in this team, invite others to continue.",
+                        ) {
+                            Button(
+                                modifier = Modifier.padding(16.dp),
+                                onClick = { onClickInviteMore() },
+                            ) {
+                                Text(text = "Invite More")
+                            }
                         }
+                    }
+                }
+            } else {
+                items(state.list) { member ->
+                    TeamMemberComponent(member = member)
+                }
+            }
+        }
+    }
+
+    AnimatedVisibility(
+        modifier = Modifier.fillMaxSize(),
+        visible = state.showConfetti,
+    ) {
+        KonfettiView(
+            modifier = Modifier.fillMaxSize(),
+            parties =
+                remember {
+                    listOf(
+                        Party(
+                            speed = 0f,
+                            maxSpeed = 30f,
+                            damping = 0.9f,
+                            spread = 360,
+                            colors = listOf(0xfce18a, 0xff726d, 0xf4306d, 0xb48def),
+                            position = Position.Relative(0.5, 0.3),
+                            emitter = Emitter(duration = 100, TimeUnit.MILLISECONDS).max(100),
+                        ),
+                        Party(
+                            speed = 0f,
+                            maxSpeed = 30f,
+                            damping = 0.9f,
+                            spread = 360,
+                            colors = listOf(0xfce18a, 0xff726d, 0xf4306d, 0xb48def),
+                            position = Position.Relative(0.5, 0.3),
+                            emitter = Emitter(duration = 100, TimeUnit.MILLISECONDS).max(100),
+                        ),
+                    )
+                },
+        )
+    }
+}
+
+@Composable
+fun TeamsScreenTopSection(
+    state: TeamScreenState,
+    modifier: Modifier = Modifier,
+) {
+    Surface(modifier = modifier) {
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+        ) {
+            AnimatedVisibility(
+                modifier = Modifier.fillMaxWidth(),
+                visible = state.team != null,
+            ) {
+                if (state.team != null) {
+                    Row(
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 16.dp),
+                    ) {
+                        TeamTopMemberComponent(
+                            isFirst = false,
+                            modifier =
+                                Modifier
+                                    .weight(1f)
+                                    .padding(top = 48.dp),
+                            member = state.team.top[1],
+                        )
+                        TeamTopMemberComponent(
+                            isFirst = true,
+                            modifier = Modifier.weight(1f),
+                            member = state.team.top[0],
+                        )
+                        TeamTopMemberComponent(
+                            isFirst = false,
+                            modifier =
+                                Modifier
+                                    .weight(1f)
+                                    .padding(top = 48.dp),
+                            member = state.team.top[2],
+                        )
                     }
                 }
             }
