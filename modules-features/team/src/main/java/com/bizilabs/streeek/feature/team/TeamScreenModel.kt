@@ -205,6 +205,8 @@ class TeamScreenModel(
 
     private fun saveTeam(team: TeamWithMembersDomain) {
         screenModelScope.launch {
+            val teamDetails = team.asTeamDetails(page = 1)
+            mutableState.update { it.copy(team = teamDetails) }
             teamRepository.addTeamLocally(team = team.asTeamDetails(page = 1))
         }
     }
@@ -225,6 +227,7 @@ class TeamScreenModel(
 
                     is DataResult.Success -> {
                         val teamId = result.data
+                        mutableState.update { it.copy(teamId = teamId) }
                         getTeam(id = teamId, shouldSaveTeam = true)
                         DialogState.Success(
                             title = "Success",
@@ -510,6 +513,7 @@ class TeamScreenModel(
     fun onClickManageAction() {
         if (state.value.teamId != null) {
             updateTeam()
+            mutableState.update { it.copy(isEditing = false) }
         } else {
             createTeam()
         }
@@ -531,7 +535,7 @@ class TeamScreenModel(
         joinTeam()
     }
 
-    fun onClickInviteMore()  {
+    fun onClickInviteMore() {
         mutableState.update { it.copy(isInvitationsOpen = true) }
         if (state.value.invitationsState !is FetchListState.Success) getInvitations()
     }
