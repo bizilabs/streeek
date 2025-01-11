@@ -8,6 +8,9 @@ object SafiDrawables {
     val IconNotification = R.drawable.icon_notification
     val IconLauncherForeground = R.drawable.icon_launcher_foreground
     val Crown = R.drawable.crown
+    val TrendingDown = R.drawable.trending_down
+    val TrendingUp = R.drawable.trending_up
+    val TrendingFlat = R.drawable.trending_flat
 }
 
 object SafiMipMaps {
