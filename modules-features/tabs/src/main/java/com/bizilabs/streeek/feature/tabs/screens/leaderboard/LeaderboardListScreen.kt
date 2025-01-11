@@ -19,9 +19,9 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.ScrollableTabRow
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
-import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -42,6 +42,7 @@ import com.bizilabs.streeek.lib.design.components.SafiCenteredColumn
 import com.bizilabs.streeek.lib.design.components.SafiCenteredRow
 import com.bizilabs.streeek.lib.design.components.SafiCircularProgressIndicator
 import com.bizilabs.streeek.lib.design.components.SafiInfoSection
+import com.bizilabs.streeek.lib.design.components.SafiRefreshBox
 import com.bizilabs.streeek.lib.design.helpers.onSuccess
 import com.bizilabs.streeek.lib.design.helpers.success
 import com.bizilabs.streeek.lib.domain.extensions.asRank
@@ -64,6 +65,7 @@ object LeaderboardListScreen : Screen {
             state = state,
             onValueChangeLeaderboard = screenModel::onValueChangeLeaderboard,
             onClickViewMore = screenModel::onClickViewMore,
+            onTriggerRefreshLeaderboards = screenModel::onTriggerRefreshLeaderboards,
         ) { screen ->
             navigator?.push(screen)
         }
@@ -76,6 +78,7 @@ fun LeaderboardListScreenContent(
     state: LeaderboardListScreenState,
     onValueChangeLeaderboard: (LeaderboardDomain) -> Unit,
     onClickViewMore: () -> Unit,
+    onTriggerRefreshLeaderboards: () -> Unit,
     navigate: (Screen) -> Unit,
 ) {
     if (state.leaderboardName != null) {
@@ -95,46 +98,85 @@ fun LeaderboardListScreenContent(
                 )
             },
         ) { paddingValues ->
-            AnimatedContent(
-                label = "animate teams",
+            SafiRefreshBox(
                 modifier =
                     Modifier
-                        .padding(top = paddingValues.calculateTopPadding())
-                        .fillMaxSize(),
-                targetState = state.leaderboard,
-            ) { leaderboard ->
-                when (leaderboard) {
-                    null -> {
-                        SafiCenteredColumn(modifier = Modifier.fillMaxSize()) {
-                            SafiInfoSection(
-                                icon = Icons.Rounded.Leaderboard,
-                                title = "Crunching",
-                                description = "It's about to get real. Prepare yourself!",
-                            ) {
-                                SafiCircularProgressIndicator()
-                            }
-                        }
-                    }
-
-                    else -> {
-                        LazyColumn(modifier = Modifier.fillMaxSize()) {
-                            items(state.list) { member ->
-                                LeaderboardComponent(
-                                    imageUrl = member.account.avatarUrl,
-                                    username = member.account.username,
-                                    points = member.rank.points,
-                                    rank = member.rank.position.asRank(),
-                                    modifier = Modifier.fillMaxWidth(),
+                        .fillMaxSize()
+                        .padding(top = paddingValues.calculateTopPadding()),
+                isRefreshing = state.isSyncing,
+                onRefresh = onTriggerRefreshLeaderboards,
+            ) {
+                AnimatedContent(
+                    label = "animate teams",
+                    modifier = Modifier.fillMaxSize(),
+                    targetState = state.leaderboard,
+                ) { leaderboard ->
+                    when (leaderboard) {
+                        null -> {
+                            SafiCenteredColumn(modifier = Modifier.fillMaxSize()) {
+                                SafiInfoSection(
+                                    icon = Icons.Rounded.Leaderboard,
+                                    title = "Crunching",
+                                    description = "It's about to get real. Prepare yourself!",
                                 ) {
+                                    SafiCircularProgressIndicator()
                                 }
                             }
-                            item {
-                                SafiCenteredRow(modifier = Modifier.fillMaxWidth()) {
-                                    Button(
-                                        modifier = Modifier.padding(16.dp),
-                                        onClick = onClickViewMore,
+                        }
+
+                        else -> {
+                            LazyColumn(modifier = Modifier.fillMaxSize()) {
+                                item {
+                                    Column(modifier = Modifier.fillMaxWidth()) {
+                                        Row(
+                                            modifier =
+                                                Modifier
+                                                    .fillMaxWidth()
+                                                    .padding(bottom = 16.dp),
+                                        ) {
+                                            TeamTopMemberComponent(
+                                                isFirst = false,
+                                                modifier =
+                                                    Modifier
+                                                        .weight(1f)
+                                                        .padding(top = 48.dp),
+                                                member = state.leaderboard?.top[1],
+                                            )
+                                            TeamTopMemberComponent(
+                                                isFirst = true,
+                                                modifier = Modifier.weight(1f),
+                                                member = state.leaderboard?.top[0],
+                                            )
+                                            TeamTopMemberComponent(
+                                                isFirst = false,
+                                                modifier =
+                                                    Modifier
+                                                        .weight(1f)
+                                                        .padding(top = 48.dp),
+                                                member = state.leaderboard?.top[2],
+                                            )
+                                        }
+                                        HorizontalDivider()
+                                    }
+                                }
+                                items(state.list) { member ->
+                                    LeaderboardComponent(
+                                        imageUrl = member.account.avatarUrl,
+                                        username = member.account.username,
+                                        points = member.rank.points,
+                                        rank = member.rank.position.asRank(),
+                                        modifier = Modifier.fillMaxWidth(),
                                     ) {
-                                        Text(text = "View More")
+                                    }
+                                }
+                                item {
+                                    SafiCenteredRow(modifier = Modifier.fillMaxWidth()) {
+                                        Button(
+                                            modifier = Modifier.padding(16.dp),
+                                            onClick = onClickViewMore,
+                                        ) {
+                                            Text(text = "View More")
+                                        }
                                     }
                                 }
                             }
@@ -193,7 +235,10 @@ fun LeaderboardListScreenHeaderSection(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
-                    modifier = Modifier.weight(1f).padding(vertical = 16.dp),
+                    modifier =
+                        Modifier
+                            .weight(1f)
+                            .padding(vertical = 16.dp),
                     text = "Leaderboard".uppercase(),
                     style = MaterialTheme.typography.titleSmall,
                     textAlign = TextAlign.Center,
@@ -202,13 +247,13 @@ fun LeaderboardListScreenHeaderSection(
             AnimatedVisibility(
                 modifier =
                     Modifier
-                        .padding(vertical = 16.dp)
+                        .padding(top = 16.dp)
                         .fillMaxWidth(),
                 visible = state.leaderboards.isNotEmpty() && (state.leaderboards.size != 1),
             ) {
                 val index = state.leaderboards.indexOf(state.leaderboard)
                 Column(modifier = Modifier.fillMaxWidth()) {
-                    TabRow(
+                    ScrollableTabRow(
                         modifier = Modifier.fillMaxWidth(),
                         selectedTabIndex = index,
                         divider = {},
@@ -221,7 +266,11 @@ fun LeaderboardListScreenHeaderSection(
                             ) {
                                 Box {
                                     Text(
-                                        modifier = Modifier.padding(vertical = 8.dp, horizontal = 24.dp),
+                                        modifier =
+                                            Modifier.padding(
+                                                vertical = 8.dp,
+                                                horizontal = 24.dp,
+                                            ),
                                         text =
                                             leaderboard.name.lowercase()
                                                 .replaceFirstChar { it.uppercase() },
@@ -259,41 +308,6 @@ fun LeaderboardListScreenHeaderSection(
                         }
                     }
                     HorizontalDivider(modifier = Modifier.fillMaxWidth())
-                }
-            }
-            AnimatedVisibility(
-                modifier = Modifier.fillMaxWidth(),
-                visible = state.leaderboard != null,
-            ) {
-                if (state.leaderboard != null) {
-                    Row(
-                        modifier =
-                            Modifier
-                                .fillMaxWidth()
-                                .padding(bottom = 16.dp),
-                    ) {
-                        TeamTopMemberComponent(
-                            isFirst = false,
-                            modifier =
-                                Modifier
-                                    .weight(1f)
-                                    .padding(top = 48.dp),
-                            member = state.leaderboard.top[1],
-                        )
-                        TeamTopMemberComponent(
-                            isFirst = true,
-                            modifier = Modifier.weight(1f),
-                            member = state.leaderboard.top[0],
-                        )
-                        TeamTopMemberComponent(
-                            isFirst = false,
-                            modifier =
-                                Modifier
-                                    .weight(1f)
-                                    .padding(top = 48.dp),
-                            member = state.leaderboard.top[2],
-                        )
-                    }
                 }
             }
         }
