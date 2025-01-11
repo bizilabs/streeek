@@ -481,8 +481,7 @@ class TeamScreenModel(
             }
 
             TeamMenuAction.INVITE -> {
-                mutableState.update { it.copy(isInvitationsOpen = true) }
-                if (state.value.invitationsState !is FetchListState.Success) getInvitations()
+                onClickInviteMore()
             }
 
             TeamMenuAction.LEAVE -> {
@@ -532,5 +531,9 @@ class TeamScreenModel(
         joinTeam()
     }
 
+    fun onClickInviteMore()  {
+        mutableState.update { it.copy(isInvitationsOpen = true) }
+        if (state.value.invitationsState !is FetchListState.Success) getInvitations()
+    }
     // </editor-fold>
 }

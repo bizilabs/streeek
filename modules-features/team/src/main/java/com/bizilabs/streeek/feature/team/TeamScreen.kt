@@ -108,7 +108,7 @@ class TeamScreen(
             onClickActionDelete = screenModel::onClickManageDeleteAction,
             onValueChangeTeamCode = screenModel::onValueChangeTeamCode,
             onClickJoin = screenModel::onClickJoin,
-            onClickInviteMore = {},
+            onClickInviteMore = screenModel::onClickInviteMore,
         )
     }
 }
