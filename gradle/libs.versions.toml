@@ -67,6 +67,7 @@ chucker = "4.1.0"
 foundation-android = "1.7.5"
 ktlint = "12.1.2"
 confetti = "2.0.5"
+rich-text-editor = "1.0.0-rc10"
 
 [libraries]
 # androidx
@@ -206,6 +207,7 @@ kalendar = { module = "com.himanshoe:kalendar", version.ref = "kalendar" }
 calendar = { module = "com.kizitonwose.calendar:compose-multiplatform", version.ref = "calendar" }
 androidx-foundation-android = { group = "androidx.compose.foundation", name = "foundation-android", version.ref = "foundation-android" }
 confetti = { module = "nl.dionsegijn:konfetti-compose", version.ref = "confetti"}
+richtexteditor = { module = "com.mohamedrejeb.richeditor:richeditor-compose", version.ref = "rich-text-editor"}
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "gradle-plugin-android" }

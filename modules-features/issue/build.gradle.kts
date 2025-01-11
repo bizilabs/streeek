@@ -7,10 +7,10 @@ android {
 }
 
 dependencies {
-
     // paging
     implementation(libs.bundles.paging)
-
     // coil
     implementation(libs.bundles.coil)
+    // richtexteditor
+    implementation(libs.richtexteditor)
 }

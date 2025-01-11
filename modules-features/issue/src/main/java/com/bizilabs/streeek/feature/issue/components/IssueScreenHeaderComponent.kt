@@ -3,6 +3,7 @@ package com.bizilabs.streeek.feature.issue.components
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -29,6 +30,9 @@ import androidx.compose.ui.unit.dp
 import com.bizilabs.streeek.feature.issue.IssueScreenState
 import com.bizilabs.streeek.lib.common.helpers.fromHex
 import com.bizilabs.streeek.lib.common.models.FetchState
+import com.mohamedrejeb.richeditor.model.rememberRichTextState
+import com.mohamedrejeb.richeditor.ui.material3.OutlinedRichTextEditor
+import com.mohamedrejeb.richeditor.ui.material3.RichTextEditorDefaults
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -102,7 +106,21 @@ fun IssueScreenHeaderComponent(
                                 text = "Description",
                                 style = MaterialTheme.typography.labelLarge,
                             )
-                            Text(text = issue.body.ifEmpty { "No description" })
+                            val state = rememberRichTextState()
+                            state.setHtml(html = issue.body)
+
+                            OutlinedRichTextEditor(
+                                modifier = Modifier.fillMaxWidth(),
+                                contentPadding = PaddingValues(0.dp),
+                                readOnly = true,
+                                state = state,
+                                colors =
+                                    RichTextEditorDefaults.outlinedRichTextEditorColors(
+                                        containerColor = Color.Transparent,
+                                        textColor = MaterialTheme.colorScheme.onBackground,
+                                        unfocusedBorderColor = Color.Transparent,
+                                    ),
+                            )
                             Spacer(modifier = Modifier.padding(8.dp))
                             LazyRow {
                                 items(issue.labels) { label ->

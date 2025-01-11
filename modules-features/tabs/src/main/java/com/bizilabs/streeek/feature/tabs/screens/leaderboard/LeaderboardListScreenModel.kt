@@ -105,7 +105,7 @@ class LeaderboardListScreenModel(
         }
     }
 
-    fun onTriggerRefreshLeaderboards()  {
+    fun onTriggerRefreshLeaderboards() {
         context.startImmediateSyncLeaderboardWork()
     }
 }

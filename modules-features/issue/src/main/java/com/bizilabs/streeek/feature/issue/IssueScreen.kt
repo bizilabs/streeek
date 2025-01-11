@@ -4,6 +4,7 @@ import android.R.attr.top
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -12,6 +13,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.Comment
+import androidx.compose.material.icons.rounded.Comment
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -21,6 +24,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -37,6 +41,9 @@ import com.bizilabs.streeek.lib.design.components.SafiInfoSection
 import com.bizilabs.streeek.lib.domain.helpers.toTimeAgo
 import com.bizilabs.streeek.lib.domain.models.CommentDomain
 import com.bizilabs.streeek.lib.domain.models.LabelDomain
+import com.mohamedrejeb.richeditor.model.rememberRichTextState
+import com.mohamedrejeb.richeditor.ui.material3.OutlinedRichTextEditor
+import com.mohamedrejeb.richeditor.ui.material3.RichTextEditorDefaults
 
 class IssueScreen(val id: Long?) : Screen {
     @Composable
@@ -63,6 +70,7 @@ class IssueScreen(val id: Long?) : Screen {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun IssueScreenContent(
     state: IssueScreenState,
@@ -166,16 +174,29 @@ fun IssueScreenContent(
                                     ) {
                                         Column(modifier = Modifier.padding(16.dp)) {
                                             Text(
-                                                text = comment.user.name,
+                                                text =
+                                                    buildString {
+                                                        append(comment.user.name)
+                                                        append(" • ")
+                                                        append(comment.updatedAt.toTimeAgo())
+                                                    },
                                                 fontSize = MaterialTheme.typography.labelMedium.fontSize,
                                             )
-                                            Text(
-                                                modifier = Modifier.padding(vertical = 4.dp),
-                                                text = comment.body,
-                                            )
-                                            Text(
-                                                text = comment.updatedAt.toTimeAgo(),
-                                                fontSize = MaterialTheme.typography.labelMedium.fontSize,
+
+                                            val state = rememberRichTextState()
+                                            state.setMarkdown(markdown = comment.body)
+
+                                            OutlinedRichTextEditor(
+                                                modifier = Modifier.fillMaxWidth(),
+                                                contentPadding = PaddingValues(0.dp),
+                                                readOnly = true,
+                                                state = state,
+                                                colors =
+                                                    RichTextEditorDefaults.outlinedRichTextEditorColors(
+                                                        containerColor = Color.Transparent,
+                                                        textColor = MaterialTheme.colorScheme.onBackground,
+                                                        unfocusedBorderColor = Color.Transparent,
+                                                    ),
                                             )
                                         }
                                     }
