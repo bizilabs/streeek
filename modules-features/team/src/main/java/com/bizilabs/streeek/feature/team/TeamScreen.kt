@@ -136,6 +136,8 @@ fun TeamScreenContent(
 ) {
     val activity = LocalContext.current as Activity
 
+    if (state.shouldNavigateBack) onClickBack()
+
     if (state.isOpen) {
         SafiBottomSheetPicker(
             title = stringResource(SafiStrings.SelectTeamVisibility),

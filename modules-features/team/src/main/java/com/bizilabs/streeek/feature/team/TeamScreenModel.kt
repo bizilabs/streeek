@@ -360,12 +360,11 @@ class TeamScreenModel(
                                     title = "Success",
                                     message = "Team deleted successfully!",
                                 ),
+                            shouldNavigateBack = true,
                         )
                     }
                 }
             }
-            delay(2000)
-            mutableState.update { it.copy(dialogState = null) }
         }
     }
 
