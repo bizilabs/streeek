@@ -69,7 +69,19 @@ data class TeamRankDomain(
     val previous: Long?,
     val current: Long,
 ) {
-    val currentIsHigher: Boolean = if (previous != null) current > previous else true
+    val currentIsHigher: CurrentRankState =
+        when {
+            previous == null -> CurrentRankState.IDLE
+            (previous > current) -> CurrentRankState.LOWER
+            (previous < current) -> CurrentRankState.HIGHER
+            else -> CurrentRankState.IDLE
+        }
+}
+
+enum class CurrentRankState {
+    HIGHER,
+    LOWER,
+    IDLE,
 }
 
 data class TeamWithMembersDomain(

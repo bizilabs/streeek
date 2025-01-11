@@ -7,9 +7,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.ArrowDownward
-import androidx.compose.material.icons.outlined.ArrowUpward
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -19,12 +16,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.bizilabs.streeek.lib.design.helpers.info
 import com.bizilabs.streeek.lib.design.helpers.pastelSurface
 import com.bizilabs.streeek.lib.design.helpers.success
+import com.bizilabs.streeek.lib.domain.models.CurrentRankState
 import com.bizilabs.streeek.lib.domain.models.TeamDetailsDomain
+import com.bizilabs.streeek.lib.resources.images.SafiDrawables
 
 @Composable
 fun TeamComponent(
@@ -33,10 +34,10 @@ fun TeamComponent(
     onClickAction: () -> Unit = {},
 ) {
     val (iconColor, iconVector) =
-        if (teamDetails.rank.currentIsHigher) {
-            Pair(MaterialTheme.colorScheme.success, Icons.Outlined.ArrowUpward)
-        } else {
-            Pair(MaterialTheme.colorScheme.error, Icons.Outlined.ArrowDownward)
+        when (teamDetails.rank.currentIsHigher) {
+            CurrentRankState.HIGHER -> Pair(MaterialTheme.colorScheme.success, SafiDrawables.TrendingUp)
+            CurrentRankState.LOWER -> Pair(MaterialTheme.colorScheme.error, SafiDrawables.TrendingDown)
+            CurrentRankState.IDLE -> Pair(MaterialTheme.colorScheme.info, SafiDrawables.TrendingFlat)
         }
     Card(
         modifier = modifier,
@@ -70,7 +71,7 @@ fun TeamComponent(
                 )
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(
-                        imageVector = iconVector,
+                        painter = painterResource(iconVector),
                         contentDescription = "User Rank",
                         tint = iconColor,
                     )
