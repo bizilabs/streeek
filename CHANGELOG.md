@@ -17,7 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Dynamic Levels
 - Profile Overview
 
-## [0.0.3]
+## [0.0.3] - 2025-01-11
 
 ### Fixed
 
@@ -29,5 +29,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - streak count (#48)
 - users with same rank ordering (#61)
 
-[unreleased]: https://github.com/bizilabs/streeek/compare/0.0.2...HEAD
+[unreleased]: https://github.com/bizilabs/streeek/compare/0.0.3...HEAD
+[0.0.3]: https://github.com/bizilabs/streeek/releases/v0.0.2...v0.0.3
 [0.0.2]: https://github.com/bizilabs/streeek/releases/tag/v0.0.2
