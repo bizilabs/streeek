@@ -11,6 +11,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ArrowDownward
 import androidx.compose.material.icons.outlined.ArrowUpward
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -21,6 +22,8 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.bizilabs.streeek.lib.design.helpers.pastelSurface
+import com.bizilabs.streeek.lib.design.helpers.success
 import com.bizilabs.streeek.lib.domain.models.TeamDetailsDomain
 
 @Composable
@@ -29,6 +32,12 @@ fun TeamComponent(
     teamDetails: TeamDetailsDomain,
     onClickAction: () -> Unit = {},
 ) {
+    val (iconColor, iconVector) =
+        if (teamDetails.rank.currentIsHigher) {
+            Pair(MaterialTheme.colorScheme.success, Icons.Outlined.ArrowUpward)
+        } else {
+            Pair(MaterialTheme.colorScheme.error, Icons.Outlined.ArrowDownward)
+        }
     Card(
         modifier = modifier,
         onClick = onClickAction,
@@ -39,6 +48,7 @@ fun TeamComponent(
                     0.2f,
                 ),
             ),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.pastelSurface.random()),
     ) {
         Row(
             modifier =
@@ -60,8 +70,9 @@ fun TeamComponent(
                 )
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(
-                        imageVector = if (teamDetails.rank.currentIsHigher) Icons.Outlined.ArrowUpward else Icons.Outlined.ArrowDownward,
+                        imageVector = iconVector,
                         contentDescription = "User Rank",
+                        tint = iconColor,
                     )
 
                     Text(
