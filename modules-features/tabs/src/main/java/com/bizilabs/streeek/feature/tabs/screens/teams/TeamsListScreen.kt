@@ -130,7 +130,7 @@ fun TeamsListScreenContent(
                         Modifier
                             .padding(top = paddingValues.calculateTopPadding())
                             .padding(8.dp),
-                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
                     items(state.teams) { teamDetails ->
                         TeamComponent(

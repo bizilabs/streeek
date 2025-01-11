@@ -42,7 +42,7 @@ fun TeamMemberComponent(member: TeamMemberDomain) {
                 .padding(horizontal = 16.dp)
                 .padding(top = 8.dp)
                 .fillMaxWidth(),
-        colors = CardDefaults.cardColors(),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.onSurface.copy(0.1f)),
         onClick = {
             Toast.makeText(
                 context,
