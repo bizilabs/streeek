@@ -14,6 +14,8 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.Add
+import androidx.compose.material.icons.rounded.Refresh
+import androidx.compose.material.icons.rounded.SearchOff
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -23,6 +25,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -49,8 +52,9 @@ import coil.compose.AsyncImage
 import com.bizilabs.streeek.lib.common.components.paging.SafiPagingComponent
 import com.bizilabs.streeek.lib.common.helpers.fromHex
 import com.bizilabs.streeek.lib.common.navigation.SharedScreen
-import com.bizilabs.streeek.lib.design.components.SearchAction
-import com.bizilabs.streeek.lib.design.components.SearchBar
+import com.bizilabs.streeek.lib.design.components.SafiInfoSection
+import com.bizilabs.streeek.lib.design.components.SafiSearchAction
+import com.bizilabs.streeek.lib.design.components.SafiSearchBar
 import com.bizilabs.streeek.lib.domain.helpers.toTimeAgo
 import com.bizilabs.streeek.lib.domain.models.IssueDomain
 import com.bizilabs.streeek.lib.domain.models.LabelDomain
@@ -119,7 +123,7 @@ fun IssuesScreenContent(
                 },
                 title = {
                     if (isSearching) {
-                        SearchBar(
+                        SafiSearchBar(
                             query = searchQuery,
                             onQueryChanged = { newQuery ->
                                 searchQuery = newQuery
@@ -140,7 +144,7 @@ fun IssuesScreenContent(
                     }
                 },
                 actions = {
-                    SearchAction(isSearching) { isSearching = it }
+                    SafiSearchAction(isSearching) { isSearching = it }
                 },
             )
         },
@@ -154,7 +158,23 @@ fun IssuesScreenContent(
             }
         },
     ) { innerPadding ->
+
         SafiPagingComponent(
+            refreshEmpty = {
+                SafiInfoSection(
+                    icon = Icons.Rounded.SearchOff,
+                    title = stringResource(SafiStrings.Labels.NoIssuesFound),
+                    description = stringResource(SafiStrings.Messages.NoIssues),
+                ) {
+                    SmallFloatingActionButton(
+                        onClick = { onSearchQueryChanged("") },
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        contentColor = MaterialTheme.colorScheme.onPrimary,
+                    ) {
+                        Icon(imageVector = Icons.Rounded.Refresh, contentDescription = null)
+                    }
+                }
+            },
             modifier =
                 Modifier
                     .padding(innerPadding)

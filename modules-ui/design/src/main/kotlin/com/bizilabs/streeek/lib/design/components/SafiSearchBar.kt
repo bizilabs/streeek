@@ -19,7 +19,7 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 
 @Composable
-fun SearchBar(
+fun SafiSearchBar(
     query: String,
     onQueryChanged: (String) -> Unit,
     onClose: () -> Unit,
@@ -68,7 +68,7 @@ fun SearchBar(
 }
 
 @Composable
-fun SearchAction(
+fun SafiSearchAction(
     isSearching: Boolean,
     onToggleSearch: (Boolean) -> Unit,
 ) {
