@@ -78,7 +78,7 @@ object IssuesScreen : Screen {
             onClickNavigateBack = { navigator?.pop() },
             onClickIssue = screenModel::onClickIssue,
             onClickAddIssue = { navigator?.push(screenIssue) },
-            onSearchQueryChanged = screenModel::updateSearchQuery,
+            onSearchQueryChanged = screenModel::onValueChangeQuery,
         ) { screen -> navigator?.push(screen) }
     }
 }

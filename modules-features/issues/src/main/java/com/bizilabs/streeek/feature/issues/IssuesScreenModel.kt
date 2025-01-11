@@ -40,7 +40,7 @@ class IssuesScreenModel(
     private val _isSearching = MutableStateFlow(false)
     val isSearching: StateFlow<Boolean> = _isSearching.asStateFlow()
 
-    fun updateSearchQuery(query: String) {
+    fun onValueChangeQuery(query: String) {
         searchQuery.value = query
         searchJob?.cancel()
 
