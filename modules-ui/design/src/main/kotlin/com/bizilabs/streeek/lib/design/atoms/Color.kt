@@ -15,6 +15,8 @@ internal val ErrorLight = Color(0xFFCC0000)
 internal val OnErrorLight = Color(0xFFFFFFFF)
 internal val SuccessLight = Color(0xFF007A3D)
 internal val OnSuccessLight = Color(0xFFFFFFFF)
+internal val InfoLight = Color(0xFF2454FF)
+internal val OnInfoLight = Color(0xFFFFFFFF)
 val PastelColors =
     listOf<Color>(
         Color(0xFFF8E9F4),
@@ -38,6 +40,8 @@ internal val ErrorDark = Color(0xFFFF9999)
 internal val OnErrorDark = Color(0xFF000000)
 internal val SuccessDark = Color(0xFF85FFC2)
 internal val OnSuccessDark = Color(0xFF000000)
+internal val InfoDark = Color(0xFF1F76FF)
+internal val OnInfoDark = Color(0xFFFFFFFF)
 val PastelColorsDark =
     listOf<Color>(
         Color(0xFF4D173D),
