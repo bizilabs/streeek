@@ -8,9 +8,13 @@ import com.bizilabs.streeek.lib.domain.models.team.JoinTeamInvitationDomain
 import kotlinx.coroutines.flow.Flow
 
 interface TeamRepository {
+    val isSyncing: Flow<Boolean>
+
     val teamId: Flow<Long?>
 
     val teams: Flow<Map<Long, TeamDetailsDomain>>
+
+    suspend fun updateIsSyncing(isSyncing: Boolean)
 
     suspend fun createTeam(
         name: String,

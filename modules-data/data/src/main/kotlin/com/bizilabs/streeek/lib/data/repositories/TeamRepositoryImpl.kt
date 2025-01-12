@@ -26,6 +26,9 @@ class TeamRepositoryImpl(
     private val localSource: TeamLocalSource,
     private val accountLocalSource: AccountLocalSource,
 ) : TeamRepository {
+    override val isSyncing: Flow<Boolean>
+        get() = localSource.isSyncing
+
     override val teamId: Flow<Long?>
         get() = localSource.teamId
 
@@ -34,6 +37,10 @@ class TeamRepositoryImpl(
             localSource.teams.mapLatest { map ->
                 map.mapValues { it.value.toDomain() }
             }
+
+    override suspend fun updateIsSyncing(isSyncing: Boolean) {
+        localSource.updateIsSyncing(isSyncing = isSyncing)
+    }
 
     private suspend fun getAccountId() = accountLocalSource.account.firstOrNull()?.id
 

@@ -1,5 +1,6 @@
 package com.bizilabs.streeek.lib.local.sources.team
 
+import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.bizilabs.streeek.lib.local.helpers.LocalResult
@@ -12,8 +13,11 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
 interface TeamLocalSource {
+    val isSyncing: Flow<Boolean>
     val teamId: Flow<Long?>
     val teams: Flow<Map<Long, TeamDetailsCache>>
+
+    suspend fun updateIsSyncing(isSyncing: Boolean)
 
     suspend fun get(id: Long): LocalResult<TeamDetailsCache>
 
@@ -29,8 +33,12 @@ interface TeamLocalSource {
 }
 
 internal class TeamLocalSourceImpl(val source: PreferenceSource) : TeamLocalSource {
+    private val syncing = booleanPreferencesKey("team.syncing")
     private val teamKey = longPreferencesKey("team.id")
     private val teamsKey = stringPreferencesKey("teams.list")
+
+    override val isSyncing: Flow<Boolean>
+        get() = source.get(syncing, false)
 
     override val teamId: Flow<Long?>
         get() = source.getNullable(teamKey)
@@ -40,6 +48,10 @@ internal class TeamLocalSourceImpl(val source: PreferenceSource) : TeamLocalSour
             source.getNullable(teamsKey).mapLatest { json ->
                 json?.let { Json.decodeFromString(it) } ?: emptyMap()
             }
+
+    override suspend fun updateIsSyncing(isSyncing: Boolean) {
+        source.update(syncing, isSyncing)
+    }
 
     private suspend fun getMutableMap() = teams.first().toMutableMap()
 

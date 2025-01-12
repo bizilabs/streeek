@@ -14,6 +14,7 @@ import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.People
 import androidx.compose.material.icons.rounded.TransitEnterexit
 import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -38,6 +39,7 @@ import com.bizilabs.streeek.feature.tabs.screens.teams.components.TeamComponent
 import com.bizilabs.streeek.lib.common.navigation.SharedScreen
 import com.bizilabs.streeek.lib.design.components.SafiCenteredColumn
 import com.bizilabs.streeek.lib.design.components.SafiInfoSection
+import com.bizilabs.streeek.lib.design.components.SafiRefreshBox
 import com.bizilabs.streeek.lib.domain.models.TeamDetailsDomain
 import com.bizilabs.streeek.lib.resources.strings.SafiStringLabels
 import java.util.Locale
@@ -62,6 +64,7 @@ object TeamsListScreen : Screen {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TeamsListScreenContent(
     state: TeamsListScreenState,
@@ -93,50 +96,57 @@ fun TeamsListScreenContent(
                     onClickMenuJoinTeam = onClickMenuJoinTeam,
                 )
             },
-        ) { paddingValues ->
+        ) { innerPadding ->
 
-            if (state.teams.isEmpty()) {
-                SafiCenteredColumn(modifier = Modifier.fillMaxSize()) {
-                    SafiInfoSection(
-                        icon = Icons.Rounded.People,
-                        title = "Empty",
-                        description = "Join a team to continue",
-                    )
+            when {
+                state.teams.isEmpty() -> {
+                    SafiCenteredColumn(modifier = Modifier.fillMaxSize()) {
+                        SafiInfoSection(
+                            icon = Icons.Rounded.People,
+                            title = "Empty",
+                            description = "Join a team to continue",
+                        )
 
-                    Button(
-                        modifier =
-                            Modifier
-                                .fillMaxWidth()
-                                .padding(top = 16.dp)
-                                .padding(horizontal = 16.dp),
-                        onClick = onClickMenuCreateTeam,
-                    ) {
-                        Text(text = "Create Team")
-                    }
+                        Button(
+                            modifier =
+                                Modifier
+                                    .fillMaxWidth()
+                                    .padding(top = 16.dp)
+                                    .padding(horizontal = 16.dp),
+                            onClick = onClickMenuCreateTeam,
+                        ) {
+                            Text(text = "Create Team")
+                        }
 
-                    OutlinedButton(
-                        modifier =
-                            Modifier
-                                .fillMaxWidth()
-                                .padding(top = 8.dp),
-                        onClick = onClickMenuJoinTeam,
-                    ) {
-                        Text(text = "Join Team")
+                        OutlinedButton(
+                            modifier =
+                                Modifier
+                                    .fillMaxWidth()
+                                    .padding(top = 8.dp),
+                            onClick = onClickMenuJoinTeam,
+                        ) {
+                            Text(text = "Join Team")
+                        }
                     }
                 }
-            } else {
-                LazyColumn(
-                    modifier =
-                        Modifier
-                            .padding(top = paddingValues.calculateTopPadding())
-                            .padding(8.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
-                ) {
-                    items(state.teams) { teamDetails ->
-                        TeamComponent(
-                            teamDetails = teamDetails,
-                            onClickAction = { onClickTeam(teamDetails) },
-                        )
+                else -> {
+                    SafiRefreshBox(
+                        modifier = Modifier.fillMaxSize().padding(innerPadding),
+                        isRefreshing = state.isSyncing,
+                        onRefresh = onClickSwipeToRefreshTeam,
+                    ) {
+                        LazyColumn(
+                            modifier =
+                                Modifier.padding(8.dp),
+                            verticalArrangement = Arrangement.spacedBy(8.dp),
+                        ) {
+                            items(state.teams) { teamDetails ->
+                                TeamComponent(
+                                    teamDetails = teamDetails,
+                                    onClickAction = { onClickTeam(teamDetails) },
+                                )
+                            }
+                        }
                     }
                 }
             }

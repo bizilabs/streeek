@@ -22,6 +22,7 @@ internal val TeamsListModule =
     }
 
 data class TeamsListScreenState(
+    val isSyncing: Boolean = false,
     val isJoining: Boolean = false,
     val isCreating: Boolean = false,
     val teamId: Long? = null,
@@ -36,6 +37,15 @@ class TeamsListScreenModel(
 ) : StateScreenModel<TeamsListScreenState>(TeamsListScreenState()) {
     init {
         observeTeams()
+        observeTeamsSync()
+    }
+
+    private fun observeTeamsSync() {
+        screenModelScope.launch {
+            repository.isSyncing.collectLatest { isSyncing ->
+                mutableState.update { it.copy(isSyncing = isSyncing) }
+            }
+        }
     }
 
     private fun observeTeams() {

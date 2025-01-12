@@ -68,14 +68,13 @@ class SyncTeamsWork(
 
     override suspend fun doWork(): Result {
         val cachedTeamsMap = repository.teams.first()
+        repository.updateIsSyncing(true)
         val remoteTeams = repository.getAccountTeams()
         if (remoteTeams is DataResult.Error) return getWorkerResult()
         val remoteTeamsList = (remoteTeams as DataResult.Success).data
         val remoteIds = remoteTeamsList.map { it.team.id }
-        for (cached in cachedTeamsMap.values) {
-            if (cached.team.id !in remoteIds) {
-                repository.deleteTeamLocally(team = cached)
-            }
+        for (cached in cachedTeamsMap.values.filter { it.team.id !in remoteIds }) {
+            repository.deleteTeamLocally(team = cached)
         }
         for (team in remoteTeamsList) {
             val current = cachedTeamsMap[team.team.id]
@@ -91,10 +90,12 @@ class SyncTeamsWork(
             val first = updatedCachedTeams.values.firstOrNull()
             first?.let { repository.setSelectedTeam(it) }
         }
+        repository.updateIsSyncing(isSyncing = false)
         return Result.success()
     }
 
-    private fun getWorkerResult(): Result {
+    private suspend fun getWorkerResult(): Result {
+        repository.updateIsSyncing(isSyncing = false)
         if (params.runAttemptCount > 2) return Result.failure()
         return Result.retry()
     }
