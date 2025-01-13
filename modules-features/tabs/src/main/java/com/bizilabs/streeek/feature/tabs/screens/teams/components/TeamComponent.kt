@@ -35,8 +35,8 @@ fun TeamComponent(
 ) {
     val (iconColor, iconVector) =
         when (teamDetails.rank.currentIsHigher) {
-            CurrentRankState.HIGHER -> Pair(MaterialTheme.colorScheme.success, SafiDrawables.TrendingUp)
-            CurrentRankState.LOWER -> Pair(MaterialTheme.colorScheme.error, SafiDrawables.TrendingDown)
+            CurrentRankState.HIGHER -> Pair(MaterialTheme.colorScheme.success, SafiDrawables.TrendingDown)
+            CurrentRankState.LOWER -> Pair(MaterialTheme.colorScheme.error, SafiDrawables.TrendingUp)
             CurrentRankState.IDLE -> Pair(MaterialTheme.colorScheme.info, SafiDrawables.TrendingFlat)
         }
     Card(
