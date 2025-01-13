@@ -15,4 +15,6 @@ dependencies {
     implementation(libs.saket.swipe)
     // confetti
     implementation(libs.confetti)
+    // paging
+    implementation(libs.bundles.paging)
 }

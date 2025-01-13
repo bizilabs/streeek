@@ -1,7 +1,9 @@
 package com.bizilabs.streeek.lib.domain.repositories
 
+import androidx.paging.PagingData
 import com.bizilabs.streeek.lib.domain.helpers.DataResult
 import com.bizilabs.streeek.lib.domain.models.TeamDetailsDomain
+import com.bizilabs.streeek.lib.domain.models.TeamMemberDomain
 import com.bizilabs.streeek.lib.domain.models.TeamWithDetailDomain
 import com.bizilabs.streeek.lib.domain.models.TeamWithMembersDomain
 import com.bizilabs.streeek.lib.domain.models.team.JoinTeamInvitationDomain
@@ -13,6 +15,8 @@ interface TeamRepository {
     val teamId: Flow<Long?>
 
     val teams: Flow<Map<Long, TeamDetailsDomain>>
+
+    fun getPagedData(team: TeamDetailsDomain): Flow<PagingData<TeamMemberDomain>>
 
     suspend fun updateIsSyncing(isSyncing: Boolean)
 

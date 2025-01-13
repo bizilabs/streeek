@@ -1,13 +1,16 @@
 package com.bizilabs.streeek.feature.team
 
+import android.content.Context
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ExitToApp
 import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material.icons.rounded.Edit
 import androidx.compose.material.icons.rounded.People
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.paging.PagingData
 import cafe.adriel.voyager.core.model.StateScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
+import com.bizilabs.streeek.lib.common.components.paging.getPagingDataLoading
 import com.bizilabs.streeek.lib.common.models.FetchListState
 import com.bizilabs.streeek.lib.common.models.FetchState
 import com.bizilabs.streeek.lib.design.components.DialogState
@@ -24,9 +27,14 @@ import com.bizilabs.streeek.lib.domain.models.team.JoinTeamInvitationDomain
 import com.bizilabs.streeek.lib.domain.models.team.TeamInvitationDomain
 import com.bizilabs.streeek.lib.domain.repositories.TeamInvitationRepository
 import com.bizilabs.streeek.lib.domain.repositories.TeamRepository
+import com.bizilabs.streeek.lib.domain.workers.startImmediateSyncTeamsWork
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.koin.dsl.module
@@ -34,7 +42,13 @@ import timber.log.Timber
 
 val FeatureTeamModule =
     module {
-        factory { TeamScreenModel(teamRepository = get(), teamInvitationRepository = get()) }
+        factory {
+            TeamScreenModel(
+                context = get(),
+                teamRepository = get(),
+                teamInvitationRepository = get(),
+            )
+        }
     }
 
 enum class TeamMenuAction {
@@ -73,6 +87,7 @@ enum class TeamMenuAction {
 }
 
 data class TeamScreenState(
+    val isSyncing: Boolean = false,
     val isEditing: Boolean = false,
     val isJoining: Boolean = false,
     val shouldNavigateBack: Boolean = false,
@@ -133,9 +148,13 @@ data class TeamScreenState(
 }
 
 class TeamScreenModel(
+    private val context: Context,
     private val teamRepository: TeamRepository,
     private val teamInvitationRepository: TeamInvitationRepository,
 ) : StateScreenModel<TeamScreenState>(TeamScreenState()) {
+    private var _pages = MutableStateFlow(getPagingDataLoading<TeamMemberDomain>())
+    val pages: StateFlow<PagingData<TeamMemberDomain>> = _pages.asStateFlow()
+
     private val clickedTeam =
         combine(teamRepository.teamId, teamRepository.teams) { id, map ->
             Timber.d("Team Map -> $map")
@@ -143,6 +162,18 @@ class TeamScreenModel(
             Timber.d("Clicked Team : ${mutableState.value.team}")
             map[id]
         }
+
+    init {
+        observeTeamsSyncing()
+    }
+
+    private fun observeTeamsSyncing() {
+        screenModelScope.launch {
+            teamRepository.isSyncing.collectLatest { value ->
+                mutableState.update { it.copy(isSyncing = value) }
+            }
+        }
+    }
 
     fun setNavigationVariables(
         isJoining: Boolean,
@@ -165,7 +196,11 @@ class TeamScreenModel(
     private fun observeTeamDetails() {
         screenModelScope.launch {
             clickedTeam.collectLatest { value ->
-                mutableState.update { it.copy(team = value) }
+                if (value != null) {
+                    val paging = teamRepository.getPagedData(team = value).first()
+                    mutableState.update { it.copy(team = value) }
+                    _pages.update { paging }
+                }
                 if (value?.rank?.current == 1L) showConfetti()
             }
         }
@@ -539,5 +574,10 @@ class TeamScreenModel(
         mutableState.update { it.copy(isInvitationsOpen = true) }
         if (state.value.invitationsState !is FetchListState.Success) getInvitations()
     }
+
+    fun onRefreshTeams() {
+        context.startImmediateSyncTeamsWork()
+    }
+
     // </editor-fold>
 }

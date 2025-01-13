@@ -13,8 +13,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.filled.MoreVert
@@ -39,12 +37,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
 import cafe.adriel.voyager.core.registry.screenModule
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.getScreenModel
@@ -53,6 +52,7 @@ import com.bizilabs.streeek.feature.team.components.TeamInvitationBottomSheet
 import com.bizilabs.streeek.feature.team.components.TeamJoiningSection
 import com.bizilabs.streeek.feature.team.components.TeamMemberComponent
 import com.bizilabs.streeek.feature.team.components.TeamTopMemberComponent
+import com.bizilabs.streeek.lib.common.components.paging.SafiPagingComponent
 import com.bizilabs.streeek.lib.common.models.FetchState
 import com.bizilabs.streeek.lib.common.navigation.SharedScreen
 import com.bizilabs.streeek.lib.design.components.SafiBottomDialog
@@ -60,7 +60,9 @@ import com.bizilabs.streeek.lib.design.components.SafiBottomSheetPicker
 import com.bizilabs.streeek.lib.design.components.SafiCenteredColumn
 import com.bizilabs.streeek.lib.design.components.SafiDropdownComponent
 import com.bizilabs.streeek.lib.design.components.SafiInfoSection
+import com.bizilabs.streeek.lib.design.components.SafiRefreshBox
 import com.bizilabs.streeek.lib.design.components.SafiTopBarHeader
+import com.bizilabs.streeek.lib.domain.models.TeamMemberDomain
 import com.bizilabs.streeek.lib.domain.models.team.TeamInvitationDomain
 import com.bizilabs.streeek.lib.resources.strings.SafiStrings
 import nl.dionsegijn.konfetti.compose.KonfettiView
@@ -89,9 +91,11 @@ class TeamScreen(
         val screenModel: TeamScreenModel = getScreenModel()
         screenModel.setNavigationVariables(isJoining = isJoining, teamId = teamId)
         val state by screenModel.state.collectAsStateWithLifecycle()
+        val data = screenModel.pages.collectAsLazyPagingItems()
 
         TeamScreenContent(
             state = state,
+            data = data,
             onClickBack = { navigator?.pop() },
             onValueChangeName = screenModel::onValueChangeName,
             onValueChangePublic = screenModel::onValueChangePublic,
@@ -109,6 +113,7 @@ class TeamScreen(
             onValueChangeTeamCode = screenModel::onValueChangeTeamCode,
             onClickJoin = screenModel::onClickJoin,
             onClickInviteMore = screenModel::onClickInviteMore,
+            onRefreshTeams = screenModel::onRefreshTeams,
         )
     }
 }
@@ -116,6 +121,7 @@ class TeamScreen(
 @Composable
 fun TeamScreenContent(
     state: TeamScreenState,
+    data: LazyPagingItems<TeamMemberDomain>,
     onClickBack: () -> Unit,
     onValueChangeName: (String) -> Unit,
     onValueChangePublic: (String) -> Unit,
@@ -133,6 +139,7 @@ fun TeamScreenContent(
     onValueChangeTeamCode: (String) -> Unit,
     onClickJoin: () -> Unit,
     onClickInviteMore: () -> Unit,
+    onRefreshTeams: () -> Unit,
 ) {
     val activity = LocalContext.current as Activity
 
@@ -219,7 +226,9 @@ fun TeamScreenContent(
                             false -> {
                                 ViewTeamSection(
                                     state = state,
+                                    data = data,
                                     onClickInviteMore = onClickInviteMore,
+                                    onRefreshTeams = onRefreshTeams,
                                 )
                             }
                         }
@@ -327,7 +336,9 @@ private fun TeamScreenHeaderComponent(
 @Composable
 fun ViewTeamSection(
     state: TeamScreenState,
+    data: LazyPagingItems<TeamMemberDomain>,
     onClickInviteMore: () -> Unit,
+    onRefreshTeams: () -> Unit,
 ) {
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -357,7 +368,9 @@ fun ViewTeamSection(
                 is FetchState.Success -> {
                     TeamDetailsSection(
                         state = state,
+                        data = data,
                         onClickInviteMore = onClickInviteMore,
+                        onRefreshTeams = onRefreshTeams,
                     )
                 }
             }
@@ -365,29 +378,37 @@ fun ViewTeamSection(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TeamDetailsSection(
     state: TeamScreenState,
+    data: LazyPagingItems<TeamMemberDomain>,
     onClickInviteMore: () -> Unit,
+    onRefreshTeams: () -> Unit,
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
-        LazyColumn(modifier = Modifier.fillMaxSize()) {
-            item {
-                TeamsScreenTopSection(
-                    state = state,
-                    modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .wrapContentHeight(),
-                )
-            }
-            if (state.list.isEmpty()) {
-                item {
+        SafiRefreshBox(
+            modifier = Modifier.fillMaxSize(),
+            isRefreshing = false,
+            onRefresh = onRefreshTeams,
+        ) {
+            SafiPagingComponent(
+                modifier = Modifier.fillMaxSize(),
+                data = data,
+                prependSuccess = {
+                    TeamsScreenTopSection(
+                        state = state,
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .wrapContentHeight(),
+                    )
+                },
+                refreshEmpty = {
                     SafiCenteredColumn(
                         modifier =
                             Modifier
-                                .fillMaxSize()
-                                .align(Alignment.Center),
+                                .fillMaxSize(),
                     ) {
                         SafiInfoSection(
                             icon = Icons.Rounded.People,
@@ -402,45 +423,42 @@ fun TeamDetailsSection(
                             }
                         }
                     }
-                }
-            } else {
-                items(state.list) { member ->
-                    TeamMemberComponent(member = member)
-                }
+                },
+            ) { member ->
+                if (member.rank > 3) TeamMemberComponent(member = member)
             }
         }
-    }
-
-    AnimatedVisibility(
-        modifier = Modifier.fillMaxSize(),
-        visible = state.showConfetti,
-    ) {
-        KonfettiView(
+        AnimatedVisibility(
             modifier = Modifier.fillMaxSize(),
-            parties =
-                remember {
-                    listOf(
-                        Party(
-                            speed = 0f,
-                            maxSpeed = 30f,
-                            damping = 0.9f,
-                            spread = 360,
-                            colors = listOf(0xfce18a, 0xff726d, 0xf4306d, 0xb48def),
-                            position = Position.Relative(0.5, 0.3),
-                            emitter = Emitter(duration = 100, TimeUnit.MILLISECONDS).max(100),
-                        ),
-                        Party(
-                            speed = 0f,
-                            maxSpeed = 30f,
-                            damping = 0.9f,
-                            spread = 360,
-                            colors = listOf(0xfce18a, 0xff726d, 0xf4306d, 0xb48def),
-                            position = Position.Relative(0.5, 0.3),
-                            emitter = Emitter(duration = 100, TimeUnit.MILLISECONDS).max(100),
-                        ),
-                    )
-                },
-        )
+            visible = state.showConfetti,
+        ) {
+            KonfettiView(
+                modifier = Modifier.fillMaxSize(),
+                parties =
+                    remember {
+                        listOf(
+                            Party(
+                                speed = 0f,
+                                maxSpeed = 30f,
+                                damping = 0.9f,
+                                spread = 360,
+                                colors = listOf(0xfce18a, 0xff726d, 0xf4306d, 0xb48def),
+                                position = Position.Relative(0.5, 0.3),
+                                emitter = Emitter(duration = 100, TimeUnit.MILLISECONDS).max(100),
+                            ),
+                            Party(
+                                speed = 0f,
+                                maxSpeed = 30f,
+                                damping = 0.9f,
+                                spread = 360,
+                                colors = listOf(0xfce18a, 0xff726d, 0xf4306d, 0xb48def),
+                                position = Position.Relative(0.5, 0.3),
+                                emitter = Emitter(duration = 100, TimeUnit.MILLISECONDS).max(100),
+                            ),
+                        )
+                    },
+            )
+        }
     }
 }
 

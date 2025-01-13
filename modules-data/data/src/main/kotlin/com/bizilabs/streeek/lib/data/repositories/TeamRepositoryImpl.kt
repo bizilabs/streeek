@@ -1,11 +1,17 @@
 package com.bizilabs.streeek.lib.data.repositories
 
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
 import com.bizilabs.streeek.lib.data.mappers.asDataResult
 import com.bizilabs.streeek.lib.data.mappers.team.toDomain
 import com.bizilabs.streeek.lib.data.mappers.toCache
 import com.bizilabs.streeek.lib.data.mappers.toDomain
+import com.bizilabs.streeek.lib.data.paging.PagingHelpers
+import com.bizilabs.streeek.lib.data.paging.TeamsPagingSource
 import com.bizilabs.streeek.lib.domain.helpers.DataResult
 import com.bizilabs.streeek.lib.domain.models.TeamDetailsDomain
+import com.bizilabs.streeek.lib.domain.models.TeamMemberDomain
 import com.bizilabs.streeek.lib.domain.models.TeamWithDetailDomain
 import com.bizilabs.streeek.lib.domain.models.TeamWithMembersDomain
 import com.bizilabs.streeek.lib.domain.models.team.JoinTeamInvitationDomain
@@ -37,6 +43,20 @@ class TeamRepositoryImpl(
             localSource.teams.mapLatest { map ->
                 map.mapValues { it.value.toDomain() }
             }
+
+    override fun getPagedData(team: TeamDetailsDomain): Flow<PagingData<TeamMemberDomain>> {
+        return Pager(
+            config = PagingConfig(pageSize = PagingHelpers.PAGE_SIZE, enablePlaceholders = false),
+            pagingSourceFactory = {
+                TeamsPagingSource(
+                    team = team,
+                    accountLocalSource = accountLocalSource,
+                    teamLocalSource = localSource,
+                    teamRemoteSource = remoteSource,
+                )
+            },
+        ).flow
+    }
 
     override suspend fun updateIsSyncing(isSyncing: Boolean) {
         localSource.updateIsSyncing(isSyncing = isSyncing)
