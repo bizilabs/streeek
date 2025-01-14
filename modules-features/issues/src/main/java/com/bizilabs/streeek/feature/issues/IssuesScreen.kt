@@ -154,8 +154,10 @@ fun IssuesScreenContent(
                 onClick = onClickAddIssue,
                 containerColor = MaterialTheme.colorScheme.primary,
                 contentColor = MaterialTheme.colorScheme.onPrimary,
-                modifier = Modifier
-                    .navigationBarsPadding() // Handles devices with navigation bars
+                modifier =
+                    Modifier
+                        .navigationBarsPadding(),
+                // Handles devices with navigation bars
             ) {
                 Icon(imageVector = Icons.Rounded.Add, contentDescription = "Add Issue")
             }
