@@ -3,7 +3,8 @@
 <p align="center"><img width=12% src=".github/images/logo.webp"></p>
 
 # Streeek
-![GitHub Repo stars](https://img.shields.io:/github/stars/bizilabs/streeek?style=for-the-badge) ![GitHub tag (latest by date)](https://img.shields.io:/github/v/tag/bizilabs/streeek?style=for-the-badge) ![GitHub branch checks state](https://img.shields.io:/github/checks-status/bizilabs/streeek/main?style=for-the-badge) 
+![GitHub Repo stars](https://img.shields.io:/github/stars/bizilabs/streeek?style=for-the-badge) ![GitHub tag (latest by date)](https://img.shields.io:/github/v/tag/bizilabs/streeek?style=for-the-badge) ![GitHub branch check runs](https://img.shields.io/github/check-runs/bizilabs/streeek/main?style=for-the-badge) ![Playstore](https://img.shields.io/endpoint?url=https%3A%2F%2Fplay.cuzi.workers.dev%2Fplay%3Fi%3Dcom.bizilabs.app.streeek.mobile%26gl%3D%26hl%3Den%26l%3DPlaystore%26m%3D%24totalinstalls&style=for-the-badge&logoColor=1DAF46&color=1DAF46&link=https%3A%2F%2Fplay.google.com%2Fstore%2Fapps%2Fdetails%3Fid%3Dcom.bizilabs.app.streeek.mobile)
+
 
 [<img src=".github/images/google_play_store.png" width="160" alt="auth" />](https://play.google.com/store/apps/details?id=com.bizilabs.app.streeek.mobile&pcampaignid=web_share)
 
