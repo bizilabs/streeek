@@ -4,6 +4,7 @@ import cafe.adriel.voyager.core.model.StateScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
 import com.bizilabs.streeek.lib.domain.models.AccountDomain
 import com.bizilabs.streeek.lib.domain.repositories.AccountRepository
+import com.bizilabs.streeek.lib.domain.repositories.VersionRepository
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -11,21 +12,34 @@ import org.koin.dsl.module
 
 val profileModule =
     module {
-        factory { ProfileScreenModel(accountRepository = get()) }
+        factory { ProfileScreenModel(accountRepository = get(), versionRepository = get()) }
     }
 
 data class ProfileScreenState(
     val account: AccountDomain? = null,
     val shouldConfirmLogout: Boolean = false,
     val shouldNavigateToLanding: Boolean = false,
+    val versionCode: Int = 1,
+    val versionName: String = "",
 )
 
 class ProfileScreenModel(
     private val accountRepository: AccountRepository,
+    private val versionRepository: VersionRepository,
 ) : StateScreenModel<ProfileScreenState>(ProfileScreenState()) {
     init {
         getAccount()
         observeAccount()
+        getVersion()
+    }
+
+    private fun getVersion() {
+        mutableState.update {
+            it.copy(
+                versionCode = versionRepository.code,
+                versionName = versionRepository.name,
+            )
+        }
     }
 
     private fun getAccount() {

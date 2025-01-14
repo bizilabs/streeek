@@ -8,6 +8,6 @@ import org.koin.core.component.KoinComponent
 class MobileApplication : MainApplication(), KoinComponent {
     override fun onCreate() {
         super.onCreate()
-        initKoin(dataModule)
+        initKoin(dataModule, appModule)
     }
 }

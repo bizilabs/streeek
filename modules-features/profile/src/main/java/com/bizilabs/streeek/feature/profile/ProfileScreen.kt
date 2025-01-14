@@ -125,64 +125,79 @@ fun ProfileScreenContent(
             modifier =
                 Modifier
                     .fillMaxSize()
-                    .padding(innerPadding)
-                    .scrollable(state = scrollState, orientation = Orientation.Vertical),
+                    .padding(innerPadding),
         ) {
-            SafiCenteredColumn(modifier = Modifier.fillMaxWidth()) {
-                state.account?.let { account ->
-                    Card(
-                        modifier = Modifier.padding(16.dp),
-                        onClick = {},
-                        shape = RoundedCornerShape(50),
-                        border = BorderStroke(1.dp, MaterialTheme.colorScheme.onBackground),
-                    ) {
-                        AsyncImage(
-                            modifier =
-                                Modifier
-                                    .size(150.dp)
-                                    .clip(RoundedCornerShape(50)),
-                            model = state.account.avatarUrl,
-                            contentDescription = "user avatar url",
-                            contentScale = ContentScale.Crop,
+            Column(
+                modifier =
+                    Modifier
+                        .weight(1f)
+                        .scrollable(state = scrollState, orientation = Orientation.Vertical),
+            ) {
+                SafiCenteredColumn(modifier = Modifier.fillMaxWidth()) {
+                    state.account?.let { account ->
+                        Card(
+                            modifier = Modifier.padding(16.dp),
+                            onClick = {},
+                            shape = RoundedCornerShape(50),
+                            border = BorderStroke(1.dp, MaterialTheme.colorScheme.onBackground),
+                        ) {
+                            AsyncImage(
+                                modifier =
+                                    Modifier
+                                        .size(150.dp)
+                                        .clip(RoundedCornerShape(50)),
+                                model = state.account.avatarUrl,
+                                contentDescription = "user avatar url",
+                                contentScale = ContentScale.Crop,
+                            )
+                        }
+                        account.level?.let { level ->
+                            Text(text = "LV.${level.number}")
+                            Text(text = level.name)
+                        }
+                        Text(text = account.username)
+                        Text(text = account.email)
+                        Text(
+                            modifier = Modifier.fillMaxWidth(0.75f),
+                            text = account.bio,
+                            textAlign = TextAlign.Center,
+                        )
+                        Text(
+                            text =
+                                buildString {
+                                    append("Joined : ")
+                                    append(account.createdAt.toTimeAgo())
+                                },
                         )
                     }
-                    account.level?.let { level ->
-                        Text(text = "LV.${level.number}")
-                        Text(text = level.name)
-                    }
-                    Text(text = account.username)
-                    Text(text = account.email)
-                    Text(
-                        modifier = Modifier.fillMaxWidth(0.75f),
-                        text = account.bio,
-                        textAlign = TextAlign.Center,
-                    )
-                    Text(
-                        text =
-                            buildString {
-                                append("Joined : ")
-                                append(account.createdAt.toTimeAgo())
-                            },
-                    )
+                }
+
+                ProfileItemComponent(
+                    icon = Icons.Rounded.Feedback,
+                    title = "Feedback",
+                    message = "For any feedback or suggestions",
+                    onClickCardIssues = onClickCardIssues,
+                )
+
+                Button(
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp),
+                    onClick = onClickLogout,
+                ) {
+                    Text(text = stringResource(SafiStringLabels.LogOut))
                 }
             }
-
-            ProfileItemComponent(
-                icon = Icons.Rounded.Feedback,
-                title = "Feedback",
-                message = "For any feedback or suggestions",
-                onClickCardIssues = onClickCardIssues,
-            )
-
-            Button(
+            Text(
+                text = "${state.versionCode} - v${state.versionName}",
                 modifier =
                     Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 16.dp),
-                onClick = onClickLogout,
-            ) {
-                Text(text = stringResource(SafiStringLabels.LogOut))
-            }
+                        .padding(vertical = 8.dp),
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.labelMedium,
+            )
         }
     }
 }
