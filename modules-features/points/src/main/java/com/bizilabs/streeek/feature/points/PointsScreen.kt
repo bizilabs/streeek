@@ -125,7 +125,7 @@ fun PointsScreenContent(
                                             )
                                         }
 
-                                        if (event is EventPointsDomain.Single) {
+                                        if (event is EventPointsDomain.SingleActioned) {
                                             Text(
                                                 modifier = Modifier.padding(start = 16.dp),
                                                 text =
@@ -138,7 +138,7 @@ fun PointsScreenContent(
                                         }
                                     }
 
-                                    if (event is EventPointsDomain.Multiple) {
+                                    if (event is EventPointsDomain.MultipleActioned) {
                                         event.actions.forEach { action ->
                                             HorizontalDivider(
                                                 modifier = Modifier.fillMaxWidth(),

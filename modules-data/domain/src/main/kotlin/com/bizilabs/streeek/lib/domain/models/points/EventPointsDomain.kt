@@ -5,7 +5,7 @@ sealed class EventPointsDomain(
     open val subtitle: String,
     open val description: String,
 ) {
-    data class Single(
+    data class SingleActioned(
         override val title: String,
         override val subtitle: String = "",
         override val description: String = "",
@@ -16,7 +16,7 @@ sealed class EventPointsDomain(
             description = description,
         )
 
-    data class Multiple(
+    data class MultipleActioned(
         override val title: String,
         override val subtitle: String = "",
         override val description: String = "",
