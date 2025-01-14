@@ -41,7 +41,7 @@ class TeamsPagingSource(
         if (page == team.page) {
             val prev = if (page == START_PAGE) null else page.minus(1)
             val next = if (team.members.size < PAGE_SIZE) null else page + 1
-            return LoadResult.Page(data = team.members, prevKey = prev, nextKey = next)
+            return LoadResult.Page(data = team.members.filterNot { member -> member.rank <= 3 }, prevKey = prev, nextKey = next)
         }
 
         val result =
@@ -53,7 +53,7 @@ class TeamsPagingSource(
         val cache = team.updateOrCreate(page = page, team = data).toCache()
         if (page == START_PAGE) teamLocalSource.update(cache)
 
-        val list = data.members
+        val list = data.members.filterNot { member -> member.rank <= 3 }
 
         val nextKey =
             when {

@@ -425,7 +425,7 @@ fun TeamDetailsSection(
                     }
                 },
             ) { member ->
-                if (member.rank > 3) TeamMemberComponent(member = member)
+                TeamMemberComponent(member = member)
             }
         }
         AnimatedVisibility(
