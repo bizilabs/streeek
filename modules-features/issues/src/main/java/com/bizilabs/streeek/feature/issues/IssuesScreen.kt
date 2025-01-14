@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
@@ -153,6 +154,8 @@ fun IssuesScreenContent(
                 onClick = onClickAddIssue,
                 containerColor = MaterialTheme.colorScheme.primary,
                 contentColor = MaterialTheme.colorScheme.onPrimary,
+                modifier = Modifier
+                    .navigationBarsPadding() // Handles devices with navigation bars
             ) {
                 Icon(imageVector = Icons.Rounded.Add, contentDescription = "Add Issue")
             }
