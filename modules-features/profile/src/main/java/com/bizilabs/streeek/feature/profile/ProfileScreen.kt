@@ -1,5 +1,7 @@
 package com.bizilabs.streeek.feature.profile
 
+import android.R.attr.onClick
+import android.service.autofill.Validators.and
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.gestures.Orientation
@@ -15,10 +17,12 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
+import androidx.compose.material.icons.rounded.Bolt
 import androidx.compose.material.icons.rounded.ChevronRight
 import androidx.compose.material.icons.rounded.Feedback
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -60,6 +64,7 @@ object ProfileScreen : Screen {
     override fun Content() {
         val navigator = LocalNavigator.current
         val screenIssues = rememberScreen(SharedScreen.Issues)
+        val screenPoints = rememberScreen(SharedScreen.Points)
 
         val landingScreen = rememberScreen(SharedScreen.Landing)
         val screenModel: ProfileScreenModel = getScreenModel()
@@ -70,9 +75,8 @@ object ProfileScreen : Screen {
             onClickLogout = screenModel::onClickLogout,
             navigateToLanding = { navigator?.replaceAll(landingScreen) },
             onClickConfirmLogout = screenModel::onClickConfirmLogout,
-            onClickCardIssues = {
-                navigator?.push(screenIssues)
-            },
+            onClickCardIssues = { navigator?.push(screenIssues) },
+            onClickCardPoints = { navigator?.push(screenPoints) },
         )
     }
 }
@@ -86,6 +90,7 @@ fun ProfileScreenContent(
     navigateToLanding: () -> Unit,
     onClickConfirmLogout: (Boolean) -> Unit,
     onClickCardIssues: () -> Unit,
+    onClickCardPoints: () -> Unit,
 ) {
     val scrollState = rememberScrollState()
 
@@ -94,10 +99,10 @@ fun ProfileScreenContent(
     if (state.shouldConfirmLogout) {
         SafiBottomDialog(
             state =
-                DialogState.Info(
-                    title = "Logout",
-                    message = "Are you sure you want to logout?",
-                ),
+            DialogState.Info(
+                title = "Logout",
+                message = "Are you sure you want to logout?",
+            ),
             onClickDismiss = { onClickConfirmLogout(false) },
         ) {
             Button(onClick = { onClickConfirmLogout(true) }) {
@@ -123,15 +128,15 @@ fun ProfileScreenContent(
     }) { innerPadding ->
         Column(
             modifier =
-                Modifier
-                    .fillMaxSize()
-                    .padding(innerPadding),
+            Modifier
+                .fillMaxSize()
+                .padding(innerPadding),
         ) {
             Column(
                 modifier =
-                    Modifier
-                        .weight(1f)
-                        .scrollable(state = scrollState, orientation = Orientation.Vertical),
+                Modifier
+                    .weight(1f)
+                    .scrollable(state = scrollState, orientation = Orientation.Vertical),
             ) {
                 SafiCenteredColumn(modifier = Modifier.fillMaxWidth()) {
                     state.account?.let { account ->
@@ -143,9 +148,9 @@ fun ProfileScreenContent(
                         ) {
                             AsyncImage(
                                 modifier =
-                                    Modifier
-                                        .size(150.dp)
-                                        .clip(RoundedCornerShape(50)),
+                                Modifier
+                                    .size(150.dp)
+                                    .clip(RoundedCornerShape(50)),
                                 model = state.account.avatarUrl,
                                 contentDescription = "user avatar url",
                                 contentScale = ContentScale.Crop,
@@ -164,26 +169,42 @@ fun ProfileScreenContent(
                         )
                         Text(
                             text =
-                                buildString {
-                                    append("Joined : ")
-                                    append(account.createdAt.toTimeAgo())
-                                },
+                            buildString {
+                                append("Joined : ")
+                                append(account.createdAt.toTimeAgo())
+                            },
                         )
                     }
                 }
 
                 ProfileItemComponent(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp)
+                        .padding(top = 16.dp),
                     icon = Icons.Rounded.Feedback,
                     title = "Feedback",
                     message = "For any feedback or suggestions",
-                    onClickCardIssues = onClickCardIssues,
+                    onClick = onClickCardIssues,
+                )
+
+                ProfileItemComponent(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp)
+                        .padding(top = 16.dp),
+                    icon = Icons.Rounded.Bolt,
+                    title = "Arcane Knowledge",
+                    message = "Learn how to earn experience points (EXP).",
+                    onClick = onClickCardPoints,
                 )
 
                 Button(
                     modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 16.dp),
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp)
+                        .padding(top = 24.dp),
                     onClick = onClickLogout,
                 ) {
                     Text(text = stringResource(SafiStringLabels.LogOut))
@@ -192,9 +213,9 @@ fun ProfileScreenContent(
             Text(
                 text = "${state.versionCode} - v${state.versionName}",
                 modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 8.dp),
+                Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp),
                 textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.labelMedium,
             )
@@ -207,20 +228,23 @@ private fun ProfileItemComponent(
     icon: ImageVector,
     title: String,
     message: String = "",
-    onClickCardIssues: () -> Unit,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
 ) {
     Card(
-        modifier =
-            Modifier
-                .padding(16.dp)
-                .fillMaxWidth(),
-        onClick = onClickCardIssues,
+        modifier = modifier,
+        onClick = onClick,
+        colors =
+        CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.primary.copy(0.2f),
+            contentColor = MaterialTheme.colorScheme.onBackground,
+        ),
     ) {
         Row(
             modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
+            Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
             Row(modifier = Modifier.weight(1f)) {
