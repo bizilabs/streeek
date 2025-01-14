@@ -22,4 +22,7 @@ sealed class SharedScreen : ScreenProvider {
     data class Issue(val id: Long? = null) : SharedScreen()
 
     data class Leaderboard(val name: String) : SharedScreen()
+
+    object Points : SharedScreen()
+
 }
