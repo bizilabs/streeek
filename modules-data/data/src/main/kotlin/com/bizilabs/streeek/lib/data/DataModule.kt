@@ -12,6 +12,7 @@ import com.bizilabs.streeek.lib.data.repositories.PreferenceRepositoryImpl
 import com.bizilabs.streeek.lib.data.repositories.TeamInvitationRepositoryImpl
 import com.bizilabs.streeek.lib.data.repositories.TeamRepositoryImpl
 import com.bizilabs.streeek.lib.data.repositories.UserRepositoryImpl
+import com.bizilabs.streeek.lib.data.repositories.VersionRepositoryImpl
 import com.bizilabs.streeek.lib.domain.repositories.AccountRepository
 import com.bizilabs.streeek.lib.domain.repositories.AuthenticationRepository
 import com.bizilabs.streeek.lib.domain.repositories.ContributionRepository
@@ -24,8 +25,10 @@ import com.bizilabs.streeek.lib.domain.repositories.PreferenceRepository
 import com.bizilabs.streeek.lib.domain.repositories.TeamInvitationRepository
 import com.bizilabs.streeek.lib.domain.repositories.TeamRepository
 import com.bizilabs.streeek.lib.domain.repositories.UserRepository
+import com.bizilabs.streeek.lib.domain.repositories.VersionRepository
 import com.bizilabs.streeek.lib.local.LocalModule
 import com.bizilabs.streeek.lib.remote.RemoteModule
+import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
 val dataModule =
@@ -51,7 +54,11 @@ val dataModule =
             PreferenceRepositoryImpl(localSource = get(), remoteSource = get())
         }
         single<TeamRepository> {
-            TeamRepositoryImpl(remoteSource = get(), localSource = get(), accountLocalSource = get())
+            TeamRepositoryImpl(
+                remoteSource = get(),
+                localSource = get(),
+                accountLocalSource = get(),
+            )
         }
         single<TeamInvitationRepository> {
             TeamInvitationRepositoryImpl(remote = get(), accountLocalSource = get())
@@ -60,7 +67,11 @@ val dataModule =
             LevelRepositoryImpl(remoteSource = get(), localSource = get())
         }
         single<NotificationRepository> {
-            NotificationRepositoryImpl(remoteSource = get(), localSource = get(), accountLocalSource = get())
+            NotificationRepositoryImpl(
+                remoteSource = get(),
+                localSource = get(),
+                accountLocalSource = get(),
+            )
         }
         single<IssueRepository> {
             IssuesRepositoryImpl(remoteSource = get(), accountLocalSource = get())
@@ -69,6 +80,16 @@ val dataModule =
             LabelRepositoryImpl(remoteSource = get())
         }
         single<LeaderboardRepository> {
-            LeaderboardRepositoryImpl(remoteSource = get(), localSource = get(), accountLocalSource = get())
+            LeaderboardRepositoryImpl(
+                remoteSource = get(),
+                localSource = get(),
+                accountLocalSource = get(),
+            )
+        }
+        single<VersionRepository> {
+            VersionRepositoryImpl(
+                versionCode = get(named("version_code")),
+                versionName = get(named("version_name")),
+            )
         }
     }
