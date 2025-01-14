@@ -96,10 +96,10 @@ fun ProfileScreenContent(
     if (state.shouldConfirmLogout) {
         SafiBottomDialog(
             state =
-            DialogState.Info(
-                title = "Logout",
-                message = "Are you sure you want to logout?",
-            ),
+                DialogState.Info(
+                    title = "Logout",
+                    message = "Are you sure you want to logout?",
+                ),
             onClickDismiss = { onClickConfirmLogout(false) },
         ) {
             Button(onClick = { onClickConfirmLogout(true) }) {
@@ -122,13 +122,13 @@ fun ProfileScreenContent(
                     SafiTopBarHeader(title = "Profile")
                 },
             )
-        }
+        },
     ) { innerPadding ->
         LazyColumn(
             modifier =
-            Modifier
-                .fillMaxSize()
-                .padding(innerPadding),
+                Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding),
             contentPadding = PaddingValues(vertical = 16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
@@ -143,9 +143,9 @@ fun ProfileScreenContent(
                         ) {
                             AsyncImage(
                                 modifier =
-                                Modifier
-                                    .size(150.dp)
-                                    .clip(RoundedCornerShape(50)),
+                                    Modifier
+                                        .size(150.dp)
+                                        .clip(RoundedCornerShape(50)),
                                 model = state.account.avatarUrl,
                                 contentDescription = "user avatar url",
                                 contentScale = ContentScale.Crop,
@@ -164,10 +164,10 @@ fun ProfileScreenContent(
                         )
                         Text(
                             text =
-                            buildString {
-                                append("Joined : ")
-                                append(account.createdAt.toTimeAgo())
-                            },
+                                buildString {
+                                    append("Joined : ")
+                                    append(account.createdAt.toTimeAgo())
+                                },
                         )
                     }
                 }
@@ -176,10 +176,10 @@ fun ProfileScreenContent(
             item {
                 ProfileItemComponent(
                     modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp)
-                        .padding(top = 16.dp),
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp)
+                            .padding(top = 16.dp),
                     icon = Icons.Rounded.Feedback,
                     title = "Feedback",
                     message = "For any feedback or suggestions",
@@ -190,9 +190,9 @@ fun ProfileScreenContent(
             item {
                 Button(
                     modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp),
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp),
                     onClick = onClickLogout,
                 ) {
                     Text(text = stringResource(SafiStringLabels.LogOut))
@@ -203,9 +203,9 @@ fun ProfileScreenContent(
                 Text(
                     text = "${state.versionCode} - v${state.versionName}",
                     modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 8.dp),
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 8.dp),
                     textAlign = TextAlign.Center,
                     style = MaterialTheme.typography.labelMedium,
                 )
@@ -226,16 +226,16 @@ private fun ProfileItemComponent(
         modifier = modifier,
         onClick = onClick,
         colors =
-        CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.primary.copy(0.2f),
-            contentColor = MaterialTheme.colorScheme.onBackground,
-        ),
+            CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.primary.copy(0.2f),
+                contentColor = MaterialTheme.colorScheme.onBackground,
+            ),
     ) {
         Row(
             modifier =
-            Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
+                Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
             Row(modifier = Modifier.weight(1f)) {
