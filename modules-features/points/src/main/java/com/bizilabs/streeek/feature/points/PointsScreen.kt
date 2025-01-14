@@ -110,9 +110,7 @@ fun PointsScreenContent(
                                 ) {
                                     Row(
                                         modifier =
-                                            Modifier
-                                                .padding(top = 48.dp)
-                                                .fillMaxWidth(),
+                                            Modifier.fillMaxWidth(),
                                         verticalAlignment = Alignment.CenterVertically,
                                     ) {
                                         Column(modifier = Modifier.weight(1f)) {
