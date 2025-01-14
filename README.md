@@ -37,9 +37,9 @@ Why don't you give it a try? :wink: :wink:
 
 ## Screenshots
 
-|                                      Authentication                                       |                                      Feed                                       |                                       Leaderboard                                       |                                       Achievements                                       |
+|                                      Leaderboard                                       |                                      Feed                                       |                                       Teams                                       |                                       Achievements                                       |
 |:-----------------------------------------------------------------------------------------:|:-------------------------------------------------------------------------------:|:---------------------------------------------------------------------------------------:|:----------------------------------------------------------------------------------------:|
-| <img src=".github/images/screens/authentication.png" width="200" hspace="2" alt="auth" /> | <img src=".github/images/screens/feed.png" width="200" hspace="2" alt="feed" /> | <img src=".github/images/screens/leaderboard.png" width="200" hspace="2" alt="feed" />  | <img src=".github/images/screens/achievements.png" width="200" hspace="2" alt="feed" />  |
+| <img src=".github/images/screens/leaderboard.png" width="200" hspace="2" alt="auth" /> | <img src=".github/images/screens/feed.png" width="200" hspace="2" alt="feed" /> | <img src=".github/images/screens/teams.png" width="200" hspace="2" alt="feed" />  | <img src=".github/images/screens/achievements.png" width="200" hspace="2" alt="feed" />  |
 
 ## 🤩 Contributing
 
