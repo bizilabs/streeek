@@ -24,5 +24,4 @@ sealed class SharedScreen : ScreenProvider {
     data class Leaderboard(val name: String) : SharedScreen()
 
     object Points : SharedScreen()
-
 }

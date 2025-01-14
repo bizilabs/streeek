@@ -48,7 +48,7 @@ val PresentationModule =
             FeatureIssuesModule,
             FeatureIssueModule,
             FeatureLeaderboard,
-            FeaturePoints
+            FeaturePoints,
         )
         workerOf(::SyncTeamsWork)
         workerOf(::SyncLevelsWork)

@@ -21,6 +21,7 @@ import com.bizilabs.streeek.lib.domain.repositories.LabelRepository
 import com.bizilabs.streeek.lib.domain.repositories.LeaderboardRepository
 import com.bizilabs.streeek.lib.domain.repositories.LevelRepository
 import com.bizilabs.streeek.lib.domain.repositories.NotificationRepository
+import com.bizilabs.streeek.lib.domain.repositories.PointsRepository
 import com.bizilabs.streeek.lib.domain.repositories.PreferenceRepository
 import com.bizilabs.streeek.lib.domain.repositories.TeamInvitationRepository
 import com.bizilabs.streeek.lib.domain.repositories.TeamRepository
@@ -92,4 +93,5 @@ val dataModule =
                 versionName = get(named("version_name")),
             )
         }
+        single<PointsRepository> { PointsRepository() }
     }

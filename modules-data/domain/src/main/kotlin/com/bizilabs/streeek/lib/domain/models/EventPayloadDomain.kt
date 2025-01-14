@@ -1,7 +1,6 @@
 package com.bizilabs.streeek.lib.domain.models
 
 import kotlinx.datetime.LocalDateTime
-import timber.log.Timber
 
 sealed interface EventPayloadDomain {
     fun getPoints(account: AccountDomain): Long
@@ -73,7 +72,7 @@ data class IssuesEventDomain(
         return when {
             action.equals("opened", true) -> 30
             action.equals("edited", true) -> 10
-            action.equals("closed", true) && (issue.user.id == account.id) -> 30
+            action.equals("closed", true) -> 30
             else -> 0
         }
     }
@@ -100,14 +99,14 @@ data class PullRequestEventDomain(
     val reason: String?,
 ) : EventPayloadDomain {
     override fun getPoints(account: AccountDomain): Long {
-        Timber.d("Kachari -> action = $action")
         return when {
-            action.equals("opened", true) -> 40L
-            action.equals("edited", true) -> 10L
-            else -> 0L
-        }.also {
-            Timber.d("Kachari -> points = $it")
-            it
+            action.equals("closed", true) -> 50
+            action.equals("opened", true) -> 40
+            action.equals("reopened", true) -> 30
+            action.equals("edited", true) -> 10
+            action.equals("labeled", true) -> 5
+            action.equals("unlabeled", true) -> -5
+            else -> 5
         }
     }
 }
