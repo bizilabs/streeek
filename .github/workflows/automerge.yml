@@ -1,0 +1,25 @@
+name: Merge PR
+
+on:
+#  pull_request_review:
+#    types:
+#      - submitted
+  pull_request:
+
+jobs:
+  merge:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout project sources
+        uses: actions/checkout@v4
+
+      - name: Get pull request reviews
+        run: |
+          response=$(curl -L \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            https://api.github.com/repos/bizilabs/streek/pulls/${{ github.event.number }}/reviews)
+          
+          echo "response from curl= $response"
