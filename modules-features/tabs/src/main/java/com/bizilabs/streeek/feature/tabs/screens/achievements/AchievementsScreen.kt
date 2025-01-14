@@ -5,12 +5,14 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -89,9 +91,9 @@ fun AchievementsScreenContent(
     }) { paddingValues ->
         SafiCenteredColumn(
             modifier =
-                Modifier
-                    .padding(top = paddingValues.calculateTopPadding())
-                    .fillMaxSize(),
+            Modifier
+                .padding(top = paddingValues.calculateTopPadding())
+                .fillMaxSize(),
         ) {
             AnimatedContent(targetState = state.tab, label = "animate achievements") { tab ->
                 when (tab) {
@@ -121,70 +123,76 @@ fun AchievementScreenHeader(
     onClickTab: (AchievementTab) -> Unit,
 ) {
     Surface(modifier = Modifier.fillMaxWidth()) {
-        Column(modifier = Modifier.fillMaxWidth()) {
-            Row(
-                modifier =
+        LazyColumn(
+            modifier = Modifier.fillMaxWidth(),
+            contentPadding = PaddingValues(vertical = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+        ) {
+            item {
+                Row(
+                    modifier =
                     Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                IconButton(onClick = onClickAccount) {
-                    Icon(
-                        imageVector = Icons.Rounded.AccountCircle,
-                        contentDescription = "refresh profile",
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    IconButton(onClick = onClickAccount) {
+                        Icon(
+                            imageVector = Icons.Rounded.AccountCircle,
+                            contentDescription = "Account",
+                        )
+                    }
+                    SafiTopBarHeader(
+                        modifier = Modifier.weight(1f),
+                        title = "Achievements",
+                        align = TextAlign.Center,
                     )
-                }
-                SafiTopBarHeader(
-                    modifier = Modifier.weight(1f),
-                    title = "Achievements",
-                    align = TextAlign.Center,
-                )
-                IconButton(onClick = onClickRefreshProfile) {
-                    Icon(
-                        imageVector = Icons.Rounded.Refresh,
-                        contentDescription = "refresh profile",
-                    )
+                    IconButton(onClick = onClickRefreshProfile) {
+                        Icon(
+                            imageVector = Icons.Rounded.Refresh,
+                            contentDescription = "Refresh Profile",
+                        )
+                    }
                 }
             }
-            Spacer(modifier = Modifier.padding(8.dp))
-            SafiCenteredColumn(
-                modifier =
+            item {
+                SafiCenteredColumn(
+                    modifier =
                     Modifier
-                        .padding(16.dp)
+                        .padding(horizontal = 16.dp)
                         .fillMaxWidth(),
-            ) {
-                state.account?.let { account ->
-                    SafiProfileArc(
-                        progress = account.points,
-                        maxProgress = account.level?.maxPoints ?: account.points.plus(500),
-                        modifier = Modifier.size(148.dp),
-                        tint = MaterialTheme.colorScheme.primary,
-                    ) {
-                        AsyncImage(
-                            modifier =
+                ) {
+                    state.account?.let { account ->
+                        SafiProfileArc(
+                            progress = account.points,
+                            maxProgress = account.level?.maxPoints ?: account.points + 500,
+                            modifier = Modifier.size(148.dp),
+                            tint = MaterialTheme.colorScheme.primary,
+                        ) {
+                            AsyncImage(
+                                modifier =
                                 Modifier
                                     .size(128.dp)
                                     .clip(CircleShape)
                                     .background(Color.White),
-                            model = account.avatarUrl,
-                            contentDescription = "user avatar url",
-                            contentScale = ContentScale.Crop,
+                                model = account.avatarUrl,
+                                contentDescription = "User Avatar",
+                                contentScale = ContentScale.Crop,
+                            )
+                        }
+                        Text(
+                            modifier = Modifier.padding(top = 16.dp),
+                            text = account.username,
+                            style = MaterialTheme.typography.titleLarge,
                         )
-                    }
-                    Text(
-                        modifier = Modifier.padding(top = 16.dp),
-                        text = account.username,
-                        style = MaterialTheme.typography.titleLarge,
-                    )
-                    Text(
-                        text = account.level?.name?.replaceFirstChar { it.uppercase() } ?: "",
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.onSurface.copy(0.5f),
-                    )
-                    Text(
-                        text =
+                        Text(
+                            text = account.level?.name?.replaceFirstChar { it.uppercase() } ?: "",
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = MaterialTheme.colorScheme.onSurface.copy(0.5f),
+                        )
+                        Text(
+                            text =
                             buildString {
                                 append("LV.")
                                 append(account.level?.number)
@@ -192,37 +200,153 @@ fun AchievementScreenHeader(
                                 append(account.points)
                                 append(" EXP")
                             },
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.onSurface.copy(0.5f),
-                    )
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurface.copy(0.5f),
+                        )
+                    }
                 }
             }
-            TabRow(
-                modifier = Modifier.fillMaxWidth(),
-                selectedTabIndex = state.tabs.indexOf(state.tab),
-            ) {
-                state.tabs.forEach { tab ->
-                    val isSelected = tab == state.tab
-                    val (selectedIcon, unselectedIcon) = tab.icon
-                    Tab(
-                        selected = isSelected,
-                        onClick = { onClickTab(tab) },
-                        selectedContentColor = MaterialTheme.colorScheme.primary,
-                        unselectedContentColor = MaterialTheme.colorScheme.onSurface.copy(0.25f),
-                    ) {
-                        SafiCenteredRow(modifier = Modifier.padding(16.dp)) {
-                            Icon(
-                                imageVector = if (isSelected) selectedIcon else unselectedIcon,
-                                contentDescription = tab.label,
-                            )
-                            Spacer(modifier = Modifier.padding(8.dp))
-                            Text(text = tab.label)
+            item {
+                TabRow(
+                    modifier = Modifier.fillMaxWidth(),
+                    selectedTabIndex = state.tabs.indexOf(state.tab),
+                ) {
+                    state.tabs.forEach { tab ->
+                        val isSelected = tab == state.tab
+                        val (selectedIcon, unselectedIcon) = tab.icon
+                        Tab(
+                            selected = isSelected,
+                            onClick = { onClickTab(tab) },
+                            selectedContentColor = MaterialTheme.colorScheme.primary,
+                            unselectedContentColor = MaterialTheme.colorScheme.onSurface.copy(0.25f),
+                        ) {
+                            SafiCenteredRow(modifier = Modifier.padding(16.dp)) {
+                                Icon(
+                                    imageVector = if (isSelected) selectedIcon else unselectedIcon,
+                                    contentDescription = tab.label,
+                                )
+                                Spacer(modifier = Modifier.padding(8.dp))
+                                Text(text = tab.label)
+                            }
                         }
                     }
                 }
             }
         }
     }
+//}
+
+
+//@Composable
+//fun AchievementScreenHeader(
+//    state: AchievementScreenState,
+//    onClickAccount: () -> Unit,
+//    onClickRefreshProfile: () -> Unit,
+//    onClickTab: (AchievementTab) -> Unit,
+//) {
+//    Surface(modifier = Modifier.fillMaxWidth()) {
+//        Column(modifier = Modifier.fillMaxWidth()) {
+//            Row(
+//                modifier =
+//                    Modifier
+//                        .fillMaxWidth()
+//                        .padding(horizontal = 16.dp),
+//                horizontalArrangement = Arrangement.SpaceBetween,
+//                verticalAlignment = Alignment.CenterVertically,
+//            ) {
+//                IconButton(onClick = onClickAccount) {
+//                    Icon(
+//                        imageVector = Icons.Rounded.AccountCircle,
+//                        contentDescription = "refresh profile",
+//                    )
+//                }
+//                SafiTopBarHeader(
+//                    modifier = Modifier.weight(1f),
+//                    title = "Achievements",
+//                    align = TextAlign.Center,
+//                )
+//                IconButton(onClick = onClickRefreshProfile) {
+//                    Icon(
+//                        imageVector = Icons.Rounded.Refresh,
+//                        contentDescription = "refresh profile",
+//                    )
+//                }
+//            }
+//            Spacer(modifier = Modifier.padding(8.dp))
+//            SafiCenteredColumn(
+//                modifier =
+//                    Modifier
+//                        .padding(16.dp)
+//                        .fillMaxWidth(),
+//            ) {
+//                state.account?.let { account ->
+//                    SafiProfileArc(
+//                        progress = account.points,
+//                        maxProgress = account.level?.maxPoints ?: account.points.plus(500),
+//                        modifier = Modifier.size(148.dp),
+//                        tint = MaterialTheme.colorScheme.primary,
+//                    ) {
+//                        AsyncImage(
+//                            modifier =
+//                                Modifier
+//                                    .size(128.dp)
+//                                    .clip(CircleShape)
+//                                    .background(Color.White),
+//                            model = account.avatarUrl,
+//                            contentDescription = "user avatar url",
+//                            contentScale = ContentScale.Crop,
+//                        )
+//                    }
+//                    Text(
+//                        modifier = Modifier.padding(top = 16.dp),
+//                        text = account.username,
+//                        style = MaterialTheme.typography.titleLarge,
+//                    )
+//                    Text(
+//                        text = account.level?.name?.replaceFirstChar { it.uppercase() } ?: "",
+//                        style = MaterialTheme.typography.bodyLarge,
+//                        color = MaterialTheme.colorScheme.onSurface.copy(0.5f),
+//                    )
+//                    Text(
+//                        text =
+//                            buildString {
+//                                append("LV.")
+//                                append(account.level?.number)
+//                                append(" | ")
+//                                append(account.points)
+//                                append(" EXP")
+//                            },
+//                        style = MaterialTheme.typography.labelSmall,
+//                        color = MaterialTheme.colorScheme.onSurface.copy(0.5f),
+//                    )
+//                }
+//            }
+//            TabRow(
+//                modifier = Modifier.fillMaxWidth(),
+//                selectedTabIndex = state.tabs.indexOf(state.tab),
+//            ) {
+//                state.tabs.forEach { tab ->
+//                    val isSelected = tab == state.tab
+//                    val (selectedIcon, unselectedIcon) = tab.icon
+//                    Tab(
+//                        selected = isSelected,
+//                        onClick = { onClickTab(tab) },
+//                        selectedContentColor = MaterialTheme.colorScheme.primary,
+//                        unselectedContentColor = MaterialTheme.colorScheme.onSurface.copy(0.25f),
+//                    ) {
+//                        SafiCenteredRow(modifier = Modifier.padding(16.dp)) {
+//                            Icon(
+//                                imageVector = if (isSelected) selectedIcon else unselectedIcon,
+//                                contentDescription = tab.label,
+//                            )
+//                            Spacer(modifier = Modifier.padding(8.dp))
+//                            Text(text = tab.label)
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//    }
 }
 
 @Composable
@@ -289,14 +413,14 @@ fun AchievementsLevelsScreenSection(
                         ) {
                             Card(
                                 modifier =
-                                    Modifier
-                                        .padding(8.dp)
-                                        .fillMaxWidth(),
+                                Modifier
+                                    .padding(8.dp)
+                                    .fillMaxWidth(),
                                 colors =
-                                    CardDefaults.cardColors(
-                                        containerColor = containerColor,
-                                        contentColor = contentColor,
-                                    ),
+                                CardDefaults.cardColors(
+                                    containerColor = containerColor,
+                                    contentColor = contentColor,
+                                ),
                             ) {
                                 Column(modifier = Modifier.padding(16.dp)) {
                                     Text(

@@ -1,22 +1,20 @@
 package com.bizilabs.streeek.feature.profile
 
-import android.R.attr.onClick
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
-import androidx.compose.material.icons.rounded.Bolt
 import androidx.compose.material.icons.rounded.ChevronRight
 import androidx.compose.material.icons.rounded.Feedback
 import androidx.compose.material3.Button
@@ -98,10 +96,10 @@ fun ProfileScreenContent(
     if (state.shouldConfirmLogout) {
         SafiBottomDialog(
             state =
-                DialogState.Info(
-                    title = "Logout",
-                    message = "Are you sure you want to logout?",
-                ),
+            DialogState.Info(
+                title = "Logout",
+                message = "Are you sure you want to logout?",
+            ),
             onClickDismiss = { onClickConfirmLogout(false) },
         ) {
             Button(onClick = { onClickConfirmLogout(true) }) {
@@ -109,34 +107,32 @@ fun ProfileScreenContent(
             }
         }
     }
-
-    Scaffold(topBar = {
-        TopAppBar(
-            navigationIcon = {
-                IconButton(onClick = onClickNavigateBackIcon) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
-                        contentDescription = null,
-                    )
-                }
-            },
-            title = {
-                SafiTopBarHeader(title = "Profile")
-            },
-        )
-    }) { innerPadding ->
-        Column(
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                navigationIcon = {
+                    IconButton(onClick = onClickNavigateBackIcon) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
+                            contentDescription = null,
+                        )
+                    }
+                },
+                title = {
+                    SafiTopBarHeader(title = "Profile")
+                },
+            )
+        }
+    ) { innerPadding ->
+        LazyColumn(
             modifier =
-                Modifier
-                    .fillMaxSize()
-                    .padding(innerPadding),
+            Modifier
+                .fillMaxSize()
+                .padding(innerPadding),
+            contentPadding = PaddingValues(vertical = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
-            Column(
-                modifier =
-                    Modifier
-                        .weight(1f)
-                        .scrollable(state = scrollState, orientation = Orientation.Vertical),
-            ) {
+            item {
                 SafiCenteredColumn(modifier = Modifier.fillMaxWidth()) {
                     state.account?.let { account ->
                         Card(
@@ -147,9 +143,9 @@ fun ProfileScreenContent(
                         ) {
                             AsyncImage(
                                 modifier =
-                                    Modifier
-                                        .size(150.dp)
-                                        .clip(RoundedCornerShape(50)),
+                                Modifier
+                                    .size(150.dp)
+                                    .clip(RoundedCornerShape(50)),
                                 model = state.account.avatarUrl,
                                 contentDescription = "user avatar url",
                                 contentScale = ContentScale.Crop,
@@ -168,58 +164,52 @@ fun ProfileScreenContent(
                         )
                         Text(
                             text =
-                                buildString {
-                                    append("Joined : ")
-                                    append(account.createdAt.toTimeAgo())
-                                },
+                            buildString {
+                                append("Joined : ")
+                                append(account.createdAt.toTimeAgo())
+                            },
                         )
                     }
                 }
+            }
 
+            item {
                 ProfileItemComponent(
                     modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 16.dp)
-                            .padding(top = 16.dp),
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp)
+                        .padding(top = 16.dp),
                     icon = Icons.Rounded.Feedback,
                     title = "Feedback",
                     message = "For any feedback or suggestions",
                     onClick = onClickCardIssues,
                 )
+            }
 
-                ProfileItemComponent(
-                    modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 16.dp)
-                            .padding(top = 16.dp),
-                    icon = Icons.Rounded.Bolt,
-                    title = "Arcane Knowledge",
-                    message = "Learn how to earn experience points (EXP).",
-                    onClick = onClickCardPoints,
-                )
-
+            item {
                 Button(
                     modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 16.dp)
-                            .padding(top = 24.dp),
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp),
                     onClick = onClickLogout,
                 ) {
                     Text(text = stringResource(SafiStringLabels.LogOut))
                 }
             }
-            Text(
-                text = "${state.versionCode} - v${state.versionName}",
-                modifier =
+
+            item {
+                Text(
+                    text = "${state.versionCode} - v${state.versionName}",
+                    modifier =
                     Modifier
                         .fillMaxWidth()
                         .padding(vertical = 8.dp),
-                textAlign = TextAlign.Center,
-                style = MaterialTheme.typography.labelMedium,
-            )
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.labelMedium,
+                )
+            }
         }
     }
 }
@@ -236,16 +226,16 @@ private fun ProfileItemComponent(
         modifier = modifier,
         onClick = onClick,
         colors =
-            CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.primary.copy(0.2f),
-                contentColor = MaterialTheme.colorScheme.onBackground,
-            ),
+        CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.primary.copy(0.2f),
+            contentColor = MaterialTheme.colorScheme.onBackground,
+        ),
     ) {
         Row(
             modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
+            Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
             Row(modifier = Modifier.weight(1f)) {
