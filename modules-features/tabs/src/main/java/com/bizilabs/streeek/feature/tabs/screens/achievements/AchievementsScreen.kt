@@ -12,12 +12,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.AccountCircle
 import androidx.compose.material.icons.rounded.Refresh
@@ -90,40 +89,49 @@ fun AchievementsScreenContent(
             )
         },
     ) { paddingValues ->
-        // Combine header and content into a scrollable column
-        Column(
+        // Use LazyColumn to avoid infinite constraints
+        LazyColumn(
             modifier =
                 Modifier
-                    .padding(top = paddingValues.calculateTopPadding())
-                    .fillMaxSize()
-                    .verticalScroll(rememberScrollState()),
+                    .padding(paddingValues)
+                    .fillMaxSize(),
         ) {
-            Spacer(modifier = Modifier.height(8.dp))
-            AchievementScreenHeader(
-                state = state,
-                onClickTab = onClickTab,
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-            // Animated content section for tabs
-            AnimatedContent(targetState = state.tab, label = "animate achievements") { tab ->
-                when (tab) {
-                    AchievementTab.BADGES -> {
-                        SafiCenteredColumn(
-                            modifier =
-                                Modifier
-                                    .fillMaxSize(),
-                        ) {
-                            Text(text = "Coming soon...")
+            item {
+                Spacer(modifier = Modifier.height(8.dp))
+            }
+            item {
+                AchievementScreenHeader(
+                    state = state,
+                    onClickTab = onClickTab,
+                )
+            }
+            item {
+                Spacer(modifier = Modifier.height(16.dp))
+            }
+            item {
+                // Animated content section for tabs
+                AnimatedContent(targetState = state.tab, label = "animate achievements") { tab ->
+                    when (tab) {
+                        AchievementTab.BADGES -> {
+                            SafiCenteredColumn(
+                                modifier =
+                                    Modifier
+                                        .fillMaxWidth()
+                                        .padding(16.dp),
+                            ) {
+                                Text(text = "Coming soon...")
+                            }
                         }
-                    }
 
-                    AchievementTab.LEVELS -> {
-                        AchievementsLevelsScreenSection(
-                            state = state,
-                            modifier =
-                                Modifier
-                                    .fillMaxSize(),
-                        )
+                        AchievementTab.LEVELS -> {
+                            AchievementsLevelsScreenSection(
+                                state = state,
+                                modifier =
+                                    Modifier
+                                        .fillMaxWidth()
+                                        .padding(16.dp),
+                            )
+                        }
                     }
                 }
             }
