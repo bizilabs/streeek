@@ -78,7 +78,7 @@ class LeaderboardListScreenModel(
     private fun observeLeaderboards() {
         screenModelScope.launch {
             repository.leaderboards.collectLatest { map ->
-                mutableState.update { it.copy(leaderboards = map.values.filter { it.name != Leaderboard.DAILY.name }) }
+                mutableState.update { it.copy(leaderboards = map.map {(_, value) ->  value }) }
             }
         }
     }
