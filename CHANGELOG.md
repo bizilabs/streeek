@@ -42,6 +42,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Navigates to Team screen after successfully creating a team
 - Shows an empty state in the team details when members <= 3
 
-[unreleased]: https://github.com/bizilabs/streeek/compare/0.0.3...HEAD
+## [0.0.5] - 2025-01-15
+
+### Fixed
+- crashing on leaderboard screen
+
+[unreleased]: https://github.com/bizilabs/streeek/compare/0.0.5...HEAD
+[0.0.5]: https://github.com/bizilabs/streeek/releases/v0.0.4...v0.0.5
+[0.0.4]: https://github.com/bizilabs/streeek/releases/v0.0.3...v0.0.4
 [0.0.3]: https://github.com/bizilabs/streeek/releases/v0.0.2...v0.0.3
 [0.0.2]: https://github.com/bizilabs/streeek/releases/tag/v0.0.2
