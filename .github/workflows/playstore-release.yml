@@ -105,4 +105,4 @@ jobs:
           packageName: com.bizilabs.app.streeek.mobile
           releaseFiles: modules-app/streeek/build/outputs/bundle/release/streeek-release.aab
           track: internal
-          whatsNewDirectory: distribution/whatsnew/whatsnew-en-US
+          whatsNewDirectory: distribution/whatsnew
