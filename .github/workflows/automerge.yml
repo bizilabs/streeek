@@ -1,4 +1,4 @@
-name: Merge PR
+name: Auto Merge Pull Requests
 
 on:
   pull_request_review:
@@ -6,19 +6,41 @@ on:
       - submitted
 
 jobs:
-  merge:
+  auto-merge:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout project sources
-        uses: actions/checkout@v4
-
-      - name: Get pull request reviews
+      # Check approvals and merge
+      - name: Check and Merge Pull Request
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          response=$(curl -L \
+          # Required number of approvals
+          REQUIRED_APPROVALS=2
+
+          # Extract pull request number and repository information
+          PR_NUMBER=$(jq -r .pull_request.number < $GITHUB_EVENT_PATH)
+          OWNER=$(jq -r .repository.owner.login < $GITHUB_EVENT_PATH)
+          REPO=$(jq -r .repository.name < $GITHUB_EVENT_PATH)
+
+          echo "Processing Pull Request #$PR_NUMBER in $OWNER/$REPO"
+
+          # Fetch reviews using the GitHub API
+          REVIEWS=$(curl -s -H "Authorization: Bearer $GITHUB_TOKEN" \
             -H "Accept: application/vnd.github+json" \
-            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-            -H "X-GitHub-Api-Version: 2022-11-28" \
-            https://api.github.com/repos/bizilabs/streek/pulls/${{ github.event.number }}/reviews)
-          
-          echo "response from curl= $response"
+            "https://api.github.com/repos/$OWNER/$REPO/pulls/$PR_NUMBER/reviews")
+
+          # Count approvals
+          APPROVAL_COUNT=$(echo "$REVIEWS" | jq '[.[] | select(.state == "APPROVED")] | length')
+
+          echo "Approvals: $APPROVAL_COUNT / $REQUIRED_APPROVALS"
+
+          if [ "$APPROVAL_COUNT" -ge "$REQUIRED_APPROVALS" ]; then
+            echo "Merging Pull Request #$PR_NUMBER"
+            curl -X PUT -s -H "Authorization: Bearer $GITHUB_TOKEN" \
+              -H "Accept: application/vnd.github+json" \
+              "https://api.github.com/repos/$OWNER/$REPO/pulls/$PR_NUMBER/merge" \
+              -d '{"merge_method": "rebase"}'
+          else
+            echo "Not enough approvals to merge."
+          fi
