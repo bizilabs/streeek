@@ -95,6 +95,11 @@ jobs:
           
           mkdir -p "$TARGET_DIR"
           
+          # Trim the release notes to 499 characters if it exceeds the limit
+          if [ ${#RELEASE_NOTES} -gt 499 ]; then
+          RELEASE_NOTES="${RELEASE_NOTES:0:499}..."
+          fi
+          
           echo "$RELEASE_NOTES" >> "$TARGET_DIR/$TARGET_FILE"
           echo "Release notes appended to $TARGET_DIR/$TARGET_FILE."
 
@@ -105,4 +110,4 @@ jobs:
           packageName: com.bizilabs.app.streeek.mobile
           releaseFiles: modules-app/streeek/build/outputs/bundle/release/streeek-release.aab
           track: internal
-          whatsNewDirectory: distribution/whatsnew/whatsnew-en-US
+          whatsNewDirectory: distribution/whatsnew
