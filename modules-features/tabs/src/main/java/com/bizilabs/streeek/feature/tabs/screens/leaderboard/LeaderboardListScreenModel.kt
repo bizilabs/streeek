@@ -3,7 +3,6 @@ package com.bizilabs.streeek.feature.tabs.screens.leaderboard
 import android.content.Context
 import cafe.adriel.voyager.core.model.StateScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
-import com.bizilabs.streeek.lib.domain.models.Leaderboard
 import com.bizilabs.streeek.lib.domain.models.LeaderboardAccountDomain
 import com.bizilabs.streeek.lib.domain.models.LeaderboardDomain
 import com.bizilabs.streeek.lib.domain.repositories.LeaderboardRepository
@@ -78,7 +77,7 @@ class LeaderboardListScreenModel(
     private fun observeLeaderboards() {
         screenModelScope.launch {
             repository.leaderboards.collectLatest { map ->
-                mutableState.update { it.copy(leaderboards = map.map {(_, value) ->  value }) }
+                mutableState.update { it.copy(leaderboards = map.map { (_, value) -> value }) }
             }
         }
     }
