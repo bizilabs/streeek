@@ -86,19 +86,18 @@ fun AchievementsScreenContent(
         topBar = {
             AchievementScreenAppBar(
                 onClickAccount = onClickAccount,
-                onClickRefreshProfile = onClickRefreshProfile
+                onClickRefreshProfile = onClickRefreshProfile,
             )
-        }
-
+        },
     ) { paddingValues ->
         // Combine header and content into a scrollable column
         Column(
-            modifier = Modifier
-                .padding(top = paddingValues.calculateTopPadding())
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState()),
-
-            ) {
+            modifier =
+                Modifier
+                    .padding(top = paddingValues.calculateTopPadding())
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState()),
+        ) {
             Spacer(modifier = Modifier.height(8.dp))
             AchievementScreenHeader(
                 state = state,
@@ -110,8 +109,9 @@ fun AchievementsScreenContent(
                 when (tab) {
                     AchievementTab.BADGES -> {
                         SafiCenteredColumn(
-                            modifier = Modifier
-                                .fillMaxSize()
+                            modifier =
+                                Modifier
+                                    .fillMaxSize(),
                         ) {
                             Text(text = "Coming soon...")
                         }
@@ -120,8 +120,9 @@ fun AchievementsScreenContent(
                     AchievementTab.LEVELS -> {
                         AchievementsLevelsScreenSection(
                             state = state,
-                            modifier = Modifier
-                                .fillMaxSize()
+                            modifier =
+                                Modifier
+                                    .fillMaxSize(),
                         )
                     }
                 }
@@ -138,9 +139,9 @@ fun AchievementScreenAppBar(
     Surface(modifier = Modifier.fillMaxWidth()) {
         Row(
             modifier =
-            Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp),
+                Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
         ) {
@@ -175,9 +176,9 @@ fun AchievementScreenHeader(
             Spacer(modifier = Modifier.padding(8.dp))
             SafiCenteredColumn(
                 modifier =
-                Modifier
-                    .padding(16.dp)
-                    .fillMaxWidth(),
+                    Modifier
+                        .padding(16.dp)
+                        .fillMaxWidth(),
             ) {
                 state.account?.let { account ->
                     SafiProfileArc(
@@ -188,10 +189,10 @@ fun AchievementScreenHeader(
                     ) {
                         AsyncImage(
                             modifier =
-                            Modifier
-                                .size(128.dp)
-                                .clip(CircleShape)
-                                .background(Color.White),
+                                Modifier
+                                    .size(128.dp)
+                                    .clip(CircleShape)
+                                    .background(Color.White),
                             model = account.avatarUrl,
                             contentDescription = "user avatar url",
                             contentScale = ContentScale.Crop,
@@ -209,13 +210,13 @@ fun AchievementScreenHeader(
                     )
                     Text(
                         text =
-                        buildString {
-                            append("LV.")
-                            append(account.level?.number)
-                            append(" | ")
-                            append(account.points)
-                            append(" EXP")
-                        },
+                            buildString {
+                                append("LV.")
+                                append(account.level?.number)
+                                append(" | ")
+                                append(account.points)
+                                append(" EXP")
+                            },
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSurface.copy(0.5f),
                     )
@@ -313,14 +314,14 @@ fun AchievementsLevelsScreenSection(
                         ) {
                             Card(
                                 modifier =
-                                Modifier
-                                    .padding(8.dp)
-                                    .fillMaxWidth(),
+                                    Modifier
+                                        .padding(8.dp)
+                                        .fillMaxWidth(),
                                 colors =
-                                CardDefaults.cardColors(
-                                    containerColor = containerColor,
-                                    contentColor = contentColor,
-                                ),
+                                    CardDefaults.cardColors(
+                                        containerColor = containerColor,
+                                        contentColor = contentColor,
+                                    ),
                             ) {
                                 Column(modifier = Modifier.padding(16.dp)) {
                                     Text(
