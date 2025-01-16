@@ -29,6 +29,8 @@ import com.bizilabs.streeek.lib.remote.sources.team.TeamRemoteSource
 import com.bizilabs.streeek.lib.remote.sources.team.TeamRemoteSourceImpl
 import com.bizilabs.streeek.lib.remote.sources.team.invitations.TeamInvitationRemoteSource
 import com.bizilabs.streeek.lib.remote.sources.team.invitations.TeamInvitationRemoteSourceImpl
+import com.bizilabs.streeek.lib.remote.sources.team.requests.TeamRequestRemoteSource
+import com.bizilabs.streeek.lib.remote.sources.team.requests.TeamRequestRemoteSourceImpl
 import com.bizilabs.streeek.lib.remote.sources.user.UserRemoteSource
 import com.bizilabs.streeek.lib.remote.sources.user.UserRemoteSourceImpl
 import com.chuckerteam.chucker.api.ChuckerInterceptor
@@ -86,4 +88,5 @@ val RemoteModule =
         single<IssuesRemoteSource> { IssuesRemoteSourceImpl(client = get()) }
         single<LabelRemoteSource> { LabelRemoteSourceImpl(client = get()) }
         single<LeaderboardRemoteSource> { LeaderboardRemoteSourceImpl(supabase = get()) }
+        single<TeamRequestRemoteSource> { TeamRequestRemoteSourceImpl(supabase = get()) }
     }

@@ -16,4 +16,6 @@ dependencies {
     implementation(libs.androidx.foundation.android)
     // confetti
     implementation(libs.confetti)
+    // paging
+    implementation(libs.bundles.paging)
 }

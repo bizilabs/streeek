@@ -8,8 +8,10 @@ import com.bizilabs.streeek.lib.data.mappers.team.toDomain
 import com.bizilabs.streeek.lib.data.mappers.toCache
 import com.bizilabs.streeek.lib.data.mappers.toDomain
 import com.bizilabs.streeek.lib.data.paging.PagingHelpers
+import com.bizilabs.streeek.lib.data.paging.TeamMembersPagingSource
 import com.bizilabs.streeek.lib.data.paging.TeamsPagingSource
 import com.bizilabs.streeek.lib.domain.helpers.DataResult
+import com.bizilabs.streeek.lib.domain.models.TeamAndMembersDomain
 import com.bizilabs.streeek.lib.domain.models.TeamDetailsDomain
 import com.bizilabs.streeek.lib.domain.models.TeamMemberDomain
 import com.bizilabs.streeek.lib.domain.models.TeamWithDetailDomain
@@ -48,7 +50,7 @@ class TeamRepositoryImpl(
         return Pager(
             config = PagingConfig(pageSize = PagingHelpers.PAGE_SIZE, enablePlaceholders = false),
             pagingSourceFactory = {
-                TeamsPagingSource(
+                TeamMembersPagingSource(
                     team = team,
                     accountLocalSource = accountLocalSource,
                     teamLocalSource = localSource,
@@ -88,6 +90,18 @@ class TeamRepositoryImpl(
         val accountId = getAccountId() ?: return DataResult.Error(message = "No account found")
         return remoteSource.getAccountTeams(accountId = accountId)
             .asDataResult { list -> list.map { it.toDomain() } }
+    }
+
+    override fun getTeamsAndMembers(): Flow<PagingData<TeamAndMembersDomain>> {
+        return Pager(
+            config = PagingConfig(pageSize = PagingHelpers.PAGE_SIZE, enablePlaceholders = false),
+            pagingSourceFactory = {
+                TeamsPagingSource(
+                    accountLocalSource = accountLocalSource,
+                    teamRemoteSource = remoteSource,
+                )
+            },
+        ).flow
     }
 
     override suspend fun getTeam(

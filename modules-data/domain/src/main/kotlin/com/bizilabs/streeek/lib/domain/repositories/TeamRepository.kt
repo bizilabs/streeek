@@ -2,6 +2,7 @@ package com.bizilabs.streeek.lib.domain.repositories
 
 import androidx.paging.PagingData
 import com.bizilabs.streeek.lib.domain.helpers.DataResult
+import com.bizilabs.streeek.lib.domain.models.TeamAndMembersDomain
 import com.bizilabs.streeek.lib.domain.models.TeamDetailsDomain
 import com.bizilabs.streeek.lib.domain.models.TeamMemberDomain
 import com.bizilabs.streeek.lib.domain.models.TeamWithDetailDomain
@@ -32,6 +33,8 @@ interface TeamRepository {
     ): DataResult<Boolean>
 
     suspend fun getAccountTeams(): DataResult<List<TeamWithDetailDomain>>
+
+    fun getTeamsAndMembers(): Flow<PagingData<TeamAndMembersDomain>>
 
     suspend fun getTeam(
         id: Long,

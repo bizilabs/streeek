@@ -31,15 +31,19 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
 import cafe.adriel.voyager.core.registry.rememberScreen
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.getScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import com.bizilabs.streeek.feature.tabs.screens.teams.components.TeamComponent
+import com.bizilabs.streeek.feature.tabs.screens.teams.components.TeamEmptyListSection
 import com.bizilabs.streeek.lib.common.navigation.SharedScreen
 import com.bizilabs.streeek.lib.design.components.SafiCenteredColumn
 import com.bizilabs.streeek.lib.design.components.SafiInfoSection
 import com.bizilabs.streeek.lib.design.components.SafiRefreshBox
+import com.bizilabs.streeek.lib.domain.models.TeamAndMembersDomain
 import com.bizilabs.streeek.lib.domain.models.TeamDetailsDomain
 import com.bizilabs.streeek.lib.resources.strings.SafiStringLabels
 import java.util.Locale
@@ -51,12 +55,15 @@ object TeamsListScreen : Screen {
 
         val screenModel: TeamsListScreenModel = getScreenModel()
         val state by screenModel.state.collectAsStateWithLifecycle()
+        val availableTeams = screenModel.availableTeams.collectAsLazyPagingItems()
 
         TeamsListScreenContent(
             state = state,
+            availableTeams = availableTeams,
             onClickMenuCreateTeam = screenModel::onClickMenuTeamCreate,
             onClickMenuJoinTeam = screenModel::onClickMenuTeamJoin,
             onClickSwipeToRefreshTeam = screenModel::onClickMenuRefreshTeam,
+            onClickTeamRequest = screenModel::onClickTeamRequest,
             onClickTeam = screenModel::onClickTeam,
         ) { screen ->
             navigator?.push(screen)
@@ -68,10 +75,12 @@ object TeamsListScreen : Screen {
 @Composable
 fun TeamsListScreenContent(
     state: TeamsListScreenState,
+    availableTeams: LazyPagingItems<TeamAndMembersDomain>,
     onClickMenuCreateTeam: () -> Unit,
     onClickMenuJoinTeam: () -> Unit,
     onClickSwipeToRefreshTeam: () -> Unit,
     onClickTeam: (TeamDetailsDomain) -> Unit,
+    onClickTeamRequest: (TeamAndMembersDomain) -> Unit,
     navigate: (Screen) -> Unit,
 ) {
     if (state.isCreating) {
@@ -100,34 +109,14 @@ fun TeamsListScreenContent(
 
             when {
                 state.teams.isEmpty() -> {
-                    SafiCenteredColumn(modifier = Modifier.fillMaxSize()) {
-                        SafiInfoSection(
-                            icon = Icons.Rounded.People,
-                            title = "Empty",
-                            description = "Join a team to continue",
-                        )
-
-                        Button(
-                            modifier =
-                                Modifier
-                                    .fillMaxWidth()
-                                    .padding(top = 16.dp)
-                                    .padding(horizontal = 16.dp),
-                            onClick = onClickMenuCreateTeam,
-                        ) {
-                            Text(text = "Create Team")
-                        }
-
-                        OutlinedButton(
-                            modifier =
-                                Modifier
-                                    .fillMaxWidth()
-                                    .padding(top = 8.dp),
-                            onClick = onClickMenuJoinTeam,
-                        ) {
-                            Text(text = "Join Team")
-                        }
-                    }
+                    TeamEmptyListSection(
+                        modifier = Modifier.fillMaxSize()
+                            .padding(top = innerPadding.calculateTopPadding()),
+                        state = state,
+                        availableTeams = availableTeams,
+                        onClickTeamRequest = onClickTeamRequest,
+                        onClickCreateTeam = onClickMenuCreateTeam
+                    )
                 }
                 else -> {
                     SafiRefreshBox(

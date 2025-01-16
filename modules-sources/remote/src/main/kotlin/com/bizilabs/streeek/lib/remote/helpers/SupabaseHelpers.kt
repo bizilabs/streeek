@@ -37,7 +37,10 @@ internal object Supabase {
             const val JOIN = "join_team_with_invite_code"
             const val LEAVE = "leave_team"
             const val DELETE = "archive_team"
-
+            const val GETANDMEMBERS = "get_teams_with_member_count_and_members"
+            object MemberRequests {
+                const val REQUESTTOJOINTEAM = "request_to_join_team"
+            }
             object Invitations {
                 const val GET = "get_team_invitations"
                 const val DELETE = "delete_team_invitation"

@@ -1,6 +1,7 @@
 package com.bizilabs.streeek.lib.remote.models.supabase
 
 import com.bizilabs.streeek.lib.remote.helpers.PAGE_SIZE
+import com.bizilabs.streeek.lib.remote.models.AccountLightDTO
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -8,6 +9,16 @@ import kotlinx.serialization.Serializable
 data class GetTeamRequestDTO(
     @SerialName("p_team_id")
     val teamId: Long,
+    @SerialName("p_account_id")
+    val accountId: Long,
+    @SerialName("p_page")
+    val page: Int,
+    @SerialName("p_page_size")
+    val pageSize: Int = PAGE_SIZE,
+)
+
+@Serializable
+data class GetTeamAndMembersRequestDTO(
     @SerialName("p_account_id")
     val accountId: Long,
     @SerialName("p_page")
@@ -100,4 +111,10 @@ data class TeamMemberLevelDTO(
     val level_number: Long,
     val max_points: Long,
     val min_points: Long,
+)
+
+@Serializable
+data class TeamAndMembersDTO(
+    val team: TeamDTO,
+    val members: List<AccountLightDTO>?,
 )

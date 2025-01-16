@@ -3,8 +3,12 @@ package com.bizilabs.streeek.feature.tabs
 import android.app.Activity
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -66,32 +70,39 @@ fun TabsScreenContent(
             NavigationBar(
                 containerColor = MaterialTheme.colorScheme.surface,
             ) {
-                Tabs.entries.forEach { item ->
-                    NavigationBarItem(
-                        colors =
-                            NavigationBarItemDefaults.colors(
-                                indicatorColor = Color.Transparent,
-                                selectedIconColor = MaterialTheme.colorScheme.primary,
-                                unselectedIconColor = MaterialTheme.colorScheme.onSurface.copy(0.25f),
-                            ),
-                        selected = item == state.tab,
-                        icon = {
-                            Icon(
-                                imageVector = if (item == state.tab) item.icon.second else item.icon.first,
-                                contentDescription = item.label,
+                Column(modifier = Modifier.fillMaxWidth()) {
+                    HorizontalDivider()
+                    Row(modifier = Modifier.fillMaxWidth()) {
+                        Tabs.entries.forEach { item ->
+                            NavigationBarItem(
+                                colors =
+                                NavigationBarItemDefaults.colors(
+                                    indicatorColor = Color.Transparent,
+                                    selectedIconColor = MaterialTheme.colorScheme.primary,
+                                    unselectedIconColor = MaterialTheme.colorScheme.onSurface.copy(
+                                        0.25f
+                                    ),
+                                ),
+                                selected = item == state.tab,
+                                icon = {
+                                    Icon(
+                                        imageVector = if (item == state.tab) item.icon.second else item.icon.first,
+                                        contentDescription = item.label,
+                                    )
+                                },
+                                onClick = { onValueChangeTab(item) },
                             )
-                        },
-                        onClick = { onValueChangeTab(item) },
-                    )
+                        }
+                    }
                 }
             }
         },
     ) { paddingValues ->
         AnimatedContent(
             modifier =
-                Modifier
-                    .padding(paddingValues)
-                    .fillMaxSize(),
+            Modifier
+                .padding(paddingValues)
+                .fillMaxSize(),
             targetState = state.tab,
             label = "animated_tabs",
         ) { tab ->

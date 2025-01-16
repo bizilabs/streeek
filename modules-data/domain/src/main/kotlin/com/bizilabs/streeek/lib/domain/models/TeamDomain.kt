@@ -133,3 +133,8 @@ data class TeamMemberLevelDomain(
     val maxPoints: Long,
     val minPoints: Long,
 )
+
+data class TeamAndMembersDomain(
+    val team: TeamDomain,
+    val members: List<AccountLightDomain>
+)

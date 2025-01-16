@@ -6,15 +6,16 @@ import com.bizilabs.streeek.lib.remote.helpers.asJsonObject
 import com.bizilabs.streeek.lib.remote.helpers.safeSupabaseCall
 import com.bizilabs.streeek.lib.remote.models.supabase.AccountTeamRequestDTO
 import com.bizilabs.streeek.lib.remote.models.supabase.CreateTeamRequestDTO
+import com.bizilabs.streeek.lib.remote.models.supabase.GetTeamAndMembersRequestDTO
 import com.bizilabs.streeek.lib.remote.models.supabase.GetTeamRequestDTO
 import com.bizilabs.streeek.lib.remote.models.supabase.JoinTeamInvitationDTO
 import com.bizilabs.streeek.lib.remote.models.supabase.JoinTeamInvitationRequestDTO
+import com.bizilabs.streeek.lib.remote.models.supabase.TeamAndMembersDTO
 import com.bizilabs.streeek.lib.remote.models.supabase.TeamWithDetailDTO
 import com.bizilabs.streeek.lib.remote.models.supabase.TeamWithMembersDTO
 import com.bizilabs.streeek.lib.remote.models.supabase.UpdateTeamRequestDTO
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.postgrest.postgrest
-import io.github.jan.supabase.postgrest.rpc
 
 interface TeamRemoteSource {
     suspend fun getAccountTeams(accountId: Long): NetworkResult<List<TeamWithDetailDTO>>
@@ -28,6 +29,11 @@ interface TeamRemoteSource {
         accountId: Long,
         page: Int,
     ): NetworkResult<TeamWithMembersDTO>
+
+    suspend fun fetchTeamAndMembers(
+        accountId: Long,
+        page: Int
+    ): NetworkResult<List<TeamAndMembersDTO>>
 
     suspend fun joinTeam(
         accountId: Long,
@@ -78,6 +84,20 @@ internal class TeamRemoteSourceImpl(
                 )
             true
         }
+
+    override suspend fun fetchTeamAndMembers(
+        accountId: Long,
+        page: Int
+    ): NetworkResult<List<TeamAndMembersDTO>> = safeSupabaseCall {
+        val parameters =
+            GetTeamAndMembersRequestDTO(accountId = accountId, page = page).asJsonObject()
+        supabase.postgrest
+            .rpc(
+                function = Supabase.Functions.Teams.GETANDMEMBERS,
+                parameters = parameters,
+            )
+            .decodeList()
+    }
 
     override suspend fun fetchTeam(
         teamId: Long,
