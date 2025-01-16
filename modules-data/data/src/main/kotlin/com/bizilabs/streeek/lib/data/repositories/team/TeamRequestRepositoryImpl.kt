@@ -34,4 +34,9 @@ class TeamRequestRepositoryImpl(
             }
         )
     }
+
+    override suspend fun cancelRequest(id: Long): DataResult<Boolean> {
+        return remoteSource.delete(id = id).asDataResult { it }
+    }
+
 }

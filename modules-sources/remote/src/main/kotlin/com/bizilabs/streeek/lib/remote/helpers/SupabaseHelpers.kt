@@ -20,6 +20,7 @@ internal object Supabase {
         const val CONTRIBUTIONS = "contributions"
         const val LEVELS = "levels"
         const val NOTIFICATIONS = "notifications"
+        const val TEAM_REQUESTS = "team_member_requests"
     }
 
     object Functions {
@@ -39,7 +40,8 @@ internal object Supabase {
             const val DELETE = "archive_team"
             const val GETANDMEMBERS = "get_teams_with_member_count_and_members"
             object MemberRequests {
-                val GetMyRequests = "get_my_member_requests"
+                const val GETMYREQUESTS = "get_my_member_requests"
+                const val PROCESSMYREQUEST = "process_single_member_request"
                 const val REQUESTTOJOINTEAM = "request_to_join_team"
             }
             object Invitations {

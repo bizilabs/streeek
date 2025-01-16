@@ -11,4 +11,7 @@ interface TeamRequestRepository {
     ): DataResult<Boolean>
 
     fun getMyRequests(): Flow<PagingData<MemberAccountRequestDomain>>
+
+    suspend fun cancelRequest(id: Long): DataResult<Boolean>
+
 }

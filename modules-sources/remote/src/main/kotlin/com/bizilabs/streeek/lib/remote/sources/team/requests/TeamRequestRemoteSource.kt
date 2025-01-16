@@ -5,10 +5,11 @@ import com.bizilabs.streeek.lib.remote.helpers.Supabase
 import com.bizilabs.streeek.lib.remote.helpers.asJsonObject
 import com.bizilabs.streeek.lib.remote.helpers.safeSupabaseCall
 import com.bizilabs.streeek.lib.remote.models.supabase.team.MemberAccountRequestDTO
-import com.bizilabs.streeek.lib.remote.models.supabase.team.TeamJoinRequestDTO
+import com.bizilabs.streeek.lib.remote.models.supabase.team.ProcessJoinRequestDTO
 import com.bizilabs.streeek.lib.remote.models.supabase.team.TeamMemberGetDTO
 import com.bizilabs.streeek.lib.remote.models.supabase.team.TeamMemberRequestDTO
 import io.github.jan.supabase.SupabaseClient
+import io.github.jan.supabase.postgrest.from
 import io.github.jan.supabase.postgrest.postgrest
 
 interface TeamRequestRemoteSource {
@@ -21,6 +22,15 @@ interface TeamRequestRemoteSource {
         accountId: Long,
         page: Int,
     ): NetworkResult<List<MemberAccountRequestDTO>>
+
+    suspend fun processAccountRequest(
+        requestId: Long,
+        accountId: Long,
+        status: String,
+    ): NetworkResult<Boolean>
+
+    suspend fun delete(id: Long): NetworkResult<Boolean>
+
 }
 
 class TeamRequestRemoteSourceImpl(
@@ -48,10 +58,39 @@ class TeamRequestRemoteSourceImpl(
                 TeamMemberGetDTO(accountId = accountId, page = page).asJsonObject()
             supabase.postgrest
                 .rpc(
-                    function = Supabase.Functions.Teams.MemberRequests.GetMyRequests,
+                    function = Supabase.Functions.Teams.MemberRequests.GETMYREQUESTS,
                     parameters = request,
                 )
                 .decodeList()
         }
+
+    override suspend fun processAccountRequest(
+        requestId: Long,
+        accountId: Long,
+        status: String,
+    ): NetworkResult<Boolean> = safeSupabaseCall {
+        val request =
+            ProcessJoinRequestDTO(
+                requestId = requestId,
+                accountId = accountId,
+                status = status
+            ).asJsonObject()
+        supabase.postgrest
+            .rpc(
+                function = Supabase.Functions.Teams.MemberRequests.PROCESSMYREQUEST,
+                parameters = request,
+            )
+        true
+    }
+
+    override suspend fun delete(id: Long): NetworkResult<Boolean> = safeSupabaseCall {
+        supabase
+            .from(Supabase.Tables.TEAM_REQUESTS)
+            .delete {
+                filter { eq("id", id) }
+            }
+        true
+    }
+
 }
 

@@ -34,8 +34,6 @@ import com.bizilabs.streeek.lib.common.components.paging.SafiPagingComponent
 import com.bizilabs.streeek.lib.common.models.FetchState
 import com.bizilabs.streeek.lib.design.components.SafiCircularProgressIndicator
 import com.bizilabs.streeek.lib.design.components.SafiRefreshBox
-import com.bizilabs.streeek.lib.design.helpers.onSuccess
-import com.bizilabs.streeek.lib.design.helpers.success
 import com.bizilabs.streeek.lib.domain.extensions.asCount
 import com.bizilabs.streeek.lib.domain.models.team.MemberAccountRequestDomain
 
@@ -44,7 +42,8 @@ import com.bizilabs.streeek.lib.domain.models.team.MemberAccountRequestDomain
 fun NotificationRequestsSection(
     state: NotificationsScreenState,
     data: LazyPagingItems<MemberAccountRequestDomain>,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onClickCancelRequest: (MemberAccountRequestDomain) -> Unit,
 ) {
     SafiRefreshBox(
         modifier = modifier,
@@ -106,10 +105,10 @@ fun NotificationRequestsSection(
                             })
                         }
                     }
-                    val requested = value.team.id in state.requestedTeamIds
+                    val requested = value.team.id in state.cancelledTeamIds
                     Button(
                         modifier = Modifier.padding(8.dp),
-                        onClick = { },
+                        onClick = { onClickCancelRequest(value) },
                         enabled = state.requestState == null && !requested,
                         colors = ButtonDefaults.buttonColors(
                             containerColor = MaterialTheme.colorScheme.error,

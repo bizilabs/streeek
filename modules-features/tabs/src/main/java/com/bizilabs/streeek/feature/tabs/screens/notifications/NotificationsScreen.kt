@@ -52,7 +52,8 @@ object NotificationsScreen : Screen {
             notifications = notifications,
             requests = requests,
             onClickNotification = {},
-            onClickSection = screenModel::onClickSection
+            onClickSection = screenModel::onClickSection,
+            onClickCancelRequest = screenModel::onClickCancelRequest
         )
     }
 }
@@ -64,7 +65,8 @@ fun NotificationsScreenContent(
     notifications: LazyPagingItems<NotificationDomain>,
     requests: LazyPagingItems<MemberAccountRequestDomain>,
     onClickNotification: (NotificationDomain) -> Unit,
-    onClickSection: (NotificationSection) -> Unit = {},
+    onClickSection: (NotificationSection) -> Unit,
+    onClickCancelRequest: (MemberAccountRequestDomain) -> Unit
 ) {
     Scaffold(
         topBar = {
@@ -95,6 +97,7 @@ fun NotificationsScreenContent(
                         modifier = Modifier.fillMaxSize(),
                         state = state,
                         data = requests,
+                        onClickCancelRequest = onClickCancelRequest
                     )
                 }
             }

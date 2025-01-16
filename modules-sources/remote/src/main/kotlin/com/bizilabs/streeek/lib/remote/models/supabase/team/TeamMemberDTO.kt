@@ -20,6 +20,13 @@ data class TeamMemberGetDTO(
 )
 
 @Serializable
+data class ProcessJoinRequestDTO(
+    @SerialName("p_request_id") val requestId: Long,
+    @SerialName("p_account_id") val accountId: Long,
+    @SerialName("p_status") val status: String,
+)
+
+@Serializable
 data class TeamJoinRequestDTO(
     val id: Long,
     val status: String,
