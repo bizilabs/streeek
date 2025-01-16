@@ -1,0 +1,10 @@
+# Code owners for specific areas of the repository
+/modules-conventions/*  @kibettheophilus @MamboBryan
+/modules-sources/* @kibettheophilus @bensalcie
+/modules-data/* @kibettheophilus @bensalcie
+/modules-ui/* @janewaitara @MamboBryan
+/modules-features/*  @janewaitara @MamboBryan
+/modules-app/*  @janewaitara @MamboBryan
+
+# Default owners for all other files
+* @MamboBryan @kibettheophilus @janewaitara @bensalcie
