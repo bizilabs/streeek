@@ -47,6 +47,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - crashing on leaderboard screen
 
+## [0.0.6] - 2025-01-16
+
+### Fixed
+- Removed the daily leaderboard
+
 [unreleased]: https://github.com/bizilabs/streeek/compare/0.0.5...HEAD
 [0.0.5]: https://github.com/bizilabs/streeek/releases/v0.0.4...v0.0.5
 [0.0.4]: https://github.com/bizilabs/streeek/releases/v0.0.3...v0.0.4
