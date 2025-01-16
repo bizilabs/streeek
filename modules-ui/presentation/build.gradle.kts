@@ -22,7 +22,6 @@ dependencies {
     implementation(projects.modulesFeatures.setup)
     implementation(projects.modulesFeatures.profile)
     implementation(projects.modulesFeatures.team)
-    implementation(projects.modulesFeatures.notifications)
     implementation(projects.modulesFeatures.issues)
     implementation(projects.modulesFeatures.issue)
     implementation(projects.modulesFeatures.leaderboard)

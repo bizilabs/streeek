@@ -16,7 +16,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.IconButton
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material.icons.rounded.CalendarMonth
 import androidx.compose.material.icons.rounded.CalendarViewWeek
 import androidx.compose.material.icons.rounded.LocalFireDepartment
@@ -45,12 +44,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import cafe.adriel.voyager.core.registry.rememberScreen
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.getScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import com.bizilabs.streeek.feature.tabs.screens.feed.components.ContributionItemComponent
-import com.bizilabs.streeek.lib.common.navigation.SharedScreen
 import com.bizilabs.streeek.lib.design.components.SafiCenteredColumn
 import com.bizilabs.streeek.lib.design.components.SafiCenteredRow
 import com.bizilabs.streeek.lib.design.components.SafiInfoSection
@@ -71,7 +68,6 @@ object FeedScreen : Screen {
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.current
-        val screenNotifications = rememberScreen(SharedScreen.Notifications)
 
         val screenModel: FeedScreenModel = getScreenModel()
         val state by screenModel.state.collectAsStateWithLifecycle()
@@ -85,7 +81,6 @@ object FeedScreen : Screen {
             onClickDate = screenModel::onClickDate,
             onRefreshContributions = screenModel::onRefreshContributions,
             onClickToggleMonthView = screenModel::onClickToggleMonthView,
-            onClosesNotifications = { navigator?.push(screenNotifications) },
         )
     }
 }
@@ -99,7 +94,6 @@ fun FeedScreenContent(
     onClickDate: (LocalDate) -> Unit,
     onRefreshContributions: () -> Unit,
     onClickToggleMonthView: () -> Unit,
-    onClosesNotifications: () -> Unit,
 ) {
     val pullRefreshState =
         rememberPullRefreshState(
@@ -115,7 +109,6 @@ fun FeedScreenContent(
                         selectedDate = date,
                         state = state,
                         onClickToggleMonthView = onClickToggleMonthView,
-                        onClickNotifications = onClosesNotifications,
                     )
                     AnimatedContent(
                         modifier = Modifier.fillMaxWidth(),
@@ -405,7 +398,6 @@ private fun FeedHeader(
     selectedDate: LocalDate,
     state: FeedScreenState,
     onClickToggleMonthView: () -> Unit,
-    onClickNotifications: () -> Unit,
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -443,15 +435,5 @@ private fun FeedHeader(
             )
         }
 
-        IconButton(
-            modifier = Modifier.padding(end = 16.dp),
-            onClick = onClickNotifications,
-        ) {
-            Icon(
-                imageVector = Icons.Outlined.Notifications,
-                contentDescription = "notifications",
-                tint = MaterialTheme.colorScheme.onBackground,
-            )
-        }
     }
 }

@@ -5,36 +5,37 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.EmojiEvents
 import androidx.compose.material.icons.outlined.Explore
 import androidx.compose.material.icons.outlined.Leaderboard
+import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material.icons.outlined.PeopleAlt
 import androidx.compose.material.icons.rounded.EmojiEvents
 import androidx.compose.material.icons.rounded.Explore
 import androidx.compose.material.icons.rounded.Leaderboard
+import androidx.compose.material.icons.rounded.Notifications
 import androidx.compose.material.icons.rounded.PeopleAlt
 import androidx.compose.ui.graphics.vector.ImageVector
 import cafe.adriel.voyager.core.model.StateScreenModel
-import cafe.adriel.voyager.core.model.screenModelScope
 import com.bizilabs.streeek.feature.tabs.screens.achievements.AchievementsModule
 import com.bizilabs.streeek.feature.tabs.screens.feed.FeedModule
 import com.bizilabs.streeek.feature.tabs.screens.leaderboard.LeaderboardModule
+import com.bizilabs.streeek.feature.tabs.screens.notifications.ModuleNotifications
 import com.bizilabs.streeek.feature.tabs.screens.teams.TeamsListModule
-import com.bizilabs.streeek.lib.domain.repositories.LeaderboardRepository
-import com.bizilabs.streeek.lib.domain.workers.startImmediateSyncLeaderboardWork
 import com.bizilabs.streeek.lib.domain.workers.startPeriodicAccountSyncWork
 import com.bizilabs.streeek.lib.domain.workers.startPeriodicDailySyncContributionsWork
+import com.bizilabs.streeek.lib.domain.workers.startPeriodicLeaderboardSyncWork
 import com.bizilabs.streeek.lib.domain.workers.startPeriodicLevelsSyncWork
 import com.bizilabs.streeek.lib.domain.workers.startPeriodicTeamsSyncWork
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 import org.koin.dsl.module
-import timber.log.Timber
 
 val FeatureTabsModule =
     module {
         factory {
-            TabsScreenModel(context = get(), leaderboardRepository = get())
+            TabsScreenModel(context = get())
         }
-        includes(LeaderboardModule, FeedModule, AchievementsModule, TeamsListModule)
+        includes(
+            LeaderboardModule, FeedModule, AchievementsModule, TeamsListModule,
+            ModuleNotifications
+        )
     }
 
 enum class Tabs {
@@ -42,6 +43,7 @@ enum class Tabs {
     TEAMS,
     FEED,
     ACHIEVEMENTS,
+    NOTIFICATIONS,
     ;
 
     val icon: Pair<ImageVector, ImageVector>
@@ -51,6 +53,7 @@ enum class Tabs {
                 LEADERBOARD -> Pair(Icons.Outlined.Leaderboard, Icons.Rounded.Leaderboard)
                 TEAMS -> Pair(Icons.Outlined.PeopleAlt, Icons.Rounded.PeopleAlt)
                 ACHIEVEMENTS -> Pair(Icons.Outlined.EmojiEvents, Icons.Rounded.EmojiEvents)
+                NOTIFICATIONS -> Pair(Icons.Outlined.Notifications, Icons.Rounded.Notifications)
             }
 
     val label: String
@@ -60,6 +63,7 @@ enum class Tabs {
                 LEADERBOARD -> "Leaderboard"
                 TEAMS -> "Teams"
                 ACHIEVEMENTS -> "Achievements"
+                NOTIFICATIONS -> "Notifications"
             }
 }
 
@@ -70,19 +74,9 @@ data class TabsScreenState(
 
 class TabsScreenModel(
     private val context: Context,
-    private val leaderboardRepository: LeaderboardRepository,
 ) : StateScreenModel<TabsScreenState>(TabsScreenState()) {
     init {
         startWorkers()
-        observeLeaderboard()
-    }
-
-    private fun observeLeaderboard() {
-        screenModelScope.launch {
-            leaderboardRepository.leaderboards.collectLatest { map ->
-                Timber.d("Kawabanga -> $map")
-            }
-        }
     }
 
     private fun startWorkers() {
@@ -90,7 +84,7 @@ class TabsScreenModel(
             startPeriodicTeamsSyncWork()
             startPeriodicLevelsSyncWork()
             startPeriodicAccountSyncWork()
-            startImmediateSyncLeaderboardWork()
+            startPeriodicLeaderboardSyncWork()
             startPeriodicDailySyncContributionsWork()
         }
     }
