@@ -4,9 +4,12 @@ import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.bizilabs.streeek.lib.local.models.LeaderboardCache
 import com.bizilabs.streeek.lib.local.sources.preference.PreferenceSource
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.mapLatest
+import kotlinx.coroutines.launch
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
@@ -46,6 +49,24 @@ internal class LeaderboardLocalSourceImpl(
             source.getNullable(key = leaderboardsKey).mapLatest { json ->
                 json?.let { Json.decodeFromString(it) } ?: emptyMap()
             }
+
+    init {
+        CoroutineScope(Dispatchers.IO).launch {
+            deleteDaily()
+        }
+    }
+
+    /***
+     * Due to the delayed syncing issue, we are removing the Daily leaderboard from the app.
+     * We have to factor in locally cached data for the the users who had installed the app
+     * before the change. [deleteDaily] removes the cached daily data and should be removed
+     * when all users update their app version v.0.0.6 and above.
+     * */
+    private suspend fun deleteDaily() {
+        val map = getMutableMap()
+        map.remove("DAILY")
+        saveMutableMap(map)
+    }
 
     private suspend fun getMutableMap() = leaderboards.first().toMutableMap()
 
