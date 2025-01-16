@@ -39,6 +39,7 @@ internal object Supabase {
             const val DELETE = "archive_team"
             const val GETANDMEMBERS = "get_teams_with_member_count_and_members"
             object MemberRequests {
+                val GetMyRequests = "get_my_member_requests"
                 const val REQUESTTOJOINTEAM = "request_to_join_team"
             }
             object Invitations {
