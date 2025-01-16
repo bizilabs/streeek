@@ -1,7 +1,6 @@
 package com.bizilabs.streeek.lib.domain.models
 
 enum class Leaderboard {
-    DAILY,
     WEEKLY,
     MONTHLY,
     ULTIMATE,

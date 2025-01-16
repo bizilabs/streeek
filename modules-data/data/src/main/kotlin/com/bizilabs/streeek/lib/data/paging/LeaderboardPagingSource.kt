@@ -45,12 +45,6 @@ class LeaderboardPagingSource(
 
         val result =
             when (Leaderboard.valueOf(leaderboard.name.uppercase())) {
-                Leaderboard.DAILY ->
-                    leaderboardRemoteSource.fetchDailyLeaderboard(
-                        accountId = accountId,
-                        page = page,
-                    )
-
                 Leaderboard.WEEKLY ->
                     leaderboardRemoteSource.fetchWeeklyLeaderboard(
                         accountId = accountId,

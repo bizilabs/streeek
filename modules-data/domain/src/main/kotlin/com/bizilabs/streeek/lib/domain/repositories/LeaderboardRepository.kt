@@ -17,8 +17,6 @@ interface LeaderboardRepository {
 
     suspend fun getPagedData(leaderboard: LeaderboardDomain): Flow<PagingData<LeaderboardAccountDomain>>
 
-    suspend fun getDaily(page: Int): DataResult<LeaderboardDomain>
-
     suspend fun getWeekly(page: Int): DataResult<LeaderboardDomain>
 
     suspend fun getMonthly(page: Int): DataResult<LeaderboardDomain>

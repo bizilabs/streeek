@@ -55,12 +55,6 @@ internal class LeaderboardRepositoryImpl(
         ).flow
     }
 
-    override suspend fun getDaily(page: Int): DataResult<LeaderboardDomain> {
-        val accountId = getAccountId() ?: return DataResult.Error("Couldn't find account")
-        return remoteSource.fetchDailyLeaderboard(accountId = accountId, page = page)
-            .asDataResult { it.toDomain(name = Leaderboard.DAILY.name, page = page) }
-    }
-
     override suspend fun getWeekly(page: Int): DataResult<LeaderboardDomain> {
         val accountId = getAccountId() ?: return DataResult.Error("Couldn't find account")
         return remoteSource.fetchWeeklyLeaderboard(accountId = accountId, page = page)

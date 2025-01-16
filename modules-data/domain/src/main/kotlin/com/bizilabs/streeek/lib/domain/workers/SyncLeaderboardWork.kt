@@ -70,12 +70,6 @@ class SyncLeaderboardWork(
     override suspend fun doWork(): Result {
         repository.setIsSyncing(isSyncing = true)
         val cached = repository.leaderboards.first().toMutableMap()
-        // sync daily leaderboard
-        val dailyResult = repository.getDaily(page = 1)
-        if (dailyResult is DataResult.Error) return getWorkerResult()
-        val daily = (dailyResult as DataResult.Success).data
-        val dailyUpdate = cached[daily.name]?.updateOrCreate(value = daily) ?: daily
-        repository.update(leaderboard = dailyUpdate)
         // sync weekly leaderboard
         val weeklyResult = repository.getWeekly(page = 1)
         if (weeklyResult is DataResult.Error) return getWorkerResult()
@@ -96,7 +90,7 @@ class SyncLeaderboardWork(
         repository.update(leaderboard = ultimateUpdate)
         // set selected
         val selectedId = repository.selectedLeaderBoardId.firstOrNull()
-        val selected = cached[selectedId] ?: dailyUpdate
+        val selected = cached[selectedId] ?: weeklyUpdate
         repository.set(leaderboard = selected)
         // finish
         repository.setIsSyncing(isSyncing = false)
