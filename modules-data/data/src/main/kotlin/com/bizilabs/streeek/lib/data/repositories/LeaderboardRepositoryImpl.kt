@@ -75,7 +75,7 @@ internal class LeaderboardRepositoryImpl(
 
     override suspend fun getUltimate(page: Int): DataResult<LeaderboardDomain> {
         val accountId = getAccountId() ?: return DataResult.Error("Couldn't find account")
-        return remoteSource.fetchMonthlyLeaderboard(accountId = accountId, page = page)
+        return remoteSource.fetchUltimateLeaderboard(accountId = accountId, page = page)
             .asDataResult { it.toDomain(name = Leaderboard.ULTIMATE.name, page = page) }
     }
 
