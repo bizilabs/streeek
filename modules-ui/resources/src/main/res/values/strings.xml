@@ -5,4 +5,5 @@
     <string name="select_team_visibility">Select Team Visiblity</string>
     <string name="no_issues_found">No Issues found! </string>
     <string name="message_no_issues">We couldn\'t find any issues matching your criteria, try something else</string>
+    <string name="invalid_team_name">Name can\'t have uppercase, space, symbols and length should be more than 4</string>
 </resources>
