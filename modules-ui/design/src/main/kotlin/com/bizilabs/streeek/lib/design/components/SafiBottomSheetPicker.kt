@@ -2,6 +2,7 @@ package com.bizilabs.streeek.lib.design.components
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -37,6 +38,7 @@ fun <T : Any> SafiBottomSheetPicker(
             hideSheet()
             onDismiss()
         },
+        containerColor = MaterialTheme.colorScheme.surface,
     ) {
         SafiColumnPicker(
             title = title,
