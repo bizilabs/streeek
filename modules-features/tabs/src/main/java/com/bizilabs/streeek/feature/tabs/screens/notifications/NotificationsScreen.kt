@@ -18,7 +18,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -72,12 +71,12 @@ fun NotificationsScreenContent(
         topBar = {
             NotificationsScreenHeader(
                 state = state,
-                modifier = Modifier.fillMaxWidth(),
                 onClickSection = onClickSection
             )
         },
     ) { innerPadding ->
         AnimatedContent(
+            label = "animate notification section",
             modifier = Modifier
                 .fillMaxSize()
                 .padding(top = innerPadding.calculateTopPadding()),
@@ -110,19 +109,16 @@ fun NotificationsScreenContent(
 @Composable
 fun NotificationsScreenHeader(
     state: NotificationsScreenState,
-    modifier: Modifier = Modifier,
     onClickSection: (NotificationSection) -> Unit,
 ) {
-    Surface(modifier = modifier) {
-        Column(modifier = Modifier.fillMaxWidth()) {
-            TopAppBar(
-                title = {
-                    SafiTopBarHeader(
-                        modifier = Modifier.fillMaxWidth(),
-                        title = stringResource(SafiStrings.Labels.Notifications),
-                        align = TextAlign.Center
-                    )
-                },
+    Surface {
+        Column {
+            SafiTopBarHeader(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 16.dp),
+                title = stringResource(SafiStrings.Labels.Notifications),
+                align = TextAlign.Center
             )
             TabRow(
                 modifier = Modifier.fillMaxWidth(),
@@ -135,7 +131,9 @@ fun NotificationsScreenHeader(
                         selected = isSelected,
                         onClick = { onClickSection(section) },
                         selectedContentColor = MaterialTheme.colorScheme.primary,
-                        unselectedContentColor = MaterialTheme.colorScheme.onSurface.copy(0.25f),
+                        unselectedContentColor = MaterialTheme.colorScheme.onSurface.copy(
+                            0.25f
+                        ),
                     ) {
                         SafiCenteredRow(modifier = Modifier.padding(16.dp)) {
                             Icon(
