@@ -32,7 +32,7 @@ interface TeamRemoteSource {
 
     suspend fun fetchTeamAndMembers(
         accountId: Long,
-        page: Int
+        page: Int,
     ): NetworkResult<List<TeamAndMembersDTO>>
 
     suspend fun joinTeam(
@@ -87,17 +87,18 @@ internal class TeamRemoteSourceImpl(
 
     override suspend fun fetchTeamAndMembers(
         accountId: Long,
-        page: Int
-    ): NetworkResult<List<TeamAndMembersDTO>> = safeSupabaseCall {
-        val parameters =
-            GetTeamAndMembersRequestDTO(accountId = accountId, page = page).asJsonObject()
-        supabase.postgrest
-            .rpc(
-                function = Supabase.Functions.Teams.GETANDMEMBERS,
-                parameters = parameters,
-            )
-            .decodeList()
-    }
+        page: Int,
+    ): NetworkResult<List<TeamAndMembersDTO>> =
+        safeSupabaseCall {
+            val parameters =
+                GetTeamAndMembersRequestDTO(accountId = accountId, page = page).asJsonObject()
+            supabase.postgrest
+                .rpc(
+                    function = Supabase.Functions.Teams.GETANDMEMBERS,
+                    parameters = parameters,
+                )
+                .decodeList()
+        }
 
     override suspend fun fetchTeam(
         teamId: Long,

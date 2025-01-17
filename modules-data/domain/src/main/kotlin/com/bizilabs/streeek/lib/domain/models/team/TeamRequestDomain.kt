@@ -6,16 +6,16 @@ import com.bizilabs.streeek.lib.domain.models.TeamDomain
 data class TeamJoinRequestDomain(
     val id: Long,
     val status: String,
-    val createdAt: String
+    val createdAt: String,
 )
 
 data class MemberAccountRequestDomain(
     val request: TeamJoinRequestDomain,
     val team: TeamDomain,
-    val members: List<AccountLightDomain>
+    val members: List<AccountLightDomain>,
 )
 
 data class TeamAccountJoinRequestDomain(
     val request: TeamJoinRequestDomain,
-    val account: AccountLightDomain
+    val account: AccountLightDomain,
 )

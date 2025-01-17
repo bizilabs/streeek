@@ -11,15 +11,12 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
-import androidx.compose.material.icons.rounded.People
 import androidx.compose.material.icons.rounded.TransitEnterexit
-import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -40,8 +37,6 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import com.bizilabs.streeek.feature.tabs.screens.teams.components.TeamComponent
 import com.bizilabs.streeek.feature.tabs.screens.teams.components.TeamEmptyListSection
 import com.bizilabs.streeek.lib.common.navigation.SharedScreen
-import com.bizilabs.streeek.lib.design.components.SafiCenteredColumn
-import com.bizilabs.streeek.lib.design.components.SafiInfoSection
 import com.bizilabs.streeek.lib.design.components.SafiRefreshBox
 import com.bizilabs.streeek.lib.domain.models.TeamAndMembersDomain
 import com.bizilabs.streeek.lib.domain.models.TeamDetailsDomain
@@ -110,12 +105,13 @@ fun TeamsListScreenContent(
             when {
                 state.teams.isEmpty() -> {
                     TeamEmptyListSection(
-                        modifier = Modifier.fillMaxSize()
-                            .padding(top = innerPadding.calculateTopPadding()),
+                        modifier =
+                            Modifier.fillMaxSize()
+                                .padding(top = innerPadding.calculateTopPadding()),
                         state = state,
                         availableTeams = availableTeams,
                         onClickTeamRequest = onClickTeamRequest,
-                        onClickCreateTeam = onClickMenuCreateTeam
+                        onClickCreateTeam = onClickMenuCreateTeam,
                     )
                 }
                 else -> {

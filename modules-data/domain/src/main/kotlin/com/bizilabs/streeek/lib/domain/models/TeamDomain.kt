@@ -136,5 +136,5 @@ data class TeamMemberLevelDomain(
 
 data class TeamAndMembersDomain(
     val team: TeamDomain,
-    val members: List<AccountLightDomain>
+    val members: List<AccountLightDomain>,
 )

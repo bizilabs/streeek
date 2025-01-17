@@ -8,25 +8,29 @@ import com.bizilabs.streeek.lib.remote.models.supabase.team.MemberAccountRequest
 import com.bizilabs.streeek.lib.remote.models.supabase.team.TeamAccountJoinRequestDTO
 import com.bizilabs.streeek.lib.remote.models.supabase.team.TeamJoinRequestDTO
 
-fun TeamJoinRequestDTO.toDomain() = TeamJoinRequestDomain(
-    id = id,
-    status = status,
-    createdAt = createdAt
-)
+fun TeamJoinRequestDTO.toDomain() =
+    TeamJoinRequestDomain(
+        id = id,
+        status = status,
+        createdAt = createdAt,
+    )
 
-fun TeamJoinRequestDomain.toDTO() = TeamJoinRequestDTO(
-    id = id,
-    status = status,
-    createdAt = createdAt
-)
+fun TeamJoinRequestDomain.toDTO() =
+    TeamJoinRequestDTO(
+        id = id,
+        status = status,
+        createdAt = createdAt,
+    )
 
-fun MemberAccountRequestDTO.toDomain() = MemberAccountRequestDomain(
-    request = request.toDomain(),
-    team = team.toDomain(),
-    members = members?.map { it.toDomain() } ?: emptyList()
-)
+fun MemberAccountRequestDTO.toDomain() =
+    MemberAccountRequestDomain(
+        request = request.toDomain(),
+        team = team.toDomain(),
+        members = members?.map { it.toDomain() } ?: emptyList(),
+    )
 
-fun TeamAccountJoinRequestDTO.toDomain() = TeamAccountJoinRequestDomain(
-    request = request.toDomain(),
-    account = account.toDomain()
-)
+fun TeamAccountJoinRequestDTO.toDomain() =
+    TeamAccountJoinRequestDomain(
+        request = request.toDomain(),
+        account = account.toDomain(),
+    )

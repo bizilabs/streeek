@@ -48,35 +48,38 @@ fun NotificationRequestsSection(
     SafiRefreshBox(
         modifier = modifier,
         isRefreshing = data.loadState.refresh is LoadState.Loading,
-        onRefresh = { data.refresh() }
+        onRefresh = { data.refresh() },
     ) {
         SafiPagingComponent(
             modifier = Modifier.fillMaxSize(),
-            data = data
+            data = data,
         ) { value ->
             Card(
-                modifier = Modifier
-                    .padding(vertical = 8.dp)
-                    .padding(horizontal = 16.dp),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.15f)
-                )
+                modifier =
+                    Modifier
+                        .padding(vertical = 8.dp)
+                        .padding(horizontal = 16.dp),
+                colors =
+                    CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.15f),
+                    ),
             ) {
                 Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    verticalAlignment = Alignment.CenterVertically
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
                             modifier = Modifier.padding(start = 8.dp),
                             text = value.team.name,
                             style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.Bold
+                            fontWeight = FontWeight.Bold,
                         )
                         Row(
-                            verticalAlignment = Alignment.CenterVertically
+                            verticalAlignment = Alignment.CenterVertically,
                         ) {
                             Box(modifier = Modifier.padding(8.dp)) {
                                 for (member in value.members) {
@@ -85,24 +88,28 @@ fun NotificationRequestsSection(
                                     Card(
                                         modifier = Modifier.padding(start = start),
                                         shape = CircleShape,
-                                        border = BorderStroke(
-                                            2.dp, MaterialTheme.colorScheme.onBackground
-                                        )
+                                        border =
+                                            BorderStroke(
+                                                2.dp,
+                                                MaterialTheme.colorScheme.onBackground,
+                                            ),
                                     ) {
                                         AsyncImage(
                                             model = member.avatarUrl,
                                             contentDescription = null,
-                                            modifier = Modifier.size(36.dp)
+                                            modifier = Modifier.size(36.dp),
                                         )
                                     }
                                 }
-
                             }
-                            Text(text = buildString {
-                                append(value.team.count)
-                                append(" ")
-                                append("member".asCount(value.team.count))
-                            })
+                            Text(
+                                text =
+                                    buildString {
+                                        append(value.team.count)
+                                        append(" ")
+                                        append("member".asCount(value.team.count))
+                                    },
+                            )
                         }
                     }
                     val requested = value.team.id in state.cancelledTeamIds
@@ -110,20 +117,21 @@ fun NotificationRequestsSection(
                         modifier = Modifier.padding(8.dp),
                         onClick = { onClickCancelRequest(value) },
                         enabled = state.requestState == null && !requested,
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.error,
-                            contentColor = MaterialTheme.colorScheme.onError
-                        )
+                        colors =
+                            ButtonDefaults.buttonColors(
+                                containerColor = MaterialTheme.colorScheme.error,
+                                contentColor = MaterialTheme.colorScheme.onError,
+                            ),
                     ) {
                         AnimatedContent(
                             label = "",
-                            targetState = state.requestState
+                            targetState = state.requestState,
                         ) { request ->
                             when (request) {
                                 null -> {
                                     Text(
                                         text = if (requested) "Cancelled" else "Cancel",
-                                        style = MaterialTheme.typography.labelSmall
+                                        style = MaterialTheme.typography.labelSmall,
                                     )
                                 }
 
@@ -135,14 +143,14 @@ fun NotificationRequestsSection(
                                                 is FetchState.Error -> {
                                                     Icon(
                                                         imageVector = Icons.Rounded.Error,
-                                                        contentDescription = ""
+                                                        contentDescription = "",
                                                     )
                                                 }
 
                                                 is FetchState.Success -> {
                                                     Icon(
                                                         imageVector = Icons.Rounded.CheckCircle,
-                                                        contentDescription = ""
+                                                        contentDescription = "",
                                                     )
                                                 }
                                             }
@@ -151,18 +159,16 @@ fun NotificationRequestsSection(
                                         else -> {
                                             Text(
                                                 text = if (requested) "Cancelled" else "Cancel",
-                                                style = MaterialTheme.typography.labelSmall
+                                                style = MaterialTheme.typography.labelSmall,
                                             )
                                         }
                                     }
                                 }
                             }
                         }
-
                     }
                 }
             }
         }
     }
-
 }

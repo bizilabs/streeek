@@ -431,6 +431,5 @@ private fun FeedHeader(
                 tint = MaterialTheme.colorScheme.onBackground,
             )
         }
-
     }
 }

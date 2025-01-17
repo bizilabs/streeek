@@ -9,8 +9,6 @@ import androidx.compose.material.icons.rounded.Edit
 import androidx.compose.material.icons.rounded.People
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.paging.PagingData
-import androidx.paging.compose.collectAsLazyPagingItems
-import androidx.paging.map
 import cafe.adriel.voyager.core.model.StateScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
 import com.bizilabs.streeek.lib.common.components.paging.getPagingDataLoading
@@ -33,6 +31,8 @@ import com.bizilabs.streeek.lib.domain.repositories.TeamInvitationRepository
 import com.bizilabs.streeek.lib.domain.repositories.TeamRepository
 import com.bizilabs.streeek.lib.domain.repositories.team.TeamRequestRepository
 import com.bizilabs.streeek.lib.domain.workers.startImmediateSyncTeamsWork
+import kotlinx.coroutines.InternalCoroutinesApi
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -41,11 +41,9 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.koin.dsl.module
-import timber.log.Timber
 
 val FeatureTeamModule =
     module {
@@ -54,14 +52,27 @@ val FeatureTeamModule =
                 context = get(),
                 teamRepository = get(),
                 teamInvitationRepository = get(),
-                teamRequestRepository = get()
+                teamRequestRepository = get(),
             )
         }
     }
 
+enum class TeamRequestAction {
+    ACCEPT,
+    REJECT,
+    ;
+
+    val value: String
+        get() =
+            when (this) {
+                ACCEPT -> "accepted"
+                REJECT -> "rejected"
+            }
+}
+
 enum class SelectionAction {
     SELECT_ALL,
-    CLEAR_ALL
+    CLEAR_ALL,
 }
 
 enum class TeamMenuAction {
@@ -99,6 +110,11 @@ enum class TeamMenuAction {
             }
 }
 
+data class ProcessRequestDomain(
+    val requestIds: List<Long>,
+    val fetchState: FetchState<Boolean> = FetchState.Loading,
+)
+
 data class TeamScreenState(
     val isSyncing: Boolean = false,
     val isEditing: Boolean = false,
@@ -122,7 +138,10 @@ data class TeamScreenState(
     val joinTeamState: FetchState<JoinTeamInvitationDomain>? = null,
     val team: TeamDetailsDomain? = null,
     val showConfetti: Boolean = false,
-    val selectedRequestIds: List<Long> = listOf()
+    val selectedRequestIds: List<Long> = listOf(),
+    val processingSingleRequestsState: Map<Long, FetchState<Boolean>> = emptyMap(),
+    val processingMultipleRequestsState: ProcessRequestDomain? = null,
+    val processedRequests: Map<String, List<Long>> = emptyMap(),
 ) {
     val isManagingTeam: Boolean
         get() = isEditing || teamId == null
@@ -138,11 +157,11 @@ data class TeamScreenState(
             if (fetchState is FetchState.Success) {
                 val team = fetchState.value.team
                 name.isNotBlank() && (
-                        !team.name.equals(
-                            name,
-                            ignoreCase = false,
-                        ) || team.public != isPublic
-                        )
+                    !team.name.equals(
+                        name,
+                        ignoreCase = false,
+                    ) || team.public != isPublic
+                )
             } else {
                 isValidName && value.isNotBlank()
             }
@@ -166,7 +185,7 @@ class TeamScreenModel(
     private val context: Context,
     private val teamRepository: TeamRepository,
     private val teamInvitationRepository: TeamInvitationRepository,
-    private val teamRequestRepository: TeamRequestRepository
+    private val teamRequestRepository: TeamRequestRepository,
 ) : StateScreenModel<TeamScreenState>(TeamScreenState()) {
     private var _pages = MutableStateFlow(getPagingDataLoading<TeamMemberDomain>())
     val pages: StateFlow<PagingData<TeamMemberDomain>> = _pages.asStateFlow()
@@ -178,6 +197,8 @@ class TeamScreenModel(
 
     private val clickedTeam =
         combine(teamRepository.teamId, teamRepository.teams) { id, map -> map[id] }
+
+    private var processJobs: Job? = null
 
     init {
         observeTeamsSyncing()
@@ -333,10 +354,10 @@ class TeamScreenModel(
                     mutableState.update {
                         it.copy(
                             dialogState =
-                            DialogState.Error(
-                                title = "Error",
-                                message = result.message,
-                            ),
+                                DialogState.Error(
+                                    title = "Error",
+                                    message = result.message,
+                                ),
                         )
                     }
                 }
@@ -347,10 +368,10 @@ class TeamScreenModel(
                             isJoining = false,
                             teamId = result.data.teamId,
                             dialogState =
-                            DialogState.Success(
-                                title = "Success",
-                                message = "Joined team successfully as a ${result.data.role}",
-                            ),
+                                DialogState.Success(
+                                    title = "Success",
+                                    message = "Joined team successfully as a ${result.data.role}",
+                                ),
                         )
                     }
                     getTeam(id = result.data.teamId, shouldSaveTeam = true)
@@ -370,10 +391,10 @@ class TeamScreenModel(
                     mutableState.update {
                         it.copy(
                             dialogState =
-                            DialogState.Error(
-                                title = "Error",
-                                message = result.message,
-                            ),
+                                DialogState.Error(
+                                    title = "Error",
+                                    message = result.message,
+                                ),
                         )
                     }
                 }
@@ -382,10 +403,10 @@ class TeamScreenModel(
                     mutableState.update {
                         it.copy(
                             dialogState =
-                            DialogState.Success(
-                                title = "Success",
-                                message = "Left team successfully. \nHope you come back soon!",
-                            ),
+                                DialogState.Success(
+                                    title = "Success",
+                                    message = "Left team successfully. \nHope you come back soon!",
+                                ),
                         )
                     }
                     delay(2000)
@@ -404,10 +425,10 @@ class TeamScreenModel(
                     mutableState.update {
                         it.copy(
                             dialogState =
-                            DialogState.Error(
-                                title = "Error",
-                                message = result.message,
-                            ),
+                                DialogState.Error(
+                                    title = "Error",
+                                    message = result.message,
+                                ),
                         )
                     }
                 }
@@ -416,10 +437,10 @@ class TeamScreenModel(
                     mutableState.update {
                         it.copy(
                             dialogState =
-                            DialogState.Success(
-                                title = "Success",
-                                message = "Team deleted successfully!",
-                            ),
+                                DialogState.Success(
+                                    title = "Success",
+                                    message = "Team deleted successfully!",
+                                ),
                             shouldNavigateBack = true,
                         )
                     }
@@ -448,9 +469,9 @@ class TeamScreenModel(
                         mutableState.update {
                             it.copy(
                                 invitationsState =
-                                FetchListState.Error(
-                                    message = result.message,
-                                ),
+                                    FetchListState.Error(
+                                        message = result.message,
+                                    ),
                             )
                         }
                         FetchState.Error(result.message)
@@ -621,7 +642,7 @@ class TeamScreenModel(
 
     fun onClickSelectedRequestsSelection(
         action: SelectionAction,
-        list: List<TeamAccountJoinRequestDomain>
+        list: List<TeamAccountJoinRequestDomain>,
     ) {
         when (action) {
             SelectionAction.SELECT_ALL -> selectAllRequests(list = list)
@@ -630,14 +651,128 @@ class TeamScreenModel(
     }
 
     @SuppressLint("CheckResult")
-    private fun selectAllRequests(
-        list: List<TeamAccountJoinRequestDomain>
-    ) {
+    private fun selectAllRequests(list: List<TeamAccountJoinRequestDomain>) {
         mutableState.update { it.copy(selectedRequestIds = list.map { it.request.id }) }
     }
 
     private fun clearAllSelectedRequests() {
         mutableState.update { it.copy(selectedRequestIds = listOf()) }
+    }
+
+    fun onClickProcessSelectedRequests(value: Boolean) {
+        val action =
+            when (value) {
+                true -> TeamRequestAction.ACCEPT
+                false -> TeamRequestAction.REJECT
+            }
+        processSelectedRequests(action = action)
+    }
+
+    private fun processSelectedRequests(action: TeamRequestAction) {
+        val selectedRequestIds = state.value.selectedRequestIds
+        if (selectedRequestIds.isEmpty()) return
+        val teamId = state.value.teamId ?: return
+        screenModelScope.launch {
+            mutableState.update {
+                it.copy(processingMultipleRequestsState = ProcessRequestDomain(requestIds = selectedRequestIds))
+            }
+            val result =
+                teamRequestRepository.processMultipleRequest(
+                    teamId = teamId,
+                    requestIds = selectedRequestIds,
+                    status = action.value,
+                )
+            when (result) {
+                is DataResult.Error -> {
+                    mutableState.update {
+                        it.copy(
+                            processingMultipleRequestsState =
+                                it.processingMultipleRequestsState?.copy(
+                                    fetchState =
+                                        FetchState.Error(result.message),
+                                ),
+                        )
+                    }
+                }
+
+                is DataResult.Success -> {
+                    mutableState.update {
+                        it.copy(
+                            processingMultipleRequestsState =
+                                it.processingMultipleRequestsState?.copy(
+                                    fetchState =
+                                        FetchState.Success(true),
+                                ),
+                        )
+                    }
+                }
+            }
+            delay(2000)
+            val fetchState = state.value.processingMultipleRequestsState?.fetchState
+            mutableState.update {
+                it.copy(processingMultipleRequestsState = null, selectedRequestIds = emptyList())
+            }
+            if (fetchState is FetchState.Success) {
+                val processed = state.value.processedRequests.toMutableMap()
+                val list = processed[action.value]?.toMutableList() ?: mutableListOf()
+                list.addAll(selectedRequestIds)
+                processed[action.value] = list
+                mutableState.update { it.copy(processedRequests = processed) }
+            }
+        }
+    }
+
+    fun onClickProcessRequest(
+        value: TeamAccountJoinRequestDomain,
+        action: TeamRequestAction,
+    ) {
+        processRequest(value = value, action = action)
+    }
+
+    private fun getMutableMap() = state.value.processingSingleRequestsState.toMutableMap()
+
+    @OptIn(InternalCoroutinesApi::class)
+    private fun processRequest(
+        value: TeamAccountJoinRequestDomain,
+        action: TeamRequestAction,
+    ) {
+        val teamId = state.value.teamId ?: return
+        screenModelScope.launch {
+            val map = getMutableMap()
+            map[value.request.id] = FetchState.Loading
+            mutableState.update { it.copy(processingSingleRequestsState = map) }
+            val result =
+                teamRequestRepository.processSingleRequest(
+                    teamId = teamId,
+                    requestId = value.request.id,
+                    status = action.value,
+                )
+            when (result) {
+                is DataResult.Error -> {
+                    val map = getMutableMap()
+                    map[value.request.id] = FetchState.Error(result.message)
+                    mutableState.update { it.copy(processingSingleRequestsState = map) }
+                }
+
+                is DataResult.Success -> {
+                    val map = getMutableMap()
+                    map[value.request.id] = FetchState.Success(true)
+                    mutableState.update { it.copy(processingSingleRequestsState = map) }
+                }
+            }
+            delay(2000)
+            val update = getMutableMap()
+            val fetchState = update[value.request.id]
+            update.remove(value.request.id)
+            if (fetchState is FetchState.Success) {
+                mutableState.update { it.copy(processingSingleRequestsState = update) }
+                val processed = state.value.processedRequests.toMutableMap()
+                val list = processed[action.value]?.toMutableList() ?: mutableListOf()
+                list.add(value.request.id)
+                processed[action.value] = list
+                mutableState.update { it.copy(processedRequests = processed) }
+            }
+        }
     }
 
     // </editor-fold>

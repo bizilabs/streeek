@@ -33,10 +33,10 @@ fun NotificationItemComponent(
         onClick = { onClickNotification(notification) },
         shape = RectangleShape,
         colors =
-        CardDefaults.cardColors(
-            contentColor = MaterialTheme.colorScheme.onBackground,
-            containerColor = containerColor,
-        ),
+            CardDefaults.cardColors(
+                contentColor = MaterialTheme.colorScheme.onBackground,
+                containerColor = containerColor,
+            ),
     ) {
         Column(modifier = Modifier.fillMaxWidth()) {
             Column(modifier = Modifier.padding(16.dp)) {

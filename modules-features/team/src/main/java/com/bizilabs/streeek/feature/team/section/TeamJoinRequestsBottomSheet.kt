@@ -1,6 +1,6 @@
 package com.bizilabs.streeek.feature.team.section
 
-import android.R.attr.data
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -15,8 +15,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.CheckCircle
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.DoneAll
+import androidx.compose.material.icons.rounded.Error
 import androidx.compose.material.icons.rounded.Inbox
 import androidx.compose.material.icons.rounded.Refresh
 import androidx.compose.material3.Button
@@ -47,9 +49,12 @@ import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import coil.compose.AsyncImage
 import com.bizilabs.streeek.feature.team.SelectionAction
+import com.bizilabs.streeek.feature.team.TeamRequestAction
 import com.bizilabs.streeek.feature.team.TeamScreenState
 import com.bizilabs.streeek.lib.common.components.paging.SafiPagingComponent
+import com.bizilabs.streeek.lib.common.models.FetchState
 import com.bizilabs.streeek.lib.design.components.SafiCenteredColumn
+import com.bizilabs.streeek.lib.design.components.SafiCircularProgressIndicator
 import com.bizilabs.streeek.lib.design.components.SafiInfoSection
 import com.bizilabs.streeek.lib.design.components.SafiTopBarHeader
 import com.bizilabs.streeek.lib.design.helpers.onSuccess
@@ -67,6 +72,7 @@ fun TeamJoinRequestsBottomSheet(
     onClickToggleSelectRequest: (TeamAccountJoinRequestDomain) -> Unit,
     onClickProcessSelectedRequests: (Boolean) -> Unit,
     onClickSelectedRequestsSelection: (SelectionAction, List<TeamAccountJoinRequestDomain>) -> Unit,
+    onClickProcessRequest: (TeamAccountJoinRequestDomain, TeamRequestAction) -> Unit,
 ) {
     val scope = rememberCoroutineScope()
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
@@ -86,166 +92,191 @@ fun TeamJoinRequestsBottomSheet(
                         IconButton(onClick = onDismissSheet) {
                             Icon(
                                 imageVector = Icons.Rounded.Close,
-                                contentDescription = "close sheet"
+                                contentDescription = "close sheet",
                             )
                         }
                     },
                     title = {
                         SafiTopBarHeader(
                             title = state.team?.team?.name ?: "",
-                            subtitle = "Join Team Requests"
+                            subtitle = "Join Team Requests",
                         )
                     },
                     actions = {
                         IconButton(
                             onClick = { data.refresh() },
-                            enabled = data.loadState.refresh is LoadState.NotLoading
+                            enabled = data.loadState.refresh is LoadState.NotLoading,
                         ) {
                             Icon(
                                 imageVector = Icons.Rounded.Refresh,
-                                contentDescription = "refresh requests"
+                                contentDescription = "refresh requests",
                             )
                         }
-                    }
+                    },
                 )
-            }
+            },
         ) { innerPadding ->
             Column(
-                modifier = Modifier
-                    .padding(innerPadding)
-                    .fillMaxSize()
+                modifier =
+                    Modifier
+                        .padding(innerPadding)
+                        .fillMaxSize(),
             ) {
                 AnimatedVisibility(
                     modifier = Modifier.fillMaxWidth(),
-                    visible = state.selectedRequestIds.isNotEmpty()
+                    visible = state.selectedRequestIds.isNotEmpty(),
                 ) {
                     Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 16.dp, vertical = 8.dp),
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 16.dp, vertical = 8.dp),
                         verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween
+                        horizontalArrangement = Arrangement.SpaceBetween,
                     ) {
                         Text(text = "${state.selectedRequestIds.size} selected")
                         Row(
-                            verticalAlignment = Alignment.CenterVertically
+                            verticalAlignment = Alignment.CenterVertically,
                         ) {
                             TextButton(
                                 onClick = {
                                     onClickSelectedRequestsSelection(
                                         SelectionAction.SELECT_ALL,
-                                        data.itemSnapshotList.items
+                                        data.itemSnapshotList.items,
                                     )
                                 },
-                                colors = ButtonDefaults.textButtonColors(
-                                    contentColor = MaterialTheme.colorScheme.success
-                                )
+                                colors =
+                                    ButtonDefaults.textButtonColors(
+                                        contentColor = MaterialTheme.colorScheme.success,
+                                    ),
                             ) {
                                 Text(text = "Select All (${data.itemCount})")
                             }
                             TextButton(
-                                onClick = { onClickSelectedRequestsSelection(SelectionAction.CLEAR_ALL, listOf()) },
-                                colors = ButtonDefaults.textButtonColors(
-                                    contentColor = MaterialTheme.colorScheme.error
-                                )
+                                onClick = {
+                                    onClickSelectedRequestsSelection(
+                                        SelectionAction.CLEAR_ALL,
+                                        listOf(),
+                                    )
+                                },
+                                colors =
+                                    ButtonDefaults.textButtonColors(
+                                        contentColor = MaterialTheme.colorScheme.error,
+                                    ),
                             ) {
                                 Text(text = "Clear (${state.selectedRequestIds.size})")
                             }
                         }
-
                     }
                 }
                 SafiPagingComponent(
                     data = data,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f),
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .weight(1f),
                     refreshEmpty = {
                         SafiCenteredColumn(modifier = Modifier.fillMaxWidth()) {
                             SafiInfoSection(
                                 icon = Icons.Rounded.Inbox,
                                 title = "No New Requests",
-                                description = ""
+                                description = "",
                             )
                         }
-                    }
+                    },
                 ) {
                     TeamJoinRequestCard(
+                        state = state,
                         modifier = Modifier.fillMaxWidth(),
-                        selectedIds = state.selectedRequestIds,
-                        request = it
-                    ) {
-                        onClickToggleSelectRequest(it)
-                    }
+                        request = it,
+                        onClickToggleSelectRequest = { onClickToggleSelectRequest(it) },
+                        onClickProcessRequest = onClickProcessRequest,
+                    )
                 }
                 AnimatedVisibility(
                     visible = state.selectedRequestIds.isNotEmpty(),
                 ) {
                     Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 16.dp),
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 16.dp),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Button(
+                            enabled = state.processingMultipleRequestsState == null,
                             modifier = Modifier.weight(1f),
                             onClick = { onClickProcessSelectedRequests(true) },
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = MaterialTheme.colorScheme.success,
-                                contentColor = MaterialTheme.colorScheme.onSuccess
-                            )
+                            colors =
+                                ButtonDefaults.buttonColors(
+                                    containerColor = MaterialTheme.colorScheme.success,
+                                    contentColor = MaterialTheme.colorScheme.onSuccess,
+                                ),
                         ) {
                             Text(text = "Accept")
                         }
                         Spacer(modifier = Modifier.padding(horizontal = 16.dp))
                         Button(
+                            enabled = state.processingMultipleRequestsState == null,
                             modifier = Modifier.weight(1f),
                             onClick = { onClickProcessSelectedRequests(false) },
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = MaterialTheme.colorScheme.error,
-                                contentColor = MaterialTheme.colorScheme.onError
-                            )
+                            colors =
+                                ButtonDefaults.buttonColors(
+                                    containerColor = MaterialTheme.colorScheme.error,
+                                    contentColor = MaterialTheme.colorScheme.onError,
+                                ),
                         ) {
                             Text(text = "Decline")
                         }
                     }
                 }
             }
-
         }
     }
 }
 
 @Composable
 fun TeamJoinRequestCard(
+    state: TeamScreenState,
     request: TeamAccountJoinRequestDomain,
-    selectedIds: List<Long>,
     modifier: Modifier = Modifier,
     onClickToggleSelectRequest: () -> Unit,
+    onClickProcessRequest: (TeamAccountJoinRequestDomain, TeamRequestAction) -> Unit,
 ) {
-
     val account = request.account
+    val processing =
+        if (state.processingMultipleRequestsState?.requestIds?.contains(request.request.id) == true) {
+            state.processingMultipleRequestsState.fetchState
+        } else {
+            null
+        }
+    val fetchState = state.processingSingleRequestsState[request.request.id] ?: processing
+    val isAlreadyProcessed = state.processedRequests.values.flatten().contains(request.request.id)
     Column(
-        modifier = modifier.clickable { onClickToggleSelectRequest() },
+        modifier = modifier.clickable(enabled = fetchState == null && isAlreadyProcessed.not()) { onClickToggleSelectRequest() },
     ) {
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 16.dp),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 16.dp),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
+            horizontalArrangement = Arrangement.SpaceBetween,
         ) {
             Checkbox(
-                modifier = Modifier
-                    .padding(horizontal = 16.dp)
-                    .clip(CircleShape),
-                checked = selectedIds.contains(request.request.id),
+                enabled = fetchState == null && isAlreadyProcessed.not(),
+                modifier =
+                    Modifier
+                        .padding(horizontal = 16.dp)
+                        .clip(CircleShape),
+                checked = state.selectedRequestIds.contains(request.request.id),
                 onCheckedChange = { onClickToggleSelectRequest() },
-                colors = CheckboxDefaults.colors(
-                    checkedColor = MaterialTheme.colorScheme.success,
-                    uncheckedColor = MaterialTheme.colorScheme.onBackground,
-                    checkmarkColor = MaterialTheme.colorScheme.onSuccess
-                )
+                colors =
+                    CheckboxDefaults.colors(
+                        checkedColor = MaterialTheme.colorScheme.success,
+                        uncheckedColor = MaterialTheme.colorScheme.onBackground,
+                        checkmarkColor = MaterialTheme.colorScheme.onSuccess,
+                    ),
             )
             Row(
                 modifier = Modifier.weight(1f),
@@ -253,9 +284,9 @@ fun TeamJoinRequestCard(
             ) {
                 AsyncImage(
                     modifier =
-                    Modifier
-                        .size(36.dp)
-                        .clip(CircleShape),
+                        Modifier
+                            .size(36.dp)
+                            .clip(CircleShape),
                     model = account.avatarUrl,
                     contentDescription = "user avatar url",
                     contentScale = ContentScale.Crop,
@@ -264,41 +295,99 @@ fun TeamJoinRequestCard(
                     modifier = Modifier.padding(start = 16.dp),
                     text = account.username,
                     style = MaterialTheme.typography.bodyMedium,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
                 )
             }
-            AnimatedVisibility(
-                visible = selectedIds.isEmpty(),
-                enter = fadeIn(),
-                exit = fadeOut()
-            ) {
-                Row() {
-                    SmallFloatingActionButton(
-                        modifier = Modifier.padding(end = 16.dp),
-                        onClick = {},
-                        containerColor = MaterialTheme.colorScheme.success,
-                        contentColor = MaterialTheme.colorScheme.onSuccess
-                    ) {
+            AnimatedContent(
+                label = "animate process actions",
+                targetState = fetchState,
+            ) { fetch ->
+                when (fetch) {
+                    FetchState.Loading -> {
+                        SafiCircularProgressIndicator(modifier = Modifier.padding(16.dp))
+                    }
+
+                    is FetchState.Error -> {
                         Icon(
-                            imageVector = Icons.Rounded.DoneAll,
-                            contentDescription = "accept"
+                            modifier = Modifier.padding(16.dp),
+                            imageVector = Icons.Rounded.Error,
+                            contentDescription = "",
+                            tint = MaterialTheme.colorScheme.error,
                         )
                     }
-                    SmallFloatingActionButton(
-                        modifier = Modifier.padding(end = 16.dp),
-                        onClick = {},
-                        containerColor = MaterialTheme.colorScheme.error,
-                        contentColor = MaterialTheme.colorScheme.onError
-                    ) {
+
+                    is FetchState.Success -> {
                         Icon(
-                            imageVector = Icons.Rounded.Close,
-                            contentDescription = "decline"
+                            modifier = Modifier.padding(16.dp),
+                            imageVector = Icons.Rounded.CheckCircle,
+                            contentDescription = "",
+                            tint = MaterialTheme.colorScheme.success,
                         )
+                    }
+
+                    null -> {
+                        AnimatedContent(
+                            label = "animated processed",
+                            targetState = isAlreadyProcessed,
+                        ) { processed ->
+                            when (processed) {
+                                true -> {
+                                    Icon(
+                                        modifier = Modifier.padding(16.dp),
+                                        imageVector = Icons.Rounded.CheckCircle,
+                                        contentDescription = "",
+                                        tint = MaterialTheme.colorScheme.success,
+                                    )
+                                }
+
+                                false -> {
+                                    AnimatedVisibility(
+                                        visible = state.selectedRequestIds.isEmpty() && !isAlreadyProcessed,
+                                        enter = fadeIn(),
+                                        exit = fadeOut(),
+                                    ) {
+                                        Row {
+                                            SmallFloatingActionButton(
+                                                modifier = Modifier.padding(end = 16.dp),
+                                                onClick = {
+                                                    onClickProcessRequest(
+                                                        request,
+                                                        TeamRequestAction.ACCEPT,
+                                                    )
+                                                },
+                                                containerColor = MaterialTheme.colorScheme.success,
+                                                contentColor = MaterialTheme.colorScheme.onSuccess,
+                                            ) {
+                                                Icon(
+                                                    imageVector = Icons.Rounded.DoneAll,
+                                                    contentDescription = "accept",
+                                                )
+                                            }
+                                            SmallFloatingActionButton(
+                                                modifier = Modifier.padding(end = 16.dp),
+                                                onClick = {
+                                                    onClickProcessRequest(
+                                                        request,
+                                                        TeamRequestAction.REJECT,
+                                                    )
+                                                },
+                                                containerColor = MaterialTheme.colorScheme.error,
+                                                contentColor = MaterialTheme.colorScheme.onError,
+                                            ) {
+                                                Icon(
+                                                    imageVector = Icons.Rounded.Close,
+                                                    contentDescription = "decline",
+                                                )
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
         }
         HorizontalDivider(color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.2f))
     }
-
 }

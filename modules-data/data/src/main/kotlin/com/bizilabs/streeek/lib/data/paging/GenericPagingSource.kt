@@ -46,5 +46,4 @@ private class GenericPagingSource<T : Any, R : Any>(
         val previousKey = if (page == START_PAGE) null else page.minus(1)
         return LoadResult.Page(data = list, prevKey = previousKey, nextKey = nextKey)
     }
-
 }

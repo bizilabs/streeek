@@ -39,12 +39,16 @@ internal object Supabase {
             const val LEAVE = "leave_team"
             const val DELETE = "archive_team"
             const val GETANDMEMBERS = "get_teams_with_member_count_and_members"
+
             object MemberRequests {
                 const val GETTEAMREQUESTS = "get_team_join_requests"
                 const val GETMYREQUESTS = "get_my_member_requests"
                 const val PROCESSMYREQUEST = "process_single_member_request"
+                const val PROCESSSINGLEREQUEST = "process_member_request"
+                const val PROCESSMULTIPLTREQUEST = "process_member_requests"
                 const val REQUESTTOJOINTEAM = "request_to_join_team"
             }
+
             object Invitations {
                 const val GET = "get_team_invitations"
                 const val DELETE = "delete_team_invitation"

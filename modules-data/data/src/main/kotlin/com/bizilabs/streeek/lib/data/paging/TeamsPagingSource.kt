@@ -5,15 +5,10 @@ import androidx.paging.PagingSource.LoadParams
 import androidx.paging.PagingSource.LoadResult
 import androidx.paging.PagingState
 import com.bizilabs.streeek.lib.data.mappers.team.toDomain
-import com.bizilabs.streeek.lib.data.mappers.toCache
 import com.bizilabs.streeek.lib.data.mappers.toDomain
 import com.bizilabs.streeek.lib.data.paging.PagingHelpers.START_PAGE
 import com.bizilabs.streeek.lib.domain.models.TeamAndMembersDomain
-import com.bizilabs.streeek.lib.domain.models.TeamDetailsDomain
-import com.bizilabs.streeek.lib.domain.models.TeamMemberDomain
-import com.bizilabs.streeek.lib.domain.models.updateOrCreate
 import com.bizilabs.streeek.lib.local.sources.account.AccountLocalSource
-import com.bizilabs.streeek.lib.local.sources.team.TeamLocalSource
 import com.bizilabs.streeek.lib.remote.helpers.NetworkResult
 import com.bizilabs.streeek.lib.remote.helpers.PAGE_SIZE
 import com.bizilabs.streeek.lib.remote.sources.team.TeamRemoteSource
@@ -24,7 +19,6 @@ class TeamsPagingSource(
     private val teamRemoteSource: TeamRemoteSource,
     private val accountLocalSource: AccountLocalSource,
 ) : PagingSource<Int, TeamAndMembersDomain>() {
-
     override fun getRefreshKey(state: PagingState<Int, TeamAndMembersDomain>): Int? {
         return state.anchorPosition?.let { anchorPosition ->
             state.closestPageToPosition(anchorPosition)?.prevKey?.plus(1)

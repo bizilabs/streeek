@@ -99,7 +99,7 @@ val dataModule =
         single<TeamRequestRepository> {
             TeamRequestRepositoryImpl(
                 remoteSource = get(),
-                accountLocalSource = get()
+                accountLocalSource = get(),
             )
         }
     }

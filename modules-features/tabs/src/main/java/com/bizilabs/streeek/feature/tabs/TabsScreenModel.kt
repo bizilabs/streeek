@@ -33,8 +33,11 @@ val FeatureTabsModule =
             TabsScreenModel(context = get())
         }
         includes(
-            LeaderboardModule, FeedModule, AchievementsModule, TeamsListModule,
-            ModuleNotifications
+            LeaderboardModule,
+            FeedModule,
+            AchievementsModule,
+            TeamsListModule,
+            ModuleNotifications,
         )
     }
 

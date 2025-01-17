@@ -32,7 +32,7 @@ class TeamRequestRepositoryImpl(
             },
             mapper = { requests ->
                 requests.map { it.toDomain() }
-            }
+            },
         )
     }
 
@@ -43,7 +43,7 @@ class TeamRequestRepositoryImpl(
             },
             mapper = { requests ->
                 requests.map { it.toDomain() }
-            }
+            },
         )
     }
 
@@ -51,4 +51,31 @@ class TeamRequestRepositoryImpl(
         return remoteSource.delete(id = id).asDataResult { it }
     }
 
+    override suspend fun processSingleRequest(
+        teamId: Long,
+        requestId: Long,
+        status: String,
+    ): DataResult<Boolean> {
+        val accountId = getAccountId() ?: return DataResult.Error("couldn't find account id")
+        return remoteSource.processSingleRequestAsTeamAdmin(
+            adminId = accountId,
+            requestId = requestId,
+            teamId = teamId,
+            status = status,
+        ).asDataResult { it }
+    }
+
+    override suspend fun processMultipleRequest(
+        teamId: Long,
+        requestIds: List<Long>,
+        status: String,
+    ): DataResult<Boolean> {
+        val accountId = getAccountId() ?: return DataResult.Error("couldn't find account id")
+        return remoteSource.processMultipleRequestAsTeamAdmin(
+            adminId = accountId,
+            requestIds = requestIds,
+            teamId = teamId,
+            status = status,
+        ).asDataResult { it }
+    }
 }

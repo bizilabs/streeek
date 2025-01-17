@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material3.TabRow
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Notifications
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -17,6 +16,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
+import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -52,7 +52,7 @@ object NotificationsScreen : Screen {
             requests = requests,
             onClickNotification = {},
             onClickSection = screenModel::onClickSection,
-            onClickCancelRequest = screenModel::onClickCancelRequest
+            onClickCancelRequest = screenModel::onClickCancelRequest,
         )
     }
 }
@@ -65,22 +65,23 @@ fun NotificationsScreenContent(
     requests: LazyPagingItems<MemberAccountRequestDomain>,
     onClickNotification: (NotificationDomain) -> Unit,
     onClickSection: (NotificationSection) -> Unit,
-    onClickCancelRequest: (MemberAccountRequestDomain) -> Unit
+    onClickCancelRequest: (MemberAccountRequestDomain) -> Unit,
 ) {
     Scaffold(
         topBar = {
             NotificationsScreenHeader(
                 state = state,
-                onClickSection = onClickSection
+                onClickSection = onClickSection,
             )
         },
     ) { innerPadding ->
         AnimatedContent(
             label = "animate notification section",
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(top = innerPadding.calculateTopPadding()),
-            targetState = state.section
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(top = innerPadding.calculateTopPadding()),
+            targetState = state.section,
         ) { section ->
             when (section) {
                 NotificationSection.GENERAL -> {
@@ -96,12 +97,11 @@ fun NotificationsScreenContent(
                         modifier = Modifier.fillMaxSize(),
                         state = state,
                         data = requests,
-                        onClickCancelRequest = onClickCancelRequest
+                        onClickCancelRequest = onClickCancelRequest,
                     )
                 }
             }
         }
-
     }
 }
 
@@ -114,11 +114,12 @@ fun NotificationsScreenHeader(
     Surface {
         Column {
             SafiTopBarHeader(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 16.dp),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 16.dp),
                 title = stringResource(SafiStrings.Labels.Notifications),
-                align = TextAlign.Center
+                align = TextAlign.Center,
             )
             TabRow(
                 modifier = Modifier.fillMaxWidth(),
@@ -131,9 +132,10 @@ fun NotificationsScreenHeader(
                         selected = isSelected,
                         onClick = { onClickSection(section) },
                         selectedContentColor = MaterialTheme.colorScheme.primary,
-                        unselectedContentColor = MaterialTheme.colorScheme.onSurface.copy(
-                            0.25f
-                        ),
+                        unselectedContentColor =
+                            MaterialTheme.colorScheme.onSurface.copy(
+                                0.25f,
+                            ),
                     ) {
                         SafiCenteredRow(modifier = Modifier.padding(16.dp)) {
                             Icon(

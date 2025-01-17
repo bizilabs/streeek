@@ -7,9 +7,7 @@ import com.bizilabs.streeek.lib.domain.models.team.TeamAccountJoinRequestDomain
 import kotlinx.coroutines.flow.Flow
 
 interface TeamRequestRepository {
-    suspend fun requestToJoinTeam(
-        teamId: Long,
-    ): DataResult<Boolean>
+    suspend fun requestToJoinTeam(teamId: Long): DataResult<Boolean>
 
     fun getMyRequests(): Flow<PagingData<MemberAccountRequestDomain>>
 
@@ -17,4 +15,15 @@ interface TeamRequestRepository {
 
     suspend fun cancelRequest(id: Long): DataResult<Boolean>
 
+    suspend fun processSingleRequest(
+        teamId: Long,
+        requestId: Long,
+        status: String,
+    ): DataResult<Boolean>
+
+    suspend fun processMultipleRequest(
+        teamId: Long,
+        requestIds: List<Long>,
+        status: String,
+    ): DataResult<Boolean>
 }

@@ -30,25 +30,28 @@ internal val ModuleNotifications =
     }
 
 enum class NotificationSection {
-    GENERAL, REQUESTS;
+    GENERAL,
+    REQUESTS,
+    ;
 
     val label: String
-        get() = when (this) {
-            GENERAL -> "General"
-            REQUESTS -> "Requests"
-        }
+        get() =
+            when (this) {
+                GENERAL -> "General"
+                REQUESTS -> "Requests"
+            }
 
     val icon: Pair<ImageVector, ImageVector>
-        get() = when (this) {
-            GENERAL -> Pair(Icons.Outlined.Inbox, Icons.Rounded.Inbox)
-            REQUESTS -> Pair(Icons.Outlined.People, Icons.Rounded.People)
-        }
-
+        get() =
+            when (this) {
+                GENERAL -> Pair(Icons.Outlined.Inbox, Icons.Rounded.Inbox)
+                REQUESTS -> Pair(Icons.Outlined.People, Icons.Rounded.People)
+            }
 }
 
 data class RequestTeamState(
     val teamId: Long,
-    val requestState: FetchState<Boolean> = FetchState.Loading
+    val requestState: FetchState<Boolean> = FetchState.Loading,
 )
 
 data class NotificationsScreenState(
@@ -58,7 +61,7 @@ data class NotificationsScreenState(
     val dialogState: DialogState? = null,
     val requestState: RequestTeamState? = null,
     val cancelledTeamIds: List<Long> = emptyList(),
-    val selectedTeamIds: List<Long> = emptyList()
+    val selectedTeamIds: List<Long> = emptyList(),
 ) {
     val selectedSectionIndex: Int
         get() = sections.indexOf(section)
@@ -68,7 +71,6 @@ class NotificationsScreenModel(
     private val notificationsRepository: NotificationRepository,
     private val teamRequestRepository: TeamRequestRepository,
 ) : StateScreenModel<NotificationsScreenState>(NotificationsScreenState()) {
-
     val notifications = notificationsRepository.notifications
     val requests = teamRequestRepository.getMyRequests()
 
@@ -88,13 +90,15 @@ class NotificationsScreenModel(
                 is DataResult.Error -> {
                     mutableState.update {
                         it.copy(
-                            dialogState = DialogState.Error(
-                                title = "Error",
-                                message = "Wasn't able to send request to join team"
-                            ),
-                            requestState = it.requestState?.copy(
-                                requestState = FetchState.Error(result.message)
-                            )
+                            dialogState =
+                                DialogState.Error(
+                                    title = "Error",
+                                    message = "Wasn't able to send request to join team",
+                                ),
+                            requestState =
+                                it.requestState?.copy(
+                                    requestState = FetchState.Error(result.message),
+                                ),
                         )
                     }
                     delay(2000)
@@ -107,9 +111,10 @@ class NotificationsScreenModel(
                     mutableState.update {
                         it.copy(
                             cancelledTeamIds = requests,
-                            requestState = it.requestState?.copy(
-                                requestState = FetchState.Success(result.data)
-                            )
+                            requestState =
+                                it.requestState?.copy(
+                                    requestState = FetchState.Success(result.data),
+                                ),
                         )
                     }
                     delay(2000)
@@ -118,5 +123,4 @@ class NotificationsScreenModel(
             }
         }
     }
-
 }

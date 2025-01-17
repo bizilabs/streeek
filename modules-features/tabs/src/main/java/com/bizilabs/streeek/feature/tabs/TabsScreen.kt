@@ -77,13 +77,14 @@ fun TabsScreenContent(
                         Tabs.entries.forEach { item ->
                             NavigationBarItem(
                                 colors =
-                                NavigationBarItemDefaults.colors(
-                                    indicatorColor = Color.Transparent,
-                                    selectedIconColor = MaterialTheme.colorScheme.primary,
-                                    unselectedIconColor = MaterialTheme.colorScheme.onSurface.copy(
-                                        0.25f
+                                    NavigationBarItemDefaults.colors(
+                                        indicatorColor = Color.Transparent,
+                                        selectedIconColor = MaterialTheme.colorScheme.primary,
+                                        unselectedIconColor =
+                                            MaterialTheme.colorScheme.onSurface.copy(
+                                                0.25f,
+                                            ),
                                     ),
-                                ),
                                 selected = item == state.tab,
                                 icon = {
                                     Icon(
@@ -101,9 +102,9 @@ fun TabsScreenContent(
     ) { paddingValues ->
         AnimatedContent(
             modifier =
-            Modifier
-                .padding(paddingValues)
-                .fillMaxSize(),
+                Modifier
+                    .padding(paddingValues)
+                    .fillMaxSize(),
             targetState = state.tab,
             label = "animated_tabs",
         ) { tab ->

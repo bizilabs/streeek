@@ -53,62 +53,66 @@ fun TeamEmptyListSection(
         SafiRefreshBox(
             modifier = Modifier.fillMaxSize(),
             isRefreshing = availableTeams.loadState.refresh is LoadState.Loading,
-            onRefresh = { availableTeams.refresh() }
+            onRefresh = { availableTeams.refresh() },
         ) {
             SafiPagingComponent(
                 modifier = Modifier.fillMaxSize(),
                 data = availableTeams,
                 prependSuccess = {
                     SafiCenteredColumn(
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth(),
                     ) {
                         Icon(
-                            modifier = Modifier
-                                .padding(top = 16.dp)
-                                .size(48.dp),
+                            modifier =
+                                Modifier
+                                    .padding(top = 16.dp)
+                                    .size(48.dp),
                             imageVector = Icons.Rounded.People,
-                            contentDescription = "teams"
+                            contentDescription = "teams",
                         )
                         Text(
                             modifier = Modifier.padding(vertical = 16.dp),
                             text = "You don't have any teams yet.\nRequest to join public teams to join the challenge.",
-                            textAlign = TextAlign.Center
+                            textAlign = TextAlign.Center,
                         )
 
                         Button(
                             modifier = Modifier.padding(bottom = 16.dp),
-                            onClick = onClickCreateTeam
+                            onClick = onClickCreateTeam,
                         ) {
                             Text(text = "Create")
                         }
 
                         HorizontalDivider()
                     }
-                }
+                },
             ) { team ->
                 Card(
-                    modifier = Modifier
-                        .padding(vertical = 8.dp)
-                        .padding(horizontal = 16.dp),
-                    colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.15f)
-                    )
+                    modifier =
+                        Modifier
+                            .padding(vertical = 8.dp)
+                            .padding(horizontal = 16.dp),
+                    colors =
+                        CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.15f),
+                        ),
                 ) {
                     Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp),
-                        verticalAlignment = Alignment.CenterVertically
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                        verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Column(modifier = Modifier.weight(1f)) {
                             Text(
                                 modifier = Modifier.padding(start = 8.dp),
                                 text = team.team.name,
                                 style = MaterialTheme.typography.titleMedium,
-                                fontWeight = FontWeight.Bold
+                                fontWeight = FontWeight.Bold,
                             )
                             Row(
-                                verticalAlignment = Alignment.CenterVertically
+                                verticalAlignment = Alignment.CenterVertically,
                             ) {
                                 Box(modifier = Modifier.padding(8.dp)) {
                                     for (member in team.members) {
@@ -117,41 +121,45 @@ fun TeamEmptyListSection(
                                         Card(
                                             modifier = Modifier.padding(start = start),
                                             shape = CircleShape,
-                                            border = BorderStroke(
-                                                2.dp, MaterialTheme.colorScheme.onBackground
-                                            )
+                                            border =
+                                                BorderStroke(
+                                                    2.dp,
+                                                    MaterialTheme.colorScheme.onBackground,
+                                                ),
                                         ) {
                                             AsyncImage(
                                                 model = member.avatarUrl,
                                                 contentDescription = null,
-                                                modifier = Modifier.size(36.dp)
+                                                modifier = Modifier.size(36.dp),
                                             )
                                         }
                                     }
-
                                 }
-                                Text(text = buildString {
-                                    append(team.team.count)
-                                    append(" ")
-                                    append("member".asCount(team.team.count))
-                                })
+                                Text(
+                                    text =
+                                        buildString {
+                                            append(team.team.count)
+                                            append(" ")
+                                            append("member".asCount(team.team.count))
+                                        },
+                                )
                             }
                         }
                         val requested = team.team.id in state.requestedTeamIds
                         Button(
                             modifier = Modifier.padding(8.dp),
                             onClick = { onClickTeamRequest(team) },
-                            enabled = state.requestState == null && !requested
+                            enabled = state.requestState == null && !requested,
                         ) {
                             AnimatedContent(
                                 label = "",
-                                targetState = state.requestState
+                                targetState = state.requestState,
                             ) { request ->
                                 when (request) {
                                     null -> {
                                         Text(
                                             text = if (requested) "Requested" else "Request",
-                                            style = MaterialTheme.typography.labelSmall
+                                            style = MaterialTheme.typography.labelSmall,
                                         )
                                     }
 
@@ -163,14 +171,14 @@ fun TeamEmptyListSection(
                                                     is FetchState.Error -> {
                                                         Icon(
                                                             imageVector = Icons.Rounded.Error,
-                                                            contentDescription = ""
+                                                            contentDescription = "",
                                                         )
                                                     }
 
                                                     is FetchState.Success -> {
                                                         Icon(
                                                             imageVector = Icons.Rounded.CheckCircle,
-                                                            contentDescription = ""
+                                                            contentDescription = "",
                                                         )
                                                     }
                                                 }
@@ -179,14 +187,13 @@ fun TeamEmptyListSection(
                                             else -> {
                                                 Text(
                                                     text = if (requested) "Requested" else "Request",
-                                                    style = MaterialTheme.typography.labelSmall
+                                                    style = MaterialTheme.typography.labelSmall,
                                                 )
                                             }
                                         }
                                     }
                                 }
                             }
-
                         }
                     }
                 }

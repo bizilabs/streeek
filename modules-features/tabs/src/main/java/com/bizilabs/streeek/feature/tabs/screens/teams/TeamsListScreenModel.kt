@@ -26,7 +26,7 @@ internal val TeamsListModule =
 
 data class RequestTeamState(
     val teamId: Long,
-    val requestState: FetchState<Boolean> = FetchState.Loading
+    val requestState: FetchState<Boolean> = FetchState.Loading,
 )
 
 data class TeamsListScreenState(
@@ -38,15 +38,14 @@ data class TeamsListScreenState(
     val showConfetti: Boolean = false,
     val requestedTeamIds: List<Long> = emptyList(),
     val requestState: RequestTeamState? = null,
-    val dialogState: DialogState? = null
+    val dialogState: DialogState? = null,
 )
 
 class TeamsListScreenModel(
     private val context: Context,
     private val teamRepository: TeamRepository,
-    private val teamRequestRepository: TeamRequestRepository
+    private val teamRequestRepository: TeamRequestRepository,
 ) : StateScreenModel<TeamsListScreenState>(TeamsListScreenState()) {
-
     val availableTeams = teamRepository.getTeamsAndMembers()
 
     init {
@@ -111,14 +110,16 @@ class TeamsListScreenModel(
                 is DataResult.Error -> {
                     mutableState.update {
                         it.copy(
-                            dialogState = DialogState.Error(
-                                title = "Error",
-                                message = "Wasn't able to send request to join team"
-                            ),
-                            requestState = RequestTeamState(
-                                teamId = teamId,
-                                requestState = FetchState.Error(result.message)
-                            )
+                            dialogState =
+                                DialogState.Error(
+                                    title = "Error",
+                                    message = "Wasn't able to send request to join team",
+                                ),
+                            requestState =
+                                RequestTeamState(
+                                    teamId = teamId,
+                                    requestState = FetchState.Error(result.message),
+                                ),
                         )
                     }
                     delay(2000)
@@ -131,9 +132,10 @@ class TeamsListScreenModel(
                     mutableState.update {
                         it.copy(
                             requestedTeamIds = requests,
-                            requestState = it.requestState?.copy(
-                                requestState = FetchState.Success(result.data)
-                            )
+                            requestState =
+                                it.requestState?.copy(
+                                    requestState = FetchState.Success(result.data),
+                                ),
                         )
                     }
                     delay(2000)
@@ -142,5 +144,4 @@ class TeamsListScreenModel(
             }
         }
     }
-
 }
