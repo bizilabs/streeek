@@ -65,7 +65,6 @@ import com.bizilabs.streeek.lib.design.components.SafiRefreshBox
 import com.bizilabs.streeek.lib.design.components.SafiTopBarHeader
 import com.bizilabs.streeek.lib.domain.models.TeamMemberDomain
 import com.bizilabs.streeek.lib.domain.models.team.TeamInvitationDomain
-import com.bizilabs.streeek.lib.resources.R
 import com.bizilabs.streeek.lib.resources.strings.SafiStrings
 import nl.dionsegijn.konfetti.compose.KonfettiView
 import nl.dionsegijn.konfetti.core.Party
@@ -544,7 +543,7 @@ fun ManageTeamSection(
             },
             supportingText = {
                 if (!state.isValidName && state.name.isNotBlank()) {
-                    Text(text = stringResource(R.string.invalid_team_name))
+                    Text(text = stringResource(SafiStrings.InvalidTeamName))
                 }
             },
         )

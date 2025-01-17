@@ -13,4 +13,5 @@ object SafiStrings {
     val Messages = SafiStringMessages
     val AppName: Int = R.string.app_name
     val SelectTeamVisibility: Int = R.string.select_team_visibility
+    val InvalidTeamName: Int = R.string.invalid_team_name
 }
