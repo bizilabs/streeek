@@ -116,7 +116,7 @@ data class TeamScreenState(
         get() = value.equals("public", true)
 
     val isValidName: Boolean
-        get() = name.isNotBlank() && name.matches("^[a-z]+$".toRegex())
+        get() = name.isNotBlank() && name.matches("^[a-z]+$".toRegex()) && name.length > 4
 
     val isActionEnabled: Boolean
         get() =
