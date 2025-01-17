@@ -536,14 +536,14 @@ fun ManageTeamSection(
                 Text(text = "Name")
             },
             singleLine = true,
-            isError = !state.isValidName,
+            isError = !state.isValidName && state.name.isNotBlank(),
             trailingIcon = {
-                if (!state.isValidName) {
+                if (!state.isValidName && state.name.isNotBlank()) {
                     Icon(Icons.Rounded.Error, "error")
                 }
             },
             supportingText = {
-                if (!state.isValidName) {
+                if (!state.isValidName && state.name.isNotBlank()) {
                     Text(text = stringResource(R.string.invalid_team_name))
                 }
             },
