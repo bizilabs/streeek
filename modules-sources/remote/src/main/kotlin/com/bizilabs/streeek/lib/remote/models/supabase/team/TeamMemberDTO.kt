@@ -27,6 +27,13 @@ data class ProcessJoinRequestDTO(
 )
 
 @Serializable
+data class GetTeamRequestDTO(
+    @SerialName("p_team_id") val teamId: Long,
+    @SerialName("p_page") val page: Int,
+    @SerialName("p_page_size") val pageSize: Int = PAGE_SIZE,
+)
+
+@Serializable
 data class TeamJoinRequestDTO(
     val id: Long,
     val status: String,
@@ -39,4 +46,10 @@ data class MemberAccountRequestDTO(
     val request: TeamJoinRequestDTO,
     val team: TeamDTO,
     val members: List<AccountLightDTO>?
+)
+
+@Serializable
+data class TeamAccountJoinRequestDTO(
+    val request: TeamJoinRequestDTO,
+    val account: AccountLightDTO
 )

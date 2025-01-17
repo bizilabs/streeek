@@ -14,3 +14,8 @@ data class MemberAccountRequestDomain(
     val team: TeamDomain,
     val members: List<AccountLightDomain>
 )
+
+data class TeamAccountJoinRequestDomain(
+    val request: TeamJoinRequestDomain,
+    val account: AccountLightDomain
+)

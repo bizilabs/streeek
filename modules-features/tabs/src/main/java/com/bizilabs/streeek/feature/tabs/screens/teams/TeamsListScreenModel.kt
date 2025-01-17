@@ -65,7 +65,7 @@ class TeamsListScreenModel(
     private fun observeTeams() {
         screenModelScope.launch {
             teamRepository.teams.collectLatest { map ->
-                mutableState.update { it.copy(teams = emptyList()) }
+                mutableState.update { it.copy(teams = map.values.toList()) }
             }
         }
     }

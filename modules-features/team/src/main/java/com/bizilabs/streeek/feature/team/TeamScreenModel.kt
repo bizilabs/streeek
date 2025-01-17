@@ -1,5 +1,6 @@
 package com.bizilabs.streeek.feature.team
 
+import android.annotation.SuppressLint
 import android.content.Context
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ExitToApp
@@ -8,6 +9,8 @@ import androidx.compose.material.icons.rounded.Edit
 import androidx.compose.material.icons.rounded.People
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.paging.PagingData
+import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.paging.map
 import cafe.adriel.voyager.core.model.StateScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
 import com.bizilabs.streeek.lib.common.components.paging.getPagingDataLoading
@@ -24,17 +27,21 @@ import com.bizilabs.streeek.lib.domain.models.asTeamDetails
 import com.bizilabs.streeek.lib.domain.models.sortedByRank
 import com.bizilabs.streeek.lib.domain.models.team.CreateTeamInvitationDomain
 import com.bizilabs.streeek.lib.domain.models.team.JoinTeamInvitationDomain
+import com.bizilabs.streeek.lib.domain.models.team.TeamAccountJoinRequestDomain
 import com.bizilabs.streeek.lib.domain.models.team.TeamInvitationDomain
 import com.bizilabs.streeek.lib.domain.repositories.TeamInvitationRepository
 import com.bizilabs.streeek.lib.domain.repositories.TeamRepository
+import com.bizilabs.streeek.lib.domain.repositories.team.TeamRequestRepository
 import com.bizilabs.streeek.lib.domain.workers.startImmediateSyncTeamsWork
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.koin.dsl.module
@@ -47,9 +54,15 @@ val FeatureTeamModule =
                 context = get(),
                 teamRepository = get(),
                 teamInvitationRepository = get(),
+                teamRequestRepository = get()
             )
         }
     }
+
+enum class SelectionAction {
+    SELECT_ALL,
+    CLEAR_ALL
+}
 
 enum class TeamMenuAction {
     EDIT,
@@ -102,12 +115,14 @@ data class TeamScreenState(
     val dialogState: DialogState? = null,
     val fetchState: FetchState<TeamWithMembersDomain> = FetchState.Loading,
     val isInvitationsOpen: Boolean = false,
+    val isRequestsSheetOpen: Boolean = false,
     val isLoadingInvitationsPartially: Boolean = false,
     val invitationsState: FetchListState<TeamInvitationDomain> = FetchListState.Loading,
     val createInvitationState: FetchState<CreateTeamInvitationDomain>? = null,
     val joinTeamState: FetchState<JoinTeamInvitationDomain>? = null,
     val team: TeamDetailsDomain? = null,
     val showConfetti: Boolean = false,
+    val selectedRequestIds: List<Long> = listOf()
 ) {
     val isManagingTeam: Boolean
         get() = isEditing || teamId == null
@@ -123,11 +138,11 @@ data class TeamScreenState(
             if (fetchState is FetchState.Success) {
                 val team = fetchState.value.team
                 name.isNotBlank() && (
-                    !team.name.equals(
-                        name,
-                        ignoreCase = false,
-                    ) || team.public != isPublic
-                )
+                        !team.name.equals(
+                            name,
+                            ignoreCase = false,
+                        ) || team.public != isPublic
+                        )
             } else {
                 isValidName && value.isNotBlank()
             }
@@ -151,17 +166,18 @@ class TeamScreenModel(
     private val context: Context,
     private val teamRepository: TeamRepository,
     private val teamInvitationRepository: TeamInvitationRepository,
+    private val teamRequestRepository: TeamRequestRepository
 ) : StateScreenModel<TeamScreenState>(TeamScreenState()) {
     private var _pages = MutableStateFlow(getPagingDataLoading<TeamMemberDomain>())
     val pages: StateFlow<PagingData<TeamMemberDomain>> = _pages.asStateFlow()
 
+    private var _requests: Flow<PagingData<TeamAccountJoinRequestDomain>> =
+        MutableStateFlow(getPagingDataLoading<TeamAccountJoinRequestDomain>()).asStateFlow()
+    val requests: Flow<PagingData<TeamAccountJoinRequestDomain>>
+        get() = _requests
+
     private val clickedTeam =
-        combine(teamRepository.teamId, teamRepository.teams) { id, map ->
-            Timber.d("Team Map -> $map")
-            Timber.d("Clicked Team being updated....")
-            Timber.d("Clicked Team : ${mutableState.value.team}")
-            map[id]
-        }
+        combine(teamRepository.teamId, teamRepository.teams) { id, map -> map[id] }
 
     init {
         observeTeamsSyncing()
@@ -190,7 +206,13 @@ class TeamScreenModel(
         teamId?.let {
             getTeam(id = it)
             observeTeamDetails()
+            observeTeamRequests()
         }
+    }
+
+    private fun observeTeamRequests() {
+        val id = state.value.teamId ?: return
+        _requests = teamRequestRepository.getTeamRequests(teamId = id)
     }
 
     private fun observeTeamDetails() {
@@ -311,10 +333,10 @@ class TeamScreenModel(
                     mutableState.update {
                         it.copy(
                             dialogState =
-                                DialogState.Error(
-                                    title = "Error",
-                                    message = result.message,
-                                ),
+                            DialogState.Error(
+                                title = "Error",
+                                message = result.message,
+                            ),
                         )
                     }
                 }
@@ -325,10 +347,10 @@ class TeamScreenModel(
                             isJoining = false,
                             teamId = result.data.teamId,
                             dialogState =
-                                DialogState.Success(
-                                    title = "Success",
-                                    message = "Joined team successfully as a ${result.data.role}",
-                                ),
+                            DialogState.Success(
+                                title = "Success",
+                                message = "Joined team successfully as a ${result.data.role}",
+                            ),
                         )
                     }
                     getTeam(id = result.data.teamId, shouldSaveTeam = true)
@@ -348,10 +370,10 @@ class TeamScreenModel(
                     mutableState.update {
                         it.copy(
                             dialogState =
-                                DialogState.Error(
-                                    title = "Error",
-                                    message = result.message,
-                                ),
+                            DialogState.Error(
+                                title = "Error",
+                                message = result.message,
+                            ),
                         )
                     }
                 }
@@ -360,10 +382,10 @@ class TeamScreenModel(
                     mutableState.update {
                         it.copy(
                             dialogState =
-                                DialogState.Success(
-                                    title = "Success",
-                                    message = "Left team successfully. \nHope you come back soon!",
-                                ),
+                            DialogState.Success(
+                                title = "Success",
+                                message = "Left team successfully. \nHope you come back soon!",
+                            ),
                         )
                     }
                     delay(2000)
@@ -382,10 +404,10 @@ class TeamScreenModel(
                     mutableState.update {
                         it.copy(
                             dialogState =
-                                DialogState.Error(
-                                    title = "Error",
-                                    message = result.message,
-                                ),
+                            DialogState.Error(
+                                title = "Error",
+                                message = result.message,
+                            ),
                         )
                     }
                 }
@@ -394,10 +416,10 @@ class TeamScreenModel(
                     mutableState.update {
                         it.copy(
                             dialogState =
-                                DialogState.Success(
-                                    title = "Success",
-                                    message = "Team deleted successfully!",
-                                ),
+                            DialogState.Success(
+                                title = "Success",
+                                message = "Team deleted successfully!",
+                            ),
                             shouldNavigateBack = true,
                         )
                     }
@@ -426,9 +448,9 @@ class TeamScreenModel(
                         mutableState.update {
                             it.copy(
                                 invitationsState =
-                                    FetchListState.Error(
-                                        message = result.message,
-                                    ),
+                                FetchListState.Error(
+                                    message = result.message,
+                                ),
                             )
                         }
                         FetchState.Error(result.message)
@@ -474,6 +496,10 @@ class TeamScreenModel(
 
     fun onDismissInvitationsSheet() {
         mutableState.update { it.copy(isInvitationsOpen = false) }
+    }
+
+    fun onDismissRequestsSheet() {
+        mutableState.update { it.copy(isRequestsSheetOpen = false) }
     }
 
     fun onClickInvitationGet() {
@@ -577,6 +603,41 @@ class TeamScreenModel(
 
     fun onRefreshTeams() {
         context.startImmediateSyncTeamsWork()
+    }
+
+    fun onClickRequests() {
+        mutableState.update { it.copy(isRequestsSheetOpen = true) }
+    }
+
+    fun onClickToggleSelectRequest(request: TeamAccountJoinRequestDomain) {
+        val list = (state.value.selectedRequestIds).toMutableList()
+        if (list.contains(request.request.id)) {
+            list.remove(request.request.id)
+        } else {
+            list.add(request.request.id)
+        }
+        mutableState.update { it.copy(selectedRequestIds = list) }
+    }
+
+    fun onClickSelectedRequestsSelection(
+        action: SelectionAction,
+        list: List<TeamAccountJoinRequestDomain>
+    ) {
+        when (action) {
+            SelectionAction.SELECT_ALL -> selectAllRequests(list = list)
+            SelectionAction.CLEAR_ALL -> clearAllSelectedRequests()
+        }
+    }
+
+    @SuppressLint("CheckResult")
+    private fun selectAllRequests(
+        list: List<TeamAccountJoinRequestDomain>
+    ) {
+        mutableState.update { it.copy(selectedRequestIds = list.map { it.request.id }) }
+    }
+
+    private fun clearAllSelectedRequests() {
+        mutableState.update { it.copy(selectedRequestIds = listOf()) }
     }
 
     // </editor-fold>

@@ -1,0 +1,304 @@
+package com.bizilabs.streeek.feature.team.section
+
+import android.R.attr.data
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Close
+import androidx.compose.material.icons.rounded.DoneAll
+import androidx.compose.material.icons.rounded.Inbox
+import androidx.compose.material.icons.rounded.Refresh
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CheckboxDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SmallFloatingActionButton
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.paging.LoadState
+import androidx.paging.compose.LazyPagingItems
+import coil.compose.AsyncImage
+import com.bizilabs.streeek.feature.team.SelectionAction
+import com.bizilabs.streeek.feature.team.TeamScreenState
+import com.bizilabs.streeek.lib.common.components.paging.SafiPagingComponent
+import com.bizilabs.streeek.lib.design.components.SafiCenteredColumn
+import com.bizilabs.streeek.lib.design.components.SafiInfoSection
+import com.bizilabs.streeek.lib.design.components.SafiTopBarHeader
+import com.bizilabs.streeek.lib.design.helpers.onSuccess
+import com.bizilabs.streeek.lib.design.helpers.success
+import com.bizilabs.streeek.lib.domain.models.team.TeamAccountJoinRequestDomain
+import kotlinx.coroutines.launch
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun TeamJoinRequestsBottomSheet(
+    state: TeamScreenState,
+    data: LazyPagingItems<TeamAccountJoinRequestDomain>,
+    modifier: Modifier = Modifier,
+    onDismissSheet: () -> Unit,
+    onClickToggleSelectRequest: (TeamAccountJoinRequestDomain) -> Unit,
+    onClickProcessSelectedRequests: (Boolean) -> Unit,
+    onClickSelectedRequestsSelection: (SelectionAction, List<TeamAccountJoinRequestDomain>) -> Unit,
+) {
+    val scope = rememberCoroutineScope()
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    ModalBottomSheet(
+        modifier = modifier,
+        sheetState = sheetState,
+        containerColor = MaterialTheme.colorScheme.surface,
+        onDismissRequest = {
+            scope.launch { if (sheetState.isVisible) sheetState.hide() }
+            onDismissSheet()
+        },
+    ) {
+        Scaffold(
+            topBar = {
+                TopAppBar(
+                    navigationIcon = {
+                        IconButton(onClick = onDismissSheet) {
+                            Icon(
+                                imageVector = Icons.Rounded.Close,
+                                contentDescription = "close sheet"
+                            )
+                        }
+                    },
+                    title = {
+                        SafiTopBarHeader(
+                            title = state.team?.team?.name ?: "",
+                            subtitle = "Join Team Requests"
+                        )
+                    },
+                    actions = {
+                        IconButton(
+                            onClick = { data.refresh() },
+                            enabled = data.loadState.refresh is LoadState.NotLoading
+                        ) {
+                            Icon(
+                                imageVector = Icons.Rounded.Refresh,
+                                contentDescription = "refresh requests"
+                            )
+                        }
+                    }
+                )
+            }
+        ) { innerPadding ->
+            Column(
+                modifier = Modifier
+                    .padding(innerPadding)
+                    .fillMaxSize()
+            ) {
+                AnimatedVisibility(
+                    modifier = Modifier.fillMaxWidth(),
+                    visible = state.selectedRequestIds.isNotEmpty()
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp, vertical = 8.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Text(text = "${state.selectedRequestIds.size} selected")
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            TextButton(
+                                onClick = {
+                                    onClickSelectedRequestsSelection(
+                                        SelectionAction.SELECT_ALL,
+                                        data.itemSnapshotList.items
+                                    )
+                                },
+                                colors = ButtonDefaults.textButtonColors(
+                                    contentColor = MaterialTheme.colorScheme.success
+                                )
+                            ) {
+                                Text(text = "Select All (${data.itemCount})")
+                            }
+                            TextButton(
+                                onClick = { onClickSelectedRequestsSelection(SelectionAction.CLEAR_ALL, listOf()) },
+                                colors = ButtonDefaults.textButtonColors(
+                                    contentColor = MaterialTheme.colorScheme.error
+                                )
+                            ) {
+                                Text(text = "Clear (${state.selectedRequestIds.size})")
+                            }
+                        }
+
+                    }
+                }
+                SafiPagingComponent(
+                    data = data,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f),
+                    refreshEmpty = {
+                        SafiCenteredColumn(modifier = Modifier.fillMaxWidth()) {
+                            SafiInfoSection(
+                                icon = Icons.Rounded.Inbox,
+                                title = "No New Requests",
+                                description = ""
+                            )
+                        }
+                    }
+                ) {
+                    TeamJoinRequestCard(
+                        modifier = Modifier.fillMaxWidth(),
+                        selectedIds = state.selectedRequestIds,
+                        request = it
+                    ) {
+                        onClickToggleSelectRequest(it)
+                    }
+                }
+                AnimatedVisibility(
+                    visible = state.selectedRequestIds.isNotEmpty(),
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Button(
+                            modifier = Modifier.weight(1f),
+                            onClick = { onClickProcessSelectedRequests(true) },
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = MaterialTheme.colorScheme.success,
+                                contentColor = MaterialTheme.colorScheme.onSuccess
+                            )
+                        ) {
+                            Text(text = "Accept")
+                        }
+                        Spacer(modifier = Modifier.padding(horizontal = 16.dp))
+                        Button(
+                            modifier = Modifier.weight(1f),
+                            onClick = { onClickProcessSelectedRequests(false) },
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = MaterialTheme.colorScheme.error,
+                                contentColor = MaterialTheme.colorScheme.onError
+                            )
+                        ) {
+                            Text(text = "Decline")
+                        }
+                    }
+                }
+            }
+
+        }
+    }
+}
+
+@Composable
+fun TeamJoinRequestCard(
+    request: TeamAccountJoinRequestDomain,
+    selectedIds: List<Long>,
+    modifier: Modifier = Modifier,
+    onClickToggleSelectRequest: () -> Unit,
+) {
+
+    val account = request.account
+    Column(
+        modifier = modifier.clickable { onClickToggleSelectRequest() },
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Checkbox(
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+                    .clip(CircleShape),
+                checked = selectedIds.contains(request.request.id),
+                onCheckedChange = { onClickToggleSelectRequest() },
+                colors = CheckboxDefaults.colors(
+                    checkedColor = MaterialTheme.colorScheme.success,
+                    uncheckedColor = MaterialTheme.colorScheme.onBackground,
+                    checkmarkColor = MaterialTheme.colorScheme.onSuccess
+                )
+            )
+            Row(
+                modifier = Modifier.weight(1f),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                AsyncImage(
+                    modifier =
+                    Modifier
+                        .size(36.dp)
+                        .clip(CircleShape),
+                    model = account.avatarUrl,
+                    contentDescription = "user avatar url",
+                    contentScale = ContentScale.Crop,
+                )
+                Text(
+                    modifier = Modifier.padding(start = 16.dp),
+                    text = account.username,
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+            AnimatedVisibility(
+                visible = selectedIds.isEmpty(),
+                enter = fadeIn(),
+                exit = fadeOut()
+            ) {
+                Row() {
+                    SmallFloatingActionButton(
+                        modifier = Modifier.padding(end = 16.dp),
+                        onClick = {},
+                        containerColor = MaterialTheme.colorScheme.success,
+                        contentColor = MaterialTheme.colorScheme.onSuccess
+                    ) {
+                        Icon(
+                            imageVector = Icons.Rounded.DoneAll,
+                            contentDescription = "accept"
+                        )
+                    }
+                    SmallFloatingActionButton(
+                        modifier = Modifier.padding(end = 16.dp),
+                        onClick = {},
+                        containerColor = MaterialTheme.colorScheme.error,
+                        contentColor = MaterialTheme.colorScheme.onError
+                    ) {
+                        Icon(
+                            imageVector = Icons.Rounded.Close,
+                            contentDescription = "decline"
+                        )
+                    }
+                }
+            }
+        }
+        HorizontalDivider(color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.2f))
+    }
+
+}

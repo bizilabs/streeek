@@ -4,8 +4,10 @@ import com.bizilabs.streeek.lib.remote.helpers.NetworkResult
 import com.bizilabs.streeek.lib.remote.helpers.Supabase
 import com.bizilabs.streeek.lib.remote.helpers.asJsonObject
 import com.bizilabs.streeek.lib.remote.helpers.safeSupabaseCall
+import com.bizilabs.streeek.lib.remote.models.supabase.team.GetTeamRequestDTO
 import com.bizilabs.streeek.lib.remote.models.supabase.team.MemberAccountRequestDTO
 import com.bizilabs.streeek.lib.remote.models.supabase.team.ProcessJoinRequestDTO
+import com.bizilabs.streeek.lib.remote.models.supabase.team.TeamAccountJoinRequestDTO
 import com.bizilabs.streeek.lib.remote.models.supabase.team.TeamMemberGetDTO
 import com.bizilabs.streeek.lib.remote.models.supabase.team.TeamMemberRequestDTO
 import io.github.jan.supabase.SupabaseClient
@@ -22,6 +24,11 @@ interface TeamRequestRemoteSource {
         accountId: Long,
         page: Int,
     ): NetworkResult<List<MemberAccountRequestDTO>>
+
+    suspend fun fetchTeamRequests(
+        teamId: Long,
+        page: Int,
+    ): NetworkResult<List<TeamAccountJoinRequestDTO>>
 
     suspend fun processAccountRequest(
         requestId: Long,
@@ -63,6 +70,19 @@ class TeamRequestRemoteSourceImpl(
                 )
                 .decodeList()
         }
+
+    override suspend fun fetchTeamRequests(
+        teamId: Long,
+        page: Int
+    ): NetworkResult<List<TeamAccountJoinRequestDTO>> = safeSupabaseCall {
+        val request = GetTeamRequestDTO(teamId = teamId, page = page).asJsonObject()
+        supabase.postgrest
+            .rpc(
+                function = Supabase.Functions.Teams.MemberRequests.GETTEAMREQUESTS,
+                parameters = request,
+            )
+            .decodeList()
+    }
 
     override suspend fun processAccountRequest(
         requestId: Long,
