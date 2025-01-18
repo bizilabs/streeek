@@ -4,6 +4,7 @@ import android.app.Application
 import android.util.Log
 import com.bizilabs.streeek.lib.presentation.BuildConfig
 import com.google.firebase.crashlytics.FirebaseCrashlytics
+import org.koin.android.ext.android.get
 import timber.log.Timber
 
 fun Application.initTimber() {
