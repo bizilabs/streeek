@@ -69,6 +69,7 @@ ktlint = "12.1.2"
 confetti = "2.0.5"
 updater = "2.1.0"
 rich-text-editor = "1.0.0-rc10"
+firebase-messaging-ktx = "24.1.0"
 
 [libraries]
 # androidx
@@ -210,6 +211,7 @@ androidx-foundation-android = { group = "androidx.compose.foundation", name = "f
 confetti = { module = "nl.dionsegijn:konfetti-compose", version.ref = "confetti"}
 updater = { module = "com.google.android.play:app-update", version.ref = "updater"}
 richtexteditor = { module = "com.mohamedrejeb.richeditor:richeditor-compose", version.ref = "rich-text-editor"}
+firebase-messaging-ktx = { group = "com.google.firebase", name = "firebase-messaging-ktx", version.ref = "firebase-messaging-ktx" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "gradle-plugin-android" }
