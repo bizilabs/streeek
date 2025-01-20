@@ -19,16 +19,12 @@ val FeatureNotificationModule =
     }
 val PushNotificationsModule =
     module {
-        // Provide NotificationEventManager as a singleton
         single { NotificationEventManager }
-        // Provide com.bizilabs.streeek.feature.push.data.NotificationHelper as a singleton
         single { NotificationHelper(get()) }
-        // Provide ViewModel
         viewModel {
             NotificationViewModel(
                 get(),
                 get(),
             )
         }
-// Inject NotificationEventManager and com.bizilabs.streeek.feature.push.data.NotificationHelper
     }

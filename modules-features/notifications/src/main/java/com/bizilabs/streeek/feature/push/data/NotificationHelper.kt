@@ -12,11 +12,15 @@ import android.provider.Settings
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.messaging.ktx.messaging
+import timber.log.Timber
 
 class NotificationHelper(private val context: Context) {
     companion object {
         private const val CHANNEL_ID = "event_notifications"
         private const val GROUP_KEY_EVENTS = "com.bizilabs.streeek.EVENTS"
+        const val TAG = "FCMTopicSubscription"
     }
 
     fun initNotificationChannel() {
@@ -154,5 +158,37 @@ class NotificationHelper(private val context: Context) {
             return
         }
         NotificationManagerCompat.from(context).notify(0, summaryNotification)
+    }
+
+    /**
+     * Subscribes to a list of FCM topics.
+     * @param topics List of topic names to subscribe to.
+     */
+    fun subscribeToTopics(topics: List<String>) {
+        topics.forEach { topic ->
+            Firebase.messaging.subscribeToTopic(topic)
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        Timber.tag(TAG).d("Successfully subscribed to topic: $topic")
+                    } else {
+                        Timber.tag(TAG).e(task.exception, "Failed to subscribe to topic: $topic")
+                    }
+                }
+        }
+    }
+
+    /**
+     * Subscribes to a single FCM topic.
+     * @param topic The topic name to subscribe to.
+     */
+    fun subscribeToTopic(topic: String) {
+        Firebase.messaging.subscribeToTopic(topic)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    Timber.tag(TAG).d("Successfully subscribed to topic: $topic")
+                } else {
+                    Timber.tag(TAG).e(task.exception, "Failed to subscribe to topic: $topic")
+                }
+            }
     }
 }
