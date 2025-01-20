@@ -72,12 +72,20 @@ val PresentationModule =
     }
 
 fun MainActivity.initializeNotificationChannel(notificationHelper: NotificationHelper) {
+    notificationHelper.subscribeToTopics(
+        listOf(
+            "global",
+            "user",
+            "issue",
+        ),
+    )
     // Register the ActivityResultLauncher to handle permission request
     val requestNotificationPermission: ActivityResultLauncher<String> =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
             if (isGranted) {
                 // Permission granted, initialize the notification channel
                 notificationHelper.initNotificationChannel()
+                // Subscribe to FCM topics
             } else {
                 // Permission denied, handle accordingly (show message, guide user to settings, etc.)
                 Timber.tag("NotificationPermission").e("Notification permission denied.")
