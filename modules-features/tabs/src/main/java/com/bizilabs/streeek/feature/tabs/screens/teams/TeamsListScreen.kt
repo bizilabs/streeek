@@ -83,7 +83,7 @@ fun TeamsListScreenContent(
     }
 
     if (state.isJoining) {
-        navigate(rememberScreen(SharedScreen.Team(isJoining = true, teamId = null)))
+        navigate(rememberScreen(SharedScreen.Join))
     }
 
     if (state.teamId != null) {

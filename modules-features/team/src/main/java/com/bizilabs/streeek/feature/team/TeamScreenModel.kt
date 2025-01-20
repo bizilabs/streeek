@@ -32,7 +32,6 @@ import com.bizilabs.streeek.lib.domain.repositories.TeamRepository
 import com.bizilabs.streeek.lib.domain.repositories.team.TeamRequestRepository
 import com.bizilabs.streeek.lib.domain.workers.startImmediateSyncTeamsWork
 import kotlinx.coroutines.InternalCoroutinesApi
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -197,8 +196,6 @@ class TeamScreenModel(
 
     private val clickedTeam =
         combine(teamRepository.teamId, teamRepository.teams) { id, map -> map[id] }
-
-    private var processJobs: Job? = null
 
     init {
         observeTeamsSyncing()

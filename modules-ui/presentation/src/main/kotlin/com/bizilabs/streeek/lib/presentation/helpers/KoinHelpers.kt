@@ -4,6 +4,7 @@ import android.app.Application
 import com.bizilabs.streeek.feature.authentication.authenticationModule
 import com.bizilabs.streeek.feature.issue.FeatureIssueModule
 import com.bizilabs.streeek.feature.issues.FeatureIssuesModule
+import com.bizilabs.streeek.feature.join.FeatureJoin
 import com.bizilabs.streeek.feature.landing.landingModule
 import com.bizilabs.streeek.feature.leaderboard.FeatureLeaderboard
 import com.bizilabs.streeek.feature.points.FeaturePoints
@@ -49,6 +50,7 @@ val PresentationModule =
             FeatureLeaderboard,
             FeaturePoints,
             AppUpdaterModule,
+            FeatureJoin,
         )
         workerOf(::SyncTeamsWork)
         workerOf(::SyncLevelsWork)
