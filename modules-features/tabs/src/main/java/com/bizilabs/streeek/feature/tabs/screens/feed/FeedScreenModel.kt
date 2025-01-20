@@ -53,7 +53,7 @@ class FeedScreenModel(
     private val preferenceRepository: PreferenceRepository,
     private val contributionRepository: ContributionRepository,
 ) : StateScreenModel<FeedScreenState>(FeedScreenState()) {
-    private val _date = MutableStateFlow(Clock.System.now().toLocalDateTime(TimeZone.UTC).date)
+    private val _date = MutableStateFlow(Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date)
     val date = _date.asStateFlow()
 
     val contributions: Flow<List<ContributionDomain>> =
