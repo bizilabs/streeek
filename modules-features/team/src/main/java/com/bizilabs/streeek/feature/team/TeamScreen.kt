@@ -52,7 +52,6 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.getScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import com.bizilabs.streeek.feature.team.components.TeamInvitationBottomSheet
-import com.bizilabs.streeek.feature.team.components.TeamJoiningSection
 import com.bizilabs.streeek.feature.team.components.TeamMemberComponent
 import com.bizilabs.streeek.feature.team.components.TeamTopMemberComponent
 import com.bizilabs.streeek.feature.team.section.TeamJoinRequestsBottomSheet
@@ -78,23 +77,15 @@ import java.util.concurrent.TimeUnit
 
 val screenTeam =
     screenModule {
-        register<SharedScreen.Team> { parameters ->
-            TeamScreen(
-                parameters.isJoining,
-                parameters.teamId,
-            )
-        }
+        register<SharedScreen.Team> { parameters -> TeamScreen(parameters.teamId) }
     }
 
-class TeamScreen(
-    val isJoining: Boolean,
-    val teamId: Long?,
-) : Screen {
+class TeamScreen(val teamId: Long?) : Screen {
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.current
         val screenModel: TeamScreenModel = getScreenModel()
-        screenModel.setNavigationVariables(isJoining = isJoining, teamId = teamId)
+        screenModel.setNavigationVariables(teamId = teamId)
         val state by screenModel.state.collectAsStateWithLifecycle()
         val members = screenModel.pages.collectAsLazyPagingItems()
         val requests = screenModel.requests.collectAsLazyPagingItems()
@@ -118,8 +109,6 @@ class TeamScreen(
             onSwipeInvitationDelete = screenModel::onSwipeInvitationDelete,
             onClickActionCancel = screenModel::onClickManageCancelAction,
             onClickActionDelete = screenModel::onClickManageDeleteAction,
-            onValueChangeTeamCode = screenModel::onValueChangeTeamCode,
-            onClickJoin = screenModel::onClickJoin,
             onClickInviteMore = screenModel::onClickInviteMore,
             onRefreshTeams = screenModel::onRefreshTeams,
             onClickRequests = screenModel::onClickRequests,
@@ -151,8 +140,6 @@ fun TeamScreenContent(
     onClickInvitationCreate: () -> Unit,
     onClickInvitationRetry: () -> Unit,
     onSwipeInvitationDelete: (TeamInvitationDomain) -> Unit,
-    onValueChangeTeamCode: (String) -> Unit,
-    onClickJoin: () -> Unit,
     onClickInviteMore: () -> Unit,
     onRefreshTeams: () -> Unit,
     onClickRequests: () -> Unit,
@@ -218,54 +205,29 @@ fun TeamScreenContent(
         },
     ) { innerPadding ->
         AnimatedContent(
-            modifier =
-                Modifier
-                    .padding(innerPadding)
-                    .fillMaxSize(),
-            targetState = state.isJoining,
-            label = "animate team joining",
-        ) { joining ->
-            when {
-                joining -> {
-                    TeamJoiningSection(
-                        modifier =
-                            Modifier
-                                .fillMaxSize()
-                                .padding(16.dp),
+            modifier = Modifier.padding(innerPadding).fillMaxSize(),
+            targetState = state.isManagingTeam,
+            label = "",
+        ) { isManaging ->
+            when (isManaging) {
+                true -> {
+                    ManageTeamSection(
                         state = state,
-                        onValueChangeTeamCode = onValueChangeTeamCode,
-                        onClickJoin = onClickJoin,
+                        onValueChangeName = onValueChangeName,
+                        onValueChangePublicDropdown = onValueChangePublicDropdown,
+                        onClickAction = onClickManageAction,
+                        onClickActionDelete = onClickActionDelete,
+                        onClickActionCancel = onClickActionCancel,
                     )
                 }
 
-                else -> {
-                    AnimatedContent(
-                        modifier = Modifier.fillMaxSize(),
-                        targetState = state.isManagingTeam,
-                        label = "",
-                    ) { isManaging ->
-                        when (isManaging) {
-                            true -> {
-                                ManageTeamSection(
-                                    state = state,
-                                    onValueChangeName = onValueChangeName,
-                                    onValueChangePublicDropdown = onValueChangePublicDropdown,
-                                    onClickAction = onClickManageAction,
-                                    onClickActionDelete = onClickActionDelete,
-                                    onClickActionCancel = onClickActionCancel,
-                                )
-                            }
-
-                            false -> {
-                                ViewTeamSection(
-                                    state = state,
-                                    data = data,
-                                    onClickInviteMore = onClickInviteMore,
-                                    onRefreshTeams = onRefreshTeams,
-                                )
-                            }
-                        }
-                    }
+                false -> {
+                    ViewTeamSection(
+                        state = state,
+                        data = data,
+                        onClickInviteMore = onClickInviteMore,
+                        onRefreshTeams = onRefreshTeams,
+                    )
                 }
             }
         }
@@ -297,10 +259,6 @@ private fun TeamScreenHeaderComponent(
                 label = "animate_team_title",
             ) { isManaging ->
                 when {
-                    state.isJoining -> {
-                        SafiTopBarHeader(title = "Join Team")
-                    }
-
                     isManaging -> {
                         SafiTopBarHeader(title = "Create Team")
                     }

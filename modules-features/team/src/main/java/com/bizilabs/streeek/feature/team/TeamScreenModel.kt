@@ -117,7 +117,6 @@ data class ProcessRequestDomain(
 data class TeamScreenState(
     val isSyncing: Boolean = false,
     val isEditing: Boolean = false,
-    val isJoining: Boolean = false,
     val shouldNavigateBack: Boolean = false,
     val account: AccountDomain? = null,
     val hasAlreadyUpdatedNavVariables: Boolean = false,
@@ -210,13 +209,11 @@ class TeamScreenModel(
     }
 
     fun setNavigationVariables(
-        isJoining: Boolean,
         teamId: Long?,
     ) {
         if (state.value.hasAlreadyUpdatedNavVariables) return
         mutableState.update {
             it.copy(
-                isJoining = isJoining,
                 teamId = teamId,
                 hasAlreadyUpdatedNavVariables = true,
             )
@@ -338,44 +335,6 @@ class TeamScreenModel(
                     }
                 }
             mutableState.update { it.copy(dialogState = update) }
-        }
-    }
-
-    private fun joinTeam() {
-        val token = state.value.token
-        if (token.length != 6 && token.any { it.digitToIntOrNull() == null }) return
-        mutableState.update { it.copy(dialogState = DialogState.Loading()) }
-        screenModelScope.launch {
-            when (val result = teamRepository.joinTeam(token = token)) {
-                is DataResult.Error -> {
-                    mutableState.update {
-                        it.copy(
-                            dialogState =
-                                DialogState.Error(
-                                    title = "Error",
-                                    message = result.message,
-                                ),
-                        )
-                    }
-                }
-
-                is DataResult.Success -> {
-                    mutableState.update {
-                        it.copy(
-                            isJoining = false,
-                            teamId = result.data.teamId,
-                            dialogState =
-                                DialogState.Success(
-                                    title = "Success",
-                                    message = "Joined team successfully as a ${result.data.role}",
-                                ),
-                        )
-                    }
-                    getTeam(id = result.data.teamId, shouldSaveTeam = true)
-                    delay(2000)
-                    mutableState.update { it.copy(dialogState = null) }
-                }
-            }
         }
     }
 
@@ -603,15 +562,6 @@ class TeamScreenModel(
     }
 
     fun onClickManageDeleteAction() {
-    }
-
-    fun onValueChangeTeamCode(value: String) {
-        mutableState.update { it.copy(token = value) }
-        if (value.length == 6) joinTeam()
-    }
-
-    fun onClickJoin() {
-        joinTeam()
     }
 
     fun onClickInviteMore() {

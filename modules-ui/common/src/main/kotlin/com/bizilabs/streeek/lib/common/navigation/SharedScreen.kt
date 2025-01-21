@@ -13,7 +13,7 @@ sealed class SharedScreen : ScreenProvider {
 
     object Profile : SharedScreen()
 
-    class Team(val isJoining: Boolean = false, val teamId: Long?) : SharedScreen()
+    class Team(val teamId: Long?) : SharedScreen()
 
     object Issues : SharedScreen()
 

@@ -79,7 +79,7 @@ fun TeamsListScreenContent(
     navigate: (Screen) -> Unit,
 ) {
     if (state.isCreating) {
-        navigate(rememberScreen(SharedScreen.Team(isJoining = false, teamId = null)))
+        navigate(rememberScreen(SharedScreen.Team(teamId = null)))
     }
 
     if (state.isJoining) {
@@ -87,7 +87,7 @@ fun TeamsListScreenContent(
     }
 
     if (state.teamId != null) {
-        navigate(rememberScreen(SharedScreen.Team(isJoining = false, teamId = state.teamId)))
+        navigate(rememberScreen(SharedScreen.Team(teamId = state.teamId)))
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
