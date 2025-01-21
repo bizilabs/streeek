@@ -1,6 +1,7 @@
 package com.bizilabs.streeek.feature.join
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,9 +13,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.ArrowBack
+import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.CheckCircle
 import androidx.compose.material.icons.rounded.Error
+import androidx.compose.material.icons.rounded.People
 import androidx.compose.material.icons.rounded.QrCode
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -53,8 +55,10 @@ import com.bizilabs.streeek.lib.common.helpers.requestFocusOnGainingVisibility
 import com.bizilabs.streeek.lib.common.models.FetchState
 import com.bizilabs.streeek.lib.common.navigation.SharedScreen
 import com.bizilabs.streeek.lib.design.components.SafiBottomDialog
+import com.bizilabs.streeek.lib.design.components.SafiCenteredColumn
 import com.bizilabs.streeek.lib.design.components.SafiCenteredRow
 import com.bizilabs.streeek.lib.design.components.SafiCircularProgressIndicator
+import com.bizilabs.streeek.lib.design.components.SafiInfoSection
 import com.bizilabs.streeek.lib.design.components.SafiOTPField
 import com.bizilabs.streeek.lib.design.components.SafiRefreshBox
 import com.bizilabs.streeek.lib.design.components.SafiTopBarHeader
@@ -82,6 +86,7 @@ object JoinScreen : Screen {
             onValueChangeTeamCode = screenModel::onValueChangeTeamCode,
             onClickJoin = screenModel::onClickJoin,
             onClickJoinWithCode = screenModel::onClickJoinWithCode,
+            onClickCreateTeam = screenModel::onClickCreateTeam,
             navigate = { screen -> navigator?.replace(screen) },
         )
     }
@@ -98,10 +103,15 @@ fun JoinScreenContent(
     onValueChangeTeamCode: (String) -> Unit,
     onClickJoin: () -> Unit,
     onClickJoinWithCode: (Boolean) -> Unit,
+    onClickCreateTeam: () -> Unit,
     navigate: (Screen) -> Unit,
 ) {
     if (state.teamId != null) {
         navigate(rememberScreen(SharedScreen.Team(teamId = state.teamId)))
+    }
+
+    if (state.hasClickedCreateTeam) {
+        navigate(rememberScreen(SharedScreen.Team(teamId = null)))
     }
 
     if (state.dialogState != null) {
@@ -117,7 +127,7 @@ fun JoinScreenContent(
                 navigationIcon = {
                     IconButton(onClick = onClickNavigateBack) {
                         Icon(
-                            imageVector = Icons.Rounded.ArrowBack,
+                            imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
                             contentDescription = "navigate back",
                         )
                     }
@@ -131,14 +141,18 @@ fun JoinScreenContent(
             )
         },
         floatingActionButton = {
-//            AnimatedVisibility(
-//                visible = state.joiningWithCode
-//            ) {
-            ExtendedFloatingActionButton(onClick = { onClickJoinWithCode(true) }) {
-                Text(text = "Use Code")
-                Icon(imageVector = Icons.Rounded.QrCode, contentDescription = null)
+            AnimatedVisibility(
+                visible = state.joiningWithCode.not(),
+            ) {
+                ExtendedFloatingActionButton(
+                    onClick = { onClickJoinWithCode(true) },
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.onPrimary,
+                ) {
+                    Text(text = "Use Code")
+                    Icon(imageVector = Icons.Rounded.QrCode, contentDescription = null)
+                }
             }
-//            }
         },
         floatingActionButtonPosition = FabPosition.End,
     ) { innerPadding ->
@@ -152,7 +166,12 @@ fun JoinScreenContent(
         ) { joinWithCode ->
             when (joinWithCode) {
                 true -> {
-                    Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
+                    Column(
+                        modifier =
+                            Modifier
+                                .fillMaxSize()
+                                .padding(16.dp),
+                    ) {
                         Text(
                             modifier = Modifier.padding(top = 16.dp),
                             text = "Enter Team Code",
@@ -215,6 +234,18 @@ fun JoinScreenContent(
                         SafiPagingComponent(
                             data = teams,
                             modifier = Modifier.fillMaxSize(),
+                            refreshEmpty = {
+                                SafiCenteredColumn(modifier = Modifier.fillMaxSize()) {
+                                    SafiInfoSection(
+                                        icon = Icons.Rounded.People,
+                                        title = "No Public Teams",
+                                        description = "No public teams found. \nCreate a team to start collaborating",
+                                    )
+                                    Button(onClick = onClickCreateTeam) {
+                                        Text(text = "create")
+                                    }
+                                }
+                            },
                         ) { team ->
                             Card(
                                 modifier =
@@ -278,7 +309,7 @@ fun JoinScreenContent(
                                         }
                                     }
                                     val requested = team.team.id in state.requestedTeamIds
-                                    Button(
+                                    OutlinedButton(
                                         modifier = Modifier.padding(8.dp),
                                         onClick = { onClickTeamRequest(team) },
                                         enabled = state.requestState == null && !requested,

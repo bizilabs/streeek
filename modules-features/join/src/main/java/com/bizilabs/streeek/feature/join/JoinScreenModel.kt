@@ -25,6 +25,7 @@ data class RequestTeamState(
 
 data class JoinScreenState(
     val isSearching: Boolean = false,
+    val hasClickedCreateTeam: Boolean = false,
     val query: String = "",
     val requestedTeamIds: List<Long> = emptyList(),
     val requestState: RequestTeamState? = null,
@@ -147,7 +148,11 @@ class JoinScreenModel(
         }
     }
 
-    fun onClickJoinWithCode(isVisible: Boolean)  {
+    fun onClickJoinWithCode(isVisible: Boolean) {
         mutableState.update { it.copy(joiningWithCode = isVisible) }
+    }
+
+    fun onClickCreateTeam() {
+        mutableState.update { it.copy(hasClickedCreateTeam = true) }
     }
 }
