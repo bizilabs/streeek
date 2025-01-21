@@ -41,8 +41,6 @@ class NotificationViewModel(
         notificationHelper.showNotification(
             title = event.title,
             message = event.body,
-            // intent = Intent(), Add appropriate Intent in case we need to navigate to.
-            // Add Intent to navigate to post details
         )
     }
 }
