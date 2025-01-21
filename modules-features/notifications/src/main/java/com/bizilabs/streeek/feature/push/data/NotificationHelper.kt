@@ -21,16 +21,20 @@ class NotificationHelper(private val context: Context) {
         private const val CHANNEL_ID = "event_notifications"
         private const val GROUP_KEY_EVENTS = "com.bizilabs.streeek.EVENTS"
         const val TAG = "FCMTopicSubscription"
+        const val LAUNCHER_ACTIVITY_CLASS_NAME =
+            "com.bizilabs.streeek.lib.presentation.MainActivity"
+        const val EVENT_NOTIFICATIONS = "Event Notifications"
+        const val NOTIFICATION_DESCRIPTION = "Notifications for app events"
     }
 
     fun initNotificationChannel() {
         val channel =
             NotificationChannel(
                 CHANNEL_ID,
-                "Event Notifications",
+                EVENT_NOTIFICATIONS,
                 NotificationManager.IMPORTANCE_HIGH,
             ).apply {
-                description = "Notifications for app events"
+                description = NOTIFICATION_DESCRIPTION
                 enableLights(true)
                 lightColor =
                     context.getColor(com.bizilabs.streeek.lib.resources.R.color.ic_launcher_background)
@@ -43,20 +47,23 @@ class NotificationHelper(private val context: Context) {
     fun showNotification(
         title: String,
         message: String,
-        intent: Intent? = null,
         imageResId: Int? = null,
-        actions: List<Pair<String, Intent>> = emptyList(),
     ) {
-        val pendingIntent =
-            intent?.let {
-                PendingIntent.getActivity(
+        val intent =
+            Intent().apply {
+                setClassName(
                     context,
-                    0,
-                    it,
-                    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
+                    LAUNCHER_ACTIVITY_CLASS_NAME,
                 )
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             }
-
+        val pendingIntent =
+            PendingIntent.getActivity(
+                context,
+                0,
+                intent,
+                PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
+            )
         val largeIcon =
             imageResId?.let {
                 BitmapFactory.decodeResource(context.resources, it)
@@ -78,16 +85,6 @@ class NotificationHelper(private val context: Context) {
                         )
                     } else {
                         setStyle(NotificationCompat.BigTextStyle().bigText(message))
-                    }
-                    actions.forEachIndexed { index, (actionTitle, actionIntent) ->
-                        val actionPendingIntent =
-                            PendingIntent.getActivity(
-                                context,
-                                index,
-                                actionIntent,
-                                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
-                            )
-                        addAction(0, actionTitle, actionPendingIntent)
                     }
                 }
 
@@ -134,30 +131,6 @@ class NotificationHelper(private val context: Context) {
             return
         }
         NotificationManagerCompat.from(context).notify(1001, builder.build())
-    }
-
-    // For just in case you need to Show Summary for Notifications
-    fun showSummaryNotification() {
-        val summaryNotification =
-            NotificationCompat.Builder(context, CHANNEL_ID)
-                .setContentTitle("Multiple Events")
-                .setContentText("You have new event notifications")
-                .setSmallIcon(com.bizilabs.streeek.lib.resources.R.drawable.icon_notification)
-                .setStyle(NotificationCompat.InboxStyle().setSummaryText("More events"))
-                .setGroup(GROUP_KEY_EVENTS)
-                .setGroupSummary(true)
-                .build()
-
-        if (ActivityCompat.checkSelfPermission(
-                context,
-                Manifest.permission.POST_NOTIFICATIONS,
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            sendPermissionRequestNotification(context)
-
-            return
-        }
-        NotificationManagerCompat.from(context).notify(0, summaryNotification)
     }
 
     /**
