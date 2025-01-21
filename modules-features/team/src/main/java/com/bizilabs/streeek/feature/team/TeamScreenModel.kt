@@ -208,9 +208,7 @@ class TeamScreenModel(
         }
     }
 
-    fun setNavigationVariables(
-        teamId: Long?,
-    ) {
+    fun setNavigationVariables(teamId: Long?) {
         if (state.value.hasAlreadyUpdatedNavVariables) return
         mutableState.update {
             it.copy(
