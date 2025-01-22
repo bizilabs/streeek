@@ -94,7 +94,7 @@ internal class TeamRemoteSourceImpl(
                 GetTeamAndMembersRequestDTO(accountId = accountId, page = page).asJsonObject()
             supabase.postgrest
                 .rpc(
-                    function = Supabase.Functions.Teams.GETANDMEMBERS,
+                    function = Supabase.Functions.Teams.GETTEAMANDMEMBERS,
                     parameters = parameters,
                 )
                 .decodeList()
