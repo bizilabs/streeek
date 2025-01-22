@@ -251,6 +251,18 @@ fun JoinScreenContent(
                                     }
                                 }
                             },
+                            refreshError = {
+                                SafiCenteredColumn(modifier = Modifier.fillMaxSize()) {
+                                    SafiInfoSection(
+                                        icon = Icons.Rounded.People,
+                                        title = "Failed Getting Teams",
+                                        description = it.localizedMessage ?: "",
+                                    )
+                                    Button(onClick = teams::retry) {
+                                        Text(text = "retry")
+                                    }
+                                }
+                            }
                         ) { team ->
                             Card(
                                 modifier =
