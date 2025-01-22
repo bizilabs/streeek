@@ -125,7 +125,12 @@ fun JoinScreenContent(
         topBar = {
             TopAppBar(
                 navigationIcon = {
-                    IconButton(onClick = onClickNavigateBack) {
+                    IconButton(onClick = {
+                        if (state.joiningWithCode)
+                            onClickJoinWithCode(false)
+                        else
+                            onClickNavigateBack()
+                    }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
                             contentDescription = "navigate back",
@@ -159,18 +164,18 @@ fun JoinScreenContent(
         AnimatedContent(
             label = "animated view",
             modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(innerPadding),
+            Modifier
+                .fillMaxWidth()
+                .padding(innerPadding),
             targetState = state.joiningWithCode,
         ) { joinWithCode ->
             when (joinWithCode) {
                 true -> {
                     Column(
                         modifier =
-                            Modifier
-                                .fillMaxSize()
-                                .padding(16.dp),
+                        Modifier
+                            .fillMaxSize()
+                            .padding(16.dp),
                     ) {
                         Text(
                             modifier = Modifier.padding(top = 16.dp),
@@ -187,18 +192,18 @@ fun JoinScreenContent(
                         SafiCenteredRow(modifier = Modifier.fillMaxWidth()) {
                             SafiOTPField(
                                 modifier =
-                                    Modifier
-                                        .fillMaxWidth(0.75f)
-                                        .padding(vertical = 24.dp)
-                                        .requestFocusOnGainingVisibility(),
+                                Modifier
+                                    .fillMaxWidth(0.75f)
+                                    .padding(vertical = 24.dp)
+                                    .requestFocusOnGainingVisibility(),
                                 text = state.token,
                                 onClickDone = onClickJoin,
                                 keyboardOptions =
-                                    KeyboardOptions(
-                                        keyboardType = KeyboardType.NumberPassword,
-                                        imeAction = ImeAction.Done,
-                                        showKeyboardOnFocus = true,
-                                    ),
+                                KeyboardOptions(
+                                    keyboardType = KeyboardType.NumberPassword,
+                                    imeAction = ImeAction.Done,
+                                    showKeyboardOnFocus = true,
+                                ),
                                 isEnabled = state.dialogState == null,
                             ) { text, bool ->
                                 onValueChangeTeamCode(text)
@@ -214,9 +219,9 @@ fun JoinScreenContent(
                         }
                         OutlinedButton(
                             modifier =
-                                Modifier
-                                    .padding(top = 8.dp)
-                                    .fillMaxWidth(),
+                            Modifier
+                                .padding(top = 8.dp)
+                                .fillMaxWidth(),
                             onClick = { onClickJoinWithCode(false) },
                             colors = ButtonDefaults.outlinedButtonColors(),
                         ) {
@@ -249,19 +254,19 @@ fun JoinScreenContent(
                         ) { team ->
                             Card(
                                 modifier =
-                                    Modifier
-                                        .padding(vertical = 8.dp)
-                                        .padding(horizontal = 16.dp),
+                                Modifier
+                                    .padding(vertical = 8.dp)
+                                    .padding(horizontal = 16.dp),
                                 colors =
-                                    CardDefaults.cardColors(
-                                        containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.15f),
-                                    ),
+                                CardDefaults.cardColors(
+                                    containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.15f),
+                                ),
                             ) {
                                 Row(
                                     modifier =
-                                        Modifier
-                                            .fillMaxWidth()
-                                            .padding(16.dp),
+                                    Modifier
+                                        .fillMaxWidth()
+                                        .padding(16.dp),
                                     verticalAlignment = Alignment.CenterVertically,
                                 ) {
                                     Column(modifier = Modifier.weight(1f)) {
@@ -278,17 +283,17 @@ fun JoinScreenContent(
                                                 for (member in team.members) {
                                                     val start =
                                                         0.dp + (
-                                                            team.members.indexOf(member)
-                                                                .times(20).dp
-                                                        )
+                                                                team.members.indexOf(member)
+                                                                    .times(20).dp
+                                                                )
                                                     Card(
                                                         modifier = Modifier.padding(start = start),
                                                         shape = CircleShape,
                                                         border =
-                                                            BorderStroke(
-                                                                2.dp,
-                                                                MaterialTheme.colorScheme.onBackground,
-                                                            ),
+                                                        BorderStroke(
+                                                            2.dp,
+                                                            MaterialTheme.colorScheme.onBackground,
+                                                        ),
                                                     ) {
                                                         AsyncImage(
                                                             model = member.avatarUrl,
@@ -300,11 +305,11 @@ fun JoinScreenContent(
                                             }
                                             Text(
                                                 text =
-                                                    buildString {
-                                                        append(team.team.count)
-                                                        append(" ")
-                                                        append("member".asCount(team.team.count))
-                                                    },
+                                                buildString {
+                                                    append(team.team.count)
+                                                    append(" ")
+                                                    append("member".asCount(team.team.count))
+                                                },
                                             )
                                         }
                                     }
