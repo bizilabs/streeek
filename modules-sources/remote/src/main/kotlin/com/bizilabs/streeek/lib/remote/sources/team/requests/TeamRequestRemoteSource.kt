@@ -32,7 +32,7 @@ interface TeamRequestRemoteSource {
         page: Int,
     ): NetworkResult<List<TeamAccountJoinRequestDTO>>
 
-    suspend fun processAccountRequest(
+    suspend fun acceptTeamInvitation(
         requestId: Long,
         accountId: Long,
         status: String,
@@ -101,7 +101,7 @@ class TeamRequestRemoteSourceImpl(
                 .decodeList()
         }
 
-    override suspend fun processAccountRequest(
+    override suspend fun acceptTeamInvitation(
         requestId: Long,
         accountId: Long,
         status: String,
