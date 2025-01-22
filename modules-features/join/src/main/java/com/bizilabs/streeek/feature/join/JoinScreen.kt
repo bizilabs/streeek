@@ -2,26 +2,17 @@ package com.bizilabs.streeek.feature.join
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
-import androidx.compose.material.icons.rounded.CheckCircle
-import androidx.compose.material.icons.rounded.Error
 import androidx.compose.material.icons.rounded.People
 import androidx.compose.material.icons.rounded.QrCode
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.FabPosition
@@ -34,7 +25,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -49,15 +39,13 @@ import cafe.adriel.voyager.core.registry.screenModule
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.getScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
-import coil.compose.AsyncImage
+import com.bizilabs.streeek.lib.common.components.TeamItemComponent
 import com.bizilabs.streeek.lib.common.components.paging.SafiPagingComponent
 import com.bizilabs.streeek.lib.common.helpers.requestFocusOnGainingVisibility
-import com.bizilabs.streeek.lib.common.models.FetchState
 import com.bizilabs.streeek.lib.common.navigation.SharedScreen
 import com.bizilabs.streeek.lib.design.components.SafiBottomDialog
 import com.bizilabs.streeek.lib.design.components.SafiCenteredColumn
 import com.bizilabs.streeek.lib.design.components.SafiCenteredRow
-import com.bizilabs.streeek.lib.design.components.SafiCircularProgressIndicator
 import com.bizilabs.streeek.lib.design.components.SafiInfoSection
 import com.bizilabs.streeek.lib.design.components.SafiOTPField
 import com.bizilabs.streeek.lib.design.components.SafiRefreshBox
@@ -265,119 +253,22 @@ fun JoinScreenContent(
                                 }
                             },
                         ) { team ->
-                            Card(
+                            val requested = team.team.id in state.requestedTeamIds
+                            TeamItemComponent(
                                 modifier =
                                     Modifier
                                         .padding(vertical = 8.dp)
                                         .padding(horizontal = 16.dp),
-                                colors =
-                                    CardDefaults.cardColors(
-                                        containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.15f),
-                                    ),
-                            ) {
-                                Row(
-                                    modifier =
-                                        Modifier
-                                            .fillMaxWidth()
-                                            .padding(16.dp),
-                                    verticalAlignment = Alignment.CenterVertically,
-                                ) {
-                                    Column(modifier = Modifier.weight(1f)) {
-                                        Text(
-                                            modifier = Modifier.padding(start = 8.dp),
-                                            text = team.team.name,
-                                            style = MaterialTheme.typography.titleMedium,
-                                            fontWeight = FontWeight.Bold,
-                                        )
-                                        Row(
-                                            verticalAlignment = Alignment.CenterVertically,
-                                        ) {
-                                            Box(modifier = Modifier.padding(8.dp)) {
-                                                for (member in team.members) {
-                                                    val start =
-                                                        0.dp + (
-                                                            team.members.indexOf(member)
-                                                                .times(20).dp
-                                                        )
-                                                    Card(
-                                                        modifier = Modifier.padding(start = start),
-                                                        shape = CircleShape,
-                                                        border =
-                                                            BorderStroke(
-                                                                2.dp,
-                                                                MaterialTheme.colorScheme.onBackground,
-                                                            ),
-                                                    ) {
-                                                        AsyncImage(
-                                                            model = member.avatarUrl,
-                                                            contentDescription = null,
-                                                            modifier = Modifier.size(36.dp),
-                                                        )
-                                                    }
-                                                }
-                                            }
-                                            Text(
-                                                text =
-                                                    buildString {
-                                                        append(team.team.count)
-                                                        append(" ")
-                                                        append("member".asCount(team.team.count))
-                                                    },
-                                            )
-                                        }
-                                    }
-                                    val requested = team.team.id in state.requestedTeamIds
-                                    OutlinedButton(
-                                        modifier = Modifier.padding(8.dp),
-                                        onClick = { onClickTeamRequest(team) },
-                                        enabled = state.requestState == null && !requested,
-                                    ) {
-                                        AnimatedContent(
-                                            label = "",
-                                            targetState = state.requestState,
-                                        ) { request ->
-                                            when (request) {
-                                                null -> {
-                                                    Text(
-                                                        text = if (requested) "Requested" else "Request",
-                                                        style = MaterialTheme.typography.labelSmall,
-                                                    )
-                                                }
-
-                                                else -> {
-                                                    when {
-                                                        request.teamId == team.team.id -> {
-                                                            when (request.requestState) {
-                                                                FetchState.Loading -> SafiCircularProgressIndicator()
-                                                                is FetchState.Error -> {
-                                                                    Icon(
-                                                                        imageVector = Icons.Rounded.Error,
-                                                                        contentDescription = "",
-                                                                    )
-                                                                }
-
-                                                                is FetchState.Success -> {
-                                                                    Icon(
-                                                                        imageVector = Icons.Rounded.CheckCircle,
-                                                                        contentDescription = "",
-                                                                    )
-                                                                }
-                                                            }
-                                                        }
-
-                                                        else -> {
-                                                            Text(
-                                                                text = if (requested) "Requested" else "Request",
-                                                                style = MaterialTheme.typography.labelSmall,
-                                                            )
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
+                                teamId = team.team.id,
+                                teamName = team.team.name,
+                                teamCount = team.team.count,
+                                teamCountLabel = "member".asCount(team.team.count),
+                                requested = requested,
+                                enabled = state.requestState == null && !requested,
+                                requestTeamId = state.requestState?.teamId,
+                                requestState = state.requestState?.requestState,
+                                membersAvatarUrl = team.members.map { it.avatarUrl },
+                            ) { onClickTeamRequest(team) }
                         }
                     }
                 }
