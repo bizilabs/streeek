@@ -106,9 +106,9 @@ fun TeamsListScreenContent(
                 state.teams.isEmpty() -> {
                     TeamEmptyListSection(
                         modifier =
-                        Modifier
-                            .fillMaxSize()
-                            .padding(top = innerPadding.calculateTopPadding()),
+                            Modifier
+                                .fillMaxSize()
+                                .padding(top = innerPadding.calculateTopPadding()),
                         state = state,
                         availableTeams = availableTeams,
                         onClickTeamRequest = onClickTeamRequest,
@@ -118,15 +118,16 @@ fun TeamsListScreenContent(
 
                 else -> {
                     SafiRefreshBox(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(top = innerPadding.calculateTopPadding()),
+                        modifier =
+                            Modifier
+                                .fillMaxSize()
+                                .padding(top = innerPadding.calculateTopPadding()),
                         isRefreshing = state.isSyncing,
                         onRefresh = onClickSwipeToRefreshTeam,
                     ) {
                         LazyColumn(
                             modifier =
-                            Modifier.padding(8.dp),
+                                Modifier.padding(8.dp),
                             verticalArrangement = Arrangement.spacedBy(8.dp),
                         ) {
                             items(state.teams) { teamDetails ->
@@ -155,9 +156,9 @@ fun TeamsScreenHeaderSection(
         ) {
             Row(
                 modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 8.dp),
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 8.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 IconButton(
