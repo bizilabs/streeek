@@ -24,4 +24,6 @@ sealed class SharedScreen : ScreenProvider {
     object Points : SharedScreen()
 
     object Join : SharedScreen()
+
+    object Notifications : SharedScreen()
 }
