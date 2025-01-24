@@ -15,6 +15,11 @@ internal val SafiDarkColorScheme =
         onSurface = OnSurfaceDark,
         error = ErrorDark,
         onError = OnErrorDark,
+        surfaceContainer = SurfaceContainerDark,
+        surfaceContainerLowest = SurfaceContainerLowestDark,
+        surfaceContainerLow = SurfaceContainerLowDark,
+        surfaceContainerHigh = SurfaceContainerHighDark,
+        surfaceContainerHighest = SurfaceContainerHighestDark,
     )
 
 internal val SafiLightColorScheme =
@@ -29,6 +34,11 @@ internal val SafiLightColorScheme =
         onSurface = OnSurfaceLight,
         error = ErrorLight,
         onError = OnErrorLight,
+        surfaceContainer = SurfaceContainerLight,
+        surfaceContainerLowest = SurfaceContainerLowestLight,
+        surfaceContainerLow = SurfaceContainerLowLight,
+        surfaceContainerHigh = SurfaceContainerHighLight,
+        surfaceContainerHighest = SurfaceContainerHighestLight,
     )
 
 internal fun getColorScheme(darkTheme: Boolean) = if (darkTheme) SafiDarkColorScheme else SafiLightColorScheme
