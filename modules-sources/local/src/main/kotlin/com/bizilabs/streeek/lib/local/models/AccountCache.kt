@@ -17,6 +17,7 @@ data class AccountCache(
     val points: Long,
     val level: LevelCache?,
     val streak: StreakCache?,
+    val fcmToken: String? = null,
 ) {
     fun asJson(): String = Json.encodeToString(this)
 }
@@ -29,4 +30,5 @@ data class AccountLightCache(
     val username: String,
     val avatarUrl: String,
     val createdAt: String,
+    val fcmToken: String? = null,
 )

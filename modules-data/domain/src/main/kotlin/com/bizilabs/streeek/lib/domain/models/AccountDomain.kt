@@ -14,6 +14,7 @@ data class AccountDomain(
     val points: Long,
     val level: LevelDomain?,
     val streak: StreakDomain?,
+    val fcmToken: String?,
 )
 
 data class AccountLightDomain(
@@ -21,4 +22,5 @@ data class AccountLightDomain(
     val username: String,
     val avatarUrl: String,
     val createdAt: LocalDateTime,
+    val fcmToken: String?,
 )

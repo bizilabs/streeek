@@ -14,4 +14,7 @@ dependencies {
     implementation(libs.androidx.work.runtime)
     // paging
     implementation(libs.androidx.paging.runtime)
+    // firebase
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.bundles.firebase)
 }

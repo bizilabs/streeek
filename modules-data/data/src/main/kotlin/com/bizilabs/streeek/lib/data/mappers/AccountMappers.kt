@@ -33,6 +33,7 @@ fun AccountDTO.toDomain(): AccountDomain =
         points = 0,
         level = null,
         streak = null,
+        fcmToken = fcmToken,
     )
 
 fun AccountDomain.toCache(): AccountCache =
@@ -48,6 +49,7 @@ fun AccountDomain.toCache(): AccountCache =
         points = points,
         level = level?.toCache(),
         streak = streak?.toCache(),
+        fcmToken = fcmToken,
     )
 
 fun AccountCache.toDomain(): AccountDomain =
@@ -67,6 +69,7 @@ fun AccountCache.toDomain(): AccountDomain =
         points = points,
         level = level?.toDomain(),
         streak = streak?.toDomain(),
+        fcmToken = fcmToken,
     )
 
 fun AccountFullDTO.toDomain() =
@@ -86,6 +89,7 @@ fun AccountFullDTO.toDomain() =
         points = points ?: 0,
         level = level?.toDomain(),
         streak = streak?.toDomain(),
+        fcmToken = account.fcmToken,
     )
 
 fun AccountLightDTO.toDomain() =
@@ -94,6 +98,7 @@ fun AccountLightDTO.toDomain() =
         username,
         avatar_url,
         created_at.asDate(format = DateFormats.YYYY_MM_DDTHH_MM_SS)?.datetimeUTC ?: UTCLocalDateTime,
+        fcmToken = fcm_token,
     )
 
 fun AccountLightDomain.toCache() =
@@ -110,4 +115,5 @@ fun AccountLightCache.toDomain() =
         username = username,
         avatarUrl = avatarUrl,
         createdAt = createdAt.asDate(format = DateFormats.YYYY_MM_DDTHH_MM_SS)?.datetimeUTC ?: UTCLocalDateTime,
+        fcmToken = fcmToken,
     )

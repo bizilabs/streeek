@@ -21,6 +21,11 @@ interface AccountRemoteSource {
 
     suspend fun getAccount(id: Long): NetworkResult<AccountFullDTO>
 
+    suspend fun saveFcmToken(
+        accountId: Long,
+        token: String,
+    ): NetworkResult<Boolean>
+
     suspend fun logout()
 }
 
@@ -46,6 +51,25 @@ class AccountRemoteSourceImpl(
                 .from(Supabase.Tables.ACCOUNTS)
                 .insert(request) { select() }
                 .decodeSingle()
+        }
+
+    override suspend fun saveFcmToken(
+        accountId: Long,
+        token: String,
+    ): NetworkResult<Boolean> =
+        safeSupabaseCall(
+            defaultErrorMessage = "failed saving fcm token",
+        ) {
+            supabase
+                .from(Supabase.Tables.ACCOUNTS)
+                .update({
+                    AccountDTO::fcmToken setTo token
+                }) {
+                    filter {
+                        AccountDTO::id eq accountId
+                    }
+                }
+            true
         }
 
     override suspend fun getAccount(id: Long): NetworkResult<AccountFullDTO> =

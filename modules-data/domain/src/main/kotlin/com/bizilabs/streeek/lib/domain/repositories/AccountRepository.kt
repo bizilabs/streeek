@@ -22,4 +22,6 @@ interface AccountRepository {
     suspend fun syncAccount(): DataResult<Boolean>
 
     suspend fun logout()
+
+    suspend fun saveFCMToken(token: String): DataResult<Boolean>
 }

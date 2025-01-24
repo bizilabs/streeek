@@ -11,6 +11,7 @@ data class AccountLightDTO(
     val username: String,
     val avatar_url: String,
     val created_at: String,
+    val fcm_token: String?,
 )
 
 @Serializable
@@ -27,6 +28,8 @@ data class AccountDTO(
     val createdAt: String,
     @SerialName("updated_at")
     val updatedAt: String,
+    @SerialName("fcm_token")
+    val fcmToken: String?,
 )
 
 @Serializable

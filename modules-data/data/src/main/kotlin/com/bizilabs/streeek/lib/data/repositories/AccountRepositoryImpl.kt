@@ -1,5 +1,6 @@
 package com.bizilabs.streeek.lib.data.repositories
 
+import com.bizilabs.streeek.lib.data.mappers.asDataResult
 import com.bizilabs.streeek.lib.data.mappers.toCache
 import com.bizilabs.streeek.lib.data.mappers.toDomain
 import com.bizilabs.streeek.lib.domain.helpers.DataResult
@@ -90,5 +91,10 @@ class AccountRepositoryImpl(
         remote.logout()
         local.logout()
         contributionsLocalSource.deleteAll()
+    }
+
+    override suspend fun saveFCMToken(token: String): DataResult<Boolean> {
+        val accountId = account.first()?.id ?: return DataResult.Error("Account not found")
+        return remote.saveFcmToken(accountId = accountId, token = token).asDataResult { it }
     }
 }
