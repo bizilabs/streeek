@@ -24,7 +24,7 @@ class MainActivity : BaseActivity() {
         setContent {
             SafiTheme {
                 SafiContent {
-                    MainNavigation()
+                    MainNavigation(intent = intent)
                 }
             }
         }
