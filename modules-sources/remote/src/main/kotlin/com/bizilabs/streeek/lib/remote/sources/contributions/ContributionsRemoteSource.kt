@@ -5,6 +5,7 @@ import com.bizilabs.streeek.lib.remote.helpers.NetworkResult
 import com.bizilabs.streeek.lib.remote.helpers.Supabase
 import com.bizilabs.streeek.lib.remote.helpers.getRange
 import com.bizilabs.streeek.lib.remote.helpers.safeApiCall
+import com.bizilabs.streeek.lib.remote.helpers.safeGithubApiCall
 import com.bizilabs.streeek.lib.remote.helpers.safeSupabaseCall
 import com.bizilabs.streeek.lib.remote.models.ContributionDTO
 import com.bizilabs.streeek.lib.remote.models.CreateContributionDTO
@@ -59,7 +60,7 @@ class ContributionsRemoteSourceImpl(
         username: String,
         page: Int,
     ): NetworkResult<List<GithubUserEventDTO>> =
-        safeApiCall {
+        safeGithubApiCall {
             client.get(GithubEndpoint.Events(username = username).url) {
                 url {
                     parameters.append("page", "$page")

@@ -90,8 +90,8 @@ class SyncDailyContributionsWork(
             while (page != null) {
                 val eventsResult = repository.getEvents(page = page)
                 if (eventsResult is DataResult.Error) {
-                    preferences.setIsSyncingContributions(isSyncing = false)
-                    return Result.failure().also { Timber.e(eventsResult.message) }
+                    Timber.e(eventsResult.message)
+                    break
                 }
                 val events = (eventsResult as DataResult.Success).data
                 Timber.d(
@@ -126,7 +126,8 @@ class SyncDailyContributionsWork(
                         repository.getContributionWithGithubEventId(githubEventId = event.id)
                     if (saved is DataResult.Error) {
                         preferences.setIsSyncingContributions(isSyncing = false)
-                        return Result.failure().also { Timber.e(saved.message) }
+                        Timber.e(saved.message)
+                        break
                     }
                     val contribution = (saved as DataResult.Success).data
                     if (contribution == null) {
@@ -144,10 +145,7 @@ class SyncDailyContributionsWork(
             // save events to supabase as contributions
             Timber.d("Saving list of events to supabase")
             val result = repository.saveContribution(events = list)
-            if (result is DataResult.Error) {
-                preferences.setIsSyncingContributions(isSyncing = false)
-                return Result.failure().also { Timber.e(result.message) }
-            }
+            if (result is DataResult.Error) getFailureResult(result.message)
             val data = (result as DataResult.Success).data
             val contributions = data.toMutableList().plus(supabaseContributions).toMutableList()
 
@@ -165,10 +163,7 @@ class SyncDailyContributionsWork(
                 if (result is DataResult.Success && result.data != null) iterator.remove()
             }
             val local = repository.saveContributionLocally(contributions = contributions)
-            if (local is DataResult.Error) {
-                preferences.setIsSyncingContributions(isSyncing = false)
-                return Result.failure().also { Timber.e(local.message) }
-            }
+            if (local is DataResult.Error) getFailureResult(local.message)
 
             // return success if everything is okay
             preferences.setIsSyncingContributions(isSyncing = false)
@@ -178,5 +173,11 @@ class SyncDailyContributionsWork(
             Timber.e(e, "Failed to Sync Daily Contributions")
             Result.failure()
         }
+    }
+
+    private suspend fun getFailureResult(message: String) {
+        Timber.e(message)
+        preferences.setIsSyncingContributions(isSyncing = false)
+        if (params.runAttemptCount > 2) Result.failure() else Result.retry()
     }
 }
