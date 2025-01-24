@@ -15,13 +15,13 @@ enum class AppNotificationChannel(
         id = "streeek.general",
         label = "General",
         importance = NotificationManager.IMPORTANCE_DEFAULT,
-        description = "general updates"
+        description = "general updates",
     ),
     TEAM_REQUESTS(
         id = "streeek.team.requests",
         label = "Team Requests",
         importance = NotificationManager.IMPORTANCE_HIGH,
-        description = "updates on joining a team"
+        description = "updates on joining a team",
     ),
 }
 

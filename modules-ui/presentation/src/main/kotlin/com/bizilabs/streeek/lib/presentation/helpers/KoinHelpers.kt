@@ -1,10 +1,8 @@
 package com.bizilabs.streeek.lib.presentation.helpers
 
 import android.app.Application
-import android.os.Build
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.app.NotificationManagerCompat
 import com.bizilabs.streeek.feature.authentication.authenticationModule
 import com.bizilabs.streeek.feature.issue.FeatureIssueModule
 import com.bizilabs.streeek.feature.issues.FeatureIssuesModule
@@ -93,17 +91,4 @@ fun MainActivity.initializeNotificationChannel(notificationHelper: NotificationH
                 Timber.tag("NotificationPermission").e("Notification permission denied.")
             }
         }
-    // Modern approach for requesting notification permission
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-        if (NotificationManagerCompat.from(this).areNotificationsEnabled()) {
-            // If notifications are already enabled, initialize the channel
-            notificationHelper.initNotificationChannel()
-        } else {
-            // Request permission if not already granted
-            requestNotificationPermission.launch(android.Manifest.permission.POST_NOTIFICATIONS)
-        }
-    } else {
-        // For versions below Android 13 (API 33), no need for permission request
-        notificationHelper.initNotificationChannel()
-    }
 }
