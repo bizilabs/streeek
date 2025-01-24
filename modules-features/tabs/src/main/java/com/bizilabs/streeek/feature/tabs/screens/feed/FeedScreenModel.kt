@@ -5,6 +5,7 @@ import android.content.Context
 import android.os.Build
 import cafe.adriel.voyager.core.model.StateScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
+import com.bizilabs.streeek.lib.common.helpers.launcherState
 import com.bizilabs.streeek.lib.common.helpers.permissionIsGranted
 import com.bizilabs.streeek.lib.domain.models.AccountDomain
 import com.bizilabs.streeek.lib.domain.models.ContributionDomain
@@ -57,7 +58,8 @@ class FeedScreenModel(
     private val preferenceRepository: PreferenceRepository,
     private val contributionRepository: ContributionRepository,
 ) : StateScreenModel<FeedScreenState>(FeedScreenState()) {
-    private val _date = MutableStateFlow(Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date)
+    private val _date =
+        MutableStateFlow(Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date)
     val date = _date.asStateFlow()
 
     val contributions: Flow<List<ContributionDomain>> =
@@ -69,18 +71,26 @@ class FeedScreenModel(
         }
 
     init {
+        observeLauncherState()
         checkNotificationPermission()
         observeDates()
         observeAccount()
         observeSyncingContributions()
     }
 
-    private fun checkNotificationPermission(){
-        val granted = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            context.permissionIsGranted(permission = Manifest.permission.POST_NOTIFICATIONS)
-        } else {
-            true
+    private fun observeLauncherState() {
+        screenModelScope.launch {
+            launcherState.collectLatest { granted -> if (granted == true) checkNotificationPermission() }
         }
+    }
+
+    private fun checkNotificationPermission() {
+        val granted =
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                context.permissionIsGranted(permission = Manifest.permission.POST_NOTIFICATIONS)
+            } else {
+                true
+            }
         mutableState.update { it.copy(isPermissionGranted = granted) }
     }
 

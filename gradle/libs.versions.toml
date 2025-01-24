@@ -26,6 +26,7 @@ androidx-appcompat = "1.7.0"
 androidx-palette = "1.0.0"
 androidx-security-crypto = "1.0.0"
 androidx-paging = "3.3.2"
+androidx-activity = "1.9.2"
 
 # compose
 compose-bom = "2024.11.00"
@@ -83,6 +84,7 @@ androidx-startup-runtime = { group = "androidx.startup", name = "startup-runtime
 androidx-security-crypto = { module = "androidx.security:security-crypto", version.ref = "androidx-security-crypto" }
 androidx-core-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "androidx-splash-screen" }
 androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "androidx-lifecycle-runtime-ktx" }
+androidx-activity = { group = "androidx.activity", name = "activity-ktx", version.ref = "androidx-activity" }
 
 # androidx-paging
 androidx-paging-runtime = {module = "androidx.paging:paging-runtime", version.ref= "androidx-paging"}

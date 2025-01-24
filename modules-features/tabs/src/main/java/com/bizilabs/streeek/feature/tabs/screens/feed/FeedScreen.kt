@@ -1,7 +1,10 @@
 package com.bizilabs.streeek.feature.tabs.screens.feed
 
+import androidx.activity.ComponentActivity
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -42,6 +45,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -49,6 +53,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.getScreenModel
 import com.bizilabs.streeek.feature.tabs.screens.feed.components.ContributionItemComponent
+import com.bizilabs.streeek.lib.common.helpers.requestSinglePermission
 import com.bizilabs.streeek.lib.design.components.SafiBottomAction
 import com.bizilabs.streeek.lib.design.components.SafiBottomValue
 import com.bizilabs.streeek.lib.design.components.SafiCenteredColumn
@@ -66,6 +71,7 @@ import com.kizitonwose.calendar.core.CalendarDay
 import com.kizitonwose.calendar.core.CalendarMonth
 import com.kizitonwose.calendar.core.now
 import kotlinx.datetime.LocalDate
+import java.util.jar.Manifest
 
 object FeedScreen : Screen {
     @Composable
@@ -96,6 +102,8 @@ fun FeedScreenContent(
     onRefreshContributions: () -> Unit,
     onClickToggleMonthView: () -> Unit,
 ) {
+    val activity = LocalContext.current as ComponentActivity
+
     val pullRefreshState =
         rememberPullRefreshState(
             refreshing = state.isSyncing,
@@ -172,16 +180,21 @@ fun FeedScreenContent(
         snackbarHost = {
             AnimatedVisibility(
                 modifier = Modifier.fillMaxWidth(),
-                visible = state.isPermissionGranted.not()
+                visible = state.isPermissionGranted.not(),
+                enter = scaleIn(),
+                exit = scaleOut(),
             ) {
                 SafiBottomAction(
                     title = "Enable Notifications",
                     description = "We can't seem to send you notifications. Please enable them for a better  experience",
                     icon = Icons.Filled.Notifications,
-                    primaryAction = SafiBottomValue("enable") {},
+                    primaryAction =
+                        SafiBottomValue("enable") {
+                            activity.requestSinglePermission(permission = android.Manifest.permission.POST_NOTIFICATIONS)
+                        },
                 )
             }
-        }
+        },
     ) { innerPadding ->
         Box(
             modifier =
@@ -418,7 +431,10 @@ private fun FeedHeader(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         SafiTopBarHeader(
-            modifier = Modifier.padding(start = 24.dp).weight(1f),
+            modifier =
+                Modifier
+                    .padding(start = 24.dp)
+                    .weight(1f),
             title = if (state.isToday) "Today" else selectedDate.month.name,
         )
 

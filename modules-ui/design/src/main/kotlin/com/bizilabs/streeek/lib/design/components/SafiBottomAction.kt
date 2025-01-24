@@ -46,9 +46,10 @@ fun SafiBottomAction(
     Card(
         modifier = modifier.padding(horizontal = 16.dp),
         shape = MaterialTheme.shapes.small,
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.1f)
-        )
+        colors =
+            CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.1f),
+            ),
     ) {
         Row(modifier = Modifier.padding(16.dp)) {
             Box(
@@ -129,7 +130,8 @@ private fun SafiBottomActionPreview() {
                     primaryAction = SafiBottomValue("enable") {},
                 )
             },
-        ) { _ ->
+        ) { innerPadding ->
+            Column(modifier = Modifier.padding(innerPadding)) { }
         }
     }
 }
