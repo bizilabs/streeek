@@ -14,6 +14,7 @@ import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.Notifications
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -43,8 +44,11 @@ fun SafiBottomAction(
     secondaryAction: SafiBottomValue? = null,
 ) {
     Card(
-        modifier = modifier.padding(16.dp),
+        modifier = modifier.padding(horizontal = 16.dp),
         shape = MaterialTheme.shapes.small,
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.1f)
+        )
     ) {
         Row(modifier = Modifier.padding(16.dp)) {
             Box(
@@ -54,12 +58,14 @@ fun SafiBottomAction(
                         MaterialTheme.shapes.small,
                     ),
             ) {
-                Icon(
-                    modifier = Modifier.padding(1.dp),
-                    imageVector = icon,
-                    contentDescription = title,
-                    tint = iconTint,
-                )
+                SafiShakingBox {
+                    Icon(
+                        modifier = Modifier.padding(1.dp),
+                        imageVector = icon,
+                        contentDescription = title,
+                        tint = iconTint,
+                    )
+                }
             }
 
             Column(

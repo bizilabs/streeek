@@ -15,9 +15,11 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.rounded.CalendarMonth
 import androidx.compose.material.icons.rounded.CalendarViewWeek
 import androidx.compose.material.icons.rounded.LocalFireDepartment
+import androidx.compose.material.icons.rounded.Notifications
 import androidx.compose.material.icons.rounded.PushPin
 import androidx.compose.material.icons.rounded.Refresh
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
@@ -47,6 +49,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.getScreenModel
 import com.bizilabs.streeek.feature.tabs.screens.feed.components.ContributionItemComponent
+import com.bizilabs.streeek.lib.design.components.SafiBottomAction
+import com.bizilabs.streeek.lib.design.components.SafiBottomValue
 import com.bizilabs.streeek.lib.design.components.SafiCenteredColumn
 import com.bizilabs.streeek.lib.design.components.SafiCenteredRow
 import com.bizilabs.streeek.lib.design.components.SafiInfoSection
@@ -165,6 +169,19 @@ fun FeedScreenContent(
                 }
             }
         },
+        snackbarHost = {
+            AnimatedVisibility(
+                modifier = Modifier.fillMaxWidth(),
+                visible = state.isPermissionGranted.not()
+            ) {
+                SafiBottomAction(
+                    title = "Enable Notifications",
+                    description = "We can't seem to send you notifications. Please enable them for a better  experience",
+                    icon = Icons.Filled.Notifications,
+                    primaryAction = SafiBottomValue("enable") {},
+                )
+            }
+        }
     ) { innerPadding ->
         Box(
             modifier =

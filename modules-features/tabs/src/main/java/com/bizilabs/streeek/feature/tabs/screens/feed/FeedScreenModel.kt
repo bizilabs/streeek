@@ -1,8 +1,11 @@
 package com.bizilabs.streeek.feature.tabs.screens.feed
 
+import android.Manifest
 import android.content.Context
+import android.os.Build
 import cafe.adriel.voyager.core.model.StateScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
+import com.bizilabs.streeek.lib.common.helpers.permissionIsGranted
 import com.bizilabs.streeek.lib.domain.models.AccountDomain
 import com.bizilabs.streeek.lib.domain.models.ContributionDomain
 import com.bizilabs.streeek.lib.domain.repositories.AccountRepository
@@ -42,6 +45,7 @@ data class FeedScreenState(
     val isFetchingContributions: Boolean = true,
     val selectedDate: LocalDate = LocalDate.now(),
     val dates: List<LocalDate> = emptyList(),
+    val isPermissionGranted: Boolean = true,
 ) {
     val isToday: Boolean
         get() = selectedDate == LocalDate.now()
@@ -65,9 +69,19 @@ class FeedScreenModel(
         }
 
     init {
+        checkNotificationPermission()
         observeDates()
         observeAccount()
         observeSyncingContributions()
+    }
+
+    private fun checkNotificationPermission(){
+        val granted = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            context.permissionIsGranted(permission = Manifest.permission.POST_NOTIFICATIONS)
+        } else {
+            true
+        }
+        mutableState.update { it.copy(isPermissionGranted = granted) }
     }
 
     private fun observeDates() {
