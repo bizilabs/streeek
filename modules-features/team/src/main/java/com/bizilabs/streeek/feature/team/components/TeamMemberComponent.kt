@@ -1,8 +1,9 @@
 package com.bizilabs.streeek.feature.team.components
 
+import android.content.res.Configuration
 import android.widget.Toast
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -10,8 +11,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -22,6 +23,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.bizilabs.streeek.lib.design.components.SafiCenteredRow
+import com.bizilabs.streeek.lib.design.helpers.onSuccess
+import com.bizilabs.streeek.lib.design.helpers.success
 import com.bizilabs.streeek.lib.design.theme.SafiTheme
 import com.bizilabs.streeek.lib.domain.extensions.asRank
 import com.bizilabs.streeek.lib.domain.helpers.SystemLocalDateTime
@@ -34,15 +37,13 @@ import com.bizilabs.streeek.lib.domain.models.TeamMemberRole
 import com.bizilabs.streeek.lib.domain.models.TeamWithMembersDomain
 
 @Composable
-fun TeamMemberComponent(member: TeamMemberDomain) {
+fun TeamMemberComponent(
+    member: TeamMemberDomain,
+    modifier: Modifier = Modifier,
+) {
     val context = LocalContext.current
     Card(
-        modifier =
-            Modifier
-                .padding(horizontal = 16.dp)
-                .padding(top = 8.dp)
-                .fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.onSurface.copy(0.1f)),
+        modifier = modifier,
         onClick = {
             Toast.makeText(
                 context,
@@ -71,10 +72,16 @@ fun TeamMemberComponent(member: TeamMemberDomain) {
             }
 
             Column {
-                AnimatedVisibility(visible = member.account.role.isAdmin) {
+                if (member.account.role.isAdmin) {
                     Text(
+                        modifier =
+                            Modifier
+                                .clip(MaterialTheme.shapes.medium)
+                                .background(MaterialTheme.colorScheme.success)
+                                .padding(horizontal = 8.dp),
                         text = member.account.role.label,
-                        style = MaterialTheme.typography.bodySmall,
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSuccess,
                     )
                 }
                 Text(
@@ -148,17 +155,38 @@ private val DummyTeamWithMembers =
     )
 
 @Preview
+@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
-private fun TeamMemberComponentLightPreview() {
+private fun TeamMemberComponentPreview() {
     SafiTheme {
-        TeamMemberComponent(DummyTeamWithMembers.members.first())
+        Surface {
+            TeamMemberComponent(
+                member = DummyTeamWithMembers.members.first(),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+            )
+        }
     }
 }
 
 @Preview
+@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
-private fun TeamMemberComponentDarkPreview() {
-    SafiTheme(isDarkThemeEnabled = true) {
-        TeamMemberComponent(DummyTeamWithMembers.members.first())
+private fun TeamMemberComponentAdminPreview() {
+    SafiTheme {
+        Surface {
+            TeamMemberComponent(
+                member =
+                    DummyTeamWithMembers.members.first().let {
+                        it.copy(account = it.account.copy(role = TeamMemberRole.ADMIN))
+                    },
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+            )
+        }
     }
 }

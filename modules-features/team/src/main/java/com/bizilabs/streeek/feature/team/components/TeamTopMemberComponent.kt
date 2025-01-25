@@ -1,5 +1,7 @@
 package com.bizilabs.streeek.feature.team.components
 
+import android.R.attr.text
+import android.R.attr.visible
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
@@ -127,6 +129,19 @@ fun TeamTopMemberComponent(
                     .fillMaxWidth()
                     .padding(top = 8.dp),
         ) {
+            if (member?.account?.role?.isAdmin == true) {
+                Text(
+                    modifier =
+                        Modifier
+                            .padding(vertical = 4.dp)
+                            .clip(MaterialTheme.shapes.medium)
+                            .background(MaterialTheme.colorScheme.success)
+                            .padding(horizontal = 8.dp),
+                    text = member.account.role.label,
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSuccess,
+                )
+            }
             Text(
                 text = member?.account?.username ?: "",
                 fontWeight = FontWeight.Bold,

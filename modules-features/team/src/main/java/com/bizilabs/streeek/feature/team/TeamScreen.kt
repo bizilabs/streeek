@@ -205,7 +205,10 @@ fun TeamScreenContent(
         },
     ) { innerPadding ->
         AnimatedContent(
-            modifier = Modifier.padding(innerPadding).fillMaxSize(),
+            modifier =
+                Modifier
+                    .padding(innerPadding)
+                    .fillMaxSize(),
             targetState = state.isManagingTeam,
             label = "",
         ) { isManaging ->
@@ -430,7 +433,14 @@ fun TeamDetailsSection(
                     }
                 },
             ) { member ->
-                TeamMemberComponent(member = member)
+                TeamMemberComponent(
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp)
+                            .padding(top = 8.dp),
+                    member = member,
+                )
             }
         }
         AnimatedVisibility(
