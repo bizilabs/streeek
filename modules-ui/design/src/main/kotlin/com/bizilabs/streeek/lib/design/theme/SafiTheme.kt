@@ -34,6 +34,5 @@ fun SafiTheme(
         )
     }
 
-    Card {  }
-
+    Card { }
 }

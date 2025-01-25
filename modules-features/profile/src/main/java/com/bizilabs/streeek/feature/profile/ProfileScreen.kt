@@ -18,14 +18,12 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.automirrored.rounded.LibraryBooks
-import androidx.compose.material.icons.rounded.Bolt
 import androidx.compose.material.icons.rounded.ChevronRight
 import androidx.compose.material.icons.rounded.Feedback
 import androidx.compose.material.icons.rounded.FontDownload
 import androidx.compose.material.icons.rounded.LibraryBooks
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -120,7 +118,7 @@ fun ProfileScreenContent(
         }
     }
 
-    if (state.isSelectingTypography){
+    if (state.isSelectingTypography) {
         SafiBottomSheetPicker(
             modifier = Modifier.fillMaxWidth(),
             title = "Select Typography",
@@ -128,7 +126,7 @@ fun ProfileScreenContent(
             list = state.typographies.toList(),
             onDismiss = { onToggleSelectTypography(false) },
             onItemSelected = onClickTypography,
-            name = { it.label }
+            name = { it.label },
         )
     }
 
@@ -149,15 +147,15 @@ fun ProfileScreenContent(
     }) { innerPadding ->
         Column(
             modifier =
-            Modifier
-                .fillMaxSize()
-                .padding(innerPadding),
+                Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding),
         ) {
             Column(
                 modifier =
-                Modifier
-                    .weight(1f)
-                    .scrollable(state = scrollState, orientation = Orientation.Vertical),
+                    Modifier
+                        .weight(1f)
+                        .scrollable(state = scrollState, orientation = Orientation.Vertical),
             ) {
                 SafiCenteredColumn(modifier = Modifier.fillMaxWidth()) {
                     state.account?.let { account ->
@@ -169,9 +167,9 @@ fun ProfileScreenContent(
                         ) {
                             AsyncImage(
                                 modifier =
-                                Modifier
-                                    .size(150.dp)
-                                    .clip(RoundedCornerShape(50)),
+                                    Modifier
+                                        .size(150.dp)
+                                        .clip(RoundedCornerShape(50)),
                                 model = state.account.avatarUrl,
                                 contentDescription = "user avatar url",
                                 contentScale = ContentScale.Crop,
@@ -224,14 +222,14 @@ fun ProfileScreenContent(
 
                 ProfileItemComponent(
                     modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp)
-                        .padding(top = 16.dp),
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp)
+                            .padding(top = 16.dp),
                     icon = Icons.Rounded.FontDownload,
                     title = "Typography",
                     message = "Change app's look and feel by changing the font.",
-                    onClick = { onToggleSelectTypography(true)  },
+                    onClick = { onToggleSelectTypography(true) },
                 )
 
                 Button(

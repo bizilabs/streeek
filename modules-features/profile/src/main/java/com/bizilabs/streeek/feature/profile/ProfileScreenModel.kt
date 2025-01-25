@@ -11,7 +11,6 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.koin.dsl.module
-import java.util.EnumSet
 import kotlin.enums.EnumEntries
 
 val profileModule =
@@ -27,13 +26,13 @@ data class ProfileScreenState(
     val versionName: String = "",
     val typographies: EnumEntries<SafiTypography> = SafiTypography.entries,
     val typography: SafiTypography = SafiTypography.MONO,
-    val isSelectingTypography: Boolean = false
+    val isSelectingTypography: Boolean = false,
 )
 
 class ProfileScreenModel(
     private val accountRepository: AccountRepository,
     private val versionRepository: VersionRepository,
-    private val preferenceRepository: PreferenceRepository
+    private val preferenceRepository: PreferenceRepository,
 ) : StateScreenModel<ProfileScreenState>(ProfileScreenState()) {
     init {
         getAccount()
@@ -65,7 +64,7 @@ class ProfileScreenModel(
         }
     }
 
-    private fun observeTypography(){
+    private fun observeTypography() {
         screenModelScope.launch {
             preferenceRepository.typography.collectLatest { typography ->
                 mutableState.update { it.copy(typography = SafiTypography.valueOf(typography)) }
@@ -96,11 +95,11 @@ class ProfileScreenModel(
         mutableState.update { it.copy(shouldConfirmLogout = false) }
     }
 
-    fun onToggleSelectTypography(show: Boolean){
+    fun onToggleSelectTypography(show: Boolean) {
         mutableState.update { it.copy(isSelectingTypography = show) }
     }
 
-    fun onClickTypography(typography: SafiTypography){
+    fun onClickTypography(typography: SafiTypography) {
         screenModelScope.launch {
             preferenceRepository.updateTypography(typography.name)
             mutableState.update { it.copy(isSelectingTypography = false) }
