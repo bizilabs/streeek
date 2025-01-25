@@ -11,6 +11,7 @@ import com.bizilabs.streeek.lib.common.helpers.BaseActivity
 import com.bizilabs.streeek.lib.common.helpers.registerLaunchers
 import com.bizilabs.streeek.lib.design.components.SafiContent
 import com.bizilabs.streeek.lib.design.theme.SafiTheme
+import com.bizilabs.streeek.lib.domain.monitors.NetworkMonitor
 import org.koin.android.ext.android.inject
 import org.koin.core.parameter.parametersOf
 
@@ -18,6 +19,7 @@ class MainActivity : BaseActivity() {
     // Inject InAppUpdateManager using Koin and pass the activity as a parameter
     private val inAppUpdateManager: InAppUpdateManager by inject { parametersOf(this) }
     private val viewModel: MainViewModel by inject()
+    private val networkMonitor: NetworkMonitor by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
@@ -29,7 +31,9 @@ class MainActivity : BaseActivity() {
             SafiTheme(
                 typography = state.typography,
             ) {
-                SafiContent {
+                SafiContent(
+                    isNetworkConnected = state.hasNetworkConnection,
+                ) {
                     MainNavigation(intent = intent)
                 }
             }
@@ -42,11 +46,13 @@ class MainActivity : BaseActivity() {
         super.onResume()
         // Complete any downloaded updates
         inAppUpdateManager.completeUpdateIfNeeded()
+        networkMonitor.register()
     }
 
     override fun onDestroy() {
         super.onDestroy()
         // Clean up resources
         inAppUpdateManager.cleanup()
+        networkMonitor.unregister()
     }
 }

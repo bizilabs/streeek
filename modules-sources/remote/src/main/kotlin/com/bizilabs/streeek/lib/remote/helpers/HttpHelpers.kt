@@ -1,6 +1,7 @@
 package com.bizilabs.streeek.lib.remote.helpers
 
 import com.bizilabs.streeek.lib.remote.interceptor.AuthorizationInterceptor
+import com.bizilabs.streeek.lib.remote.interceptor.NetworkInterceptor
 import com.chuckerteam.chucker.api.ChuckerInterceptor
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.okhttp.OkHttp
@@ -61,11 +62,13 @@ private fun DefaultRequest.DefaultRequestBuilder.addStandardHeaders() {
 }
 
 fun createHttpClient(
+    networkInterceptor: NetworkInterceptor,
     chuckerInterceptor: ChuckerInterceptor,
     loggingInterceptor: HttpLoggingInterceptor,
     authorizationInterceptor: AuthorizationInterceptor,
 ) = HttpClient(OkHttp) {
     engine {
+        addInterceptor(networkInterceptor)
         addInterceptor(authorizationInterceptor)
         addInterceptor(loggingInterceptor)
         addInterceptor(chuckerInterceptor)

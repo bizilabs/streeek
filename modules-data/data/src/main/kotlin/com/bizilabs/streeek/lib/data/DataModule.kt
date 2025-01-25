@@ -14,6 +14,7 @@ import com.bizilabs.streeek.lib.data.repositories.TeamRepositoryImpl
 import com.bizilabs.streeek.lib.data.repositories.UserRepositoryImpl
 import com.bizilabs.streeek.lib.data.repositories.VersionRepositoryImpl
 import com.bizilabs.streeek.lib.data.repositories.team.TeamRequestRepositoryImpl
+import com.bizilabs.streeek.lib.domain.monitors.NetworkMonitor
 import com.bizilabs.streeek.lib.domain.repositories.AccountRepository
 import com.bizilabs.streeek.lib.domain.repositories.AuthenticationRepository
 import com.bizilabs.streeek.lib.domain.repositories.ContributionRepository
@@ -102,4 +103,5 @@ val dataModule =
                 accountLocalSource = get(),
             )
         }
+        single<NetworkMonitor> { NetworkMonitor(context = get(), repository = get()) }
     }

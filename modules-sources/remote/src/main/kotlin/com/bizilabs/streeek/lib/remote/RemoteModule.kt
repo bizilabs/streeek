@@ -7,6 +7,7 @@ import androidx.datastore.preferences.preferencesDataStore
 import com.bizilabs.streeek.lib.remote.helpers.createHttpClient
 import com.bizilabs.streeek.lib.remote.helpers.createSupabase
 import com.bizilabs.streeek.lib.remote.interceptor.AuthorizationInterceptor
+import com.bizilabs.streeek.lib.remote.interceptor.NetworkInterceptor
 import com.bizilabs.streeek.lib.remote.sources.account.AccountRemoteSource
 import com.bizilabs.streeek.lib.remote.sources.account.AccountRemoteSourceImpl
 import com.bizilabs.streeek.lib.remote.sources.auth.AuthenticationRemoteSource
@@ -50,8 +51,10 @@ val RemoteModule =
         }
         single<ChuckerInterceptor> { ChuckerInterceptor(context = get()) }
         single<AuthorizationInterceptor> { AuthorizationInterceptor(remotePreferencesSource = get()) }
+        single<NetworkInterceptor> { NetworkInterceptor(context = get()) }
         single<HttpClient> {
             createHttpClient(
+                networkInterceptor = get(),
                 chuckerInterceptor = get(),
                 loggingInterceptor = get(),
                 authorizationInterceptor = get(),
