@@ -13,78 +13,73 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.bizilabs.streeek.feature.tabs.screens.feed.CalendarItem
 import com.bizilabs.streeek.feature.tabs.screens.feed.FeedScreenState
 import com.bizilabs.streeek.feature.tabs.screens.feed.MonthAction
+import com.bizilabs.streeek.feature.tabs.screens.feed.asStreakPosition
 import com.kizitonwose.calendar.compose.HorizontalCalendar
 import com.kizitonwose.calendar.compose.rememberCalendarState
 import com.kizitonwose.calendar.core.CalendarDay
 import com.kizitonwose.calendar.core.CalendarMonth
 import com.kizitonwose.calendar.core.YearMonth
-import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDate
 
 @Composable
-fun FeedMonthView(
+fun FeedMonthViewSection(
     state: FeedScreenState,
     modifier: Modifier = Modifier,
     onClickMonthAction: (MonthAction) -> Unit,
     onClickDate: (LocalDate) -> Unit,
 ) {
-    val scope = rememberCoroutineScope()
     val selectedDate = state.selectedDate
-    val calendarState = rememberCalendarState(
-        startMonth = YearMonth(
-            state.selectedDate.year,
-            selectedDate.month
-        ),
-        firstVisibleMonth = YearMonth(
-            state.selectedDate.year,
-            selectedDate.month
+    val calendarState =
+        rememberCalendarState(
+            startMonth =
+                YearMonth(
+                    state.selectedDate.year,
+                    selectedDate.month,
+                ),
+            firstVisibleMonth =
+                YearMonth(
+                    state.selectedDate.year,
+                    selectedDate.month,
+                ),
         )
-    )
-
-    fun getMonth(value: Long): YearMonth {
-        return YearMonth(
-            state.selectedDate.year,
-            selectedDate.month.plus(value)
-        )
-    }
 
     HorizontalCalendar(
         modifier = modifier,
         state = calendarState,
         dayContent = { day: CalendarDay ->
-            CalendarItem(
+            FeedCalendarItemComponent(
                 hasContribution = state.dates.contains(day.date),
                 isMonthView = true,
                 modifier = Modifier.fillMaxWidth(),
                 day = day.date,
                 selectedDate = selectedDate,
                 onClickDate = onClickDate,
+                streakPosition = day.date.asStreakPosition(state.dates),
             )
         },
         monthFooter = {
-            MonthFooter(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp),
+            FeedMonthFooter(
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp),
                 state = state,
-                onClickMonthAction = onClickMonthAction
+                onClickMonthAction = onClickMonthAction,
             )
         },
         monthHeader = {
-            MonthHeader(
+            FeedMonthHeader(
                 modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp),
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 8.dp),
                 calendarMonth = it,
             )
         },
@@ -92,7 +87,7 @@ fun FeedMonthView(
 }
 
 @Composable
-fun MonthHeader(
+fun FeedMonthHeader(
     calendarMonth: CalendarMonth,
     modifier: Modifier = Modifier,
 ) {
@@ -116,7 +111,7 @@ fun MonthHeader(
 }
 
 @Composable
-fun MonthFooter(
+fun FeedMonthFooter(
     state: FeedScreenState,
     modifier: Modifier = Modifier,
     onClickMonthAction: (MonthAction) -> Unit,
@@ -124,22 +119,22 @@ fun MonthFooter(
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
+        horizontalArrangement = Arrangement.SpaceBetween,
     ) {
         IconButton(onClick = { onClickMonthAction(MonthAction.PREVIOUS) }) {
             Icon(
                 imageVector = Icons.AutoMirrored.Rounded.KeyboardArrowLeft,
-                contentDescription = "previous month"
+                contentDescription = "previous month",
             )
         }
         Text(
             text = state.selectedDate.month.name,
-            style = MaterialTheme.typography.titleSmall
+            style = MaterialTheme.typography.titleSmall,
         )
         IconButton(onClick = { onClickMonthAction(MonthAction.NEXT) }) {
             Icon(
                 imageVector = Icons.AutoMirrored.Rounded.KeyboardArrowRight,
-                contentDescription = "next month"
+                contentDescription = "next month",
             )
         }
     }

@@ -2,10 +2,10 @@ package com.bizilabs.streeek.feature.tabs.screens.feed
 
 import android.Manifest
 import android.content.Context
+import android.icu.text.RelativeDateTimeFormatter.Direction.NEXT
 import android.os.Build
 import cafe.adriel.voyager.core.model.StateScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
-import com.bizilabs.streeek.feature.tabs.screens.feed.MonthAction.*
 import com.bizilabs.streeek.lib.common.helpers.launcherState
 import com.bizilabs.streeek.lib.common.helpers.permissionIsGranted
 import com.bizilabs.streeek.lib.domain.models.AccountDomain
@@ -43,7 +43,39 @@ internal val FeedModule =
     }
 
 enum class MonthAction {
-    PREVIOUS, NEXT
+    PREVIOUS,
+    NEXT,
+}
+
+enum class StreakPosition {
+    FIRST,
+    MIDDLE,
+    LAST,
+    ALONE,
+}
+
+fun LocalDate.asStreakPosition(list: List<LocalDate>): StreakPosition? {
+    val sorted = list.sorted()
+    val index = sorted.indexOf(this)
+    if (index == -1) return null
+    val previousDate = sorted.getOrNull(index - 1)
+    val hasPreviousDay =
+        when (previousDate) {
+            null -> false
+            else -> dayOfYear.minus(previousDate.dayOfYear) == 1
+        }
+    val nextDate = sorted.getOrNull(index + 1)
+    val hasNextDay =
+        when (nextDate) {
+            null -> false
+            else -> nextDate.dayOfYear.minus(this.dayOfYear) == 1
+        }
+    return when {
+        hasPreviousDay && hasNextDay -> StreakPosition.MIDDLE
+        hasPreviousDay -> StreakPosition.LAST
+        hasNextDay -> StreakPosition.FIRST
+        else -> StreakPosition.ALONE
+    }
 }
 
 data class FeedScreenState(
@@ -139,12 +171,13 @@ class FeedScreenModel(
         mutableState.update { it.copy(isMonthView = it.isMonthView.not()) }
     }
 
-    fun onClickMonthAction(action : MonthAction){
+    fun onClickMonthAction(action: MonthAction) {
         val currentDate = state.value.selectedDate
-        val updatedDate = when(action){
-            PREVIOUS -> currentDate.plus(DatePeriod(months = -1))
-            NEXT -> currentDate.plus(DatePeriod(months = 1))
-        }
+        val updatedDate =
+            when (action) {
+                MonthAction.PREVIOUS -> currentDate.plus(DatePeriod(months = -1))
+                MonthAction.NEXT -> currentDate.plus(DatePeriod(months = 1))
+            }
         mutableState.update { it.copy(selectedDate = updatedDate) }
     }
 }

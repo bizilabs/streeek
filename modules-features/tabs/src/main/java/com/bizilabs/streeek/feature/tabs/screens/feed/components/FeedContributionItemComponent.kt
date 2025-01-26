@@ -21,7 +21,7 @@ import androidx.compose.ui.unit.sp
 import com.bizilabs.streeek.lib.domain.models.ContributionDomain
 
 @Composable
-fun ContributionItemComponent(
+fun FeedContributionItemComponent(
     contribution: ContributionDomain,
     modifier: Modifier = Modifier,
 ) {
