@@ -28,4 +28,8 @@ sealed class SharedScreen : ScreenProvider {
     object Join : SharedScreen()
 
     object Notifications : SharedScreen()
+
+    object Reminders : SharedScreen()
+
+    data class Reminder(val id: String) : SharedScreen()
 }
