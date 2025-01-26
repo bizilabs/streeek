@@ -2,7 +2,6 @@ package com.bizilabs.streeek.feature.tabs.screens.feed
 
 import android.Manifest
 import android.content.Context
-import android.icu.text.RelativeDateTimeFormatter.Direction.NEXT
 import android.os.Build
 import cafe.adriel.voyager.core.model.StateScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
@@ -23,7 +22,6 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
-import kotlinx.datetime.DatePeriod
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.plus
@@ -169,15 +167,5 @@ class FeedScreenModel(
 
     fun onClickToggleMonthView() {
         mutableState.update { it.copy(isMonthView = it.isMonthView.not()) }
-    }
-
-    fun onClickMonthAction(action: MonthAction) {
-        val currentDate = state.value.selectedDate
-        val updatedDate =
-            when (action) {
-                MonthAction.PREVIOUS -> currentDate.plus(DatePeriod(months = -1))
-                MonthAction.NEXT -> currentDate.plus(DatePeriod(months = 1))
-            }
-        mutableState.update { it.copy(selectedDate = updatedDate) }
     }
 }

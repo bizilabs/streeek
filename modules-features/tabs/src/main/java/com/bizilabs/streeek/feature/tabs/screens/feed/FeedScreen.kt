@@ -76,7 +76,6 @@ object FeedScreen : Screen {
             onClickDate = screenModel::onClickDate,
             onRefreshContributions = screenModel::onRefreshContributions,
             onClickToggleMonthView = screenModel::onClickToggleMonthView,
-            onClickMonthAction = screenModel::onClickMonthAction,
         )
     }
 }
@@ -90,7 +89,6 @@ fun FeedScreenContent(
     onClickDate: (LocalDate) -> Unit,
     onRefreshContributions: () -> Unit,
     onClickToggleMonthView: () -> Unit,
-    onClickMonthAction: (MonthAction) -> Unit,
 ) {
     val activity = LocalContext.current as ComponentActivity
 
@@ -118,7 +116,6 @@ fun FeedScreenContent(
                             true -> {
                                 FeedMonthViewSection(
                                     state = state,
-                                    onClickMonthAction = onClickMonthAction,
                                     onClickDate = onClickDate,
                                 )
                             }

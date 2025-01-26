@@ -13,6 +13,8 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -26,68 +28,83 @@ import com.kizitonwose.calendar.compose.rememberCalendarState
 import com.kizitonwose.calendar.core.CalendarDay
 import com.kizitonwose.calendar.core.CalendarMonth
 import com.kizitonwose.calendar.core.YearMonth
+import com.kizitonwose.calendar.core.minusMonths
+import com.kizitonwose.calendar.core.plusMonths
+import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDate
 
 @Composable
 fun FeedMonthViewSection(
     state: FeedScreenState,
     modifier: Modifier = Modifier,
-    onClickMonthAction: (MonthAction) -> Unit,
     onClickDate: (LocalDate) -> Unit,
 ) {
+    val scope = rememberCoroutineScope()
     val selectedDate = state.selectedDate
+    val currentMonth = YearMonth(state.selectedDate.year, selectedDate.month)
+    val startMonth = remember { currentMonth.minusMonths(3) }
+    val endMonth = remember { currentMonth.plusMonths(3) }
     val calendarState =
         rememberCalendarState(
-            startMonth =
-                YearMonth(
-                    state.selectedDate.year,
-                    selectedDate.month,
-                ),
-            firstVisibleMonth =
-                YearMonth(
-                    state.selectedDate.year,
-                    selectedDate.month,
-                ),
+            startMonth = startMonth,
+            endMonth = endMonth,
+            firstVisibleMonth = currentMonth,
         )
 
-    HorizontalCalendar(
-        modifier = modifier,
-        state = calendarState,
-        dayContent = { day: CalendarDay ->
-            FeedCalendarItemComponent(
-                hasContribution = state.dates.contains(day.date),
-                isMonthView = true,
-                modifier = Modifier.fillMaxWidth(),
-                day = day.date,
-                selectedDate = selectedDate,
-                onClickDate = onClickDate,
-                streakPosition = day.date.asStreakPosition(state.dates),
-            )
-        },
-        monthFooter = {
-            FeedMonthFooter(
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(8.dp),
-                state = state,
-                onClickMonthAction = onClickMonthAction,
-            )
-        },
-        monthHeader = {
-            FeedMonthHeader(
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 8.dp),
-                calendarMonth = it,
-            )
-        },
-    )
+    fun scrollToMonth(month: YearMonth) {
+        scope.launch {
+            calendarState.animateScrollToMonth(month = month)
+        }
+    }
+
+    Column {
+        FeedCalendarMonthsHeader(
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp),
+            month = calendarState.firstVisibleMonth,
+            onClickMonthAction = {
+                when (it) {
+                    MonthAction.PREVIOUS -> {
+                        scrollToMonth(calendarState.firstVisibleMonth.yearMonth.minusMonths(1))
+                    }
+
+                    MonthAction.NEXT -> {
+                        scrollToMonth(calendarState.firstVisibleMonth.yearMonth.plusMonths(1))
+                    }
+                }
+            },
+        )
+        HorizontalCalendar(
+            modifier = modifier,
+            state = calendarState,
+            dayContent = { day: CalendarDay ->
+                FeedCalendarItemComponent(
+                    hasContribution = state.dates.contains(day.date),
+                    isMonthView = true,
+                    modifier = Modifier.fillMaxWidth(),
+                    day = day.date,
+                    selectedDate = selectedDate,
+                    onClickDate = onClickDate,
+                    streakPosition = day.date.asStreakPosition(state.dates),
+                )
+            },
+            monthHeader = {
+                FeedCalendarDaysHeader(
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 8.dp),
+                    calendarMonth = it,
+                )
+            },
+        )
+    }
 }
 
 @Composable
-fun FeedMonthHeader(
+fun FeedCalendarDaysHeader(
     calendarMonth: CalendarMonth,
     modifier: Modifier = Modifier,
 ) {
@@ -111,8 +128,8 @@ fun FeedMonthHeader(
 }
 
 @Composable
-fun FeedMonthFooter(
-    state: FeedScreenState,
+fun FeedCalendarMonthsHeader(
+    month: CalendarMonth,
     modifier: Modifier = Modifier,
     onClickMonthAction: (MonthAction) -> Unit,
 ) {
@@ -128,7 +145,7 @@ fun FeedMonthFooter(
             )
         }
         Text(
-            text = state.selectedDate.month.name,
+            text = month.yearMonth.month.name,
             style = MaterialTheme.typography.titleSmall,
         )
         IconButton(onClick = { onClickMonthAction(MonthAction.NEXT) }) {
