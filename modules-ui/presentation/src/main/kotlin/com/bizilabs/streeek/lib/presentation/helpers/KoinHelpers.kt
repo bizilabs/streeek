@@ -1,7 +1,6 @@
 package com.bizilabs.streeek.lib.presentation.helpers
 
 import android.app.Application
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.bizilabs.streeek.feature.authentication.authenticationModule
 import com.bizilabs.streeek.feature.issue.FeatureIssueModule
 import com.bizilabs.streeek.feature.issues.FeatureIssuesModule
@@ -12,6 +11,7 @@ import com.bizilabs.streeek.feature.notifications.FeatureNotificationModule
 import com.bizilabs.streeek.feature.notifications.PushNotificationsModule
 import com.bizilabs.streeek.feature.points.FeaturePoints
 import com.bizilabs.streeek.feature.profile.profileModule
+import com.bizilabs.streeek.feature.reviews.ReviewModule
 import com.bizilabs.streeek.feature.setup.setupModule
 import com.bizilabs.streeek.feature.tabs.FeatureTabsModule
 import com.bizilabs.streeek.feature.team.FeatureTeamModule
@@ -60,6 +60,7 @@ val PresentationModule =
             AppUpdaterModule,
             PushNotificationsModule,
             FeatureJoin,
+            ReviewModule,
         )
         workerOf(::SyncTeamsWork)
         workerOf(::SyncLevelsWork)

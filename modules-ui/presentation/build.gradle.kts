@@ -40,4 +40,5 @@ dependencies {
     // firebase
     implementation(platform(libs.firebase.bom))
     implementation(libs.bundles.firebase)
+    implementation(projects.modulesFeatures.reviews)
 }

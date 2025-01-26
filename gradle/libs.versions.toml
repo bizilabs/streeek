@@ -71,6 +71,7 @@ confetti = "2.0.5"
 updater = "2.1.0"
 rich-text-editor = "1.0.0-rc10"
 firebase-messaging-ktx = "24.1.0"
+google-inapp-reviews-ktx = "2.0.2"
 
 [libraries]
 # androidx
@@ -87,8 +88,8 @@ androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecyc
 androidx-activity = { group = "androidx.activity", name = "activity-ktx", version.ref = "androidx-activity" }
 
 # androidx-paging
-androidx-paging-runtime = {module = "androidx.paging:paging-runtime", version.ref= "androidx-paging"}
-androidx-paging-compose = {module = "androidx.paging:paging-compose", version.ref= "androidx-paging"}
+androidx-paging-runtime = { module = "androidx.paging:paging-runtime", version.ref = "androidx-paging" }
+androidx-paging-compose = { module = "androidx.paging:paging-compose", version.ref = "androidx-paging" }
 
 # koin
 koin-bom = { module = "io.insert-koin:koin-bom", version.ref = "koin-bom" }
@@ -210,10 +211,11 @@ realm = { module = "io.realm.kotlin:library-base", version.ref = "realm" }
 kalendar = { module = "com.himanshoe:kalendar", version.ref = "kalendar" }
 calendar = { module = "com.kizitonwose.calendar:compose-multiplatform", version.ref = "calendar" }
 androidx-foundation-android = { group = "androidx.compose.foundation", name = "foundation-android", version.ref = "foundation-android" }
-confetti = { module = "nl.dionsegijn:konfetti-compose", version.ref = "confetti"}
-updater = { module = "com.google.android.play:app-update", version.ref = "updater"}
-richtexteditor = { module = "com.mohamedrejeb.richeditor:richeditor-compose", version.ref = "rich-text-editor"}
+confetti = { module = "nl.dionsegijn:konfetti-compose", version.ref = "confetti" }
+updater = { module = "com.google.android.play:app-update", version.ref = "updater" }
+richtexteditor = { module = "com.mohamedrejeb.richeditor:richeditor-compose", version.ref = "rich-text-editor" }
 firebase-messaging-ktx = { group = "com.google.firebase", name = "firebase-messaging-ktx", version.ref = "firebase-messaging-ktx" }
+google-inapp-reviews-ktx = { group = "com.google.android.play", name = "review-ktx", version.ref = "google-inapp-reviews-ktx" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "gradle-plugin-android" }
