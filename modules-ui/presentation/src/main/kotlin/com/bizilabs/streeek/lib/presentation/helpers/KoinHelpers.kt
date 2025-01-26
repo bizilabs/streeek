@@ -12,6 +12,7 @@ import com.bizilabs.streeek.feature.notifications.FeatureNotificationModule
 import com.bizilabs.streeek.feature.notifications.PushNotificationsModule
 import com.bizilabs.streeek.feature.points.FeaturePoints
 import com.bizilabs.streeek.feature.profile.profileModule
+import com.bizilabs.streeek.feature.reminders.FeatureModuleReminders
 import com.bizilabs.streeek.feature.setup.setupModule
 import com.bizilabs.streeek.feature.tabs.FeatureTabsModule
 import com.bizilabs.streeek.feature.team.FeatureTeamModule
@@ -60,6 +61,7 @@ val PresentationModule =
             AppUpdaterModule,
             PushNotificationsModule,
             FeatureJoin,
+            FeatureModuleReminders
         )
         workerOf(::SyncTeamsWork)
         workerOf(::SyncLevelsWork)
