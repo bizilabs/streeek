@@ -5,6 +5,7 @@ import android.content.Context
 import android.os.Build
 import cafe.adriel.voyager.core.model.StateScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
+import com.bizilabs.streeek.feature.tabs.screens.feed.MonthAction.*
 import com.bizilabs.streeek.lib.common.helpers.launcherState
 import com.bizilabs.streeek.lib.common.helpers.permissionIsGranted
 import com.bizilabs.streeek.lib.domain.models.AccountDomain
@@ -22,8 +23,10 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
+import kotlinx.datetime.DatePeriod
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
+import kotlinx.datetime.plus
 import kotlinx.datetime.toLocalDateTime
 import org.koin.dsl.module
 
@@ -38,6 +41,10 @@ internal val FeedModule =
             )
         }
     }
+
+enum class MonthAction {
+    PREVIOUS, NEXT
+}
 
 data class FeedScreenState(
     val isSyncing: Boolean = false,
@@ -130,5 +137,14 @@ class FeedScreenModel(
 
     fun onClickToggleMonthView() {
         mutableState.update { it.copy(isMonthView = it.isMonthView.not()) }
+    }
+
+    fun onClickMonthAction(action : MonthAction){
+        val currentDate = state.value.selectedDate
+        val updatedDate = when(action){
+            PREVIOUS -> currentDate.plus(DatePeriod(months = -1))
+            NEXT -> currentDate.plus(DatePeriod(months = 1))
+        }
+        mutableState.update { it.copy(selectedDate = updatedDate) }
     }
 }
