@@ -21,6 +21,7 @@ import androidx.compose.material.icons.automirrored.rounded.LibraryBooks
 import androidx.compose.material.icons.rounded.ChevronRight
 import androidx.compose.material.icons.rounded.Feedback
 import androidx.compose.material.icons.rounded.FontDownload
+import androidx.compose.material.icons.rounded.Timer
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -66,22 +67,23 @@ object ProfileScreen : Screen {
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.current
+        val screenLanding = rememberScreen(SharedScreen.Landing)
         val screenIssues = rememberScreen(SharedScreen.Issues)
         val screenPoints = rememberScreen(SharedScreen.Points)
 
-        val landingScreen = rememberScreen(SharedScreen.Landing)
         val screenModel: ProfileScreenModel = getScreenModel()
         val state by screenModel.state.collectAsStateWithLifecycle()
         ProfileScreenContent(
             state = state,
             onClickNavigateBackIcon = { navigator?.pop() },
             onClickLogout = screenModel::onClickLogout,
-            navigateToLanding = { navigator?.replaceAll(landingScreen) },
+            navigateToLanding = { navigator?.replaceAll(screenLanding) },
             onClickConfirmLogout = screenModel::onClickConfirmLogout,
             onClickCardIssues = { navigator?.push(screenIssues) },
             onClickCardPoints = { navigator?.push(screenPoints) },
             onToggleSelectTypography = screenModel::onToggleSelectTypography,
             onClickTypography = screenModel::onClickTypography,
+            navigate = {screen -> navigator?.push(screen)}
         )
     }
 }
@@ -98,6 +100,7 @@ fun ProfileScreenContent(
     onClickCardPoints: () -> Unit,
     onToggleSelectTypography: (Boolean) -> Unit,
     onClickTypography: (SafiTypography) -> Unit,
+    navigate: (Screen) -> Unit,
 ) {
     val scrollState = rememberScrollState()
 
@@ -238,6 +241,19 @@ fun ProfileScreenContent(
                     title = "Typography",
                     message = "Change app's look and feel by changing the font.",
                     onClick = { onToggleSelectTypography(true) },
+                )
+
+                val screenReminders = rememberScreen(SharedScreen.Reminders)
+                ProfileItemComponent(
+                    modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp)
+                        .padding(top = 16.dp),
+                    icon = Icons.Rounded.Timer,
+                    title = "Reminders",
+                    message = "Add custom reminders to maintain a steady streak",
+                    onClick = { navigate(screenReminders) },
                 )
 
                 Button(
