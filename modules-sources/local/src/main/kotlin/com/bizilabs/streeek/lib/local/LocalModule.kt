@@ -23,6 +23,8 @@ import com.bizilabs.streeek.lib.local.sources.preference.LocalPreferenceSource
 import com.bizilabs.streeek.lib.local.sources.preference.LocalPreferenceSourceImpl
 import com.bizilabs.streeek.lib.local.sources.preference.PreferenceSource
 import com.bizilabs.streeek.lib.local.sources.preference.PreferenceSourceImpl
+import com.bizilabs.streeek.lib.local.sources.reminder.ReminderLocalSource
+import com.bizilabs.streeek.lib.local.sources.reminder.ReminderLocalSourceImpl
 import com.bizilabs.streeek.lib.local.sources.team.TeamLocalSource
 import com.bizilabs.streeek.lib.local.sources.team.TeamLocalSourceImpl
 import org.koin.core.qualifier.named
@@ -48,6 +50,7 @@ val LocalModule =
         single<AccountLocalSource> { AccountLocalSourceImpl(preferenceSource = get()) }
         single<TeamLocalSource> { TeamLocalSourceImpl(source = get()) }
         single<LeaderboardLocalSource> { LeaderboardLocalSourceImpl(source = get()) }
+        single<ReminderLocalSource> { ReminderLocalSourceImpl(source = get()) }
         // contributions
         single<ContributionDAO> { get<StreeekDatabase>().contributions }
         single<ContributionsLocalSource> {
