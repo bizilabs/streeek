@@ -8,20 +8,18 @@ import androidx.compose.ui.Modifier
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 
-class ReminderScreen(val id: String) : Screen  {
+class ReminderScreen(val id: String) : Screen {
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.current
         ReminderScreenContent()
     }
-
 }
 
 @Composable
 fun ReminderScreenContent() {
     Scaffold { innerPadding ->
         Column(modifier = Modifier.padding(innerPadding)) {
-
         }
     }
 }
