@@ -1,5 +1,6 @@
 package com.bizilabs.streeek.feature.profile
 
+import android.R.attr.visible
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.gestures.Orientation
@@ -16,12 +17,12 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
-import androidx.compose.material.icons.rounded.Bolt
+import androidx.compose.material.icons.automirrored.rounded.LibraryBooks
 import androidx.compose.material.icons.rounded.ChevronRight
 import androidx.compose.material.icons.rounded.Feedback
+import androidx.compose.material.icons.rounded.FontDownload
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -46,8 +47,10 @@ import cafe.adriel.voyager.koin.getScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import coil.compose.SubcomposeAsyncImage
 import com.bizilabs.streeek.lib.common.navigation.SharedScreen
+import com.bizilabs.streeek.lib.design.atoms.SafiTypography
 import com.bizilabs.streeek.lib.design.components.DialogState
 import com.bizilabs.streeek.lib.design.components.SafiBottomDialog
+import com.bizilabs.streeek.lib.design.components.SafiBottomSheetPicker
 import com.bizilabs.streeek.lib.design.components.SafiCenteredColumn
 import com.bizilabs.streeek.lib.design.components.SafiTopBarHeader
 import com.bizilabs.streeek.lib.design.components.shimmerEffect
@@ -63,22 +66,23 @@ object ProfileScreen : Screen {
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.current
+        val screenLanding = rememberScreen(SharedScreen.Landing)
         val screenIssues = rememberScreen(SharedScreen.Issues)
         val screenPoints = rememberScreen(SharedScreen.Points)
 
-        val landingScreen = rememberScreen(SharedScreen.Landing)
         val screenModel: ProfileScreenModel = getScreenModel()
         val state by screenModel.state.collectAsStateWithLifecycle()
         ProfileScreenContent(
             state = state,
             onClickNavigateBackIcon = { navigator?.pop() },
             onClickLogout = screenModel::onClickLogout,
-            navigateToLanding = { navigator?.replaceAll(landingScreen) },
+            navigateToLanding = { navigator?.replaceAll(screenLanding) },
             onClickConfirmLogout = screenModel::onClickConfirmLogout,
             onClickCardIssues = { navigator?.push(screenIssues) },
             onClickCardPoints = { navigator?.push(screenPoints) },
             onToggleSelectTypography = screenModel::onToggleSelectTypography,
             onClickTypography = screenModel::onClickTypography,
+            navigate = {screen -> navigator?.push(screen)}
         )
     }
 }
@@ -93,6 +97,9 @@ fun ProfileScreenContent(
     onClickConfirmLogout: (Boolean) -> Unit,
     onClickCardIssues: () -> Unit,
     onClickCardPoints: () -> Unit,
+    onToggleSelectTypography: (Boolean) -> Unit,
+    onClickTypography: (SafiTypography) -> Unit,
+    navigate: (Screen) -> Unit,
 ) {
     val scrollState = rememberScrollState()
 
@@ -186,6 +193,19 @@ fun ProfileScreenContent(
                     title = "Typography",
                     message = "Change app's look and feel by changing the font.",
                     onClick = { onToggleSelectTypography(true) },
+                )
+
+                val screenReminders = rememberScreen(SharedScreen.Reminders)
+                ProfileItemComponent(
+                    modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp)
+                        .padding(top = 16.dp),
+                    icon = Icons.Rounded.Timer,
+                    title = "Reminders",
+                    message = "Add custom reminders to maintain a steady streak",
+                    onClick = { navigate(screenReminders) },
                 )
 
                 Button(
