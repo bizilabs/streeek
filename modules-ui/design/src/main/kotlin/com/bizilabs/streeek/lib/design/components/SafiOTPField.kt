@@ -90,7 +90,7 @@ fun SafiOTPField(
 @Preview
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
-fun SafiOTPFieldPreview() {
+private fun SafiOTPFieldPreview() {
     SafiTheme {
         Surface(modifier = Modifier.padding(16.dp)) {
             SafiOTPField(text = "", onValueChange = { _, _ -> })
@@ -101,7 +101,7 @@ fun SafiOTPFieldPreview() {
 @Preview
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
-fun SafiOTPFieldFullPreview() {
+private fun SafiOTPFieldFullPreview() {
     SafiTheme {
         Surface(modifier = Modifier.padding(16.dp)) {
             SafiOTPField(text = "123456", onValueChange = { _, _ -> })

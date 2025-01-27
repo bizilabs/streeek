@@ -19,6 +19,13 @@ enum class AppNotificationChannel(
         group = AppNotificationGroup.UPDATES,
         description = "general updates",
     ),
+    REMINDERS(
+        id = "streeek.team.reminders",
+        label = "Reminders",
+        importance = NotificationManager.IMPORTANCE_MAX,
+        group = AppNotificationGroup.REMINDERS,
+        description = "alarms for contributing to the app",
+    ),
     TEAM_REQUESTS(
         id = "streeek.team.requests",
         label = "Team Requests",
@@ -40,6 +47,7 @@ enum class AppNotificationGroup(
 ) {
     UPDATES(id = "streeek.group.updates"),
     USER(id = "streeek.group.user"),
+    REMINDERS(id = "streeek.group.reminders"),
 }
 
 private fun AppNotificationChannel.asNotificationChannel() =

@@ -9,23 +9,58 @@ import android.net.Uri
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.bizilabs.streeek.lib.resources.images.SafiDrawables
+import timber.log.Timber
 
-@SuppressLint("MissingPermission")
 fun Context.notify(
     title: String,
     body: String,
     channel: AppNotificationChannel,
     imageUrl: Uri? = null,
 ) {
+    createNotificationAndSend(
+        title = title,
+        body = body,
+        channel = channel,
+        imageUrl = imageUrl,
+    )
+}
+
+fun Context.notify(
+    title: String,
+    body: String,
+    channel: AppNotificationChannel,
+    imageUrl: Uri? = null,
+    contentIntent: PendingIntent? =  null,
+    actions: List<NotificationCompat.Action> = emptyList()
+) {
+    createNotificationAndSend(
+        title = title,
+        body = body,
+        channel = channel,
+        imageUrl = imageUrl,
+        pendingIntent = contentIntent,
+        actions = actions
+    )
+}
+
+@SuppressLint("MissingPermission")
+private fun Context.createNotificationAndSend(
+    title: String,
+    body: String,
+    channel: AppNotificationChannel,
+    imageUrl: Uri? = null,
+    pendingIntent: PendingIntent? =  null,
+    actions: List<NotificationCompat.Action> = emptyList()
+) {
     val intent =
         Intent().apply {
             setClassName(
-                this@notify,
+                this@createNotificationAndSend,
                 "com.bizilabs.streeek.lib.presentation.MainActivity",
             )
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         }
-    val pendingIntent =
+    val contentIntent = pendingIntent ?:
         PendingIntent.getActivity(
             this,
             0,
@@ -40,6 +75,7 @@ fun Context.notify(
                 ImageDecoder.decodeBitmap(source)
             }
         } catch (e: RuntimeException) {
+            Timber.e(e)
             null
         }
 
@@ -50,8 +86,9 @@ fun Context.notify(
             .setSmallIcon(SafiDrawables.IconNotification)
             .setAutoCancel(true)
             .setGroup(channel.group.id)
-            .setContentIntent(pendingIntent)
+            .setContentIntent(contentIntent)
             .apply {
+                actions.forEach { addAction(it) }
                 if (bitmap != null) {
                     setStyle(NotificationCompat.BigPictureStyle().bigPicture(bitmap))
                 } else {
