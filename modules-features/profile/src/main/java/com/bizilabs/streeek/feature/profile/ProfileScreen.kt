@@ -1,5 +1,6 @@
 package com.bizilabs.streeek.feature.profile
 
+import android.R.attr.visible
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.gestures.Orientation
@@ -16,12 +17,12 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
-import androidx.compose.material.icons.rounded.Bolt
+import androidx.compose.material.icons.automirrored.rounded.LibraryBooks
 import androidx.compose.material.icons.rounded.ChevronRight
 import androidx.compose.material.icons.rounded.Feedback
+import androidx.compose.material.icons.rounded.FontDownload
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -46,8 +47,10 @@ import cafe.adriel.voyager.koin.getScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import coil.compose.SubcomposeAsyncImage
 import com.bizilabs.streeek.lib.common.navigation.SharedScreen
+import com.bizilabs.streeek.lib.design.atoms.SafiTypography
 import com.bizilabs.streeek.lib.design.components.DialogState
 import com.bizilabs.streeek.lib.design.components.SafiBottomDialog
+import com.bizilabs.streeek.lib.design.components.SafiBottomSheetPicker
 import com.bizilabs.streeek.lib.design.components.SafiCenteredColumn
 import com.bizilabs.streeek.lib.design.components.SafiTopBarHeader
 import com.bizilabs.streeek.lib.design.components.shimmerEffect
@@ -77,6 +80,8 @@ object ProfileScreen : Screen {
             onClickConfirmLogout = screenModel::onClickConfirmLogout,
             onClickCardIssues = { navigator?.push(screenIssues) },
             onClickCardPoints = { navigator?.push(screenPoints) },
+            onToggleSelectTypography = screenModel::onToggleSelectTypography,
+            onClickTypography = screenModel::onClickTypography,
         )
     }
 }
@@ -91,6 +96,8 @@ fun ProfileScreenContent(
     onClickConfirmLogout: (Boolean) -> Unit,
     onClickCardIssues: () -> Unit,
     onClickCardPoints: () -> Unit,
+    onToggleSelectTypography: (Boolean) -> Unit,
+    onClickTypography: (SafiTypography) -> Unit,
 ) {
     val scrollState = rememberScrollState()
 
@@ -109,6 +116,18 @@ fun ProfileScreenContent(
                 Text(text = "Yes")
             }
         }
+    }
+
+    if (state.isSelectingTypography) {
+        SafiBottomSheetPicker(
+            modifier = Modifier.fillMaxWidth(),
+            title = "Select Typography",
+            selected = state.typography,
+            list = state.typographies.toList(),
+            onDismiss = { onToggleSelectTypography(false) },
+            onItemSelected = onClickTypography,
+            name = { it.label },
+        )
     }
 
     Scaffold(topBar = {
@@ -203,10 +222,22 @@ fun ProfileScreenContent(
                             .fillMaxWidth()
                             .padding(horizontal = 16.dp)
                             .padding(top = 16.dp),
-                    icon = Icons.Rounded.Bolt,
+                    icon = Icons.AutoMirrored.Rounded.LibraryBooks,
                     title = "Arcane Knowledge",
                     message = "Learn how to earn experience points (EXP).",
                     onClick = onClickCardPoints,
+                )
+
+                ProfileItemComponent(
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp)
+                            .padding(top = 16.dp),
+                    icon = Icons.Rounded.FontDownload,
+                    title = "Typography",
+                    message = "Change app's look and feel by changing the font.",
+                    onClick = { onToggleSelectTypography(true) },
                 )
 
                 Button(
@@ -244,11 +275,6 @@ private fun ProfileItemComponent(
     Card(
         modifier = modifier,
         onClick = onClick,
-        colors =
-            CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.primary.copy(0.2f),
-                contentColor = MaterialTheme.colorScheme.onBackground,
-            ),
     ) {
         Row(
             modifier =
@@ -260,7 +286,7 @@ private fun ProfileItemComponent(
             Row(modifier = Modifier.weight(1f)) {
                 Icon(imageVector = icon, contentDescription = title)
                 Column(Modifier.padding(start = 16.dp)) {
-                    Text(modifier = Modifier.fillMaxWidth(), text = title)
+                    Text(modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp), text = title)
                     AnimatedVisibility(visible = message.isNotEmpty()) {
                         Text(
                             modifier = Modifier.fillMaxWidth(),

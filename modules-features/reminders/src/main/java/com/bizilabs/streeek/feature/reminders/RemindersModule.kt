@@ -7,11 +7,13 @@ import com.bizilabs.streeek.feature.reminders.single.ReminderScreen
 import com.bizilabs.streeek.lib.common.navigation.SharedScreen
 import org.koin.dsl.module
 
-val ScreenReminders = screenModule {
-    register<SharedScreen.Reminders> { ReminderListScreen }
-    register<SharedScreen.Reminder> { parameters -> ReminderScreen(id = parameters.id) }
-}
+val ScreenReminders =
+    screenModule {
+        register<SharedScreen.Reminders> { ReminderListScreen }
+        register<SharedScreen.Reminder> { parameters -> ReminderScreen(id = parameters.id) }
+    }
 
-val FeatureModuleReminders = module  {
-    factory<ReminderListScreenModel> { ReminderListScreenModel() }
-}
+val FeatureModuleReminders =
+    module {
+        factory<ReminderListScreenModel> { ReminderListScreenModel() }
+    }

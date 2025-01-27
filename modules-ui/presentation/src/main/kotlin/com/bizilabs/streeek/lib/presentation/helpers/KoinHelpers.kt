@@ -61,7 +61,7 @@ val PresentationModule =
             AppUpdaterModule,
             PushNotificationsModule,
             FeatureJoin,
-            FeatureModuleReminders
+            FeatureModuleReminders,
         )
         workerOf(::SyncTeamsWork)
         workerOf(::SyncLevelsWork)

@@ -23,7 +23,7 @@ object ReminderListScreen : Screen {
     override fun Content() {
         val navigator = LocalNavigator.current
         ReminderListScreen(
-            onClickNavigateBack = { navigator?.pop() }
+            onClickNavigateBack = { navigator?.pop() },
         )
     }
 }
@@ -39,21 +39,20 @@ fun ReminderListScreen(onClickNavigateBack: () -> Unit) {
                     IconButton(onClick = onClickNavigateBack) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Default.ArrowBack,
-                            contentDescription = "navigate back"
+                            contentDescription = "navigate back",
                         )
                     }
                 },
                 title = {
                     SafiTopBarHeader(
                         title = "Reminders",
-                        subtitle = "Set reminders for contributing to GitHub"
+                        subtitle = "Set reminders for contributing to GitHub",
                     )
                 },
             )
         },
         snackbarHost = {
-
-        }
+        },
     ) { innerPadding ->
         Column(modifier = Modifier.padding(innerPadding).fillMaxSize()) {
             Text(text = "Reminders")
