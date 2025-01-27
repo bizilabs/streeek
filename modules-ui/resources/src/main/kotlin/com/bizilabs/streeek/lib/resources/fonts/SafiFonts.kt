@@ -5,6 +5,7 @@ import com.bizilabs.streeek.lib.resources.R
 object SafiFonts {
     val Sans = FontSans()
     val Mono = FontMono()
+    val Noto = FontNoto()
 
     class FontSans internal constructor() {
         val bold = R.font.sans_black
@@ -34,5 +35,20 @@ object SafiFonts {
         val lightItalic = R.font.mono_light_italic
         val thin = R.font.mono_thin
         val thinItalic = R.font.mono_thin_italic
+    }
+
+    class FontNoto internal constructor() {
+        val bold = R.font.noto_bold
+        val boldItalic = R.font.noto_bold_italic
+        val semiBold = R.font.noto_semi_bold
+        val semiBoldItalic = R.font.noto_semi_bold_italic
+        val medium = R.font.noto_medium
+        val mediumItalic = R.font.noto_medium_italic
+        val regular = R.font.noto_regular
+        val regularItalic = R.font.noto_regular_italic
+        val light = R.font.noto_light
+        val lightItalic = R.font.noto_light_italic
+        val thin = R.font.noto_thin
+        val thinItalic = R.font.noto_thin_italic
     }
 }
