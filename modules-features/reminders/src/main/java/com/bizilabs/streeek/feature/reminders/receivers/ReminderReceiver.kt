@@ -50,7 +50,7 @@ class ReminderReceiver : BroadcastReceiver() {
         if (isReminder.not()) return
         label = intent.getStringExtra("reminder.label") ?: ""
         day = intent.getIntExtra("reminder.day", -1)
-        day = intent.getIntExtra("reminder.code", -1)
+        code = intent.getIntExtra("reminder.code", -1)
         val type = intent.getStringExtra("streeek.reminder.type")
         when (type) {
             "action" -> handleAction(intent = intent)
