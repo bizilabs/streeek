@@ -47,7 +47,7 @@ class TeamInvitationRemoteSourceImpl(
                 )
             supabase.postgrest
                 .rpc(
-                    function = Supabase.Functions.Teams.Invitations.CREATE,
+                    function = Supabase.Functions.Teams.CodeInvitations.CREATE,
                     parameters = parameters.asJsonObject(),
                 ).decodeAs()
         }
@@ -64,7 +64,7 @@ class TeamInvitationRemoteSourceImpl(
                 )
             supabase.postgrest
                 .rpc(
-                    function = Supabase.Functions.Teams.Invitations.GET,
+                    function = Supabase.Functions.Teams.CodeInvitations.GET,
                     parameters = parameters.asJsonObject(),
                 ).decodeList()
         }
@@ -81,7 +81,7 @@ class TeamInvitationRemoteSourceImpl(
                 )
             supabase.postgrest
                 .rpc(
-                    function = Supabase.Functions.Teams.Invitations.DELETE,
+                    function = Supabase.Functions.Teams.CodeInvitations.DELETE,
                     parameters = parameters.asJsonObject(),
                 )
             true
