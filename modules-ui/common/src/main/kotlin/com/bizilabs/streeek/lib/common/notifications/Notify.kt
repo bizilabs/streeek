@@ -1,11 +1,16 @@
 package com.bizilabs.streeek.lib.common.notifications
 
 import android.annotation.SuppressLint
+import android.app.Notification
+import android.app.NotificationManager
 import android.app.PendingIntent
+import android.app.Person
 import android.content.Context
 import android.content.Intent
 import android.graphics.ImageDecoder
+import android.media.RingtoneManager
 import android.net.Uri
+import android.view.WindowManager
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.bizilabs.streeek.lib.resources.images.SafiDrawables
@@ -30,7 +35,7 @@ fun Context.notify(
     body: String,
     channel: AppNotificationChannel,
     imageUrl: Uri? = null,
-    contentIntent: PendingIntent? =  null,
+    contentIntent: PendingIntent? = null,
     actions: List<NotificationCompat.Action> = emptyList()
 ) {
     createNotificationAndSend(
@@ -49,7 +54,7 @@ private fun Context.createNotificationAndSend(
     body: String,
     channel: AppNotificationChannel,
     imageUrl: Uri? = null,
-    pendingIntent: PendingIntent? =  null,
+    pendingIntent: PendingIntent? = null,
     actions: List<NotificationCompat.Action> = emptyList()
 ) {
     val intent =
@@ -60,13 +65,15 @@ private fun Context.createNotificationAndSend(
             )
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         }
-    val contentIntent = pendingIntent ?:
-        PendingIntent.getActivity(
-            this,
-            0,
-            intent,
-            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
-        )
+
+
+    val contentIntent = pendingIntent ?: PendingIntent.getActivity(
+        this,
+        0,
+        intent,
+        PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
+    )
+
 
     val bitmap =
         try {
@@ -79,6 +86,8 @@ private fun Context.createNotificationAndSend(
             null
         }
 
+    val sound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
+
     val notification =
         NotificationCompat.Builder(this, channel.id)
             .setContentTitle(title)
@@ -87,6 +96,12 @@ private fun Context.createNotificationAndSend(
             .setAutoCancel(true)
             .setGroup(channel.group.id)
             .setContentIntent(contentIntent)
+            .setSound(sound)
+            .setStyle(NotificationCompat.CallStyle.forIncomingCall(
+                androidx.core.app.Person.Builder()
+                    .setName("Jane Doe")
+                    .setImportant(true)
+                    .build(),contentIntent,contentIntent))
             .apply {
                 actions.forEach { addAction(it) }
                 if (bitmap != null) {
@@ -95,8 +110,11 @@ private fun Context.createNotificationAndSend(
                     setStyle(NotificationCompat.BigTextStyle().bigText(body))
                 }
             }
+            .setForegroundServiceBehavior(NotificationCompat.FOREGROUND_SERVICE_IMMEDIATE)
             .build()
 
     val id = System.currentTimeMillis().toInt()
-    NotificationManagerCompat.from(this).notify(id, notification)
+    val notificationManager = this.getSystemService(NotificationManager::class.java) as NotificationManager
+
+    notificationManager.notify(id, notification)
 }
