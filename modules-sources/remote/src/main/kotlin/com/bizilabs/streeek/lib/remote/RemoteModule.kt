@@ -30,6 +30,8 @@ import com.bizilabs.streeek.lib.remote.sources.team.TeamRemoteSource
 import com.bizilabs.streeek.lib.remote.sources.team.TeamRemoteSourceImpl
 import com.bizilabs.streeek.lib.remote.sources.team.invitations.TeamInvitationRemoteSource
 import com.bizilabs.streeek.lib.remote.sources.team.invitations.TeamInvitationRemoteSourceImpl
+import com.bizilabs.streeek.lib.remote.sources.team.invitations.TeamMemberInvitationRemoteSource
+import com.bizilabs.streeek.lib.remote.sources.team.invitations.TeamMemberInvitationRemoteSourceImpl
 import com.bizilabs.streeek.lib.remote.sources.team.requests.TeamRequestRemoteSource
 import com.bizilabs.streeek.lib.remote.sources.team.requests.TeamRequestRemoteSourceImpl
 import com.bizilabs.streeek.lib.remote.sources.user.UserRemoteSource
@@ -92,4 +94,5 @@ val RemoteModule =
         single<LabelRemoteSource> { LabelRemoteSourceImpl(client = get()) }
         single<LeaderboardRemoteSource> { LeaderboardRemoteSourceImpl(supabase = get()) }
         single<TeamRequestRemoteSource> { TeamRequestRemoteSourceImpl(supabase = get()) }
+        single<TeamMemberInvitationRemoteSource> { TeamMemberInvitationRemoteSourceImpl(supabase = get()) }
     }
