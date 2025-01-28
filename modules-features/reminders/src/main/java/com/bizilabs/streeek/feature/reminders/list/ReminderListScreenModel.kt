@@ -121,7 +121,24 @@ class ReminderListScreenModel(
     }
 
     fun onClickReminderDayOfWeek(day: DayOfWeek) {
+        val days = (state.value.selectedDays).toMutableList()
+        if (days.contains(day)) {
+            days.remove(day)
+        } else {
+            days.add(day)
+        }
+        mutableState.update {
+            it.copy(
+                isEditing = true,
+                selectedDays = days
+            )
+        }
+    }
 
+    fun onCreateReminder() {
+        screenModelScope.launch {
+
+        }
     }
 
 }
