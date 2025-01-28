@@ -16,7 +16,7 @@ val ScreenReminders =
             ReminderScreen(
                 label = parameters.label,
                 day = parameters.day,
-                code = parameters.code
+                code = parameters.code,
             )
         }
     }
@@ -27,7 +27,7 @@ val FeatureModuleReminders =
             ReminderListScreenModel(
                 manager = get(),
                 context = get(),
-                repository = get()
+                repository = get(),
             )
         }
         factory<ReminderManager> { ReminderManagerImpl(context = get()) }

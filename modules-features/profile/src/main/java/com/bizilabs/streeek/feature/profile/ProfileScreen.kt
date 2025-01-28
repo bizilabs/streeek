@@ -82,7 +82,7 @@ object ProfileScreen : Screen {
             onClickCardPoints = { navigator?.push(screenPoints) },
             onToggleSelectTypography = screenModel::onToggleSelectTypography,
             onClickTypography = screenModel::onClickTypography,
-            navigate = {screen -> navigator?.push(screen)}
+            navigate = { screen -> navigator?.push(screen) },
         )
     }
 }
@@ -198,10 +198,10 @@ fun ProfileScreenContent(
                 val screenReminders = rememberScreen(SharedScreen.Reminders)
                 ProfileItemComponent(
                     modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp)
-                        .padding(top = 16.dp),
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp)
+                            .padding(top = 16.dp),
                     icon = Icons.Rounded.Timer,
                     title = "Reminders",
                     message = "Add custom reminders to maintain a steady streak",

@@ -9,8 +9,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.mapLatest
 
 class ReminderRepositoryImpl(
-    private val localSource: ReminderLocalSource
-): ReminderRepository {
+    private val localSource: ReminderLocalSource,
+) : ReminderRepository {
     override val reminders: Flow<Map<String, ReminderDomain>>
         get() = localSource.reminders.mapLatest { map -> map.mapValues { reminder -> reminder.value.toDomain() } }
 

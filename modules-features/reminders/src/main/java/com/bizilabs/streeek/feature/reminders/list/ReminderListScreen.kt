@@ -1,13 +1,10 @@
 package com.bizilabs.streeek.feature.reminders.list
 
-import android.os.Build
 import androidx.activity.ComponentActivity
-import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -16,7 +13,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.rounded.Timer
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -28,27 +24,26 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.getScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
-import com.bizilabs.streeek.lib.design.components.SafiBottomAction
-import com.bizilabs.streeek.lib.design.components.SafiBottomValue
-import com.bizilabs.streeek.lib.design.components.SafiTopBarHeader
-import com.bizilabs.streeek.lib.design.helpers.success
-import kotlinx.datetime.DayOfWeek
-import androidx.compose.runtime.getValue
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.unit.dp
 import com.bizilabs.streeek.feature.reminders.components.ReminderComponent
 import com.bizilabs.streeek.feature.reminders.components.ReminderEditBottomSheet
-import com.bizilabs.streeek.feature.reminders.list.ReminderListScreen
 import com.bizilabs.streeek.lib.common.helpers.requestSinglePermission
 import com.bizilabs.streeek.lib.common.models.FetchListState
+import com.bizilabs.streeek.lib.design.components.SafiBottomAction
+import com.bizilabs.streeek.lib.design.components.SafiBottomValue
 import com.bizilabs.streeek.lib.design.components.SafiCenteredColumn
 import com.bizilabs.streeek.lib.design.components.SafiCircularProgressIndicator
 import com.bizilabs.streeek.lib.design.components.SafiInfoSection
+import com.bizilabs.streeek.lib.design.components.SafiTopBarHeader
+import com.bizilabs.streeek.lib.design.helpers.success
 import com.bizilabs.streeek.lib.domain.models.ReminderDomain
+import kotlinx.datetime.DayOfWeek
 
 object ReminderListScreen : Screen {
     @Composable
@@ -68,7 +63,7 @@ object ReminderListScreen : Screen {
             onDismissSheet = screenModel::onDismissSheet,
             onOpenTimePicker = screenModel::onOpenTimePicker,
             onDismissTimePicker = screenModel::onDismissTimePicker,
-            onCreateReminder = screenModel::onCreateReminder
+            onCreateReminder = screenModel::onCreateReminder,
         )
     }
 }
@@ -85,12 +80,11 @@ fun ReminderListScreenContent(
     onDismissSheet: () -> Unit,
     onOpenTimePicker: () -> Unit,
     onCreateReminder: () -> Unit,
-    onDismissTimePicker: (Int, Int) -> Unit
+    onDismissTimePicker: (Int, Int) -> Unit,
 ) {
-
     val activity = LocalContext.current as ComponentActivity
 
-    if (state.isEditing)
+    if (state.isEditing) {
         ReminderEditBottomSheet(
             state = state,
             onValueChangeReminderLabel = onValueChangeReminderLabel,
@@ -98,8 +92,9 @@ fun ReminderListScreenContent(
             onDismiss = onDismissSheet,
             onOpenTimePicker = onOpenTimePicker,
             onCreateReminder = onCreateReminder,
-            onDismissTimePicker = onDismissTimePicker
+            onDismissTimePicker = onDismissTimePicker,
         )
+    }
 
     Scaffold(
         topBar = {
@@ -123,7 +118,7 @@ fun ReminderListScreenContent(
                     IconButton(onClick = onClickCreateReminder) {
                         Icon(Icons.Default.Add, contentDescription = "")
                     }
-                }
+                },
             )
         },
         snackbarHost = {
@@ -135,32 +130,36 @@ fun ReminderListScreenContent(
             ) {
                 SafiBottomAction(
                     title = "Permission to Set Alarms",
-                    description = "We need your permission to set daily alarms. This will help us remind you at the perfect time. \nTap 'Allow' to proceed!",
+                    description =
+                        "We need your permission to set daily alarms. This will help us " +
+                            "remind you at the perfect time. \nTap 'Allow' to proceed!",
                     icon = Icons.Rounded.Timer,
                     iconTint = MaterialTheme.colorScheme.success,
-                    primaryAction = SafiBottomValue("allow") {
-                        activity.requestSinglePermission(permission = android.Manifest.permission.USE_EXACT_ALARM)
-                    }
+                    primaryAction =
+                        SafiBottomValue("allow") {
+                            activity.requestSinglePermission(permission = android.Manifest.permission.USE_EXACT_ALARM)
+                        },
                 )
             }
         },
     ) { innerPadding ->
         AnimatedContent(
             label = "animate reminders",
-            modifier = Modifier
-                .padding(innerPadding)
-                .fillMaxSize(),
-            targetState = state.fetchListState
+            modifier =
+                Modifier
+                    .padding(innerPadding)
+                    .fillMaxSize(),
+            targetState = state.fetchListState,
         ) { result ->
             when (result) {
                 FetchListState.Empty -> {
                     SafiCenteredColumn(
-                        modifier = Modifier.fillMaxSize()
+                        modifier = Modifier.fillMaxSize(),
                     ) {
                         SafiInfoSection(
                             icon = Icons.Rounded.Timer,
                             title = "No reminders set",
-                            description = "No reminders found. Create a reminder to continue your streak."
+                            description = "No reminders found. Create a reminder to continue your streak.",
                         ) {
                             AnimatedVisibility(
                                 visible = state.isAlarmPermissionGranted,
@@ -183,12 +182,12 @@ fun ReminderListScreenContent(
 
                 is FetchListState.Error -> {
                     SafiCenteredColumn(
-                        modifier = Modifier.fillMaxSize()
+                        modifier = Modifier.fillMaxSize(),
                     ) {
                         SafiInfoSection(
                             icon = Icons.Rounded.Timer,
                             title = "Found An Error",
-                            description = result.message
+                            description = result.message,
                         )
                     }
                 }
@@ -199,11 +198,11 @@ fun ReminderListScreenContent(
                             ReminderComponent(
                                 reminder = reminder,
                                 onClick = onClickReminder,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(horizontal = 8.dp)
-                                    .padding(top = 8.dp)
-
+                                modifier =
+                                    Modifier
+                                        .fillMaxWidth()
+                                        .padding(horizontal = 8.dp)
+                                        .padding(top = 8.dp),
                             )
                         }
                     }

@@ -28,25 +28,27 @@ data class ReminderListScreenState(
     val selectedDays: List<DayOfWeek> = emptyList(),
     val selectedHour: Int? = null,
     val selectedMinute: Int? = null,
-    val isTimePickerOpen: Boolean = false
+    val isTimePickerOpen: Boolean = false,
 ) {
-
     val isEditActionEnabled: Boolean
-        get() = when {
-            reminder != null -> {
-                label != reminder.label || selectedDays != reminder.repeat || selectedHour != reminder.hour || selectedMinute != reminder.minute
-            }
+        get() =
+            when {
+                reminder != null -> {
+                    label != reminder.label || selectedDays != reminder.repeat ||
+                        selectedHour != reminder.hour || selectedMinute != reminder.minute
+                }
 
-            else -> {
-                label.isNotBlank() && label.length > 4 && selectedDays.isNotEmpty() && selectedHour != null && selectedMinute != null
+                else -> {
+                    label.isNotBlank() && label.length > 4 && selectedDays.isNotEmpty() && selectedHour != null && selectedMinute != null
+                }
             }
-        }
 
     val time: String?
-        get() = when {
-            selectedHour != null && selectedMinute != null -> "$selectedHour:$selectedMinute"
-            else -> ""
-        }
+        get() =
+            when {
+                selectedHour != null && selectedMinute != null -> "$selectedHour:$selectedMinute"
+                else -> ""
+            }
 }
 
 class ReminderListScreenModel(
@@ -54,7 +56,6 @@ class ReminderListScreenModel(
     private val manager: ReminderManager,
     private val repository: ReminderRepository,
 ) : StateScreenModel<ReminderListScreenState>(ReminderListScreenState()) {
-
     init {
         observePermissionState()
         observeReminders()
@@ -72,10 +73,12 @@ class ReminderListScreenModel(
                 val list = it.values.toList()
                 mutableState.update { state ->
                     state.copy(
-                        fetchListState = if (list.isEmpty())
-                            FetchListState.Empty
-                        else
-                            FetchListState.Success(list)
+                        fetchListState =
+                            if (list.isEmpty()) {
+                                FetchListState.Empty
+                            } else {
+                                FetchListState.Success(list)
+                            },
                     )
                 }
             }
@@ -108,13 +111,12 @@ class ReminderListScreenModel(
                 selectedHour = reminder.hour,
                 selectedMinute = reminder.minute,
                 selectedDays = reminder.repeat,
-                label = reminder.label
+                label = reminder.label,
             )
         }
     }
 
     fun onLongClickReminder(reminder: ReminderDomain) {
-
     }
 
     fun onValueChangeReminderLabel(label: String) {
@@ -131,22 +133,23 @@ class ReminderListScreenModel(
         mutableState.update {
             it.copy(
                 isEditing = true,
-                selectedDays = days
+                selectedDays = days,
             )
         }
     }
 
     fun onCreateReminder() {
         screenModelScope.launch {
-            val reminderDomain = ReminderDomain(
-                label = state.value.label,
-                repeat = state.value.selectedDays,
-                enabled = true,
-                hour = state.value.selectedHour ?: 0,
-                minute = state.value.selectedMinute ?: 0
-            )
+            val reminderDomain =
+                ReminderDomain(
+                    label = state.value.label,
+                    repeat = state.value.selectedDays,
+                    enabled = true,
+                    hour = state.value.selectedHour ?: 0,
+                    minute = state.value.selectedMinute ?: 0,
+                )
             repository.update(
-                reminder = reminderDomain
+                reminder = reminderDomain,
             )
 
             manager.createAlarm(reminderDomain)
@@ -160,21 +163,23 @@ class ReminderListScreenModel(
     fun onOpenTimePicker() {
         mutableState.update {
             it.copy(
-                isTimePickerOpen = true
+                isTimePickerOpen = true,
             )
         }
     }
 
-    fun onDismissTimePicker(hour: Int, minute: Int) {
+    fun onDismissTimePicker(
+        hour: Int,
+        minute: Int,
+    ) {
         mutableState.update {
             it.copy(
                 isTimePickerOpen = false,
                 selectedHour = hour,
-                selectedMinute = minute
+                selectedMinute = minute,
             )
         }
     }
-
 }
 // create - store locally
 // schedule
