@@ -28,6 +28,7 @@ data class ReminderListScreenState(
     val selectedDays: List<DayOfWeek> = emptyList(),
     val selectedHour: Int? = null,
     val selectedMinute: Int? = null,
+    val isTimePickerOpen: Boolean = false
 ) {
 
     val isEditActionEnabled: Boolean
@@ -137,8 +138,44 @@ class ReminderListScreenModel(
 
     fun onCreateReminder() {
         screenModelScope.launch {
+            val reminderDomain = ReminderDomain(
+                label = state.value.label,
+                repeat = state.value.selectedDays,
+                enabled = true,
+                hour = state.value.selectedHour ?: 0,
+                minute = state.value.selectedMinute ?: 0
+            )
+            repository.update(
+                reminder = reminderDomain
+            )
 
+            manager.createAlarm(reminderDomain)
+
+            mutableState.update {
+                it.copy(isEditing = false)
+            }
+        }
+    }
+
+    fun onOpenTimePicker() {
+        mutableState.update {
+            it.copy(
+                isTimePickerOpen = true
+            )
+        }
+    }
+
+    fun onDismissTimePicker(hour: Int, minute: Int) {
+        mutableState.update {
+            it.copy(
+                isTimePickerOpen = false,
+                selectedHour = hour,
+                selectedMinute = minute
+            )
         }
     }
 
 }
+// create - store locally
+// schedule
+//
