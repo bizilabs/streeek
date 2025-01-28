@@ -33,5 +33,5 @@ sealed class SharedScreen : ScreenProvider {
 
     object Reminders : SharedScreen()
 
-    data class Reminder(val id: String) : SharedScreen()
+    data class Reminder(val label: String, val day: Int, val code: Int) : SharedScreen()
 }

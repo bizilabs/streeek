@@ -12,11 +12,23 @@ import org.koin.dsl.module
 val ScreenReminders =
     screenModule {
         register<SharedScreen.Reminders> { ReminderListScreen }
-        register<SharedScreen.Reminder> { parameters -> ReminderScreen(id = parameters.id) }
+        register<SharedScreen.Reminder> { parameters ->
+            ReminderScreen(
+                label = parameters.label,
+                day = parameters.day,
+                code = parameters.code
+            )
+        }
     }
 
 val FeatureModuleReminders =
     module {
-        factory<ReminderListScreenModel> { ReminderListScreenModel(manager = get(), context = get(), repository = get()) }
+        factory<ReminderListScreenModel> {
+            ReminderListScreenModel(
+                manager = get(),
+                context = get(),
+                repository = get()
+            )
+        }
         factory<ReminderManager> { ReminderManagerImpl(context = get()) }
     }
