@@ -251,10 +251,10 @@ fun AchievementsLevelsScreenSection(
             else -> {
                 LazyColumn(
                     modifier = Modifier.fillMaxSize(),
-                    reverseLayout = false
+                    reverseLayout = false,
                 ) {
-                    itemsIndexed(levels, key = { index, level -> level.id }){
-                        index, level ->
+                    itemsIndexed(levels, key = { index, level -> level.id }) {
+                            index, level ->
 
                         val next = levels.getOrNull(index + 1)
                         val current = level
@@ -265,13 +265,13 @@ fun AchievementsLevelsScreenSection(
                                 points = state.points,
                                 current = current,
                                 accountLevel = it,
-                                modifier = Modifier.fillMaxWidth()
-                                    .height(150.dp)
-                                    .padding(horizontal = 24.dp)
+                                modifier =
+                                    Modifier.fillMaxWidth()
+                                        .height(150.dp)
+                                        .padding(horizontal = 24.dp),
                             )
                         }
                     }
-
                 }
             }
         }

@@ -27,7 +27,7 @@ internal val AchievementsModule =
             AchievementsScreenModel(
                 context = get(),
                 accountRepository = get(),
-                levelRepository = get()
+                levelRepository = get(),
             )
         }
     }
@@ -92,8 +92,11 @@ class AchievementsScreenModel(
                 val currentLevel = state.value.level
                 val lastVisibleLevel = (currentLevel?.number ?: 0) + 2
                 mutableState.update {
-                    it.copy(levels = levels.filterNot { it.number > lastVisibleLevel }
-                        .sortedByDescending { it.number })
+                    it.copy(
+                        levels =
+                            levels.filterNot { it.number > lastVisibleLevel }
+                                .sortedByDescending { it.number },
+                    )
                 }
             }
         }
