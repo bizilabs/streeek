@@ -39,7 +39,7 @@ fun SafiContent(
                     Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 8.dp)
-                        .padding(bottom = 80.dp),
+                        .padding(bottom = 96.dp),
                 visible = !isNetworkConnected,
             ) {
                 SafiNetworkComponent(
