@@ -16,20 +16,20 @@ import com.bizilabs.streeek.lib.resources.images.SafiDrawables
 import org.koin.java.KoinJavaComponent.inject
 
 class ReminderReceiver : BroadcastReceiver() {
-
     private val manager: ReminderManager by inject(ReminderManager::class.java)
-    private val quirkyNotifications = listOf(
-        "Keep the Streak Alive!" to "GitHub called. It misses you! Commit now! 💻",
-        "Don't Break the Chain!" to "Your streak is crying in the corner. Save it with a commit! 😢",
-        "Code. Commit. Conquer." to "Be a hero. Commit today and keep the streak alive! 🦸‍♂️",
-        "Oops! Almost Forgot?" to "Your GitHub streak is on thin ice. Time to commit! ❄️",
-        "Git it Done!" to "One commit today keeps the streak alive forever. Maybe. 😉",
-        "Tick-Tock!" to "The clock is ticking, and so is your streak's patience! 🕒",
-        "The Streak is Strong With You!" to "Don't let the dark side break your streak. 🛡️",
-        "One More Commit!" to "It's just one commit. What's stopping you? 😏",
-        "Save the Streak!" to "Your streak deserves better. Show it some love! ❤️",
-        "Streaks are Sacred!" to "A commit a day keeps the streak alive. Don’t ghost it! 👻"
-    )
+    private val quirkyNotifications =
+        listOf(
+            "Keep the Streak Alive!" to "GitHub called. It misses you! Commit now! 💻",
+            "Don't Break the Chain!" to "Your streak is crying in the corner. Save it with a commit! 😢",
+            "Code. Commit. Conquer." to "Be a hero. Commit today and keep the streak alive! 🦸‍♂️",
+            "Oops! Almost Forgot?" to "Your GitHub streak is on thin ice. Time to commit! ❄️",
+            "Git it Done!" to "One commit today keeps the streak alive forever. Maybe. 😉",
+            "Tick-Tock!" to "The clock is ticking, and so is your streak's patience! 🕒",
+            "The Streak is Strong With You!" to "Don't let the dark side break your streak. 🛡️",
+            "One More Commit!" to "It's just one commit. What's stopping you? 😏",
+            "Save the Streak!" to "Your streak deserves better. Show it some love! ❤️",
+            "Streaks are Sacred!" to "A commit a day keeps the streak alive. Don’t ghost it! 👻",
+        )
 
     lateinit var label: String
     lateinit var day: Number
@@ -37,13 +37,16 @@ class ReminderReceiver : BroadcastReceiver() {
 
     enum class ReminderActions(
         val action: String,
-        val label: String
+        val label: String,
     ) {
         SNOOZE("streeek.action.reminder.snooze", "snooze"),
-        CANCEL("streeek.action.reminder.cancel", "cancel")
+        CANCEL("streeek.action.reminder.cancel", "cancel"),
     }
 
-    override fun onReceive(context: Context?, intent: Intent?) {
+    override fun onReceive(
+        context: Context?,
+        intent: Intent?,
+    ) {
         if (intent == null) return
         if (context == null) return
         val isReminder = intent.getStringExtra("streeek.receiver.type").equals("reminder")
@@ -57,7 +60,6 @@ class ReminderReceiver : BroadcastReceiver() {
             "ring" -> handleRing(context = context)
             else -> {}
         }
-
     }
 
     private fun handleRing(context: Context) {
@@ -80,7 +82,7 @@ class ReminderReceiver : BroadcastReceiver() {
             label = label,
             day = day.toInt(),
             hour = calendar.get(Calendar.HOUR_OF_DAY),
-            minute = calendar.get(Calendar.MINUTE)
+            minute = calendar.get(Calendar.MINUTE),
         )
     }
 
@@ -92,7 +94,7 @@ class ReminderReceiver : BroadcastReceiver() {
             label = label,
             day = day.toInt(),
             hour = calendar.get(Calendar.HOUR_OF_DAY),
-            minute = calendar.get(Calendar.MINUTE)
+            minute = calendar.get(Calendar.MINUTE),
         )
     }
 
@@ -105,30 +107,35 @@ class ReminderReceiver : BroadcastReceiver() {
             body = body,
             channel = AppNotificationChannel.REMINDERS,
             actions = actions,
-            contentIntent = contentIntent
+            contentIntent = contentIntent,
         )
     }
 
     private fun getNotificationActions(context: Context): List<NotificationCompat.Action> {
-        val actions = ReminderActions.entries.map { value ->
-            val intent = Intent(context, this::class.java).apply {
-                putExtra("streeek.receiver.type", "reminder")
-                putExtra("streeek.reminder.type", "action")
-                putExtra("reminder.label", label)
-                putExtra("reminder.code", code)
-                putExtra("reminder.day", day)
-                action = value.action
+        val actions =
+            ReminderActions.entries.map { value ->
+                val intent =
+                    Intent(context, this::class.java).apply {
+                        putExtra("streeek.receiver.type", "reminder")
+                        putExtra("streeek.reminder.type", "action")
+                        putExtra("reminder.label", label)
+                        putExtra("reminder.code", code)
+                        putExtra("reminder.day", day)
+                        action = value.action
+                    }
+                val pendingIntent: PendingIntent =
+                    PendingIntent.getBroadcast(
+                        context,
+                        System.currentTimeMillis().toInt(),
+                        intent,
+                        PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
+                    )
+                NotificationCompat.Action.Builder(
+                    SafiDrawables.IconNotification,
+                    value.label,
+                    pendingIntent,
+                ).build()
             }
-            val pendingIntent: PendingIntent = PendingIntent.getBroadcast(
-                context,
-                System.currentTimeMillis().toInt(),
-                intent,
-                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-            )
-            NotificationCompat.Action.Builder(
-                SafiDrawables.IconNotification, value.label, pendingIntent
-            ).build()
-        }
         return actions
     }
 
@@ -144,14 +151,15 @@ class ReminderReceiver : BroadcastReceiver() {
                     "notification_result",
                     NotificationResult(
                         type = "reminder",
-                        uri = buildUri(
-                            "type" to "navigation",
-                            "destination" to "reminder",
-                            "label" to label,
-                            "day" to day,
-                            "code" to code
-                        )
-                    ).asJson()
+                        uri =
+                            buildUri(
+                                "type" to "navigation",
+                                "destination" to "reminder",
+                                "label" to label,
+                                "day" to day,
+                                "code" to code,
+                            ),
+                    ).asJson(),
                 )
             }
         val contentIntent =
@@ -163,5 +171,4 @@ class ReminderReceiver : BroadcastReceiver() {
             )
         return contentIntent
     }
-
 }

@@ -1,7 +1,6 @@
 package com.bizilabs.streeek.lib.common.notifications
 
 import android.annotation.SuppressLint
-import android.app.Notification
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.Person
@@ -10,9 +9,7 @@ import android.content.Intent
 import android.graphics.ImageDecoder
 import android.media.RingtoneManager
 import android.net.Uri
-import android.view.WindowManager
 import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationManagerCompat
 import com.bizilabs.streeek.lib.resources.images.SafiDrawables
 import timber.log.Timber
 
@@ -36,7 +33,7 @@ fun Context.notify(
     channel: AppNotificationChannel,
     imageUrl: Uri? = null,
     contentIntent: PendingIntent? = null,
-    actions: List<NotificationCompat.Action> = emptyList()
+    actions: List<NotificationCompat.Action> = emptyList(),
 ) {
     createNotificationAndSend(
         title = title,
@@ -44,7 +41,7 @@ fun Context.notify(
         channel = channel,
         imageUrl = imageUrl,
         pendingIntent = contentIntent,
-        actions = actions
+        actions = actions,
     )
 }
 
@@ -55,7 +52,7 @@ private fun Context.createNotificationAndSend(
     channel: AppNotificationChannel,
     imageUrl: Uri? = null,
     pendingIntent: PendingIntent? = null,
-    actions: List<NotificationCompat.Action> = emptyList()
+    actions: List<NotificationCompat.Action> = emptyList(),
 ) {
     val intent =
         Intent().apply {
@@ -66,14 +63,13 @@ private fun Context.createNotificationAndSend(
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         }
 
-
-    val contentIntent = pendingIntent ?: PendingIntent.getActivity(
-        this,
-        0,
-        intent,
-        PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
-    )
-
+    val contentIntent =
+        pendingIntent ?: PendingIntent.getActivity(
+            this,
+            0,
+            intent,
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
+        )
 
     val bitmap =
         try {
@@ -97,11 +93,16 @@ private fun Context.createNotificationAndSend(
             .setGroup(channel.group.id)
             .setContentIntent(contentIntent)
             .setSound(sound)
-            .setStyle(NotificationCompat.CallStyle.forIncomingCall(
-                androidx.core.app.Person.Builder()
-                    .setName("Jane Doe")
-                    .setImportant(true)
-                    .build(),contentIntent,contentIntent))
+            .setStyle(
+                NotificationCompat.CallStyle.forIncomingCall(
+                    androidx.core.app.Person.Builder()
+                        .setName("Jane Doe")
+                        .setImportant(true)
+                        .build(),
+                    contentIntent,
+                    contentIntent,
+                ),
+            )
             .apply {
                 actions.forEach { addAction(it) }
                 if (bitmap != null) {

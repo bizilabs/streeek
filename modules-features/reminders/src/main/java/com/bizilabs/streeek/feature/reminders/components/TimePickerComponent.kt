@@ -8,7 +8,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TimeInput
 import androidx.compose.material3.TimePicker
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
@@ -26,28 +25,28 @@ fun TimePickerComponent(
 ) {
     val currentTime = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
 
-    val timePickerState = rememberTimePickerState(
-        initialHour = currentTime.hour,
-        initialMinute = currentTime.minute,
-        is24Hour = true,
-    )
+    val timePickerState =
+        rememberTimePickerState(
+            initialHour = currentTime.hour,
+            initialMinute = currentTime.minute,
+            is24Hour = true,
+        )
 
     Column(
         modifier = Modifier.background(MaterialTheme.colorScheme.surface),
-
-        ) {
+    ) {
         TimePicker(
             state = timePickerState,
         )
         Button(
             modifier = Modifier.fillMaxWidth(),
-            onClick = { onDismiss(timePickerState.hour, timePickerState.minute) }
+            onClick = { onDismiss(timePickerState.hour, timePickerState.minute) },
         ) {
             Text("Dismiss picker")
         }
         Button(
             modifier = Modifier.fillMaxWidth(),
-            onClick = { onConfirm(timePickerState.hour, timePickerState.minute) }
+            onClick = { onConfirm(timePickerState.hour, timePickerState.minute) },
         ) {
             Text("Confirm selection")
         }
@@ -60,6 +59,6 @@ fun TimePickerComponent(
 private fun TimePickerDialogPreview() {
     TimePickerComponent(
         onConfirm = { _, _ -> },
-        onDismiss = { _, _ -> }
+        onDismiss = { _, _ -> },
     )
 }

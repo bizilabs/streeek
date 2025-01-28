@@ -11,24 +11,26 @@ import kotlinx.serialization.json.Json
 
 interface ReminderLocalSource {
     val reminders: Flow<Map<String, ReminderCache>>
+
     suspend fun insert(reminder: ReminderCache)
+
     suspend fun update(reminder: ReminderCache)
+
     suspend fun delete(reminder: ReminderCache)
 }
 
 internal class ReminderLocalSourceImpl(
-    private val source: PreferenceSource
+    private val source: PreferenceSource,
 ) : ReminderLocalSource {
-
     private val key = stringPreferencesKey("streeek.reminders")
 
     override val reminders: Flow<Map<String, ReminderCache>>
-        get() = source.getNullable(key = key).mapLatest { json ->
-            json?.let { Json.decodeFromString(it) } ?: emptyMap()
-        }
+        get() =
+            source.getNullable(key = key).mapLatest { json ->
+                json?.let { Json.decodeFromString(it) } ?: emptyMap()
+            }
 
-    private suspend fun get(): MutableMap<String, ReminderCache> =
-        reminders.first().toMutableMap()
+    private suspend fun get(): MutableMap<String, ReminderCache> = reminders.first().toMutableMap()
 
     private suspend fun save(map: Map<String, ReminderCache>) {
         source.update(key = key, value = Json.encodeToString(map))
@@ -51,5 +53,4 @@ internal class ReminderLocalSourceImpl(
         map.remove(reminder.label)
         save(map)
     }
-
 }

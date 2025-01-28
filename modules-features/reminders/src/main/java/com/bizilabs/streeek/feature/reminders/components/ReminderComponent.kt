@@ -36,7 +36,7 @@ import java.time.DayOfWeek
 fun ReminderComponent(
     reminder: ReminderDomain,
     modifier: Modifier = Modifier,
-    onClick: (ReminderDomain) -> Unit
+    onClick: (ReminderDomain) -> Unit,
 ) {
     val containerColor =
         if (reminder.enabled) MaterialTheme.colorScheme.primary else CardDefaults.cardColors().containerColor
@@ -48,20 +48,22 @@ fun ReminderComponent(
             onClick(reminder)
         },
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.onSurface),
-        colors = CardDefaults.cardColors(
-            containerColor = containerColor,
-            contentColor = contentColor
-        )
+        colors =
+            CardDefaults.cardColors(
+                containerColor = containerColor,
+                contentColor = contentColor,
+            ),
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Rounded.Label,
-                    contentDescription = "${reminder.label} label"
+                    contentDescription = "${reminder.label} label",
                 )
                 Text(modifier = Modifier.padding(start = 16.dp), text = reminder.label)
             }
@@ -69,40 +71,45 @@ fun ReminderComponent(
                 modifier = Modifier.padding(vertical = 8.dp),
                 text = "${reminder.hour}:${reminder.minute}",
                 style = MaterialTheme.typography.displayMedium,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
             )
             LazyRow {
                 items(DayOfWeek.entries) { day ->
                     val isSelected = reminder.repeat.contains(day)
-                    val backgroundColor = when{
-                        reminder.enabled && isSelected -> MaterialTheme.colorScheme.onPrimary
-                        isSelected -> MaterialTheme.colorScheme.onSurface
-                        else -> Color.Transparent
-                    }
-                    val borderColor = when {
-                        reminder.enabled && isSelected -> MaterialTheme.colorScheme.onPrimary
-                        reminder.enabled -> MaterialTheme.colorScheme.onPrimary
-                        isSelected -> MaterialTheme.colorScheme.onSurface
-                        else -> MaterialTheme.colorScheme.onSurface
-                    }
+                    val backgroundColor =
+                        when {
+                            reminder.enabled && isSelected -> MaterialTheme.colorScheme.onPrimary
+                            isSelected -> MaterialTheme.colorScheme.onSurface
+                            else -> Color.Transparent
+                        }
+                    val borderColor =
+                        when {
+                            reminder.enabled && isSelected -> MaterialTheme.colorScheme.onPrimary
+                            reminder.enabled -> MaterialTheme.colorScheme.onPrimary
+                            isSelected -> MaterialTheme.colorScheme.onSurface
+                            else -> MaterialTheme.colorScheme.onSurface
+                        }
 
-                    val textColor = when {
-                        reminder.enabled && isSelected -> MaterialTheme.colorScheme.onSurface
-                        reminder.enabled -> MaterialTheme.colorScheme.onPrimary
-                        isSelected -> MaterialTheme.colorScheme.onPrimary
-                        else -> MaterialTheme.colorScheme.onSurface
-                    }
-                    Box(modifier = Modifier
-                        .padding(end = 4.dp)
-                        .clip(MaterialTheme.shapes.medium)
-                        .border(1.dp, borderColor, MaterialTheme.shapes.medium)
-                        .background(backgroundColor)
+                    val textColor =
+                        when {
+                            reminder.enabled && isSelected -> MaterialTheme.colorScheme.onSurface
+                            reminder.enabled -> MaterialTheme.colorScheme.onPrimary
+                            isSelected -> MaterialTheme.colorScheme.onPrimary
+                            else -> MaterialTheme.colorScheme.onSurface
+                        }
+                    Box(
+                        modifier =
+                            Modifier
+                                .padding(end = 4.dp)
+                                .clip(MaterialTheme.shapes.medium)
+                                .border(1.dp, borderColor, MaterialTheme.shapes.medium)
+                                .background(backgroundColor),
                     ) {
                         Text(
                             modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
                             text = day.name.take(3),
                             style = MaterialTheme.typography.labelSmall,
-                            color = textColor
+                            color = textColor,
                         )
                     }
                 }
@@ -119,33 +126,36 @@ private fun ReminderComponentPreview() {
         Surface {
             Column(modifier = Modifier.padding(16.dp)) {
                 ReminderComponent(
-                    reminder = ReminderDomain(
-                        label = "Oontz",
-                        enabled = false,
-                        hour = 12,
-                        minute = 0,
-                        repeat = listOf(DayOfWeek.MONDAY, DayOfWeek.TUESDAY)
-                    )
+                    reminder =
+                        ReminderDomain(
+                            label = "Oontz",
+                            enabled = false,
+                            hour = 12,
+                            minute = 0,
+                            repeat = listOf(DayOfWeek.MONDAY, DayOfWeek.TUESDAY),
+                        ),
                 ) { }
                 Spacer(modifier = Modifier.padding(16.dp))
                 ReminderComponent(
-                    reminder = ReminderDomain(
-                        label = "Oontz",
-                        enabled = false,
-                        hour = 12,
-                        minute = 0,
-                        repeat = listOf(DayOfWeek.MONDAY, DayOfWeek.TUESDAY)
-                    )
+                    reminder =
+                        ReminderDomain(
+                            label = "Oontz",
+                            enabled = false,
+                            hour = 12,
+                            minute = 0,
+                            repeat = listOf(DayOfWeek.MONDAY, DayOfWeek.TUESDAY),
+                        ),
                 ) { }
                 Spacer(modifier = Modifier.padding(16.dp))
                 ReminderComponent(
-                    reminder = ReminderDomain(
-                        label = "Oontz",
-                        enabled = true,
-                        hour = 12,
-                        minute = 0,
-                        repeat = listOf(DayOfWeek.MONDAY, DayOfWeek.TUESDAY)
-                    )
+                    reminder =
+                        ReminderDomain(
+                            label = "Oontz",
+                            enabled = true,
+                            hour = 12,
+                            minute = 0,
+                            repeat = listOf(DayOfWeek.MONDAY, DayOfWeek.TUESDAY),
+                        ),
                 ) { }
             }
         }
