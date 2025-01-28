@@ -15,6 +15,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.rounded.Timer
 import androidx.compose.material3.Button
@@ -38,6 +39,7 @@ import com.bizilabs.streeek.lib.design.helpers.success
 import kotlinx.datetime.DayOfWeek
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
 import com.bizilabs.streeek.feature.reminders.components.ReminderComponent
 import com.bizilabs.streeek.feature.reminders.components.ReminderEditBottomSheet
 import com.bizilabs.streeek.feature.reminders.list.ReminderListScreen
@@ -63,7 +65,10 @@ object ReminderListScreen : Screen {
             onClickCreateReminder = screenModel::onClickCreate,
             onValueChangeReminderLabel = screenModel::onValueChangeReminderLabel,
             onClickReminderDayOfWeek = screenModel::onClickReminderDayOfWeek,
-            onDismissSheet = screenModel::onDismissSheet
+            onDismissSheet = screenModel::onDismissSheet,
+            onOpenTimePicker = screenModel::onOpenTimePicker,
+            onDismissTimePicker = screenModel::onDismissTimePicker,
+            onCreateReminder = screenModel::onCreateReminder
         )
     }
 }
@@ -78,6 +83,9 @@ fun ReminderListScreenContent(
     onValueChangeReminderLabel: (String) -> Unit,
     onClickReminderDayOfWeek: (DayOfWeek) -> Unit,
     onDismissSheet: () -> Unit,
+    onOpenTimePicker: () -> Unit,
+    onCreateReminder: () -> Unit,
+    onDismissTimePicker: (Int, Int) -> Unit
 ) {
 
     val activity = LocalContext.current as ComponentActivity
@@ -87,7 +95,10 @@ fun ReminderListScreenContent(
             state = state,
             onValueChangeReminderLabel = onValueChangeReminderLabel,
             onClickReminderDayOfWeek = onClickReminderDayOfWeek,
-            onDismiss = onDismissSheet
+            onDismiss = onDismissSheet,
+            onOpenTimePicker = onOpenTimePicker,
+            onCreateReminder = onCreateReminder,
+            onDismissTimePicker = onDismissTimePicker
         )
 
     Scaffold(
@@ -108,6 +119,11 @@ fun ReminderListScreenContent(
                         subtitle = "Set reminders for contributing to GitHub",
                     )
                 },
+                actions = {
+                    IconButton(onClick = onClickCreateReminder) {
+                        Icon(Icons.Default.Add, contentDescription = "")
+                    }
+                }
             )
         },
         snackbarHost = {
@@ -180,7 +196,15 @@ fun ReminderListScreenContent(
                 is FetchListState.Success -> {
                     LazyColumn(modifier = Modifier.fillMaxSize()) {
                         items(result.list) { reminder ->
-                            ReminderComponent(reminder = reminder) { }
+                            ReminderComponent(
+                                reminder = reminder,
+                                onClick = onClickReminder,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 8.dp)
+                                    .padding(top = 8.dp)
+
+                            )
                         }
                     }
                 }
