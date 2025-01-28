@@ -23,7 +23,7 @@ fun NotificationResult?.asNavigationDestination(): Screen =
             ReminderScreen(
                 label = uri.extractParam("label") ?: "",
                 day = uri.extractParam("day")?.toInt() ?: 0,
-                code = uri.extractParam("code")?.toInt() ?: 0
+                code = uri.extractParam("code")?.toInt() ?: 0,
             )
         }
 
