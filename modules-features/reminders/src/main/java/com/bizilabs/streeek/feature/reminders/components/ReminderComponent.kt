@@ -1,6 +1,5 @@
 package com.bizilabs.streeek.feature.reminders.components
 
-import android.R.attr.text
 import android.content.res.Configuration
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -15,7 +14,6 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.Label
-import androidx.compose.material.icons.rounded.Label
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -30,9 +28,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.bizilabs.streeek.lib.design.components.SafiCenteredRow
-import com.bizilabs.streeek.lib.design.helpers.onSuccess
-import com.bizilabs.streeek.lib.design.helpers.success
 import com.bizilabs.streeek.lib.design.theme.SafiTheme
 import com.bizilabs.streeek.lib.domain.models.ReminderDomain
 import java.time.DayOfWeek
@@ -41,7 +36,7 @@ import java.time.DayOfWeek
 fun ReminderComponent(
     reminder: ReminderDomain,
     modifier: Modifier = Modifier,
-    onClick: () -> Unit
+    onClick: (ReminderDomain) -> Unit
 ) {
     val containerColor =
         if (reminder.enabled) MaterialTheme.colorScheme.primary else CardDefaults.cardColors().containerColor
@@ -49,7 +44,9 @@ fun ReminderComponent(
         if (reminder.enabled) MaterialTheme.colorScheme.onPrimary else CardDefaults.cardColors().contentColor
     Card(
         modifier = modifier,
-        onClick = onClick,
+        onClick = {
+            onClick(reminder)
+        },
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.onSurface),
         colors = CardDefaults.cardColors(
             containerColor = containerColor,
