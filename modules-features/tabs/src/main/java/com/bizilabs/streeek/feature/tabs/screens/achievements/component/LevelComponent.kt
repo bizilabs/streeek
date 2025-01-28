@@ -16,15 +16,12 @@ import com.bizilabs.streeek.lib.design.theme.SafiTheme
 import com.bizilabs.streeek.lib.domain.extensions.asRank
 import com.bizilabs.streeek.lib.domain.helpers.SystemLocalDateTime
 import com.bizilabs.streeek.lib.domain.models.LevelDomain
-import timber.log.Timber
-import java.time.temporal.TemporalAdjusters.next
 
 private val Long.isEven
     get() = (this % 2 == 0L)
 
 @Composable
 fun LevelComponent(
-    next: LevelDomain?,
     current: LevelDomain,
     accountLevel: LevelDomain,
     modifier: Modifier = Modifier,
@@ -34,24 +31,15 @@ fun LevelComponent(
     val isCurrent = accountLevel.number == current.number
     val currentIsHigher = current.number > accountLevel.number
     val currentIsLower = current.number < accountLevel.number
-    val nextIsHigher = next?.number?.let { it > accountLevel.number } == true
-    val nextIsLower = next?.number?.let { it < accountLevel.number } == true
 
+    val difference = current.number - accountLevel.number
 
     val isDotted = currentIsHigher
-    val isNextDotted = when {
-        nextIsHigher -> true
-        nextIsLower -> false
-        else -> true
-    }
-
-    Timber.d("Kawaba: next = ${next?.number} | current = ${current.number} | mine = ${accountLevel.number}")
-    Timber.d("Kawaba: isDotted = $isDotted | isNextDotted = $isNextDotted")
+    val isNextDotted = difference >= 0L
 
     val lineAboveColor = when {
-        nextIsHigher -> MaterialTheme.colorScheme.success
-        nextIsLower -> MaterialTheme.colorScheme.onBackground
-        else -> MaterialTheme.colorScheme.onBackground
+        isNextDotted -> MaterialTheme.colorScheme.onBackground
+        else -> MaterialTheme.colorScheme.success
     }
 
     val lineBelowColor = when {
@@ -64,13 +52,12 @@ fun LevelComponent(
         else -> MaterialTheme.colorScheme.onBackground to MaterialTheme.colorScheme.background
     }
 
-    val difference = current.number - accountLevel.number
     val title = when {
         difference <= 1L -> current.name.lowercase().replaceFirstChar { it.uppercase() }
         else -> "Unlock Previous Level"
     }
     val subtitle = when {
-        difference <= 0L -> "${current.minPoints} EXP"
+        difference <= 0L -> "${current.minPoints - 1} EXP"
         difference == 1L -> "${current.maxPoints - points} EXP to go"
         else -> "Locked"
     }
@@ -122,7 +109,6 @@ private fun LevelComponentPreview() {
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(150.dp),
-                    next = sampleLevels.getOrNull(5),
                     current = sampleLevels[4],
                     accountLevel = sampleLevels[2]
                 )
@@ -131,7 +117,6 @@ private fun LevelComponentPreview() {
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(150.dp),
-                    next = sampleLevels[4],
                     current = sampleLevels[3],
                     accountLevel = sampleLevels[2]
                 )
@@ -139,7 +124,6 @@ private fun LevelComponentPreview() {
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(150.dp),
-                    next = sampleLevels[3],
                     current = sampleLevels[2],
                     accountLevel = sampleLevels[2]
                 )
@@ -147,7 +131,6 @@ private fun LevelComponentPreview() {
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(150.dp),
-                    next = sampleLevels[2],
                     current = sampleLevels[1],
                     accountLevel = sampleLevels[2]
                 )
