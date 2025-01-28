@@ -8,7 +8,7 @@ import androidx.compose.ui.Modifier
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 
-class ReminderScreen(val id: String) : Screen {
+class ReminderScreen(val label: String, val day: Int, val code: Int) : Screen {
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.current
