@@ -5,6 +5,8 @@ import kotlinx.coroutines.flow.Flow
 
 interface ReminderRepository {
     val reminders: Flow<Map<String, ReminderDomain>>
+
     suspend fun update(reminder: ReminderDomain)
+
     suspend fun delete(reminder: ReminderDomain)
 }

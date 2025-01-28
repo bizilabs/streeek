@@ -39,7 +39,6 @@ import com.bizilabs.streeek.lib.design.theme.SafiTheme
 import kotlinx.coroutines.launch
 import kotlinx.datetime.DayOfWeek
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ReminderEditBottomSheet(
@@ -50,7 +49,7 @@ fun ReminderEditBottomSheet(
     onDismiss: () -> Unit,
     onOpenTimePicker: () -> Unit,
     onCreateReminder: () -> Unit,
-    onDismissTimePicker: (Int, Int) -> Unit
+    onDismissTimePicker: (Int, Int) -> Unit,
 ) {
     val scope = rememberCoroutineScope()
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
@@ -71,12 +70,12 @@ fun ReminderEditBottomSheet(
                     },
                     onDismiss = { hour, minute ->
                         onDismissTimePicker(hour, minute)
-                    }
+                    },
                 )
             },
             confirmButton = {},
             dismissButton = {},
-            containerColor = MaterialTheme.colorScheme.surface
+            containerColor = MaterialTheme.colorScheme.surface,
         )
     }
 
@@ -94,7 +93,7 @@ fun ReminderEditBottomSheet(
             onValueChangeReminderLabel = onValueChangeReminderLabel,
             onClickReminderDayOfWeek = onClickReminderDayOfWeek,
             onOpenTimePicker = onOpenTimePicker,
-            onCreateReminder = onCreateReminder
+            onCreateReminder = onCreateReminder,
         )
     }
 }
@@ -105,95 +104,103 @@ private fun ReminderBottomSheetContent(
     onValueChangeReminderLabel: (String) -> Unit,
     onClickReminderDayOfWeek: (DayOfWeek) -> Unit,
     onCreateReminder: () -> Unit,
-    onOpenTimePicker: () -> Unit
+    onOpenTimePicker: () -> Unit,
 ) {
     Column(
         modifier = Modifier.fillMaxWidth(),
     ) {
         Text(
             text = "Reminder".uppercase(),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 16.dp),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(top = 16.dp),
             textAlign = TextAlign.Center,
-            fontWeight = FontWeight.Bold
+            fontWeight = FontWeight.Bold,
         )
         HorizontalDivider(
-            modifier = Modifier.padding(vertical = 16.dp)
+            modifier = Modifier.padding(vertical = 16.dp),
         )
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
         ) {
             TextField(
-                modifier = Modifier
-                    .fillMaxWidth(),
+                modifier =
+                    Modifier
+                        .fillMaxWidth(),
                 value = state.label,
                 onValueChange = onValueChangeReminderLabel,
                 label = { Text(text = "Label") },
                 leadingIcon = {
                     Icon(
                         imageVector = Icons.AutoMirrored.Rounded.Label,
-                        contentDescription = "update label"
+                        contentDescription = "update label",
                     )
-                }
+                },
             )
             TextField(
                 value = state.time ?: "",
                 onValueChange = {},
                 label = { Text(text = "Time") },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 16.dp)
-                    .clickable {
-                        onOpenTimePicker()
-                    },
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 16.dp)
+                        .clickable {
+                            onOpenTimePicker()
+                        },
                 leadingIcon = {
                     Icon(
                         imageVector = Icons.Rounded.AccessTimeFilled,
-                        contentDescription = "update time"
+                        contentDescription = "update time",
                     )
                 },
                 trailingIcon = {
                 },
-                enabled = false
+                enabled = false,
             )
             Text(
                 text = "Repeat",
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
             )
             LazyRow(
-                modifier = Modifier
-                    .fillMaxWidth()
+                modifier =
+                    Modifier
+                        .fillMaxWidth(),
             ) {
                 items(DayOfWeek.entries) { day ->
                     val isSelected = state.selectedDays.contains(day)
                     Card(
                         modifier = Modifier.padding(end = 4.dp),
                         onClick = { onClickReminderDayOfWeek(day) },
-                        border = BorderStroke(
-                            width = 1.dp,
-                            color = MaterialTheme.colorScheme.onSurface
-                        ),
-                        colors = CardDefaults.cardColors(
-                            containerColor = if (isSelected) MaterialTheme.colorScheme.onSurface else Color.Transparent,
-                            contentColor = if (isSelected) MaterialTheme.colorScheme.surface else MaterialTheme.colorScheme.onSurface
-                        )
+                        border =
+                            BorderStroke(
+                                width = 1.dp,
+                                color = MaterialTheme.colorScheme.onSurface,
+                            ),
+                        colors =
+                            CardDefaults.cardColors(
+                                containerColor = if (isSelected) MaterialTheme.colorScheme.onSurface else Color.Transparent,
+                                contentColor = if (isSelected) MaterialTheme.colorScheme.surface else MaterialTheme.colorScheme.onSurface,
+                            ),
                     ) {
                         Text(
                             modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
                             text = day.name.take(3),
-                            style = MaterialTheme.typography.labelMedium
+                            style = MaterialTheme.typography.labelMedium,
                         )
                     }
                 }
             }
             Button(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 16.dp),
-                onClick = onCreateReminder
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 16.dp),
+                onClick = onCreateReminder,
             ) {
                 Text(text = if (state.selectedReminder != null) "update" else "create")
             }
@@ -214,10 +221,10 @@ private fun ReminderEditBottomSheetPreview() {
                         onValueChangeReminderLabel = {},
                         onClickReminderDayOfWeek = {},
                         onCreateReminder = {},
-                        onOpenTimePicker = {}
+                        onOpenTimePicker = {},
                     )
                 }
-            }
+            },
         ) {
             Box(modifier = Modifier.padding(it))
         }
@@ -233,19 +240,20 @@ private fun ReminderEditBottomSheetSelectedPreview() {
             bottomBar = {
                 Surface {
                     ReminderBottomSheetContent(
-                        state = ReminderListScreenState(
-                            label = "poach",
-                            selectedHour = 13,
-                            selectedMinute = 15,
-                            selectedDays = listOf(DayOfWeek.MONDAY, DayOfWeek.WEDNESDAY)
-                        ),
+                        state =
+                            ReminderListScreenState(
+                                label = "poach",
+                                selectedHour = 13,
+                                selectedMinute = 15,
+                                selectedDays = listOf(DayOfWeek.MONDAY, DayOfWeek.WEDNESDAY),
+                            ),
                         onValueChangeReminderLabel = {},
                         onClickReminderDayOfWeek = {},
                         onCreateReminder = {},
-                        onOpenTimePicker = {}
+                        onOpenTimePicker = {},
                     )
                 }
-            }
+            },
         ) {
             Box(modifier = Modifier.padding(it))
         }

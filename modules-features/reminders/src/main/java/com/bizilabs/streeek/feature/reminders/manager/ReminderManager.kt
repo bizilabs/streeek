@@ -11,53 +11,72 @@ import java.util.Calendar
 
 interface ReminderManager {
     fun createAlarm(reminder: ReminderDomain)
-    fun createAlarm(label: String, day: Int, hour: Int, minute: Int)
+
+    fun createAlarm(
+        label: String,
+        day: Int,
+        hour: Int,
+        minute: Int,
+    )
+
     fun cancelAlarm(reminder: ReminderDomain)
-    fun cancelAlarm(label: String, day: Int, code: Int)
+
+    fun cancelAlarm(
+        label: String,
+        day: Int,
+        code: Int,
+    )
 }
 
 internal class ReminderManagerImpl(
-    private val context: Context
+    private val context: Context,
 ) : ReminderManager {
-
     val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
     override fun createAlarm(reminder: ReminderDomain) {
         if (reminder.enabled.not()) return
 
         reminder.repeat.forEach { dayOfWeek ->
-            val calendar = getNextAlarmTime(
-                dayOfWeek = dayOfWeek,
-                hour = reminder.hour,
-                minute = reminder.minute
-            )
+            val calendar =
+                getNextAlarmTime(
+                    dayOfWeek = dayOfWeek,
+                    hour = reminder.hour,
+                    minute = reminder.minute,
+                )
 
             val alarmIntent = createPendingIntent(reminder = reminder, dayOfWeek = dayOfWeek)
             alarmManager.set(
                 AlarmManager.RTC_WAKEUP,
                 calendar.timeInMillis,
-                alarmIntent
+                alarmIntent,
             )
         }
     }
 
-    override fun createAlarm(label: String, day: Int, hour: Int, minute: Int) {
-        val calendar = Calendar.getInstance().apply {
-            timeInMillis = System.currentTimeMillis()
-            set(Calendar.HOUR_OF_DAY, hour)
-            set(Calendar.MINUTE, minute)
-            set(Calendar.SECOND, 0)
-            set(Calendar.MILLISECOND, 0)
-        }
-        val alarmIntent = createPendingIntent(
-            label = label,
-            day = day,
-            requestCode = System.currentTimeMillis().toInt()
-        )
+    override fun createAlarm(
+        label: String,
+        day: Int,
+        hour: Int,
+        minute: Int,
+    ) {
+        val calendar =
+            Calendar.getInstance().apply {
+                timeInMillis = System.currentTimeMillis()
+                set(Calendar.HOUR_OF_DAY, hour)
+                set(Calendar.MINUTE, minute)
+                set(Calendar.SECOND, 0)
+                set(Calendar.MILLISECOND, 0)
+            }
+        val alarmIntent =
+            createPendingIntent(
+                label = label,
+                day = day,
+                requestCode = System.currentTimeMillis().toInt(),
+            )
         alarmManager.set(
             AlarmManager.RTC_WAKEUP,
             calendar.timeInMillis,
-            alarmIntent
+            alarmIntent,
         )
     }
 
@@ -68,30 +87,40 @@ internal class ReminderManagerImpl(
         }
     }
 
-    override fun cancelAlarm(label: String, day: Int, code: Int) {
+    override fun cancelAlarm(
+        label: String,
+        day: Int,
+        code: Int,
+    ) {
         val alarmIntent = createPendingIntent(label = label, day = day, requestCode = code)
         alarmManager.cancel(alarmIntent)
     }
 
-    private fun getNextAlarmTime(dayOfWeek: DayOfWeek, hour: Int, minute: Int): Calendar {
+    private fun getNextAlarmTime(
+        dayOfWeek: DayOfWeek,
+        hour: Int,
+        minute: Int,
+    ): Calendar {
         val now = Calendar.getInstance()
-        val calendar = Calendar.getInstance().apply {
-            timeInMillis = System.currentTimeMillis()
-            set(Calendar.HOUR_OF_DAY, hour)
-            set(Calendar.MINUTE, minute)
-            set(Calendar.SECOND, 0)
-            set(Calendar.MILLISECOND, 0)
-        }
+        val calendar =
+            Calendar.getInstance().apply {
+                timeInMillis = System.currentTimeMillis()
+                set(Calendar.HOUR_OF_DAY, hour)
+                set(Calendar.MINUTE, minute)
+                set(Calendar.SECOND, 0)
+                set(Calendar.MILLISECOND, 0)
+            }
 
         // Calculate the next occurrence of the given day
         val currentDayOfWeek = now.get(Calendar.DAY_OF_WEEK)
         val targetDayOfWeek = dayOfWeek.value % 7 + 1 // DayOfWeek to Calendar conversion
 
-        val daysUntilNext = if (targetDayOfWeek >= currentDayOfWeek) {
-            targetDayOfWeek - currentDayOfWeek
-        } else {
-            7 - (currentDayOfWeek - targetDayOfWeek)
-        }
+        val daysUntilNext =
+            if (targetDayOfWeek >= currentDayOfWeek) {
+                targetDayOfWeek - currentDayOfWeek
+            } else {
+                7 - (currentDayOfWeek - targetDayOfWeek)
+            }
 
         if (daysUntilNext > 0 || calendar.timeInMillis <= System.currentTimeMillis()) {
             calendar.add(Calendar.DAY_OF_YEAR, daysUntilNext)
@@ -100,30 +129,36 @@ internal class ReminderManagerImpl(
         return calendar
     }
 
-    private fun createPendingIntent(reminder: ReminderDomain, dayOfWeek: DayOfWeek): PendingIntent {
+    private fun createPendingIntent(
+        reminder: ReminderDomain,
+        dayOfWeek: DayOfWeek,
+    ): PendingIntent {
         return createPendingIntent(
             label = reminder.label,
             day = dayOfWeek.value,
-            requestCode = reminder.hashCode() + dayOfWeek.value
+            requestCode = reminder.hashCode() + dayOfWeek.value,
         )
     }
 
-    private fun createPendingIntent(label: String, day: Int, requestCode: Int): PendingIntent {
-        val intent = Intent(context, ReminderReceiver::class.java).apply {
-            action = "com.example.alarm.ACTION_REMINDER"
-            putExtra("streeek.receiver.type", "reminder")
-            putExtra("streeek.reminder.type", "ring")
-            putExtra("reminder.label", label)
-            putExtra("reminder.day", day)
-            putExtra("reminder.code", requestCode)
-
-        }
+    private fun createPendingIntent(
+        label: String,
+        day: Int,
+        requestCode: Int,
+    ): PendingIntent {
+        val intent =
+            Intent(context, ReminderReceiver::class.java).apply {
+                action = "com.example.alarm.ACTION_REMINDER"
+                putExtra("streeek.receiver.type", "reminder")
+                putExtra("streeek.reminder.type", "ring")
+                putExtra("reminder.label", label)
+                putExtra("reminder.day", day)
+                putExtra("reminder.code", requestCode)
+            }
         return PendingIntent.getBroadcast(
             context,
-            requestCode, // Unique request code per reminder
+            requestCode,
             intent,
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
         )
     }
-
 }

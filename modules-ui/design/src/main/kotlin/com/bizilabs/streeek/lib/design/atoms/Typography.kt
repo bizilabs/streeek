@@ -30,7 +30,7 @@ private fun getTypography(family: FontFamily): Typography {
 enum class SafiTypography {
     SANS,
     MONO,
-    NOTO,;
+    NOTO, ;
 
     val label: String
         get() =
