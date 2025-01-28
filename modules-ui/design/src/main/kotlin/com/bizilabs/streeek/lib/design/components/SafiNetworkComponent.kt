@@ -1,9 +1,13 @@
 package com.bizilabs.streeek.lib.design.components
 
+import android.content.Context
+import android.content.Intent
+import android.provider.Settings
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.SignalWifi4Bar
 import androidx.compose.material.icons.rounded.SignalWifiConnectedNoInternet4
@@ -14,6 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -47,12 +52,27 @@ private fun getNetworkData(isNetworkConnected: Boolean) =
         )
     }
 
+fun Context.openNetworkSettings() {
+    val intent = Intent(Settings.ACTION_WIFI_SETTINGS)
+    startActivity(intent)
+}
+
 @Composable
-internal fun SafiNetworkComponent(isNetworkConnected: Boolean) {
+internal fun SafiNetworkComponent(
+    isNetworkConnected: Boolean,
+    modifier: Modifier = Modifier,
+) {
+    val context = LocalContext.current
     val data = getNetworkData(isNetworkConnected = isNetworkConnected)
-    SafiCenteredRow(modifier = Modifier.fillMaxWidth().background(data.backgroundColor)) {
-        SafiCenteredRow(modifier = Modifier.padding(8.dp)) {
+    SafiCenteredRow(
+        modifier =
+            modifier
+                .background(data.backgroundColor)
+                .clickable { context.openNetworkSettings() },
+    ) {
+        SafiCenteredRow(modifier = Modifier.padding(12.dp)) {
             Icon(
+                modifier = Modifier.size(16.dp),
                 imageVector = data.icon,
                 contentDescription = stringResource(data.label),
                 tint = data.onBackgroundColor,
@@ -61,6 +81,7 @@ internal fun SafiNetworkComponent(isNetworkConnected: Boolean) {
             Text(
                 text = stringResource(data.label),
                 color = data.onBackgroundColor,
+                style = MaterialTheme.typography.labelSmall,
             )
         }
     }

@@ -9,6 +9,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
+import kotlin.math.sqrt
+
+data class SafiBarColors(
+    val top: Color,
+    val bottom: Color,
+)
 
 @Composable
 internal fun StatusAndNavigationBar(
@@ -29,14 +35,35 @@ internal fun StatusAndNavigationBar(
     }
 }
 
+val Color.isDark: Boolean
+    get() {
+        val red = this.red
+        val green = this.green
+        val blue = this.blue
+
+        // Calculate relative brightness using a weighted formula
+        val brightness = sqrt(0.299 * red * red + 0.587 * green * green + 0.114 * blue * blue)
+
+        // Use a threshold to determine if the color is dark
+        return brightness < 0.5
+    }
+
 @Composable
 fun SetupStatusBarColor(color: Color?) {
+    val view = LocalView.current
     val window = (LocalView.current.context as Activity).window
     window.statusBarColor = (color ?: colorScheme.background).toArgb()
+    WindowCompat.getInsetsController(window, view).apply {
+        isAppearanceLightStatusBars = color?.isDark == false
+    }
 }
 
 @Composable
 fun SetupNavigationBarColor(color: Color?) {
+    val view = LocalView.current
     val window = (LocalView.current.context as Activity).window
     window.navigationBarColor = (color ?: colorScheme.background).toArgb()
+    WindowCompat.getInsetsController(window, view).apply {
+        isAppearanceLightNavigationBars = color?.isDark == false
+    }
 }

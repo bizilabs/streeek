@@ -30,8 +30,6 @@ import com.bizilabs.streeek.feature.tabs.screens.leaderboard.LeaderboardListScre
 import com.bizilabs.streeek.feature.tabs.screens.notifications.NotificationsScreen
 import com.bizilabs.streeek.feature.tabs.screens.teams.TeamsListScreen
 import com.bizilabs.streeek.lib.common.navigation.SharedScreen
-import com.bizilabs.streeek.lib.design.helpers.SetupNavigationBarColor
-import com.bizilabs.streeek.lib.design.helpers.SetupStatusBarColor
 
 val featureTabs =
     screenModule {
@@ -41,9 +39,6 @@ val featureTabs =
 object TabsScreen : Screen {
     @Composable
     override fun Content() {
-        SetupNavigationBarColor(color = MaterialTheme.colorScheme.surface)
-        SetupStatusBarColor(color = MaterialTheme.colorScheme.surface)
-
         val activity = LocalContext.current as Activity
         val screenModel: TabsScreenModel = getScreenModel()
         val state by screenModel.state.collectAsStateWithLifecycle()

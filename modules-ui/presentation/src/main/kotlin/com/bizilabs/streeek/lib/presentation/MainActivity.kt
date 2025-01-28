@@ -33,8 +33,12 @@ class MainActivity : BaseActivity() {
             ) {
                 SafiContent(
                     isNetworkConnected = state.hasNetworkConnection,
+                    barColors = state.barColors,
                 ) {
-                    MainNavigation(intent = intent)
+                    MainNavigation(
+                        intent = intent,
+                        onValueChangeBarColors = viewModel::onValueChangeBarColors,
+                    )
                 }
             }
         }
