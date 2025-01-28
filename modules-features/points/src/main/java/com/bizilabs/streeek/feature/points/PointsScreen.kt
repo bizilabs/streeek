@@ -36,8 +36,6 @@ import com.bizilabs.streeek.lib.common.navigation.SharedScreen
 import com.bizilabs.streeek.lib.design.components.SafiCenteredColumn
 import com.bizilabs.streeek.lib.design.components.SafiCircularProgressIndicator
 import com.bizilabs.streeek.lib.design.components.SafiTopBarHeader
-import com.bizilabs.streeek.lib.design.helpers.SetupNavigationBarColor
-import com.bizilabs.streeek.lib.design.helpers.SetupStatusBarColor
 import com.bizilabs.streeek.lib.domain.models.points.EventPointsDomain
 
 val ScreenPoints = screenModule { register<SharedScreen.Points> { PointsScreen } }
@@ -45,8 +43,6 @@ val ScreenPoints = screenModule { register<SharedScreen.Points> { PointsScreen }
 object PointsScreen : Screen {
     @Composable
     override fun Content() {
-        SetupStatusBarColor(color = MaterialTheme.colorScheme.surface)
-        SetupNavigationBarColor(color = MaterialTheme.colorScheme.background)
         val navigator = LocalNavigator.current
         val screenModel = getScreenModel<PointsScreenModel>()
         val state by screenModel.state.collectAsStateWithLifecycle()

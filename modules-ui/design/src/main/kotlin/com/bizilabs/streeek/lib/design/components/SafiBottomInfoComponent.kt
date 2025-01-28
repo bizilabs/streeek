@@ -1,7 +1,5 @@
 package com.bizilabs.streeek.lib.design.components
 
-import android.R.attr.action
-import android.R.id.message
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -64,6 +62,43 @@ fun SafiBottomInfoComponent(
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
                 )
+            }
+            Box(modifier = Modifier.padding(8.dp)) {
+                action?.invoke()
+            }
+        }
+    }
+}
+
+@Composable
+fun SafiBottomInfoComponent(
+    title: @Composable () -> Unit,
+    message: @Composable () -> Unit,
+    modifier: Modifier = Modifier,
+    containerColor: Color = MaterialTheme.colorScheme.surfaceVariant,
+    contentColor: Color = MaterialTheme.colorScheme.onSurface,
+    action: @Composable (() -> Unit)? = null,
+) {
+    Card(
+        modifier = modifier,
+        colors =
+            CardDefaults.cardColors(
+                contentColor = contentColor,
+                containerColor = containerColor,
+            ),
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Column(
+                modifier =
+                    Modifier
+                        .padding(16.dp)
+                        .weight(1f),
+            ) {
+                title()
+                message()
             }
             Box(modifier = Modifier.padding(8.dp)) {
                 action?.invoke()

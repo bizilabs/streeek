@@ -1,11 +1,9 @@
 package com.bizilabs.streeek.lib.design.components
 
+import android.annotation.SuppressLint
 import android.content.res.Configuration
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
@@ -21,6 +19,7 @@ import com.bizilabs.streeek.lib.design.helpers.SetupStatusBarColor
 import com.bizilabs.streeek.lib.design.helpers.isSystemNetworkConnected
 import com.bizilabs.streeek.lib.design.theme.SafiTheme
 
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun SafiContent(
     isNetworkConnected: Boolean = isSystemNetworkConnected(),
@@ -31,33 +30,26 @@ fun SafiContent(
         ),
     content: @Composable () -> Unit,
 ) {
-    Box(
-        modifier =
-            Modifier
-                .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background),
-    ) {
-        val padding = if (isNetworkConnected) 0.dp else 36.dp
-        Column(
-            modifier =
-                Modifier
-                    .fillMaxSize()
-                    .padding(top = padding),
-        ) { content() }
-        SetupStatusBarColor(color = if (isNetworkConnected) barColors.top else MaterialTheme.colorScheme.error)
-        SetupNavigationBarColor(color = barColors.bottom)
-        AnimatedVisibility(
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(top = 56.dp),
-            visible = !isNetworkConnected,
-        ) {
-            SafiNetworkComponent(
-                modifier = Modifier.fillMaxWidth(),
-                isNetworkConnected = isNetworkConnected,
-            )
-        }
+    SetupStatusBarColor(color = barColors.top)
+    SetupNavigationBarColor(color = barColors.bottom)
+    Scaffold(
+        snackbarHost = {
+            AnimatedVisibility(
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 8.dp)
+                        .padding(bottom = 80.dp),
+                visible = !isNetworkConnected,
+            ) {
+                SafiNetworkComponent(
+                    modifier = Modifier.fillMaxWidth(),
+                    isNetworkConnected = isNetworkConnected,
+                )
+            }
+        },
+    ) { innerPadding ->
+        content()
     }
 }
 
