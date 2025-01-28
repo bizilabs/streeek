@@ -2,7 +2,7 @@ package com.bizilabs.streeek.feature.reminders.components
 
 import android.content.res.Configuration
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -12,6 +12,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.Label
 import androidx.compose.material.icons.rounded.AccessTimeFilled
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -27,7 +28,6 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -38,7 +38,6 @@ import com.bizilabs.streeek.feature.reminders.list.ReminderListScreenState
 import com.bizilabs.streeek.lib.design.theme.SafiTheme
 import kotlinx.coroutines.launch
 import kotlinx.datetime.DayOfWeek
-import java.nio.file.WatchEvent
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -48,13 +47,37 @@ fun ReminderEditBottomSheet(
     onValueChangeReminderLabel: (String) -> Unit,
     onClickReminderDayOfWeek: (DayOfWeek) -> Unit,
     modifier: Modifier = Modifier,
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
+    onOpenTimePicker: () -> Unit,
+    onCreateReminder: () -> Unit,
+    onDismissTimePicker: (Int, Int) -> Unit
 ) {
     val scope = rememberCoroutineScope()
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
     fun hideSheet() {
         scope.launch { sheetState.hide() }
+    }
+
+    if (state.isTimePickerOpen) {
+        AlertDialog(
+            modifier = modifier,
+            onDismissRequest = { },
+            title = { Text("Pick Time") },
+            text = {
+                TimePickerComponent(
+                    onConfirm = { hour, minute ->
+                        onDismissTimePicker(hour, minute)
+                    },
+                    onDismiss = { hour, minute ->
+                        onDismissTimePicker(hour, minute)
+                    }
+                )
+            },
+            confirmButton = {},
+            dismissButton = {},
+            containerColor = MaterialTheme.colorScheme.surface
+        )
     }
 
     ModalBottomSheet(
@@ -69,7 +92,9 @@ fun ReminderEditBottomSheet(
         ReminderBottomSheetContent(
             state = state,
             onValueChangeReminderLabel = onValueChangeReminderLabel,
-            onClickReminderDayOfWeek = onClickReminderDayOfWeek
+            onClickReminderDayOfWeek = onClickReminderDayOfWeek,
+            onOpenTimePicker = onOpenTimePicker,
+            onCreateReminder = onCreateReminder
         )
     }
 }
@@ -78,7 +103,9 @@ fun ReminderEditBottomSheet(
 private fun ReminderBottomSheetContent(
     state: ReminderListScreenState,
     onValueChangeReminderLabel: (String) -> Unit,
-    onClickReminderDayOfWeek: (DayOfWeek) -> Unit
+    onClickReminderDayOfWeek: (DayOfWeek) -> Unit,
+    onCreateReminder: () -> Unit,
+    onOpenTimePicker: () -> Unit
 ) {
     Column(
         modifier = Modifier.fillMaxWidth(),
@@ -114,11 +141,14 @@ private fun ReminderBottomSheetContent(
             )
             TextField(
                 value = state.time ?: "",
-                onValueChange = onValueChangeReminderLabel,
+                onValueChange = {},
                 label = { Text(text = "Time") },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 16.dp),
+                    .padding(vertical = 16.dp)
+                    .clickable {
+                        onOpenTimePicker()
+                    },
                 leadingIcon = {
                     Icon(
                         imageVector = Icons.Rounded.AccessTimeFilled,
@@ -126,7 +156,8 @@ private fun ReminderBottomSheetContent(
                     )
                 },
                 trailingIcon = {
-                }
+                },
+                enabled = false
             )
             Text(
                 text = "Repeat",
@@ -158,9 +189,12 @@ private fun ReminderBottomSheetContent(
                     }
                 }
             }
-            Button(modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 16.dp), onClick = {}) {
+            Button(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 16.dp),
+                onClick = onCreateReminder
+            ) {
                 Text(text = if (state.selectedReminder != null) "update" else "create")
             }
         }
@@ -179,6 +213,8 @@ private fun ReminderEditBottomSheetPreview() {
                         state = ReminderListScreenState(),
                         onValueChangeReminderLabel = {},
                         onClickReminderDayOfWeek = {},
+                        onCreateReminder = {},
+                        onOpenTimePicker = {}
                     )
                 }
             }
@@ -205,6 +241,8 @@ private fun ReminderEditBottomSheetSelectedPreview() {
                         ),
                         onValueChangeReminderLabel = {},
                         onClickReminderDayOfWeek = {},
+                        onCreateReminder = {},
+                        onOpenTimePicker = {}
                     )
                 }
             }
