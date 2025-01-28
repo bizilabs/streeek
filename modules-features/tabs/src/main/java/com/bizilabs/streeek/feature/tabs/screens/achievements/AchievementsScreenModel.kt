@@ -24,7 +24,11 @@ import kotlin.enums.EnumEntries
 internal val AchievementsModule =
     module {
         factory<AchievementsScreenModel> {
-            AchievementsScreenModel(context = get(), accountRepository = get(), levelRepository = get())
+            AchievementsScreenModel(
+                context = get(),
+                accountRepository = get(),
+                levelRepository = get()
+            )
         }
     }
 
@@ -85,7 +89,12 @@ class AchievementsScreenModel(
     private fun observeLevels() {
         screenModelScope.launch {
             levelRepository.levels.collectLatest { levels ->
-                mutableState.update { it.copy(levels = levels) }
+                val currentLevel = state.value.level
+                val lastVisibleLevel = (currentLevel?.number ?: 0) + 2
+                mutableState.update {
+                    it.copy(levels = levels.filterNot { it.number > lastVisibleLevel }
+                        .sortedByDescending { it.number })
+                }
             }
         }
     }
