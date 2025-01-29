@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.AccountCircle
@@ -28,7 +29,9 @@ import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -49,6 +52,7 @@ import com.bizilabs.streeek.lib.design.components.SafiCenteredRow
 import com.bizilabs.streeek.lib.design.components.SafiProfileArc
 import com.bizilabs.streeek.lib.design.components.SafiTopBarHeader
 import com.bizilabs.streeek.lib.design.components.shimmerEffect
+import kotlinx.coroutines.launch
 import timber.log.Timber
 
 object AchievementsScreen : Screen {
@@ -249,16 +253,24 @@ fun AchievementsLevelsScreenSection(
             }
 
             else -> {
+                val lazyListState = rememberLazyListState()
+                val coroutineScope = rememberCoroutineScope()
+
                 LazyColumn(
                     modifier = Modifier.fillMaxSize(),
+                    state = lazyListState,
                     reverseLayout = false,
                 ) {
-                    itemsIndexed(levels, key = { index, level -> level.id }) {
-                            index, level ->
+                    itemsIndexed(levels, key = { index, level -> level.id }) { index, level ->
 
-                        val next = levels.getOrNull(index + 1)
                         val current = level
                         val accountLevel = state.level
+
+                        LaunchedEffect(current) {
+                            if (index == levels.lastIndex) {
+                                coroutineScope.launch { lazyListState.animateScrollToItem(index) }
+                            }
+                        }
 
                         accountLevel?.let {
                             LevelComponent(
