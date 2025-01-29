@@ -131,7 +131,8 @@ data class TeamScreenState(
     val isInvitationsOpen: Boolean = false,
     val isRequestsSheetOpen: Boolean = false,
     val isLoadingInvitationsPartially: Boolean = false,
-    val invitationsState: FetchListState<TeamInvitationDomain> = FetchListState.Loading,
+    val codeInvitationsState: FetchState<TeamInvitationDomain>? = null,
+    val expiryTimeToNow: String = "",
     val createInvitationState: FetchState<CreateTeamInvitationDomain>? = null,
     val joinTeamState: FetchState<JoinTeamInvitationDomain>? = null,
     val team: TeamDetailsDomain? = null,
@@ -195,6 +196,8 @@ class TeamScreenModel(
 
     private val clickedTeam =
         combine(teamRepository.teamId, teamRepository.teams) { id, map -> map[id] }
+
+    var countDownJob: Job? = null
 
     init {
         observeTeamsSyncing()
@@ -466,6 +469,27 @@ class TeamScreenModel(
                     isLoadingInvitationsPartially = false,
                 )
             }
+        }
+    }
+
+    private fun startCountDown(invite: TeamInvitationDomain) {
+        countDownJob?.cancel()
+        if (countDownJob == null) {
+            countDownJob =
+                screenModelScope.launch {
+                    var timeLeftInMinutes = invite.expiresAt.timeLeftInMinutes()
+                    val oneMinuteInMillis: Long = 60 * 1000
+                    while (timeLeftInMinutes != 0L) {
+                        mutableState.update {
+                            it.copy(
+                                expiryTimeToNow = timeLeftInMinutes.timeLeftAsString(),
+                            )
+                        }
+                        delay(oneMinuteInMillis)
+                        timeLeftInMinutes -= 1
+                    }
+                    countDownJob = null
+                }
         }
     }
 
