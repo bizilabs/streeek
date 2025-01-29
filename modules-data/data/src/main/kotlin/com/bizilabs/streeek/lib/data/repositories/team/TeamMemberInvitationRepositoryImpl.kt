@@ -18,7 +18,7 @@ class TeamMemberInvitationRepositoryImpl(
     private val invitationRemoteSource: TeamMemberInvitationRemoteSource,
     accountLocalSource: AccountLocalSource,
 ) : TeamMemberInvitationRepository, AccountHelper(source = accountLocalSource) {
-    override suspend fun getAccountsNotInTeam(teamId: Long): Flow<PagingData<AccountsNotInTeamDomain>> =
+    override fun getAccountsNotInTeam(teamId: Long): Flow<PagingData<AccountsNotInTeamDomain>> =
         genericPager(
             getResults = { page ->
                 invitationRemoteSource.getAccountsNotInTeam(teamId = teamId, page = page)
@@ -28,7 +28,7 @@ class TeamMemberInvitationRepositoryImpl(
             },
         )
 
-    override suspend fun searchForAccountNotInTeam(
+    override fun searchForAccountNotInTeam(
         searchParam: String,
         teamId: Long,
     ): Flow<PagingData<AccountsNotInTeamDomain>> =
@@ -106,7 +106,7 @@ class TeamMemberInvitationRepositoryImpl(
         ).asDataResult { it }
     }
 
-    override suspend fun getAllAccountInvites(): Flow<PagingData<AccountTeamInvitesDomain>> =
+    override fun getAllAccountInvites(): Flow<PagingData<AccountTeamInvitesDomain>> =
         genericPager(
             getResults = { page ->
                 val accountId = getAccountId() ?: 0L

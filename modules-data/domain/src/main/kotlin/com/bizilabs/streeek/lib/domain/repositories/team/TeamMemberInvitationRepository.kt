@@ -8,9 +8,9 @@ import com.bizilabs.streeek.lib.domain.models.team.DeleteAccountInvitationDomain
 import kotlinx.coroutines.flow.Flow
 
 interface TeamMemberInvitationRepository {
-    suspend fun getAccountsNotInTeam(teamId: Long): Flow<PagingData<AccountsNotInTeamDomain>>
+    fun getAccountsNotInTeam(teamId: Long): Flow<PagingData<AccountsNotInTeamDomain>>
 
-    suspend fun searchForAccountNotInTeam(
+    fun searchForAccountNotInTeam(
         searchParam: String,
         teamId: Long,
     ): Flow<PagingData<AccountsNotInTeamDomain>>
@@ -37,5 +37,5 @@ interface TeamMemberInvitationRepository {
         status: String,
     ): DataResult<Boolean>
 
-    suspend fun getAllAccountInvites(): Flow<PagingData<AccountTeamInvitesDomain>>
+    fun getAllAccountInvites(): Flow<PagingData<AccountTeamInvitesDomain>>
 }
