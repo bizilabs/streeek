@@ -9,6 +9,7 @@ import com.bizilabs.streeek.feature.issues.screenIssues
 import com.bizilabs.streeek.feature.join.ScreenJoinTeam
 import com.bizilabs.streeek.feature.landing.featureLanding
 import com.bizilabs.streeek.feature.leaderboard.ScreenLeaderboard
+import com.bizilabs.streeek.feature.onboarding.ScreenOnBoarding
 import com.bizilabs.streeek.feature.points.ScreenPoints
 import com.bizilabs.streeek.feature.profile.featureProfile
 import com.bizilabs.streeek.feature.setup.featureSetup
@@ -28,5 +29,6 @@ fun Application.initVoyager() {
         ScreenLeaderboard()
         ScreenPoints()
         ScreenJoinTeam()
+        ScreenOnBoarding()
     }
 }

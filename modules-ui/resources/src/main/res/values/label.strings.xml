@@ -9,4 +9,7 @@
     <string name="teams">Teams</string>
 
     <string name="label_issues">Issues</string>
+    <string name="label_onboarding_title_1">Gamify Your Journey</string>
+    <string name="label_onboarding_title_2">Rise to the Top</string>
+    <string name="label_onboarding_title_3">Keep the Flame Alive</string>
 </resources>

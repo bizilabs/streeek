@@ -18,6 +18,9 @@ class PreferenceRepositoryImpl(
     override val hasNetworkConnection: Flow<Boolean>
         get() = localSource.hasNetworkConnection
 
+    override val userHasOnBoarded: Flow<Boolean>
+        get() = localSource.userHasOnBoarded
+
     override suspend fun updateNetworkConnection(hasNetworkConnection: Boolean) {
         localSource.updateNetworkConnection(hasNetworkConnection = hasNetworkConnection)
     }
@@ -28,5 +31,9 @@ class PreferenceRepositoryImpl(
 
     override suspend fun updateTypography(typography: String) {
         localSource.updateTypography(typography = typography)
+    }
+
+    override suspend fun updateUserHasOnBoarded(hasOnBoarded: Boolean) {
+        localSource.updateUserHasOnBoarded(hasOnBoarded = hasOnBoarded)
     }
 }

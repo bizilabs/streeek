@@ -11,6 +11,9 @@ object SafiDrawables {
     val TrendingDown = R.drawable.trending_down
     val TrendingUp = R.drawable.trending_up
     val TrendingFlat = R.drawable.trending_flat
+    val OnBoarding1 = R.drawable.on_board_item_1
+    val OnBoarding2 = R.drawable.on_board_item_2
+    val OnBoarding3 = R.drawable.on_board_item_3
 }
 
 object SafiMipMaps {

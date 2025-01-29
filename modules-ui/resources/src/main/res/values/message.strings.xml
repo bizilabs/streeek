@@ -8,4 +8,8 @@
         \nLet’s see what you’ve got! 🚀
     </string>
     <string name="message_no_notifications">You have no notifications. Come back later! </string>
+
+    <string name="onboarding_description_1">Turn your GitHub contributions into a thrilling game. Earn points for commits, pull requests, and issues to track your progress and make coding more fun!</string>
+    <string name="onboarding_description_2">Compete with friends and collaborators on the leaderboard. Stay ahead by consistently contributing and showcasing your coding prowess!</string>
+    <string name="onboarding_description_3">Stay motivated by maintaining streaks and unlocking achievements. Keep pushing code to achieve milestones and prove your dominance in the game!</string>
 </resources>

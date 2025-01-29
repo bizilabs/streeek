@@ -30,6 +30,7 @@ dependencies {
     implementation(projects.modulesFeatures.join)
     implementation(projects.modulesFeatures.notifications)
     implementation(projects.modulesFeatures.services)
+    implementation(projects.modulesFeatures.onboarding)
 
     // splash screen
     implementation(libs.androidx.core.splashscreen)

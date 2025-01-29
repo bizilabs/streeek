@@ -8,12 +8,15 @@ interface LocalPreferenceSource {
     val typography: Flow<String>
     val isSyncingContributions: Flow<Boolean>
     val hasNetworkConnection: Flow<Boolean>
+    val userHasOnBoarded: Flow<Boolean>
 
     suspend fun setIsSyncingContributions(isSyncing: Boolean)
 
     suspend fun updateTypography(typography: String)
 
     suspend fun updateNetworkConnection(hasNetworkConnection: Boolean)
+
+    suspend fun updateUserHasOnBoarded(hasOnBoarded: Boolean)
 }
 
 class LocalPreferenceSourceImpl(
@@ -23,6 +26,7 @@ class LocalPreferenceSourceImpl(
         val SyncingContributions = booleanPreferencesKey("syncing_contributions")
         val typography = stringPreferencesKey("streeek.typography")
         val hasNetworkConnection = booleanPreferencesKey("streeek.network.connection")
+        val userHasOnBoarded = booleanPreferencesKey("streeek.onboarding")
     }
 
     override val typography: Flow<String>
@@ -34,6 +38,9 @@ class LocalPreferenceSourceImpl(
     override val hasNetworkConnection: Flow<Boolean>
         get() = source.get(key = Keys.hasNetworkConnection, default = true)
 
+    override val userHasOnBoarded: Flow<Boolean>
+        get() = source.get(key = Keys.userHasOnBoarded, default = false)
+
     override suspend fun setIsSyncingContributions(isSyncing: Boolean) {
         source.update(key = Keys.SyncingContributions, value = isSyncing)
     }
@@ -44,5 +51,9 @@ class LocalPreferenceSourceImpl(
 
     override suspend fun updateNetworkConnection(hasNetworkConnection: Boolean) {
         source.update(key = Keys.hasNetworkConnection, value = hasNetworkConnection)
+    }
+
+    override suspend fun updateUserHasOnBoarded(hasOnBoarded: Boolean) {
+        source.update(key = Keys.userHasOnBoarded, value = hasOnBoarded)
     }
 }

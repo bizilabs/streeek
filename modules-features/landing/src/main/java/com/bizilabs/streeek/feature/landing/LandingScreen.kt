@@ -34,6 +34,7 @@ object LandingScreen : Screen {
     override fun Content() {
         val navigator = LocalNavigator.currentOrThrow
 
+        val onBoardingScreen = rememberScreen(SharedScreen.OnBoarding)
         val authenticationScreen = rememberScreen(SharedScreen.Authentication)
         val setupScreen = rememberScreen(SharedScreen.Setup)
         val tabsScreen = rememberScreen(SharedScreen.Tabs)
@@ -47,6 +48,7 @@ object LandingScreen : Screen {
                 LandingScreenDestination.AUTHENTICATE -> navigator.replace(authenticationScreen)
                 LandingScreenDestination.TABS -> navigator.replace(tabsScreen)
                 LandingScreenDestination.SETUP -> navigator.replace(setupScreen)
+                LandingScreenDestination.ONBOARDING -> navigator.replace(onBoardingScreen)
             }
         }
     }

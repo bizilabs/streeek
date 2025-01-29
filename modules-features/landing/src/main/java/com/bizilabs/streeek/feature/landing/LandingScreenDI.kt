@@ -4,5 +4,11 @@ import org.koin.dsl.module
 
 val landingModule =
     module {
-        factory { LandingScreenModel(authenticationRepository = get(), accountRepository = get()) }
+        factory {
+            LandingScreenModel(
+                authenticationRepository = get(),
+                accountRepository = get(),
+                preferenceRepository = get(),
+            )
+        }
     }

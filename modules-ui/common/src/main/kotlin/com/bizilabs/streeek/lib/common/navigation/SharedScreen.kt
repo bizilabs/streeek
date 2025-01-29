@@ -5,6 +5,8 @@ import cafe.adriel.voyager.core.registry.ScreenProvider
 sealed class SharedScreen : ScreenProvider {
     object Landing : SharedScreen()
 
+    object OnBoarding : SharedScreen()
+
     object Authentication : SharedScreen()
 
     object Tabs : SharedScreen()
