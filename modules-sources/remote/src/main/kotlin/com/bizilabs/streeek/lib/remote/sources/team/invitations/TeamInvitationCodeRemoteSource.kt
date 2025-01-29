@@ -12,7 +12,7 @@ import com.bizilabs.streeek.lib.remote.models.supabase.TeamInvitationDTO
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.postgrest.postgrest
 
-interface TeamInvitationRemoteSource {
+interface TeamInvitationCodeRemoteSource {
     suspend fun createInvitation(
         accountId: Long,
         teamId: Long,
@@ -22,7 +22,7 @@ interface TeamInvitationRemoteSource {
     suspend fun getInvitations(
         teamId: Long,
         accountId: Long,
-    ): NetworkResult<List<TeamInvitationDTO>>
+    ): NetworkResult<TeamInvitationDTO?>
 
     suspend fun deleteInvitation(
         invitationId: Long,
@@ -30,9 +30,9 @@ interface TeamInvitationRemoteSource {
     ): NetworkResult<Boolean>
 }
 
-class TeamInvitationRemoteSourceImpl(
+class TeamInvitationCodeRemoteSourceImpl(
     private val supabase: SupabaseClient,
-) : TeamInvitationRemoteSource {
+) : TeamInvitationCodeRemoteSource {
     override suspend fun createInvitation(
         accountId: Long,
         teamId: Long,
@@ -55,7 +55,7 @@ class TeamInvitationRemoteSourceImpl(
     override suspend fun getInvitations(
         teamId: Long,
         accountId: Long,
-    ): NetworkResult<List<TeamInvitationDTO>> =
+    ): NetworkResult<TeamInvitationDTO?> =
         safeSupabaseCall {
             val parameters =
                 GetTeamInvitationsRequestDTO(
@@ -66,7 +66,7 @@ class TeamInvitationRemoteSourceImpl(
                 .rpc(
                     function = Supabase.Functions.Teams.CodeInvitations.GET,
                     parameters = parameters.asJsonObject(),
-                ).decodeList()
+                ).decodeSingleOrNull()
         }
 
     override suspend fun deleteInvitation(

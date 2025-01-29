@@ -116,6 +116,7 @@ class TeamScreen(val teamId: Long?) : Screen {
             onClickProcessSelectedRequests = screenModel::onClickProcessSelectedRequests,
             onClickSelectedRequestsSelection = screenModel::onClickSelectedRequestsSelection,
             onClickProcessRequest = screenModel::onClickProcessRequest,
+            onSuccessOrErrorCodeCreation = screenModel::onSuccessOrErrorCodeCreation,
         )
     }
 }
@@ -147,6 +148,7 @@ fun TeamScreenContent(
     onClickProcessSelectedRequests: (Boolean) -> Unit,
     onClickSelectedRequestsSelection: (SelectionAction, List<TeamAccountJoinRequestDomain>) -> Unit,
     onClickProcessRequest: (TeamAccountJoinRequestDomain, TeamRequestAction) -> Unit,
+    onSuccessOrErrorCodeCreation: (SnackBarType) -> Unit,
 ) {
     val activity = LocalContext.current as Activity
 
@@ -191,6 +193,7 @@ fun TeamScreenContent(
             onClickInvitationRetry = onClickInvitationRetry,
             onClickInvitationCreate = onClickInvitationCreate,
             onSwipeInvitationDelete = onSwipeInvitationDelete,
+            onSuccessOrErrorCodeCreation = onSuccessOrErrorCodeCreation,
         )
     }
 
