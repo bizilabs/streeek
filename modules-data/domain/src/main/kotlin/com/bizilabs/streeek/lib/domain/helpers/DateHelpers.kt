@@ -140,3 +140,25 @@ fun LocalDateTime.toTimeAgo(): String {
         else -> this.date.asString(format = DateFormats.DD_MM_YYYY) ?: ""
     }
 }
+
+fun LocalDateTime.timeLeftInMinutes(): Long {
+    val instantThis = this.toInstant(TimeZone.UTC)
+    val instantNow = UTCLocalDateTime.toInstant(TimeZone.UTC)
+
+    return (instantThis - instantNow).inWholeMinutes
+}
+
+fun Long.timeLeftAsString(): String {
+    val hours = this / 60
+    val minutes = this % 60
+
+    return when {
+        hours > 24 -> {
+            val days = hours / 24
+            if (days == 1L) "1 day" else "$days days"
+        }
+        hours > 0 -> "${hours}h ${minutes}m"
+        minutes > 0 -> "${minutes}m"
+        else -> "a few seconds"
+    }
+}
