@@ -49,14 +49,18 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.paging.compose.LazyPagingItems
 import com.bizilabs.streeek.feature.team.SnackBarType
 import com.bizilabs.streeek.feature.team.TeamScreenState
+import com.bizilabs.streeek.lib.common.components.paging.SafiPagingComponent
 import com.bizilabs.streeek.lib.common.models.FetchState
 import com.bizilabs.streeek.lib.design.components.SafiCenteredColumn
 import com.bizilabs.streeek.lib.design.components.SafiCenteredRow
+import com.bizilabs.streeek.lib.design.components.SafiSearchComponent
 import com.bizilabs.streeek.lib.design.helpers.onSuccess
 import com.bizilabs.streeek.lib.design.helpers.success
 import com.bizilabs.streeek.lib.design.theme.SafiTheme
+import com.bizilabs.streeek.lib.domain.models.team.AccountsNotInTeamDomain
 import com.bizilabs.streeek.lib.domain.models.team.TeamInvitationDomain
 import com.bizilabs.streeek.lib.resources.strings.SafiStrings
 import kotlinx.coroutines.launch
@@ -69,12 +73,17 @@ fun TeamInvitationBottomSheet(
     activity: Activity,
     state: TeamScreenState,
     onDismissSheet: () -> Unit,
-    onClickInvitationGet: () -> Unit,
+    onClickRefreshInvitation: () -> Unit,
     onClickInvitationCreate: () -> Unit,
     onClickInvitationRetry: () -> Unit,
     onSwipeInvitationDelete: (TeamInvitationDomain) -> Unit,
     onSuccessOrErrorCodeCreation: (SnackBarType) -> Unit,
     modifier: Modifier = Modifier,
+    accountsNotInTeam: LazyPagingItems<AccountsNotInTeamDomain>,
+    onClickInviteAccount: (AccountsNotInTeamDomain) -> Unit,
+    onClickDeleteAccountInvite: () -> Unit,
+    onSearchParamChanged: (String) -> Unit,
+    onClickClearSearch: () -> Unit,
 ) {
     val scope = rememberCoroutineScope()
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
@@ -104,7 +113,7 @@ fun TeamInvitationBottomSheet(
                         AnimatedVisibility(
                             visible = state.codeInvitationsState == null || state.codeInvitationsState is FetchState.Success,
                         ) {
-                            IconButton(onClick = onClickInvitationGet) {
+                            IconButton(onClick = onClickRefreshInvitation) {
                                 Icon(
                                     imageVector = Icons.Rounded.Refresh,
                                     contentDescription = "refresh invitations list",
@@ -162,7 +171,44 @@ fun TeamInvitationBottomSheet(
             ) {
                 Column(
                     modifier =
+                        modifier
+                            .fillMaxWidth(),
+                ) {
+                    HorizontalDivider(color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.2f))
+
+                    SafiSearchComponent(
+                        searchParam = state.searchParam,
+                        onSearchParamChanged = onSearchParamChanged,
+                        onClickClearSearch = onClickClearSearch,
+                        placeholder = "Search for an account",
+                    )
+                    HorizontalDivider(color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.2f))
+                }
+
+                SafiPagingComponent(
+                    modifier =
                         Modifier
+                            .fillMaxWidth()
+                            .weight(1f),
+                    data = accountsNotInTeam,
+                ) { accountNotInTeam ->
+
+                    val invited = accountNotInTeam.accountId in state.accountsInvitedIds
+                    InviteAccountCardComponent(
+                        modifier = modifier.fillMaxWidth(),
+                        isInvited = invited,
+                        accountNotInTeam = accountNotInTeam,
+                        inviteAccountState = state.inviteAccountState,
+                        onClickInvite = onClickInviteAccount,
+                        onClickDeleteInvite = onClickDeleteAccountInvite,
+                    )
+                }
+
+                // Generate Code section
+                Column(
+                    modifier =
+                        Modifier
+                            .background(color = MaterialTheme.colorScheme.surface)
                             .fillMaxWidth()
                             .wrapContentHeight()
                             .padding(bottom = 24.dp),
@@ -173,7 +219,10 @@ fun TeamInvitationBottomSheet(
                                 .fillMaxWidth(),
                     )
                     Text(
-                        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 12.dp),
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 16.dp, vertical = 12.dp),
                         text = "Or Generate Code",
                         textAlign = TextAlign.Center,
                     )
