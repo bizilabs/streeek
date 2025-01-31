@@ -57,9 +57,7 @@ fun MemberInviteDTO.toDomain() =
         inviteId = inviteId,
         status = status,
         teamId = teamId,
-        createdAt =
-            createdAt.asLocalDateTime(format = DateFormats.YYYY_MM_DDTHH_MM_SS)
-                ?: SystemLocalDateTime,
+        createdAt = Instant.parse(createdAt).datetimeUTC,
     )
 
 fun TeamOwnerDTO.toDomain() =
