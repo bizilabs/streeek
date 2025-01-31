@@ -5,15 +5,15 @@ import com.bizilabs.streeek.lib.data.mappers.team.toDomain
 import com.bizilabs.streeek.lib.domain.helpers.DataResult
 import com.bizilabs.streeek.lib.domain.models.team.CreateTeamInvitationDomain
 import com.bizilabs.streeek.lib.domain.models.team.TeamInvitationDomain
-import com.bizilabs.streeek.lib.domain.repositories.TeamInvitationRepository
+import com.bizilabs.streeek.lib.domain.repositories.TeamInvitationCodeRepository
 import com.bizilabs.streeek.lib.local.sources.account.AccountLocalSource
-import com.bizilabs.streeek.lib.remote.sources.team.invitations.TeamInvitationRemoteSource
+import com.bizilabs.streeek.lib.remote.sources.team.invitations.TeamInvitationCodeRemoteSource
 import kotlinx.coroutines.flow.firstOrNull
 
-class TeamInvitationRepositoryImpl(
-    private val remote: TeamInvitationRemoteSource,
+class TeamInvitationCodeRepositoryImpl(
+    private val remote: TeamInvitationCodeRemoteSource,
     private val accountLocalSource: AccountLocalSource,
-) : TeamInvitationRepository {
+) : TeamInvitationCodeRepository {
     private suspend fun getAccountId() = accountLocalSource.account.firstOrNull()?.id
 
     override suspend fun createInvitation(
@@ -28,10 +28,10 @@ class TeamInvitationRepositoryImpl(
         ).asDataResult { it.toDomain() }
     }
 
-    override suspend fun getInvitations(teamId: Long): DataResult<List<TeamInvitationDomain>> {
+    override suspend fun getInvitations(teamId: Long): DataResult<TeamInvitationDomain?> {
         val accountId = getAccountId() ?: return DataResult.Error(message = "No account found")
         return remote.getInvitations(teamId = teamId, accountId = accountId)
-            .asDataResult { list -> list.map { it.toDomain() } }
+            .asDataResult { it?.toDomain() }
     }
 
     override suspend fun deleteInvitation(id: Long): DataResult<Boolean> {

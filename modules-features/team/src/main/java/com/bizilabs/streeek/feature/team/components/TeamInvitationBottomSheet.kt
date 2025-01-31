@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -13,12 +14,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.People
+import androidx.compose.material.icons.rounded.PeopleAlt
 import androidx.compose.material.icons.rounded.Refresh
 import androidx.compose.material.icons.rounded.Share
 import androidx.compose.material3.Button
@@ -28,6 +29,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CardElevation
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
@@ -42,19 +44,25 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.paging.compose.LazyPagingItems
+import com.bizilabs.streeek.feature.team.SnackBarType
 import com.bizilabs.streeek.feature.team.TeamScreenState
-import com.bizilabs.streeek.lib.common.models.FetchListState
+import com.bizilabs.streeek.lib.common.components.paging.SafiPagingComponent
 import com.bizilabs.streeek.lib.common.models.FetchState
 import com.bizilabs.streeek.lib.design.components.SafiCenteredColumn
 import com.bizilabs.streeek.lib.design.components.SafiCenteredRow
 import com.bizilabs.streeek.lib.design.components.SafiInfoSection
+import com.bizilabs.streeek.lib.design.components.SafiSearchComponent
 import com.bizilabs.streeek.lib.design.helpers.onSuccess
 import com.bizilabs.streeek.lib.design.helpers.success
 import com.bizilabs.streeek.lib.design.theme.SafiTheme
+import com.bizilabs.streeek.lib.domain.models.team.AccountsNotInTeamDomain
 import com.bizilabs.streeek.lib.domain.models.team.TeamInvitationDomain
 import com.bizilabs.streeek.lib.resources.strings.SafiStrings
 import kotlinx.coroutines.launch
@@ -67,11 +75,16 @@ fun TeamInvitationBottomSheet(
     activity: Activity,
     state: TeamScreenState,
     onDismissSheet: () -> Unit,
-    onClickInvitationGet: () -> Unit,
+    onClickRefreshInvitation: () -> Unit,
     onClickInvitationCreate: () -> Unit,
     onClickInvitationRetry: () -> Unit,
     onSwipeInvitationDelete: (TeamInvitationDomain) -> Unit,
+    onSuccessOrErrorCodeCreation: (SnackBarType) -> Unit,
     modifier: Modifier = Modifier,
+    accountsNotInTeam: LazyPagingItems<AccountsNotInTeamDomain>,
+    onClickInviteAccount: (AccountsNotInTeamDomain) -> Unit,
+    onSearchParamChanged: (String) -> Unit,
+    onClickClearSearch: () -> Unit,
 ) {
     val scope = rememberCoroutineScope()
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
@@ -99,9 +112,9 @@ fun TeamInvitationBottomSheet(
                     title = { Text(text = "Invitations") },
                     actions = {
                         AnimatedVisibility(
-                            visible = state.invitationsState is FetchListState.Empty || state.invitationsState is FetchListState.Success,
+                            visible = state.codeInvitationsState == null || state.codeInvitationsState is FetchState.Success,
                         ) {
-                            IconButton(onClick = onClickInvitationGet) {
+                            IconButton(onClick = onClickRefreshInvitation) {
                                 Icon(
                                     imageVector = Icons.Rounded.Refresh,
                                     contentDescription = "refresh invitations list",
@@ -111,60 +124,241 @@ fun TeamInvitationBottomSheet(
                     },
                 )
             },
+            snackbarHost = {
+                AnimatedVisibility(
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 8.dp)
+                            .padding(bottom = 96.dp),
+                    visible = state.isInvitationSnackBarOpen,
+                ) {
+                    when (state.invitationSnackBarType) {
+                        SnackBarType.SUCCESS -> {
+                            InfoCardComponent(
+                                modifier = Modifier.fillMaxWidth(),
+                                title = "Invite Code Success",
+                                message = "Invite code created successfully",
+                                colors =
+                                    CardDefaults.cardColors(
+                                        containerColor = MaterialTheme.colorScheme.success,
+                                        contentColor = MaterialTheme.colorScheme.onSuccess,
+                                    ),
+                            ) {
+                            }
+                        }
+
+                        SnackBarType.ERROR -> {
+                            InfoCardComponent(
+                                modifier = Modifier.fillMaxWidth(),
+                                title = "Invite Code Error",
+                                message = (state.codeInvitationsState as FetchState.Error).message,
+                            ) {
+                                Button(onClick = onClickInvitationCreate) {
+                                    Text(text = "Retry")
+                                }
+                            }
+                        }
+                    }
+                }
+            },
         ) { innerPadding ->
-            AnimatedContent(
+            Column(
                 modifier =
                     Modifier
                         .fillMaxSize()
                         .padding(innerPadding),
-                targetState = state.invitationsState,
-                label = "animated_invitations",
-            ) { result ->
-                when (result) {
-                    FetchListState.Empty -> {
-                        SafiCenteredColumn(modifier = Modifier.fillMaxSize()) {
+                verticalArrangement = Arrangement.Bottom,
+            ) {
+                Column(
+                    modifier =
+                        modifier
+                            .fillMaxWidth(),
+                ) {
+                    HorizontalDivider(color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.2f))
+
+                    SafiSearchComponent(
+                        searchParam = state.searchParam,
+                        onSearchParamChanged = onSearchParamChanged,
+                        onClickClearSearch = onClickClearSearch,
+                        placeholder = "Search for an account",
+                    )
+                    HorizontalDivider(color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.2f))
+                }
+
+                SafiPagingComponent(
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .weight(1f),
+                    data = accountsNotInTeam,
+                    refreshEmpty = {
+                        SafiCenteredColumn(modifier = Modifier.fillMaxWidth()) {
                             SafiInfoSection(
-                                icon = Icons.Rounded.People,
-                                title = "No invitations",
-                                description = "You have no invitations",
-                                action = {
+                                modifier = Modifier.fillMaxWidth(),
+                                icon = Icons.Rounded.PeopleAlt,
+                                title = if (state.searchParam.isNotEmpty()) "No results found" else "All app users are part of this team.",
+                                description = if (state.searchParam.isNotEmpty()) "No results found for ${state.searchParam}" else "",
+                            )
+                        }
+                    },
+                ) { accountNotInTeam ->
+
+                    val invited = accountNotInTeam.accountId in state.accountsInvitedIds
+                    InviteAccountCardComponent(
+                        modifier = modifier.fillMaxWidth(),
+                        isInvited = invited,
+                        accountNotInTeam = accountNotInTeam,
+                        inviteAccountState = state.inviteAccountState,
+                        onClickInvite = onClickInviteAccount,
+                    )
+                }
+
+                // Generate Code section
+                Column(
+                    modifier =
+                        Modifier
+                            .background(color = MaterialTheme.colorScheme.surface)
+                            .fillMaxWidth()
+                            .wrapContentHeight()
+                            .padding(bottom = 24.dp),
+                ) {
+                    HorizontalDivider(
+                        modifier =
+                            Modifier
+                                .fillMaxWidth(),
+                    )
+                    Text(
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 16.dp, vertical = 12.dp),
+                        text = "Or Generate Code",
+                        textAlign = TextAlign.Center,
+                    )
+                    AnimatedContent(
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .wrapContentHeight(),
+                        targetState = state.codeInvitationsState,
+                        label = "animated_invitations",
+                    ) { result ->
+                        when (result) {
+                            null -> {
+                                SafiCenteredRow(
+                                    modifier =
+                                        Modifier
+                                            .padding(horizontal = 16.dp)
+                                            .clip(RoundedCornerShape(8.dp))
+                                            .background(color = MaterialTheme.colorScheme.surfaceContainerHighest)
+                                            .fillMaxWidth()
+                                            .wrapContentHeight()
+                                            .padding(16.dp),
+                                ) {
+                                    Icon(
+                                        modifier = Modifier.size(50.dp),
+                                        imageVector = Icons.Rounded.People,
+                                        contentDescription = "No Invitation code",
+                                    )
+                                    Column(
+                                        modifier =
+                                            Modifier
+                                                .wrapContentHeight()
+                                                .weight(1f)
+                                                .padding(horizontal = 16.dp),
+                                    ) {
+                                        Text(
+                                            modifier = Modifier.fillMaxWidth(),
+                                            text = "No invitations",
+                                            maxLines = 1,
+                                            fontSize = MaterialTheme.typography.bodyLarge.fontSize,
+                                            fontStyle = MaterialTheme.typography.bodyLarge.fontStyle,
+                                        )
+                                        Text(
+                                            modifier =
+                                                Modifier
+                                                    .fillMaxWidth()
+                                                    .padding(top = 4.dp),
+                                            text = "You have no codes yet.",
+                                            fontSize = MaterialTheme.typography.labelSmall.fontSize,
+                                            fontStyle = MaterialTheme.typography.labelSmall.fontStyle,
+                                        )
+                                    }
                                     Button(onClick = onClickInvitationCreate) {
                                         Text(text = "Generate")
                                     }
-                                },
-                            )
-                        }
-                    }
+                                }
+                            }
 
-                    FetchListState.Loading -> {
-                        SafiCenteredColumn(modifier = Modifier.fillMaxSize()) {
-                            CircularProgressIndicator()
-                        }
-                    }
+                            FetchState.Loading -> {
+                                SafiCenteredColumn(
+                                    modifier =
+                                        Modifier
+                                            .wrapContentHeight()
+                                            .padding(24.dp),
+                                ) {
+                                    CircularProgressIndicator()
+                                }
+                            }
 
-                    is FetchListState.Error -> {
-                        SafiCenteredColumn(modifier = Modifier.fillMaxSize()) {
-                            SafiInfoSection(
-                                icon = Icons.Rounded.People,
-                                title = "Error Getting Invitations",
-                                description = result.message,
-                                action = {
+                            is FetchState.Error -> {
+                                SafiCenteredRow(
+                                    modifier =
+                                        Modifier
+                                            .padding(16.dp)
+                                            .clip(RoundedCornerShape(8.dp))
+                                            .background(color = MaterialTheme.colorScheme.surfaceContainerHighest)
+                                            .fillMaxWidth()
+                                            .wrapContentHeight()
+                                            .padding(16.dp),
+                                ) {
+                                    Icon(
+                                        modifier = Modifier.size(50.dp),
+                                        imageVector = Icons.Rounded.People,
+                                        contentDescription = "Error Getting Invitations",
+                                    )
+                                    Column(
+                                        modifier =
+                                            Modifier
+                                                .wrapContentHeight()
+                                                .weight(1f)
+                                                .padding(horizontal = 16.dp),
+                                    ) {
+                                        Text(
+                                            modifier = Modifier.fillMaxWidth(),
+                                            text = "Error Getting Invitations",
+                                            maxLines = 1,
+                                            fontSize = MaterialTheme.typography.bodyLarge.fontSize,
+                                            fontStyle = MaterialTheme.typography.bodyLarge.fontStyle,
+                                        )
+                                        Text(
+                                            modifier =
+                                                Modifier
+                                                    .fillMaxWidth()
+                                                    .padding(top = 4.dp),
+                                            text = result.message,
+                                            fontSize = MaterialTheme.typography.labelSmall.fontSize,
+                                            fontStyle = MaterialTheme.typography.labelSmall.fontStyle,
+                                        )
+                                    }
                                     Button(onClick = onClickInvitationRetry) {
                                         Text(text = "Retry")
                                     }
-                                },
-                            )
-                        }
-                    }
+                                }
+                            }
 
-                    is FetchListState.Success -> {
-                        TeamInvitationsSection(
-                            activity = activity,
-                            state = state,
-                            result = result,
-                            onSwipeInvitationDelete = onSwipeInvitationDelete,
-                            onClickInvitationCreate = onClickInvitationCreate,
-                        )
+                            is FetchState.Success -> {
+                                TeamInvitationsSection(
+                                    activity = activity,
+                                    state = state,
+                                    result = result,
+                                    onSwipeInvitationDelete = onSwipeInvitationDelete,
+                                    onClickInvitationCreate = onClickInvitationCreate,
+                                    onSuccessOrErrorCodeCreation = onSuccessOrErrorCodeCreation,
+                                )
+                            }
+                        }
                     }
                 }
             }
@@ -174,97 +368,34 @@ fun TeamInvitationBottomSheet(
 
 @Composable
 private fun TeamInvitationsSection(
+    modifier: Modifier = Modifier,
     activity: Activity,
     state: TeamScreenState,
-    result: FetchListState.Success<TeamInvitationDomain>,
+    result: FetchState.Success<TeamInvitationDomain>,
     onSwipeInvitationDelete: (TeamInvitationDomain) -> Unit,
     onClickInvitationCreate: () -> Unit,
+    onSuccessOrErrorCodeCreation: (SnackBarType) -> Unit,
 ) {
     val team = (state.fetchState as? FetchState.Success)?.value?.team
+    val invite = result.value
 
-    Column(modifier = Modifier.fillMaxSize()) {
+    Column(modifier = modifier.wrapContentHeight()) {
         AnimatedVisibility(
             modifier = Modifier.fillMaxWidth(),
             visible = state.isLoadingInvitationsPartially,
         ) {
             LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
         }
-        LazyColumn(
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .weight(1f),
+
+        TeamInviteCardComponent(
+            modifier = Modifier.fillMaxWidth(),
+            invite = invite,
+            state = state,
+            onSwipeInvitationDelete = { onSwipeInvitationDelete(invite) },
+            onClickInvitationCreate = onClickInvitationCreate,
+            onSuccessOrErrorCodeCreation = onSuccessOrErrorCodeCreation,
         ) {
-            items(result.list) { invite ->
-                TeamInviteCardComponent(
-                    modifier = Modifier.fillMaxWidth(),
-                    invite = invite,
-                    onSwipeInvitationDelete = { onSwipeInvitationDelete(invite) },
-                ) {
-                    activity.share(teamName = team?.name ?: "The Unknowns", teamCode = invite.code)
-                }
-            }
-        }
-        Column(modifier = Modifier.fillMaxWidth()) {
-            AnimatedContent(
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                targetState = state.createInvitationState,
-                label = "animate create invitation",
-            ) { result ->
-                when (result) {
-                    FetchState.Loading -> {
-                        SafiCenteredRow(modifier = Modifier.fillMaxWidth()) {
-                            CircularProgressIndicator(
-                                modifier =
-                                    Modifier
-                                        .size(48.dp)
-                                        .padding(16.dp),
-                            )
-                        }
-                    }
-
-                    is FetchState.Error -> {
-                        InfoCardComponent(
-                            modifier = Modifier.fillMaxWidth(),
-                            title = "Invite Code Error",
-                            message = result.message,
-                        ) {
-                            Button(onClick = onClickInvitationCreate) {
-                                Text(text = "Retry")
-                            }
-                        }
-                    }
-
-                    is FetchState.Success -> {
-                        InfoCardComponent(
-                            modifier = Modifier.fillMaxWidth(),
-                            title = "Invite Code Success",
-                            message = "Invite code created successfully",
-                            colors =
-                                CardDefaults.cardColors(
-                                    containerColor = MaterialTheme.colorScheme.success,
-                                    contentColor = MaterialTheme.colorScheme.onSuccess,
-                                ),
-                        ) {
-                        }
-                    }
-
-                    null -> {
-                        Button(
-                            modifier =
-                                Modifier
-                                    .fillMaxWidth()
-                                    .padding(16.dp),
-                            onClick = onClickInvitationCreate,
-                        ) {
-                            Text(text = "Generate")
-                        }
-                    }
-                }
-            }
+            activity.share(teamName = team?.name ?: "The Unknowns", teamCode = invite.code)
         }
     }
 }
@@ -272,8 +403,11 @@ private fun TeamInvitationsSection(
 @Composable
 fun TeamInviteCardComponent(
     invite: TeamInvitationDomain,
+    state: TeamScreenState,
     modifier: Modifier = Modifier,
     onSwipeInvitationDelete: () -> Unit,
+    onClickInvitationCreate: () -> Unit,
+    onSuccessOrErrorCodeCreation: (SnackBarType) -> Unit,
     onClickShare: () -> Unit,
 ) {
     val delete =
@@ -309,7 +443,7 @@ fun TeamInviteCardComponent(
             ) {
                 Column {
                     Text(
-                        text = "${invite.code}",
+                        text = invite.code,
                         style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.Bold,
                     )
@@ -317,22 +451,10 @@ fun TeamInviteCardComponent(
                         modifier = Modifier.padding(top = 8.dp),
                         text =
                             buildString {
-                                append("Expires on ")
+                                append("Expires in ")
                                 append(
-                                    invite.expiresAt.dayOfWeek.name
-                                        .lowercase()
-                                        .replaceFirstChar { it.uppercase() },
+                                    state.expiryTimeToNow,
                                 )
-                                append(" , ")
-                                append(invite.expiresAt.dayOfMonth)
-                                append(" ")
-                                append(
-                                    invite.expiresAt.month.name
-                                        .lowercase()
-                                        .replaceFirstChar { it.uppercase() },
-                                )
-                                append(" ")
-                                append(invite.expiresAt.year)
                             },
                         style = MaterialTheme.typography.labelLarge,
                     )
@@ -345,6 +467,55 @@ fun TeamInviteCardComponent(
                         imageVector = Icons.Rounded.Share,
                         contentDescription = "share invite code",
                     )
+                }
+
+                AnimatedContent(
+                    modifier =
+                        Modifier
+                            .padding(16.dp),
+                    targetState = state.createInvitationState,
+                    label = "animate create invitation",
+                ) { result ->
+                    when (result) {
+                        FetchState.Loading -> {
+                            CircularProgressIndicator(
+                                modifier =
+                                    Modifier
+                                        .size(48.dp)
+                                        .padding(16.dp),
+                            )
+                        }
+
+                        is FetchState.Error -> {
+                            onSuccessOrErrorCodeCreation(SnackBarType.ERROR)
+
+                            IconButton(enabled = false, onClick = onClickInvitationCreate) {
+                                Icon(
+                                    imageVector = Icons.Rounded.Refresh,
+                                    contentDescription = "Regenerate a code",
+                                )
+                            }
+                        }
+
+                        is FetchState.Success -> {
+                            onSuccessOrErrorCodeCreation(SnackBarType.SUCCESS)
+                            IconButton(enabled = false, onClick = onClickInvitationCreate) {
+                                Icon(
+                                    imageVector = Icons.Rounded.Refresh,
+                                    contentDescription = "Regenerate a code",
+                                )
+                            }
+                        }
+
+                        null -> {
+                            IconButton(onClick = onClickInvitationCreate) {
+                                Icon(
+                                    imageVector = Icons.Rounded.Refresh,
+                                    contentDescription = "Regenerate a code",
+                                )
+                            }
+                        }
+                    }
                 }
             }
         }

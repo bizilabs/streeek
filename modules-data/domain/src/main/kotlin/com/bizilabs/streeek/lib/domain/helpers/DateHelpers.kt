@@ -116,11 +116,11 @@ val LocalDate.dayShort
 
 fun LocalDateTime.toTimeAgo(): String {
     val now = Clock.System.now()
-    val instantThis = this.toInstant(TimeZone.currentSystemDefault())
+    val instantThis = this.toInstant(TimeZone.UTC)
     val duration = now - instantThis
 
     return when {
-        duration.inWholeMinutes < 1 -> "just now"
+        duration.inWholeMinutes < 1 -> "Just now"
         duration.inWholeMinutes < 60 -> {
             val minutes = duration.inWholeMinutes
             if (minutes == 1L) "1 minute ago" else "$minutes minutes ago"
@@ -138,5 +138,27 @@ fun LocalDateTime.toTimeAgo(): String {
             if (weeks == 1L) "1 week ago" else "$weeks weeks ago"
         }
         else -> this.date.asString(format = DateFormats.DD_MM_YYYY) ?: ""
+    }
+}
+
+fun LocalDateTime.timeLeftInMinutes(): Long {
+    val instantThis = this.toInstant(TimeZone.UTC)
+    val instantNow = UTCLocalDateTime.toInstant(TimeZone.UTC)
+
+    return (instantThis - instantNow).inWholeMinutes
+}
+
+fun Long.timeLeftAsString(): String {
+    val hours = this / 60
+    val minutes = this % 60
+
+    return when {
+        hours > 24 -> {
+            val days = hours / 24
+            if (days == 1L) "1 day" else "$days days"
+        }
+        hours > 0 -> "${hours}h ${minutes}m"
+        minutes > 0 -> "${minutes}m"
+        else -> "a few seconds"
     }
 }

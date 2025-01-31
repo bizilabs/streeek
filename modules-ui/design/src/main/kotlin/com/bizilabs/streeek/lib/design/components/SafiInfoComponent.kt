@@ -38,17 +38,18 @@ fun SafiInfoSection(
             )
         }
         Text(
-            modifier = Modifier.padding(top = 16.dp),
+            modifier = Modifier.padding(top = 16.dp).fillMaxWidth(),
             text = title,
             maxLines = 1,
             fontSize = MaterialTheme.typography.bodyLarge.fontSize,
             fontStyle = MaterialTheme.typography.bodyLarge.fontStyle,
+            textAlign = TextAlign.Center,
         )
         Text(
             modifier =
                 Modifier
                     .padding(top = 8.dp)
-                    .fillMaxWidth(0.6f),
+                    .fillMaxWidth(),
             text = description,
             textAlign = TextAlign.Center,
             fontSize = MaterialTheme.typography.labelSmall.fontSize,

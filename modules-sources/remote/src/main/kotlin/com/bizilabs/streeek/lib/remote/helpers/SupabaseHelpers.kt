@@ -50,10 +50,22 @@ internal object Supabase {
                 const val REQUESTTOJOINTEAM = "request_to_join_team"
             }
 
-            object Invitations {
+            object CodeInvitations {
                 const val GET = "get_team_invitations"
                 const val DELETE = "delete_team_invitation"
                 const val CREATE = "create_team_invite_code"
+            }
+
+            object MemberInvitations {
+                const val GETACCOUNTSNOTINTEAM = "get_accounts_not_in_team"
+                const val SEARCHACCOUNTSNOTINTEAM = "search_accounts_not_in_team"
+                const val SENDMEMBERINVITE = "send_member_team_invite"
+                const val SENDMULTIPLEMEMBERINVITE = "send_multiple_member_team_invite"
+                const val DELETEINVITE = "delete_member_team_invite"
+                const val UPDATEINVITESTATUS = "update_invite_status"
+                const val UPDATEMULTIPLEINVITESTATUS = "update_multiple_invite_status"
+                const val GETACCOUNTINVITES = "get_all_invites_for_account"
+                const val GETTEAMACCOUNTINVITES = "get_team_account_invites"
             }
         }
 
@@ -100,7 +112,11 @@ fun createSupabase(): SupabaseClient =
 private fun String?.toValidErrorMessage(default: String): String {
     return when {
         this.isNullOrBlank() -> default
-        this.contains("unable to resolve host", true) -> Supabase.ErrorMessages.UNKNOWN_HOST_EXCEPTION
+        this.contains(
+            "unable to resolve host",
+            true,
+        ) -> Supabase.ErrorMessages.UNKNOWN_HOST_EXCEPTION
+
         this.contains(BuildConfig.SupabaseUrl) -> this.replace(BuildConfig.SupabaseUrl, "********")
         else -> this
     }
