@@ -137,7 +137,7 @@ fun ReminderListScreenContent(
                     iconTint = MaterialTheme.colorScheme.success,
                     primaryAction =
                         SafiBottomValue("allow") {
-                            activity.requestSinglePermission(permission = android.Manifest.permission.USE_EXACT_ALARM)
+                            activity.requestSinglePermission(permission = android.Manifest.permission.FOREGROUND_SERVICE_SPECIAL_USE)
                         },
                 )
             }

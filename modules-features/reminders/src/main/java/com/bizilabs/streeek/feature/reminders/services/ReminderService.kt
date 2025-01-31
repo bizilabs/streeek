@@ -1,25 +1,23 @@
-package com.bizilabs.streeek.feature.reminders.receivers
+package com.bizilabs.streeek.feature.reminders.services
 
 import android.app.PendingIntent
-import android.content.BroadcastReceiver
+import android.app.Service
 import android.content.Context
 import android.content.Intent
-import android.icu.util.Calendar
+import android.os.IBinder
 import androidx.core.app.NotificationCompat
 import androidx.core.app.ServiceCompat
-import com.bizilabs.streeek.feature.reminders.manager.ReminderManager
-import com.bizilabs.streeek.feature.reminders.services.ReminderService
+import com.bizilabs.streeek.feature.reminders.receivers.ReminderReceiver.ReminderActions
 import com.bizilabs.streeek.lib.common.notifications.AppNotificationChannel
-import com.bizilabs.streeek.lib.common.notifications.notify
+import com.bizilabs.streeek.lib.common.notifications.createNotification
 import com.bizilabs.streeek.lib.domain.helpers.asJson
 import com.bizilabs.streeek.lib.domain.helpers.buildUri
 import com.bizilabs.streeek.lib.domain.models.notifications.NotificationResult
 import com.bizilabs.streeek.lib.resources.images.SafiDrawables
-import org.koin.java.KoinJavaComponent.inject
 import timber.log.Timber
 
-class ReminderReceiver : BroadcastReceiver() {
-    private val manager: ReminderManager by inject(ReminderManager::class.java)
+
+class ReminderService : Service() {
     private val quirkyNotifications =
         listOf(
             "Keep the Streak Alive!" to "GitHub called. It misses you! Commit now! 💻",
@@ -34,10 +32,6 @@ class ReminderReceiver : BroadcastReceiver() {
             "Streaks are Sacred!" to "A commit a day keeps the streak alive. Don’t ghost it! 👻",
         )
 
-    lateinit var label: String
-    lateinit var day: Number
-    lateinit var code: Number
-
     enum class ReminderActions(
         val action: String,
         val label: String,
@@ -46,84 +40,61 @@ class ReminderReceiver : BroadcastReceiver() {
         CANCEL("streeek.action.reminder.cancel", "cancel"),
     }
 
-    override fun onReceive(
-        context: Context?,
-        intent: Intent?,
-    ) {
-        if (intent == null) return
-        if (context == null) return
-        val isReminder = intent.getStringExtra("streeek.receiver.type").equals("reminder")
-        if (isReminder.not()) return
+    lateinit var label: String
+    lateinit var day: Number
+    lateinit var code: Number
+
+
+    override fun onCreate() {
+        super.onCreate()
+    }
+
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        Timber.d("STREEEKNOTIFAI foreground service started")
+        if (intent == null) return START_NOT_STICKY
         label = intent.getStringExtra("reminder.label") ?: ""
         day = intent.getIntExtra("reminder.day", -1)
         code = intent.getIntExtra("reminder.code", -1)
-        val type = intent.getStringExtra("streeek.reminder.type")
-        Timber.d("STREEEKNOTIFAI sending broadcast $type")
-        when (type) {
-            "action" -> handleAction(intent = intent)
-            "ring" -> handleRing(context = context)
-            else -> {}
-        }
+
+        Timber.d("STREEEKNOTIFAI foreground service started 1: label>$label day>$day code>$code")
+        notify(this)
+        return START_STICKY
     }
 
-    private fun handleRing(context: Context) {
-        val intent = Intent(context, ReminderService::class.java)
-        intent.apply {
-            putExtra("streeek.receiver.type", "reminder")
-            putExtra("streeek.reminder.type", "ring")
-            putExtra("reminder.label", label)
-            putExtra("reminder.day", day)
-            putExtra("reminder.code", code)
-        }
-
-        context.startForegroundService(intent)
-
-        Timber.d("STREEEKNOTIFAI foreground service started 3: label>$label day>$day code>$code")
-    }
-
-    private fun handleAction(intent: Intent) {
-        val action = intent.action ?: return
-        when (action) {
-            ReminderActions.SNOOZE.action -> snoozeReminder()
-            ReminderActions.CANCEL.action -> cancelReminder()
-        }
-    }
-
-    private fun snoozeReminder() {
-        val calendar = Calendar.getInstance()
-        calendar.timeInMillis = calendar.timeInMillis + 30 * 60 * 1000
-        manager.cancelAlarm(label, day.toInt(), code.toInt())
-        manager.createAlarm(
-            label = label,
-            day = day.toInt(),
-            hour = calendar.get(Calendar.HOUR_OF_DAY),
-            minute = calendar.get(Calendar.MINUTE),
-        )
-    }
-
-    private fun cancelReminder() {
-        manager.cancelAlarm(label = label, day = day.toInt(), code = code.toInt())
-        val calendar = Calendar.getInstance()
-        calendar.timeInMillis = calendar.timeInMillis + 7 * 24 * 60 * 60 * 1000
-        manager.createAlarm(
-            label = label,
-            day = day.toInt(),
-            hour = calendar.get(Calendar.HOUR_OF_DAY),
-            minute = calendar.get(Calendar.MINUTE),
-        )
+    override fun onBind(p0: Intent?): IBinder? {
+        Timber.d("STREEEKNOTIFAI foreground service started 2: label>$label day>$day code>$code")
+        return null
     }
 
     private fun notify(context: Context) {
         val actions = getNotificationActions(context = context)
         val contentIntent = getContentIntent(context = context)
         val (title, body) = quirkyNotifications.random()
-        context.notify(
+
+        val notifcation = context.createNotification(
             title = title,
             body = body,
             channel = AppNotificationChannel.REMINDERS,
             actions = actions,
-            contentIntent = contentIntent,
+            pendingIntent = contentIntent,
+            imageUrl = null
         )
+
+        Timber.d("STREEEKNOTIFAI foreground service started 4: label>$label day>$day code>$code")
+
+        ServiceCompat.startForeground(
+            this,
+            1,
+            notifcation,
+            0x40000000
+        )
+
+        Timber.d("STREEEKNOTIFAI foreground service started 5: label>$label day>$day code>$code")
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        stopForeground(true)
     }
 
     private fun getNotificationActions(context: Context): List<NotificationCompat.Action> {

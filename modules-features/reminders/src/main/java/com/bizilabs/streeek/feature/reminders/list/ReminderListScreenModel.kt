@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.datetime.DayOfWeek
+import timber.log.Timber
 import kotlin.enums.EnumEntries
 
 data class ReminderListScreenState(
@@ -87,11 +88,10 @@ class ReminderListScreenModel(
 
     private fun checkAlarmPermission() {
         val granted =
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                context.permissionIsGranted(permission = Manifest.permission.USE_EXACT_ALARM)
-            } else {
-                true
-            }
+                context.permissionIsGranted(permission = Manifest.permission.FOREGROUND_SERVICE_SPECIAL_USE)
+
+        Timber.d("STREEEKNOTIFAI permision granted $granted")
+
         mutableState.update { it.copy(isAlarmPermissionGranted = granted) }
     }
 
