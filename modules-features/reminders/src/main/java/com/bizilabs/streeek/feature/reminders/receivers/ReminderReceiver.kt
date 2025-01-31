@@ -6,7 +6,6 @@ import android.content.Context
 import android.content.Intent
 import android.icu.util.Calendar
 import androidx.core.app.NotificationCompat
-import androidx.core.app.ServiceCompat
 import com.bizilabs.streeek.feature.reminders.manager.ReminderManager
 import com.bizilabs.streeek.feature.reminders.services.ReminderService
 import com.bizilabs.streeek.lib.common.notifications.AppNotificationChannel
@@ -167,13 +166,13 @@ class ReminderReceiver : BroadcastReceiver() {
                     NotificationResult(
                         type = "reminder",
                         uri =
-                        buildUri(
-                            "type" to "navigation",
-                            "destination" to "reminder",
-                            "label" to label,
-                            "day" to day,
-                            "code" to code,
-                        ),
+                            buildUri(
+                                "type" to "navigation",
+                                "destination" to "reminder",
+                                "label" to label,
+                                "day" to day,
+                                "code" to code,
+                            ),
                     ).asJson(),
                 )
             }

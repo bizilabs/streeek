@@ -61,7 +61,7 @@ private fun Context.createNotificationAndSend(
             channel = channel,
             title = title,
             body = body,
-            actions = actions
+            actions = actions,
         )
 
     val id = System.currentTimeMillis().toInt()
@@ -77,7 +77,7 @@ fun Context.createNotification(
     channel: AppNotificationChannel,
     title: String,
     body: String,
-    actions: List<NotificationCompat.Action>
+    actions: List<NotificationCompat.Action>,
 ): Notification {
     val intent =
         Intent().apply {
