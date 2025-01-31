@@ -9,6 +9,7 @@ import androidx.compose.material.icons.rounded.Edit
 import androidx.compose.material.icons.rounded.People
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import cafe.adriel.voyager.core.model.StateScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
 import com.bizilabs.streeek.lib.common.components.paging.getPagingDataLoading
@@ -35,7 +36,6 @@ import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
@@ -186,7 +186,7 @@ class TeamScreenModel(
     private val teamRequestRepository: TeamRequestRepository,
 ) : StateScreenModel<TeamScreenState>(TeamScreenState()) {
     private var _pages = MutableStateFlow(getPagingDataLoading<TeamMemberDomain>())
-    val pages: StateFlow<PagingData<TeamMemberDomain>> = _pages.asStateFlow()
+    val pages: Flow<PagingData<TeamMemberDomain>> = _pages.asStateFlow().cachedIn(screenModelScope)
 
     private var _requests: Flow<PagingData<TeamAccountJoinRequestDomain>> =
         MutableStateFlow(getPagingDataLoading<TeamAccountJoinRequestDomain>()).asStateFlow()

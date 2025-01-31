@@ -1,14 +1,15 @@
 package com.bizilabs.streeek.feature.leaderboard
 
 import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import cafe.adriel.voyager.core.model.StateScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
 import com.bizilabs.streeek.lib.common.components.paging.getPagingDataLoading
 import com.bizilabs.streeek.lib.domain.models.LeaderboardAccountDomain
 import com.bizilabs.streeek.lib.domain.models.LeaderboardDomain
 import com.bizilabs.streeek.lib.domain.repositories.LeaderboardRepository
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
@@ -31,7 +32,7 @@ class LeaderboardScreenModel(
     private val repository: LeaderboardRepository,
 ) : StateScreenModel<LeaderboardScreenState>(LeaderboardScreenState()) {
     private var _pages = MutableStateFlow(getPagingDataLoading<LeaderboardAccountDomain>())
-    val pages: StateFlow<PagingData<LeaderboardAccountDomain>> = _pages.asStateFlow()
+    val pages: Flow<PagingData<LeaderboardAccountDomain>> = _pages.asStateFlow().cachedIn(screenModelScope)
 
     fun onValueChange(name: String) {
         if (state.value.hasPassedNavigationArgument) return
