@@ -116,11 +116,11 @@ val LocalDate.dayShort
 
 fun LocalDateTime.toTimeAgo(): String {
     val now = Clock.System.now()
-    val instantThis = this.toInstant(TimeZone.currentSystemDefault())
+    val instantThis = this.toInstant(TimeZone.UTC)
     val duration = now - instantThis
 
     return when {
-        duration.inWholeMinutes < 1 -> "just now"
+        duration.inWholeMinutes < 1 -> "Just now"
         duration.inWholeMinutes < 60 -> {
             val minutes = duration.inWholeMinutes
             if (minutes == 1L) "1 minute ago" else "$minutes minutes ago"
