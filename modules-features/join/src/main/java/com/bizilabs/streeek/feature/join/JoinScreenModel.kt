@@ -37,11 +37,6 @@ data class RequestTeamState(
     val requestState: FetchState<Boolean> = FetchState.Loading,
 )
 
-data class SingleInviteState(
-    val inviteId: Long,
-    val singleInviteState: FetchState<Boolean> = FetchState.Loading,
-)
-
 enum class JoinTab {
     PUBLIC_TEAMS,
     TEAM_INVITES,
@@ -96,9 +91,9 @@ class JoinScreenModel(
 ) : StateScreenModel<JoinScreenState>(JoinScreenState()) {
     val teams = teamRepository.getTeamsAndMembers()
 
-    var _accountInvites: Flow<PagingData<AccountTeamInvitesDomain>> =
+    private var _accountInvites: Flow<PagingData<AccountTeamInvitesDomain>> =
         MutableStateFlow(getPagingDataLoading<AccountTeamInvitesDomain>()).asStateFlow()
-    val accountInvite: Flow<PagingData<AccountTeamInvitesDomain>>
+    val accountInvites: Flow<PagingData<AccountTeamInvitesDomain>>
         get() = _accountInvites
 
     init {

@@ -69,7 +69,7 @@ object JoinScreen : Screen {
         val screenModel: JoinScreenModel = getScreenModel()
         val state by screenModel.state.collectAsStateWithLifecycle()
         val teams = screenModel.teams.collectAsLazyPagingItems()
-        val accountInvites = screenModel.accountInvite.collectAsLazyPagingItems()
+        val accountInvites = screenModel.accountInvites.collectAsLazyPagingItems()
         JoinScreenContent(
             state = state,
             teams = teams,
@@ -330,7 +330,7 @@ fun JoinScreenContent(
                                                     SafiInfoSection(
                                                         icon = Icons.Rounded.People,
                                                         title = "No Team Invites",
-                                                        description = "You have not been invited to any team yet. \n Explore public teams and request to join.",
+                                                        description = "You have not been invited to any team yet.",
                                                     )
                                                 }
                                             },
