@@ -7,6 +7,7 @@ import android.content.Intent
 import com.bizilabs.streeek.feature.reminders.receivers.ReminderReceiver
 import com.bizilabs.streeek.lib.domain.models.ReminderDomain
 import kotlinx.datetime.DayOfWeek
+import timber.log.Timber
 import java.util.Calendar
 
 interface ReminderManager {
@@ -34,8 +35,9 @@ internal class ReminderManagerImpl(
     val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
     override fun createAlarm(reminder: ReminderDomain) {
+        Timber.d("STREEEKNOTIFAI $reminder")
         if (reminder.enabled.not()) return
-
+        Timber.d("STREEEKNOTIFAI ${reminder.enabled}")
         reminder.repeat.forEach { dayOfWeek ->
             val calendar =
                 getNextAlarmTime(
@@ -154,6 +156,8 @@ internal class ReminderManagerImpl(
                 putExtra("reminder.day", day)
                 putExtra("reminder.code", requestCode)
             }
+
+        Timber.d("STREEEKNOTIFAI sending broadcast")
         return PendingIntent.getBroadcast(
             context,
             requestCode,
