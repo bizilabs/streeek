@@ -67,6 +67,7 @@ import com.bizilabs.streeek.lib.design.components.SafiRefreshBox
 import com.bizilabs.streeek.lib.design.components.SafiTopBarHeader
 import com.bizilabs.streeek.lib.domain.models.TeamMemberDomain
 import com.bizilabs.streeek.lib.domain.models.team.AccountsNotInTeamDomain
+import com.bizilabs.streeek.lib.domain.models.team.TeamAccountInvitesDomain
 import com.bizilabs.streeek.lib.domain.models.team.TeamAccountJoinRequestDomain
 import com.bizilabs.streeek.lib.domain.models.team.TeamInvitationDomain
 import com.bizilabs.streeek.lib.resources.strings.SafiStrings
@@ -91,11 +92,13 @@ class TeamScreen(val teamId: Long?) : Screen {
         val members = screenModel.pages.collectAsLazyPagingItems()
         val requests = screenModel.requests.collectAsLazyPagingItems()
         val accountsNotInTeam = screenModel.accountsNotInTeam.collectAsLazyPagingItems()
+        val teamAccountsInvites = screenModel.teamAccountInvites.collectAsLazyPagingItems()
 
         TeamScreenContent(
             state = state,
             data = members,
             requests = requests,
+            teamAccountsInvites = teamAccountsInvites,
             onClickBack = { navigator?.pop() },
             onValueChangeName = screenModel::onValueChangeName,
             onValueChangePublic = screenModel::onValueChangePublic,
@@ -121,9 +124,10 @@ class TeamScreen(val teamId: Long?) : Screen {
             onSuccessOrErrorCodeCreation = screenModel::onSuccessOrErrorCodeCreation,
             accountsNotInTeam = accountsNotInTeam,
             onClickInviteAccount = screenModel::onClickInviteAccount,
-            onClickDeleteAccountInvite = {},
             onSearchParamChanged = screenModel::onSearchParamChanged,
             onClickClearSearch = screenModel::onClickClearSearch,
+            onClickTab = screenModel::onClickTab,
+            onClickWithdraw = screenModel::onClickWithdrawAccount,
         )
     }
 }
@@ -133,6 +137,7 @@ fun TeamScreenContent(
     state: TeamScreenState,
     data: LazyPagingItems<TeamMemberDomain>,
     requests: LazyPagingItems<TeamAccountJoinRequestDomain>,
+    teamAccountsInvites: LazyPagingItems<TeamAccountInvitesDomain>,
     onClickBack: () -> Unit,
     onValueChangeName: (String) -> Unit,
     onValueChangePublic: (String) -> Unit,
@@ -158,9 +163,10 @@ fun TeamScreenContent(
     onSuccessOrErrorCodeCreation: (SnackBarType) -> Unit,
     accountsNotInTeam: LazyPagingItems<AccountsNotInTeamDomain>,
     onClickInviteAccount: (AccountsNotInTeamDomain) -> Unit,
-    onClickDeleteAccountInvite: () -> Unit,
     onSearchParamChanged: (String) -> Unit,
     onClickClearSearch: () -> Unit,
+    onClickTab: (TeamJoinersTab) -> Unit,
+    onClickWithdraw: (TeamAccountInvitesDomain) -> Unit,
 ) {
     val activity = LocalContext.current as Activity
 
@@ -180,12 +186,15 @@ fun TeamScreenContent(
     if (state.isRequestsSheetOpen) {
         TeamJoinRequestsBottomSheet(
             state = state,
-            data = requests,
+            requestsData = requests,
+            teamAccountsInvites = teamAccountsInvites,
             onDismissSheet = onDismissRequestsSheet,
             onClickToggleSelectRequest = onClickToggleSelectRequest,
             onClickProcessSelectedRequests = onClickProcessSelectedRequests,
             onClickSelectedRequestsSelection = onClickSelectedRequestsSelection,
             onClickProcessRequest = onClickProcessRequest,
+            onClickTab = onClickTab,
+            onClickWithdraw = onClickWithdraw,
         )
     }
 
@@ -208,7 +217,6 @@ fun TeamScreenContent(
             onSuccessOrErrorCodeCreation = onSuccessOrErrorCodeCreation,
             accountsNotInTeam = accountsNotInTeam,
             onClickInviteAccount = onClickInviteAccount,
-            onClickDeleteAccountInvite = onClickDeleteAccountInvite,
             onSearchParamChanged = onSearchParamChanged,
             onClickClearSearch = onClickClearSearch,
         )
@@ -226,9 +234,9 @@ fun TeamScreenContent(
     ) { innerPadding ->
         AnimatedContent(
             modifier =
-            Modifier
-                .padding(innerPadding)
-                .fillMaxSize(),
+                Modifier
+                    .padding(innerPadding)
+                    .fillMaxSize(),
             targetState = state.isManagingTeam,
             label = "",
         ) { isManaging ->
@@ -427,9 +435,9 @@ fun TeamDetailsSection(
                     TeamsScreenTopSection(
                         state = state,
                         modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .wrapContentHeight(),
+                            Modifier
+                                .fillMaxWidth()
+                                .wrapContentHeight(),
                     )
                 },
                 refreshEmpty = {
@@ -455,10 +463,10 @@ fun TeamDetailsSection(
             ) { member ->
                 TeamMemberComponent(
                     modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp)
-                        .padding(top = 8.dp),
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp)
+                            .padding(top = 8.dp),
                     member = member,
                 )
             }
@@ -513,16 +521,16 @@ fun TeamsScreenTopSection(
                 if (state.team != null) {
                     Row(
                         modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 16.dp),
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 16.dp),
                     ) {
                         TeamTopMemberComponent(
                             isFirst = false,
                             modifier =
-                            Modifier
-                                .weight(1f)
-                                .padding(top = 48.dp),
+                                Modifier
+                                    .weight(1f)
+                                    .padding(top = 48.dp),
                             member = state.team.top[1],
                         )
                         TeamTopMemberComponent(

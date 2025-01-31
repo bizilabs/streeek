@@ -28,7 +28,9 @@ import com.bizilabs.streeek.lib.domain.models.asTeamDetails
 import com.bizilabs.streeek.lib.domain.models.sortedByRank
 import com.bizilabs.streeek.lib.domain.models.team.AccountsNotInTeamDomain
 import com.bizilabs.streeek.lib.domain.models.team.CreateTeamInvitationDomain
+import com.bizilabs.streeek.lib.domain.models.team.DeleteAccountInvitationDomain
 import com.bizilabs.streeek.lib.domain.models.team.JoinTeamInvitationDomain
+import com.bizilabs.streeek.lib.domain.models.team.TeamAccountInvitesDomain
 import com.bizilabs.streeek.lib.domain.models.team.TeamAccountJoinRequestDomain
 import com.bizilabs.streeek.lib.domain.models.team.TeamInvitationDomain
 import com.bizilabs.streeek.lib.domain.repositories.TeamInvitationCodeRepository
@@ -49,6 +51,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.koin.dsl.module
+import kotlin.enums.EnumEntries
 
 val FeatureTeamModule =
     module {
@@ -74,6 +77,15 @@ enum class TeamRequestAction {
                 ACCEPT -> "accepted"
                 REJECT -> "rejected"
             }
+}
+
+enum class TeamJoinersTab {
+    REQUESTS,
+    INVITES,
+    ;
+
+    val label: String
+        get() = name.lowercase().replaceFirstChar { it.uppercase() }
 }
 
 enum class SelectionAction {
@@ -131,6 +143,11 @@ data class InviteAccountState(
     val inviteState: FetchState<Boolean> = FetchState.Loading,
 )
 
+data class InviteWithdrawalState(
+    val inviteId: Long,
+    val withdrawalState: FetchState<DeleteAccountInvitationDomain> = FetchState.Loading,
+)
+
 data class TeamScreenState(
     val isSyncing: Boolean = false,
     val isEditing: Boolean = false,
@@ -164,6 +181,10 @@ data class TeamScreenState(
     val inviteAccountState: InviteAccountState? = null,
     val accountsInvitedIds: List<Long> = emptyList(),
     val searchParam: String = "",
+    val joinerTab: TeamJoinersTab = TeamJoinersTab.REQUESTS,
+    val joinerTabs: EnumEntries<TeamJoinersTab> = TeamJoinersTab.entries,
+    val inviteWithdrawalState: InviteWithdrawalState? = null,
+    val withdrawnInvitesIds: List<Long> = emptyList(),
 ) {
     val isManagingTeam: Boolean
         get() = isEditing || teamId == null
@@ -223,6 +244,11 @@ class TeamScreenModel(
     val accountsNotInTeam: Flow<PagingData<AccountsNotInTeamDomain>>
         get() = _accountsNotInTeam
 
+    private var _teamAccountInvites: Flow<PagingData<TeamAccountInvitesDomain>> =
+        MutableStateFlow(getPagingDataLoading<TeamAccountInvitesDomain>()).asStateFlow()
+    val teamAccountInvites: Flow<PagingData<TeamAccountInvitesDomain>>
+        get() = _teamAccountInvites
+
     private val clickedTeam =
         combine(teamRepository.teamId, teamRepository.teams) { id, map -> map[id] }
 
@@ -253,6 +279,7 @@ class TeamScreenModel(
             observeTeamDetails()
             observeTeamRequests()
             observeAccountsNotInTeam()
+            observeTeamAccountInvites()
         }
     }
 
@@ -878,12 +905,88 @@ class TeamScreenModel(
 
     fun searchAccounts(searchParam: String) {
         val teamId = state.value.teamId ?: return
-        _accountsNotInTeam = teamMemberInvitationRepository.searchForAccountNotInTeam(searchParam, teamId)
+        _accountsNotInTeam =
+            teamMemberInvitationRepository.searchForAccountNotInTeam(searchParam, teamId)
     }
 
     fun onClickClearSearch() {
         mutableState.update { it.copy(searchParam = "") }
         observeAccountsNotInTeam()
+    }
+
+    fun onClickTab(joinersTab: TeamJoinersTab) {
+        mutableState.update { it.copy(joinerTab = joinersTab) }
+    }
+
+    private fun observeTeamAccountInvites() {
+        val id = state.value.teamId ?: return
+        _teamAccountInvites = teamMemberInvitationRepository.getTeamAccountInvites(teamId = id)
+    }
+
+    fun onClickWithdrawAccount(teamAccountInviteDomain: TeamAccountInvitesDomain) {
+        mutableState.update {
+            it.copy(
+                inviteWithdrawalState =
+                    InviteWithdrawalState(
+                        inviteId = teamAccountInviteDomain.inviteId,
+                        withdrawalState = FetchState.Loading,
+                    ),
+            )
+        }
+        screenModelScope.launch {
+            val result =
+                teamMemberInvitationRepository.deleteAccountInvitation(
+                    teamAccountInviteDomain.inviteId,
+                )
+
+            when (result) {
+                is DataResult.Error -> {
+                    mutableState.update {
+                        it.copy(
+                            inviteWithdrawalState =
+                                InviteWithdrawalState(
+                                    inviteId = teamAccountInviteDomain.inviteId,
+                                    withdrawalState = FetchState.Error(result.message),
+                                ),
+                            dialogState =
+                                DialogState.Error(
+                                    title = "Error",
+                                    message = result.message,
+                                ),
+                        )
+                    }
+                    delay(2000)
+                    mutableState.update {
+                        it.copy(
+                            inviteAccountState = null,
+                            dialogState = null,
+                        )
+                    }
+                }
+
+                is DataResult.Success -> {
+                    val withdrawnInvitesIds = state.value.withdrawnInvitesIds.toMutableList()
+                    withdrawnInvitesIds.add(teamAccountInviteDomain.inviteId)
+                    mutableState.update {
+                        it.copy(
+                            inviteWithdrawalState =
+                                InviteWithdrawalState(
+                                    inviteId = teamAccountInviteDomain.inviteId,
+                                    withdrawalState = FetchState.Success(value = result.data),
+                                ),
+                        )
+                    }
+
+                    delay(2000)
+                    mutableState.update {
+                        it.copy(
+                            withdrawnInvitesIds = withdrawnInvitesIds,
+                            inviteWithdrawalState = null,
+                        )
+                    }
+                }
+            }
+        }
     }
     // </editor-fold>
 }

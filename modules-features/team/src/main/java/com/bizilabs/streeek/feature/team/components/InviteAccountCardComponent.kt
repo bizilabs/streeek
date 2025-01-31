@@ -2,7 +2,6 @@ package com.bizilabs.streeek.feature.team.components
 
 import android.content.res.Configuration
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -12,7 +11,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.CheckCircle
-import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.Error
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -44,7 +42,6 @@ fun InviteAccountCardComponent(
     accountNotInTeam: AccountsNotInTeamDomain,
     inviteAccountState: InviteAccountState?,
     onClickInvite: (AccountsNotInTeamDomain) -> Unit,
-    onClickDeleteInvite: () -> Unit,
 ) {
     Column(
         modifier = modifier,
@@ -80,24 +77,14 @@ fun InviteAccountCardComponent(
             when (isInvited) {
                 true -> {
                     Row(
-                        modifier = Modifier.padding(vertical = 8.dp),
+                        modifier = Modifier.padding(vertical = 20.dp, horizontal = 8.dp),
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                     ) {
                         Text(
                             text = "Invited",
-                            style = MaterialTheme.typography.labelSmall,
+                            style = MaterialTheme.typography.labelLarge,
                             color = MaterialTheme.colorScheme.onSurface.copy(0.5f),
-                        )
-
-                        Icon(
-                            modifier =
-                                Modifier
-                                    .padding(8.dp)
-                                    .clickable { onClickDeleteInvite() },
-                            imageVector = Icons.Rounded.Close,
-                            contentDescription = "remove",
-                            tint = MaterialTheme.colorScheme.error,
                         )
                     }
                 }
@@ -182,7 +169,6 @@ private fun InviteAccountCardPreview() {
                         isInvited = false,
                     ),
                 onClickInvite = {},
-                onClickDeleteInvite = {},
                 inviteAccountState = null,
                 isInvited = false,
             )
