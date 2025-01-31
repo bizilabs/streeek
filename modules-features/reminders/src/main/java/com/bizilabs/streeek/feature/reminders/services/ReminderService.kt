@@ -16,7 +16,6 @@ import com.bizilabs.streeek.lib.domain.models.notifications.NotificationResult
 import com.bizilabs.streeek.lib.resources.images.SafiDrawables
 import timber.log.Timber
 
-
 class ReminderService : Service() {
     private val quirkyNotifications =
         listOf(
@@ -44,12 +43,15 @@ class ReminderService : Service() {
     lateinit var day: Number
     lateinit var code: Number
 
-
     override fun onCreate() {
         super.onCreate()
     }
 
-    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+    override fun onStartCommand(
+        intent: Intent?,
+        flags: Int,
+        startId: Int,
+    ): Int {
         Timber.d("STREEEKNOTIFAI foreground service started")
         if (intent == null) return START_NOT_STICKY
         label = intent.getStringExtra("reminder.label") ?: ""
@@ -71,14 +73,15 @@ class ReminderService : Service() {
         val contentIntent = getContentIntent(context = context)
         val (title, body) = quirkyNotifications.random()
 
-        val notifcation = context.createNotification(
-            title = title,
-            body = body,
-            channel = AppNotificationChannel.REMINDERS,
-            actions = actions,
-            pendingIntent = contentIntent,
-            imageUrl = null
-        )
+        val notifcation =
+            context.createNotification(
+                title = title,
+                body = body,
+                channel = AppNotificationChannel.REMINDERS,
+                actions = actions,
+                pendingIntent = contentIntent,
+                imageUrl = null,
+            )
 
         Timber.d("STREEEKNOTIFAI foreground service started 4: label>$label day>$day code>$code")
 
@@ -86,7 +89,7 @@ class ReminderService : Service() {
             this,
             1,
             notifcation,
-            0x40000000
+            0x40000000,
         )
 
         Timber.d("STREEEKNOTIFAI foreground service started 5: label>$label day>$day code>$code")
@@ -138,13 +141,13 @@ class ReminderService : Service() {
                     NotificationResult(
                         type = "reminder",
                         uri =
-                        buildUri(
-                            "type" to "navigation",
-                            "destination" to "reminder",
-                            "label" to label,
-                            "day" to day,
-                            "code" to code,
-                        ),
+                            buildUri(
+                                "type" to "navigation",
+                                "destination" to "reminder",
+                                "label" to label,
+                                "day" to day,
+                                "code" to code,
+                            ),
                     ).asJson(),
                 )
             }

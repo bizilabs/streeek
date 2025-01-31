@@ -2,7 +2,6 @@ package com.bizilabs.streeek.feature.reminders.list
 
 import android.Manifest
 import android.content.Context
-import android.os.Build
 import cafe.adriel.voyager.core.model.StateScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
 import com.bizilabs.streeek.feature.reminders.manager.ReminderManager
@@ -88,7 +87,7 @@ class ReminderListScreenModel(
 
     private fun checkAlarmPermission() {
         val granted =
-                context.permissionIsGranted(permission = Manifest.permission.FOREGROUND_SERVICE_SPECIAL_USE)
+            context.permissionIsGranted(permission = Manifest.permission.FOREGROUND_SERVICE_SPECIAL_USE)
 
         Timber.d("STREEEKNOTIFAI permision granted $granted")
 
