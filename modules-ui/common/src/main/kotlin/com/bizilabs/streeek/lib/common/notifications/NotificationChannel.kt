@@ -26,6 +26,13 @@ enum class AppNotificationChannel(
         group = AppNotificationGroup.USER,
         description = "updates on joining a team",
     ),
+    TEAM_UPDATES(
+        id = "streeek.team.updates",
+        label = "Team Updates",
+        importance = NotificationManager.IMPORTANCE_HIGH,
+        group = AppNotificationGroup.USER,
+        description = "regular team updates",
+    ),
 }
 
 enum class AppNotificationGroup(
