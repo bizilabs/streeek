@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.bizilabs.streeek.lib.design.helpers.success
 import com.bizilabs.streeek.lib.domain.models.NotificationDomain
 
 @Composable
@@ -25,7 +26,7 @@ fun NotificationItemComponent(
         if (isRead) {
             MaterialTheme.colorScheme.background
         } else {
-            MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)
+            MaterialTheme.colorScheme.success.copy(alpha = 0.1f)
         }
 
     Card(
