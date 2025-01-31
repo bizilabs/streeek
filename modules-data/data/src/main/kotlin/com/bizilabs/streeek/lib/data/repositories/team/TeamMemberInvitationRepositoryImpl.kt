@@ -120,7 +120,7 @@ class TeamMemberInvitationRepositoryImpl(
     override fun getAllAccountInvites(): Flow<PagingData<AccountTeamInvitesDomain>> =
         genericPager(
             getResults = { page ->
-                val accountId = getAccountId() ?: 0L
+                val accountId = getAccountId() ?: throw Exception("couldn't find account id")
                 invitationRemoteSource.getAllAccountInvites(accountId = accountId, page = page)
             },
             mapper = { result ->
