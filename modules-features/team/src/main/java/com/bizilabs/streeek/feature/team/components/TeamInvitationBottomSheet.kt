@@ -19,6 +19,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.People
+import androidx.compose.material.icons.rounded.PeopleAlt
 import androidx.compose.material.icons.rounded.Refresh
 import androidx.compose.material.icons.rounded.Share
 import androidx.compose.material3.Button
@@ -56,6 +57,7 @@ import com.bizilabs.streeek.lib.common.components.paging.SafiPagingComponent
 import com.bizilabs.streeek.lib.common.models.FetchState
 import com.bizilabs.streeek.lib.design.components.SafiCenteredColumn
 import com.bizilabs.streeek.lib.design.components.SafiCenteredRow
+import com.bizilabs.streeek.lib.design.components.SafiInfoSection
 import com.bizilabs.streeek.lib.design.components.SafiSearchComponent
 import com.bizilabs.streeek.lib.design.helpers.onSuccess
 import com.bizilabs.streeek.lib.design.helpers.success
@@ -81,7 +83,6 @@ fun TeamInvitationBottomSheet(
     modifier: Modifier = Modifier,
     accountsNotInTeam: LazyPagingItems<AccountsNotInTeamDomain>,
     onClickInviteAccount: (AccountsNotInTeamDomain) -> Unit,
-    onClickDeleteAccountInvite: () -> Unit,
     onSearchParamChanged: (String) -> Unit,
     onClickClearSearch: () -> Unit,
 ) {
@@ -191,6 +192,16 @@ fun TeamInvitationBottomSheet(
                             .fillMaxWidth()
                             .weight(1f),
                     data = accountsNotInTeam,
+                    refreshEmpty = {
+                        SafiCenteredColumn(modifier = Modifier.fillMaxWidth()) {
+                            SafiInfoSection(
+                                modifier = Modifier.fillMaxWidth(),
+                                icon = Icons.Rounded.PeopleAlt,
+                                title = if (state.searchParam.isNotEmpty()) "No results found" else "All app users are part of this team.",
+                                description = if (state.searchParam.isNotEmpty()) "No results found for ${state.searchParam}" else "",
+                            )
+                        }
+                    },
                 ) { accountNotInTeam ->
 
                     val invited = accountNotInTeam.accountId in state.accountsInvitedIds
@@ -200,7 +211,6 @@ fun TeamInvitationBottomSheet(
                         accountNotInTeam = accountNotInTeam,
                         inviteAccountState = state.inviteAccountState,
                         onClickInvite = onClickInviteAccount,
-                        onClickDeleteInvite = onClickDeleteAccountInvite,
                     )
                 }
 
