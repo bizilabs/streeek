@@ -8,13 +8,14 @@ import com.bizilabs.streeek.lib.remote.models.supabase.team.invitations.AccountT
 import com.bizilabs.streeek.lib.remote.models.supabase.team.invitations.AccountsNotInTeamDTO
 import com.bizilabs.streeek.lib.remote.models.supabase.team.invitations.DeleteAccountInvitationDTO
 import com.bizilabs.streeek.lib.remote.models.supabase.team.invitations.DeleteAccountInvitationRequestDTO
-import com.bizilabs.streeek.lib.remote.models.supabase.team.invitations.GetAccountNotInTeamDTO
+import com.bizilabs.streeek.lib.remote.models.supabase.team.invitations.GetAccountsDTO
 import com.bizilabs.streeek.lib.remote.models.supabase.team.invitations.GetAllAccountInvitesDTO
 import com.bizilabs.streeek.lib.remote.models.supabase.team.invitations.ProcessAccountInviteDTO
 import com.bizilabs.streeek.lib.remote.models.supabase.team.invitations.ProcessAccountMultipleInvitesDTO
 import com.bizilabs.streeek.lib.remote.models.supabase.team.invitations.SearchAccountNotInTeamDTO
 import com.bizilabs.streeek.lib.remote.models.supabase.team.invitations.SendAccountInvitationDTO
 import com.bizilabs.streeek.lib.remote.models.supabase.team.invitations.SendMultipleAccountInvitationDTO
+import com.bizilabs.streeek.lib.remote.models.supabase.team.invitations.TeamAccountInvitesDTO
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.postgrest.postgrest
 
@@ -29,6 +30,11 @@ interface TeamMemberInvitationRemoteSource {
         teamId: Long,
         page: Int,
     ): NetworkResult<List<AccountsNotInTeamDTO>>
+
+    suspend fun getTeamAccountInvites(
+        teamId: Long,
+        page: Int,
+    ): NetworkResult<List<TeamAccountInvitesDTO>>
 
     suspend fun sendAccountInvitation(
         teamId: Long,
@@ -73,7 +79,7 @@ class TeamMemberInvitationRemoteSourceImpl(
         page: Int,
     ): NetworkResult<List<AccountsNotInTeamDTO>> =
         safeSupabaseCall {
-            val params = GetAccountNotInTeamDTO(teamId = teamId, page = page)
+            val params = GetAccountsDTO(teamId = teamId, page = page)
             supabase.postgrest
                 .rpc(
                     function = Supabase.Functions.Teams.MemberInvitations.GETACCOUNTSNOTINTEAM,
@@ -93,6 +99,20 @@ class TeamMemberInvitationRemoteSourceImpl(
             supabase.postgrest
                 .rpc(
                     function = Supabase.Functions.Teams.MemberInvitations.SEARCHACCOUNTSNOTINTEAM,
+                    parameters = params.asJsonObject(),
+                )
+                .decodeList()
+        }
+
+    override suspend fun getTeamAccountInvites(
+        teamId: Long,
+        page: Int,
+    ): NetworkResult<List<TeamAccountInvitesDTO>> =
+        safeSupabaseCall {
+            val params = GetAccountsDTO(teamId = teamId, page = page)
+            supabase.postgrest
+                .rpc(
+                    function = Supabase.Functions.Teams.MemberInvitations.GETTEAMACCOUNTINVITES,
                     parameters = params.asJsonObject(),
                 )
                 .decodeList()

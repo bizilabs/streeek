@@ -65,6 +65,7 @@ internal object Supabase {
                 const val UPDATEINVITESTATUS = "update_invite_status"
                 const val UPDATEMULTIPLEINVITESTATUS = "update_multiple_invite_status"
                 const val GETACCOUNTINVITES = "get_all_invites_for_account"
+                const val GETTEAMACCOUNTINVITES = "get_team_account_invites"
             }
         }
 

@@ -11,6 +11,14 @@ data class AccountsNotInTeamDomain(
     val isInvited: Boolean,
 )
 
+data class TeamAccountInvitesDomain(
+    val inviteId: Long,
+    val inviteeId: Long,
+    val username: String,
+    val avatarUrl: String,
+    val invitedOn: LocalDateTime,
+)
+
 data class DeleteAccountInvitationDomain(
     val inviteId: Long,
     val message: String,

@@ -9,6 +9,7 @@ import com.bizilabs.streeek.lib.domain.helpers.DataResult
 import com.bizilabs.streeek.lib.domain.models.team.AccountTeamInvitesDomain
 import com.bizilabs.streeek.lib.domain.models.team.AccountsNotInTeamDomain
 import com.bizilabs.streeek.lib.domain.models.team.DeleteAccountInvitationDomain
+import com.bizilabs.streeek.lib.domain.models.team.TeamAccountInvitesDomain
 import com.bizilabs.streeek.lib.domain.repositories.team.TeamMemberInvitationRepository
 import com.bizilabs.streeek.lib.local.sources.account.AccountLocalSource
 import com.bizilabs.streeek.lib.remote.sources.team.invitations.TeamMemberInvitationRemoteSource
@@ -39,6 +40,16 @@ class TeamMemberInvitationRepositoryImpl(
                     page = page,
                     teamId = teamId,
                 )
+            },
+            mapper = { result ->
+                result.map { it.toDomain() }
+            },
+        )
+
+    override fun getTeamAccountInvites(teamId: Long): Flow<PagingData<TeamAccountInvitesDomain>> =
+        genericPager(
+            getResults = { page ->
+                invitationRemoteSource.getTeamAccountInvites(teamId = teamId, page = page)
             },
             mapper = { result ->
                 result.map { it.toDomain() }

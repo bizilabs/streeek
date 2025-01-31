@@ -5,6 +5,7 @@ import com.bizilabs.streeek.lib.domain.helpers.DataResult
 import com.bizilabs.streeek.lib.domain.models.team.AccountTeamInvitesDomain
 import com.bizilabs.streeek.lib.domain.models.team.AccountsNotInTeamDomain
 import com.bizilabs.streeek.lib.domain.models.team.DeleteAccountInvitationDomain
+import com.bizilabs.streeek.lib.domain.models.team.TeamAccountInvitesDomain
 import kotlinx.coroutines.flow.Flow
 
 interface TeamMemberInvitationRepository {
@@ -14,6 +15,8 @@ interface TeamMemberInvitationRepository {
         searchParam: String,
         teamId: Long,
     ): Flow<PagingData<AccountsNotInTeamDomain>>
+
+    fun getTeamAccountInvites(teamId: Long): Flow<PagingData<TeamAccountInvitesDomain>>
 
     suspend fun sendAccountInvitation(
         teamId: Long,

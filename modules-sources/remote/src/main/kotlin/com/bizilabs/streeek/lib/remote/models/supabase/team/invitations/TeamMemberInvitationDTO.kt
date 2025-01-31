@@ -54,7 +54,21 @@ data class AccountTeamInvitesDTO(
 )
 
 @Serializable
-data class GetAccountNotInTeamDTO(
+data class TeamAccountInvitesDTO(
+    @SerialName("invite_id")
+    val inviteId: Long,
+    @SerialName("invitee_id")
+    val inviteeId: Long,
+    @SerialName("username")
+    val username: String,
+    @SerialName("avatar_url")
+    val avatarUrl: String,
+    @SerialName("invited_on")
+    val invitedOn: String,
+)
+
+@Serializable
+data class GetAccountsDTO(
     @SerialName("team_id_param") val teamId: Long,
     @SerialName("page_param") val page: Int,
     @SerialName("page_size_param") val pageSize: Int = PAGE_SIZE,
