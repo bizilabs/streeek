@@ -1,7 +1,6 @@
 package com.bizilabs.streeek.feature.tabs.screens.achievements
 
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -10,17 +9,16 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.AccountCircle
 import androidx.compose.material.icons.rounded.Refresh
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -31,13 +29,14 @@ import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -46,15 +45,14 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.getScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import coil.compose.SubcomposeAsyncImage
+import com.bizilabs.streeek.feature.tabs.screens.achievements.component.LevelComponent
 import com.bizilabs.streeek.lib.common.navigation.SharedScreen
 import com.bizilabs.streeek.lib.design.components.SafiCenteredColumn
 import com.bizilabs.streeek.lib.design.components.SafiCenteredRow
 import com.bizilabs.streeek.lib.design.components.SafiProfileArc
 import com.bizilabs.streeek.lib.design.components.SafiTopBarHeader
 import com.bizilabs.streeek.lib.design.components.shimmerEffect
-import com.bizilabs.streeek.lib.design.helpers.onSuccess
-import com.bizilabs.streeek.lib.design.helpers.success
-import com.bizilabs.streeek.lib.domain.extensions.asRank
+import kotlinx.coroutines.launch
 import timber.log.Timber
 
 object AchievementsScreen : Screen {
@@ -255,75 +253,35 @@ fun AchievementsLevelsScreenSection(
             }
 
             else -> {
-                LazyVerticalGrid(
+                val lazyListState = rememberLazyListState()
+                val coroutineScope = rememberCoroutineScope()
+
+                LazyColumn(
                     modifier = Modifier.fillMaxSize(),
-                    columns = GridCells.Fixed(3),
+                    state = lazyListState,
+                    reverseLayout = false,
                 ) {
-                    items(levels) { level ->
+                    itemsIndexed(levels, key = { index, level -> level.id }) { index, level ->
 
-                        val current = state.level
+                        val current = level
+                        val accountLevel = state.level
 
-                        val isSelected = level.id == current?.id
-                        val isLesser = level.number < (current?.number ?: 0)
-                        val isGreater = level.number > (current?.number ?: 0)
-                        val isNext = level.number == (current?.number ?: 0) + 1
-
-                        val (containerColor, contentColor) =
-                            when {
-                                isSelected ->
-                                    Pair(
-                                        MaterialTheme.colorScheme.success,
-                                        MaterialTheme.colorScheme.onSuccess,
-                                    )
-
-                                isGreater ->
-                                    Pair(
-                                        MaterialTheme.colorScheme.onSurface.copy(0.1f),
-                                        MaterialTheme.colorScheme.onSurface,
-                                    )
-
-                                isLesser ->
-                                    Pair(
-                                        MaterialTheme.colorScheme.success,
-                                        MaterialTheme.colorScheme.onSuccess,
-                                    )
-
-                                else ->
-                                    Pair(
-                                        MaterialTheme.colorScheme.primary,
-                                        MaterialTheme.colorScheme.onPrimary,
-                                    )
+                        LaunchedEffect(current) {
+                            if (index == levels.lastIndex) {
+                                coroutineScope.launch { lazyListState.animateScrollToItem(index) }
                             }
+                        }
 
-                        AnimatedVisibility(
-                            modifier = Modifier.fillMaxWidth(),
-                            visible = isSelected or isLesser or isNext,
-                        ) {
-                            Card(
+                        accountLevel?.let {
+                            LevelComponent(
+                                points = state.points,
+                                current = current,
+                                accountLevel = it,
                                 modifier =
-                                    Modifier
-                                        .padding(8.dp)
-                                        .fillMaxWidth(),
-                                colors =
-                                    CardDefaults.cardColors(
-                                        containerColor = containerColor,
-                                        contentColor = contentColor,
-                                    ),
-                            ) {
-                                Column(modifier = Modifier.padding(16.dp)) {
-                                    Text(
-                                        modifier = Modifier.padding(top = 24.dp),
-                                        text = level.number.asRank(),
-                                        style = MaterialTheme.typography.titleSmall,
-                                        textAlign = TextAlign.Center,
-                                        fontWeight = FontWeight.Black,
-                                    )
-                                    Text(
-                                        text = if (isGreater) "" else level.name.replaceFirstChar { it.uppercase() },
-                                        style = MaterialTheme.typography.labelLarge,
-                                    )
-                                }
-                            }
+                                    Modifier.fillMaxWidth()
+                                        .height(150.dp)
+                                        .padding(horizontal = 24.dp),
+                            )
                         }
                     }
                 }
