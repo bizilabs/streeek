@@ -2,6 +2,7 @@ package com.bizilabs.streeek.lib.design.components
 
 import android.content.res.Configuration
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -42,22 +43,23 @@ fun SafiBottomAction(
     modifier: Modifier = Modifier,
     iconTint: Color = MaterialTheme.colorScheme.primary,
     secondaryAction: SafiBottomValue? = null,
+    onCloseClick: (() -> Unit)? = null, // Optional close click listener
 ) {
     Card(
         modifier = modifier.padding(horizontal = 16.dp),
         shape = MaterialTheme.shapes.small,
         colors =
-            CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surface.copy()
-            ),
+        CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface.copy()
+        ),
     ) {
         Row(modifier = Modifier.padding(16.dp)) {
             Box(
                 modifier =
-                    Modifier.background(
-                        iconTint.copy(alpha = 0.2f),
-                        MaterialTheme.shapes.small,
-                    ),
+                Modifier.background(
+                    iconTint.copy(alpha = 0.2f),
+                    MaterialTheme.shapes.small,
+                ),
             ) {
                 SafiShakingBox {
                     Icon(
@@ -71,9 +73,9 @@ fun SafiBottomAction(
 
             Column(
                 modifier =
-                    Modifier
-                        .padding(horizontal = 8.dp)
-                        .weight(1f),
+                Modifier
+                    .padding(horizontal = 8.dp)
+                    .weight(1f),
             ) {
                 Text(
                     text = title,
@@ -110,7 +112,14 @@ fun SafiBottomAction(
             Icon(
                 imageVector = Icons.Rounded.Close,
                 contentDescription = title,
+                modifier = Modifier
+                    .clickable {
+                        if (onCloseClick != null) {
+                            onCloseClick()
+                        }
+                    }
             )
+
         }
     }
 }
