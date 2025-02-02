@@ -71,9 +71,7 @@ class SyncAccountWork(
     override suspend fun doWork(): Result {
         val result = accountRepository.syncAccount()
         if (result is DataResult.Error) {
-            if (params.runAttemptCount > 2) {
-                return Result.failure()
-            }
+            if (params.runAttemptCount > 2) return Result.failure()
             return Result.retry()
         }
         return Result.success()

@@ -26,6 +26,9 @@ class AccountRepositoryImpl(
     override val account: Flow<AccountDomain?>
         get() = local.account.mapLatest { it?.toDomain() }
 
+    override val isSyncingAccount: Flow<Boolean>
+        get() = local.isSyncingAccount
+
     override suspend fun getAccountWithGithubId(id: Int): DataResult<AccountDomain?> {
         return when (val result = remote.fetchAccountWithGithubId(id)) {
             is NetworkResult.Failure -> DataResult.Error(result.exception.localizedMessage)
@@ -77,6 +80,7 @@ class AccountRepositoryImpl(
 
     override suspend fun syncAccount(): DataResult<Boolean> {
         val id = account.first()?.id ?: return DataResult.Error("Account not found")
+        updateIsSyncingAccount(value = true)
         return when (val result = remote.getAccount(id = id)) {
             is NetworkResult.Failure -> DataResult.Error(message = result.exception.localizedMessage)
             is NetworkResult.Success -> {
@@ -84,7 +88,13 @@ class AccountRepositoryImpl(
                 local.updateAccount(account = account.toCache())
                 DataResult.Success(true)
             }
+        }.also {
+            updateIsSyncingAccount(value = false)
         }
+    }
+
+    override suspend fun updateIsSyncingAccount(value: Boolean) {
+        local.updateIsSyncingAccount(value = value)
     }
 
     override suspend fun logout() {
