@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface AccountRepository {
     val account: Flow<AccountDomain?>
+    val isSyncingAccount: Flow<Boolean>
 
     suspend fun getAccountWithGithubId(id: Int): DataResult<AccountDomain?>
 
@@ -20,6 +21,8 @@ interface AccountRepository {
     suspend fun getAccount(id: Long): DataResult<AccountDomain>
 
     suspend fun syncAccount(): DataResult<Boolean>
+
+    suspend fun updateIsSyncingAccount(value: Boolean)
 
     suspend fun logout()
 
