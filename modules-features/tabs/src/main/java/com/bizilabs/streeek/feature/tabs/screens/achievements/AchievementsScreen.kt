@@ -17,9 +17,9 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.AccountCircle
-import androidx.compose.material.icons.rounded.Refresh
+import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -37,7 +37,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.core.registry.rememberScreen
@@ -50,6 +49,7 @@ import com.bizilabs.streeek.lib.common.navigation.SharedScreen
 import com.bizilabs.streeek.lib.design.components.SafiCenteredColumn
 import com.bizilabs.streeek.lib.design.components.SafiCenteredRow
 import com.bizilabs.streeek.lib.design.components.SafiProfileArc
+import com.bizilabs.streeek.lib.design.components.SafiRefreshBox
 import com.bizilabs.streeek.lib.design.components.SafiTopBarHeader
 import com.bizilabs.streeek.lib.design.components.shimmerEffect
 import kotlinx.coroutines.launch
@@ -74,6 +74,7 @@ object AchievementsScreen : Screen {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AchievementsScreenContent(
     state: AchievementScreenState,
@@ -81,33 +82,37 @@ fun AchievementsScreenContent(
     onClickRefreshProfile: () -> Unit,
     onClickTab: (AchievementTab) -> Unit,
 ) {
-    Scaffold(topBar = {
-        AchievementScreenHeader(
-            state = state,
-            onClickAccount = onClickAccount,
-            onClickTab = onClickTab,
-            onClickRefreshProfile = onClickRefreshProfile,
-        )
-    }) { paddingValues ->
-        SafiCenteredColumn(
-            modifier =
-                Modifier
-                    .padding(top = paddingValues.calculateTopPadding())
-                    .fillMaxSize(),
-        ) {
-            AnimatedContent(targetState = state.tab, label = "animate achievements") { tab ->
-                when (tab) {
-                    AchievementTab.BADGES -> {
-                        SafiCenteredColumn(modifier = Modifier.fillMaxSize()) {
-                            Text(text = "Coming soon...")
+    SafiRefreshBox(
+        isRefreshing = state.isSyncingAccount,
+        onRefresh = onClickRefreshProfile,
+    ) {
+        Scaffold(topBar = {
+            AchievementScreenHeader(
+                state = state,
+                onClickAccount = onClickAccount,
+                onClickTab = onClickTab,
+            )
+        }) { paddingValues ->
+            SafiCenteredColumn(
+                modifier =
+                    Modifier
+                        .padding(top = paddingValues.calculateTopPadding())
+                        .fillMaxSize(),
+            ) {
+                AnimatedContent(targetState = state.tab, label = "animate achievements") { tab ->
+                    when (tab) {
+                        AchievementTab.BADGES -> {
+                            SafiCenteredColumn(modifier = Modifier.fillMaxSize()) {
+                                Text(text = "Coming soon...")
+                            }
                         }
-                    }
 
-                    AchievementTab.LEVELS -> {
-                        AchievementsLevelsScreenSection(
-                            state = state,
-                            modifier = Modifier.fillMaxSize(),
-                        )
+                        AchievementTab.LEVELS -> {
+                            AchievementsLevelsScreenSection(
+                                state = state,
+                                modifier = Modifier.fillMaxSize(),
+                            )
+                        }
                     }
                 }
             }
@@ -119,7 +124,6 @@ fun AchievementsScreenContent(
 fun AchievementScreenHeader(
     state: AchievementScreenState,
     onClickAccount: () -> Unit,
-    onClickRefreshProfile: () -> Unit,
     onClickTab: (AchievementTab) -> Unit,
 ) {
     Surface(modifier = Modifier.fillMaxWidth()) {
@@ -132,21 +136,18 @@ fun AchievementScreenHeader(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
+                SafiTopBarHeader(
+                    modifier =
+                        Modifier
+                            .padding(start = 16.dp)
+                            .weight(1f),
+                    title = "Achievements",
+                )
                 IconButton(onClick = onClickAccount) {
                     Icon(
-                        imageVector = Icons.Rounded.AccountCircle,
-                        contentDescription = "refresh profile",
-                    )
-                }
-                SafiTopBarHeader(
-                    modifier = Modifier.weight(1f),
-                    title = "Achievements",
-                    align = TextAlign.Center,
-                )
-                IconButton(onClick = onClickRefreshProfile) {
-                    Icon(
-                        imageVector = Icons.Rounded.Refresh,
-                        contentDescription = "refresh profile",
+                        modifier = Modifier.size(16.dp),
+                        imageVector = Icons.Rounded.Settings,
+                        contentDescription = "settings",
                     )
                 }
             }
@@ -278,7 +279,8 @@ fun AchievementsLevelsScreenSection(
                                 current = current,
                                 accountLevel = it,
                                 modifier =
-                                    Modifier.fillMaxWidth()
+                                    Modifier
+                                        .fillMaxWidth()
                                         .height(150.dp)
                                         .padding(horizontal = 24.dp),
                             )
