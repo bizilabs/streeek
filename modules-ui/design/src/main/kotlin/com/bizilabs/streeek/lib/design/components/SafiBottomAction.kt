@@ -48,7 +48,7 @@ fun SafiBottomAction(
         shape = MaterialTheme.shapes.small,
         colors =
             CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.1f),
+                containerColor = MaterialTheme.colorScheme.surface.copy()
             ),
     ) {
         Row(modifier = Modifier.padding(16.dp)) {
