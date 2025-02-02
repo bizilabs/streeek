@@ -76,7 +76,7 @@ object FeedScreen : Screen {
             onClickDate = screenModel::onClickDate,
             onRefreshContributions = screenModel::onRefreshContributions,
             onClickToggleMonthView = screenModel::onClickToggleMonthView,
-            onDismissPermissionModal = screenModel::onDismissNotificationModal
+            onDismissPermissionModal = screenModel::onDismissNotificationModal,
         )
     }
 }
@@ -90,7 +90,7 @@ fun FeedScreenContent(
     onClickDate: (LocalDate) -> Unit,
     onRefreshContributions: () -> Unit,
     onClickToggleMonthView: () -> Unit,
-    onDismissPermissionModal: () -> Unit
+    onDismissPermissionModal: () -> Unit,
 ) {
     val activity = LocalContext.current as ComponentActivity
 
@@ -99,8 +99,6 @@ fun FeedScreenContent(
             refreshing = state.isSyncing,
             onRefresh = onRefreshContributions,
         )
-
-
 
     Scaffold(
         topBar = {
@@ -147,35 +145,34 @@ fun FeedScreenContent(
             }
         },
         snackbarHost =
-        {
-
-            AnimatedVisibility(
-                modifier = Modifier.fillMaxWidth(),
-                visible = state.isPermissionGranted.not(),
-                enter = scaleIn(),
-                exit = scaleOut(),
-            ) {
-                SafiBottomAction(
-                    title = "Enable Notifications",
-                    description = "We can't seem to send you notifications. Please enable them for a better  experience",
-                    icon = Icons.Filled.Notifications,
-                    onCloseClick = {
-                        onDismissPermissionModal()
-                    },
-                    primaryAction =
-                    SafiBottomValue("enable") {
-                        activity.requestSinglePermission(permission = android.Manifest.permission.POST_NOTIFICATIONS)
-                    },
-                )
-            }
-        },
+            {
+                AnimatedVisibility(
+                    modifier = Modifier.fillMaxWidth(),
+                    visible = state.isPermissionGranted.not(),
+                    enter = scaleIn(),
+                    exit = scaleOut(),
+                ) {
+                    SafiBottomAction(
+                        title = "Enable Notifications",
+                        description = "We can't seem to send you notifications. Please enable them for a better  experience",
+                        icon = Icons.Filled.Notifications,
+                        onCloseClick = {
+                            onDismissPermissionModal()
+                        },
+                        primaryAction =
+                            SafiBottomValue("enable") {
+                                activity.requestSinglePermission(permission = android.Manifest.permission.POST_NOTIFICATIONS)
+                            },
+                    )
+                }
+            },
     ) { innerPadding ->
         Box(
             modifier =
-            Modifier
-                .fillMaxWidth()
-                .padding(top = innerPadding.calculateTopPadding())
-                .pullRefresh(pullRefreshState),
+                Modifier
+                    .fillMaxWidth()
+                    .padding(top = innerPadding.calculateTopPadding())
+                    .pullRefresh(pullRefreshState),
         ) {
             FeedContent(
                 state = state,
@@ -221,27 +218,27 @@ private fun FeedContent(
                                     icon = Icons.Rounded.PushPin,
                                     title = "No Contributions Found",
                                     description =
-                                    if (state.isToday) {
-                                        "You haven't been busy today... Push some few commits!"
-                                    } else {
-                                        "Seems you we\'ren\'t busy on ${
-                                            buildString {
-                                                append(
-                                                    state.selectedDate.dayOfWeek.name.lowercase()
-                                                        .replaceFirstChar { it.uppercase() },
-                                                )
-                                                append(" ")
-                                                append(state.selectedDate.dayOfMonth)
-                                                append(" ")
-                                                append(
-                                                    state.selectedDate.month.name.lowercase()
-                                                        .replaceFirstChar { it.uppercase() },
-                                                )
-                                                append(" ")
-                                                append(state.selectedDate.year)
-                                            }
-                                        }"
-                                    },
+                                        if (state.isToday) {
+                                            "You haven't been busy today... Push some few commits!"
+                                        } else {
+                                            "Seems you we\'ren\'t busy on ${
+                                                buildString {
+                                                    append(
+                                                        state.selectedDate.dayOfWeek.name.lowercase()
+                                                            .replaceFirstChar { it.uppercase() },
+                                                    )
+                                                    append(" ")
+                                                    append(state.selectedDate.dayOfMonth)
+                                                    append(" ")
+                                                    append(
+                                                        state.selectedDate.month.name.lowercase()
+                                                            .replaceFirstChar { it.uppercase() },
+                                                    )
+                                                    append(" ")
+                                                    append(state.selectedDate.year)
+                                                }
+                                            }"
+                                        },
                                 )
                                 AnimatedVisibility(
                                     visible = state.isSyncing.not() && state.isToday,
@@ -262,9 +259,9 @@ private fun FeedContent(
                             items(contributions) { contribution ->
                                 FeedContributionItemComponent(
                                     modifier =
-                                    Modifier
-                                        .fillMaxWidth()
-                                        .padding(8.dp),
+                                        Modifier
+                                            .fillMaxWidth()
+                                            .padding(8.dp),
                                     contribution = contribution,
                                 )
                             }
@@ -289,11 +286,11 @@ private fun FeedHeader(
     ) {
         Row(
             modifier =
-            Modifier
-                .padding(start = 4.dp)
-                .clickable { onClickToggleMonthView() }
-                .padding(start = 12.dp)
-                .padding(vertical = 16.dp),
+                Modifier
+                    .padding(start = 4.dp)
+                    .clickable { onClickToggleMonthView() }
+                    .padding(start = 12.dp)
+                    .padding(vertical = 16.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Icon(
@@ -304,9 +301,9 @@ private fun FeedHeader(
             Text(
                 modifier = Modifier.padding(horizontal = 16.dp),
                 text =
-                (if (state.isToday) "Today" else selectedDate.month.name)
-                    .lowercase()
-                    .replaceFirstChar { it.uppercase() },
+                    (if (state.isToday) "Today" else selectedDate.month.name)
+                        .lowercase()
+                        .replaceFirstChar { it.uppercase() },
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold,
             )

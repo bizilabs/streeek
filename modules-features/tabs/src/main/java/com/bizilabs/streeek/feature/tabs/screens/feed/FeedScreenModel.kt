@@ -172,6 +172,4 @@ class FeedScreenModel(
     fun onDismissNotificationModal() {
         mutableState.update { it.copy(isPermissionGranted = true) }
     }
-
-
 }
