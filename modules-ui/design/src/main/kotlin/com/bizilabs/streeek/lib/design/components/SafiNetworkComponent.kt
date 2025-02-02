@@ -54,14 +54,14 @@ private fun getNetworkData(isNetworkConnected: Boolean) =
         )
     }
 
-
 fun Context.openNetworkSettings() {
-    val intent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-        Intent(Settings.Panel.ACTION_INTERNET_CONNECTIVITY)
-    } else {
-        // Fallback for older Android versions
-        Intent(Settings.ACTION_WIRELESS_SETTINGS)
-    }
+    val intent =
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            Intent(Settings.Panel.ACTION_INTERNET_CONNECTIVITY)
+        } else {
+            // Fallback for older Android versions
+            Intent(Settings.ACTION_WIRELESS_SETTINGS)
+        }
     if (this is AppCompatActivity) {
         startActivityForResult(intent, 100)
     } else {
