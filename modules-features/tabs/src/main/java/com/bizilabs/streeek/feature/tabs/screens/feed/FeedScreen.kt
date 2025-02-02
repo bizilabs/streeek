@@ -39,9 +39,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -79,6 +76,7 @@ object FeedScreen : Screen {
             onClickDate = screenModel::onClickDate,
             onRefreshContributions = screenModel::onRefreshContributions,
             onClickToggleMonthView = screenModel::onClickToggleMonthView,
+            onDismissPermissionModal = screenModel::onDismissNotificationModal
         )
     }
 }
@@ -92,6 +90,7 @@ fun FeedScreenContent(
     onClickDate: (LocalDate) -> Unit,
     onRefreshContributions: () -> Unit,
     onClickToggleMonthView: () -> Unit,
+    onDismissPermissionModal: () -> Unit
 ) {
     val activity = LocalContext.current as ComponentActivity
 
@@ -101,7 +100,6 @@ fun FeedScreenContent(
             onRefresh = onRefreshContributions,
         )
 
-    var showPermissionRequest by remember { mutableStateOf(!state.isPermissionGranted) } // NEW STATE VARIABLE
 
 
     Scaffold(
@@ -153,7 +151,7 @@ fun FeedScreenContent(
 
             AnimatedVisibility(
                 modifier = Modifier.fillMaxWidth(),
-                visible = showPermissionRequest,
+                visible = state.isPermissionGranted.not(),
                 enter = scaleIn(),
                 exit = scaleOut(),
             ) {
@@ -162,7 +160,7 @@ fun FeedScreenContent(
                     description = "We can't seem to send you notifications. Please enable them for a better  experience",
                     icon = Icons.Filled.Notifications,
                     onCloseClick = {
-                        showPermissionRequest = false
+                        onDismissPermissionModal()
                     },
                     primaryAction =
                     SafiBottomValue("enable") {
