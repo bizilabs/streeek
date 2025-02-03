@@ -34,6 +34,6 @@ fun ComponentActivity.requestSinglePermission(
     permission: String,
     fallback: Activity.() -> Unit = {},
 ) {
-    val shouldShowRationale = ActivityCompat.shouldShowRequestPermissionRationale(this, permission)
-    if (shouldShowRationale.not()) fallback() else permissionLauncher.launch(permission)
+    val hasDeniedPermission = ActivityCompat.shouldShowRequestPermissionRationale(this, permission)
+    if (!hasDeniedPermission) permissionLauncher.launch(permission) else fallback()
 }
