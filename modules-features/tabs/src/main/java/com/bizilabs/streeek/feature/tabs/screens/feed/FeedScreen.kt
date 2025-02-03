@@ -51,6 +51,7 @@ import cafe.adriel.voyager.koin.getScreenModel
 import com.bizilabs.streeek.feature.tabs.screens.feed.components.FeedCalendarItemComponent
 import com.bizilabs.streeek.feature.tabs.screens.feed.components.FeedContributionItemComponent
 import com.bizilabs.streeek.feature.tabs.screens.feed.components.FeedMonthViewSection
+import com.bizilabs.streeek.lib.common.helpers.openAppSettings
 import com.bizilabs.streeek.lib.common.helpers.requestSinglePermission
 import com.bizilabs.streeek.lib.design.components.SafiBottomAction
 import com.bizilabs.streeek.lib.design.components.SafiBottomValue
@@ -155,7 +156,10 @@ fun FeedScreenContent(
                     icon = Icons.Filled.Notifications,
                     primaryAction =
                         SafiBottomValue("enable") {
-                            activity.requestSinglePermission(permission = android.Manifest.permission.POST_NOTIFICATIONS)
+                            activity.requestSinglePermission(
+                                permission = android.Manifest.permission.POST_NOTIFICATIONS,
+                                fallback = { openAppSettings() },
+                            )
                         },
                 )
             }
