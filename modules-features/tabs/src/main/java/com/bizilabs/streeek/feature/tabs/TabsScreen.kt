@@ -33,14 +33,16 @@ import com.bizilabs.streeek.lib.common.navigation.SharedScreen
 
 val featureTabs =
     screenModule {
-        register<SharedScreen.Tabs> { TabsScreen }
+        register<SharedScreen.Tabs> { params -> TabsScreen(tab = params.tab) }
+        register<SharedScreen.Tabs.Companion> { params -> TabsScreen(tab = params.tab) }
     }
 
-object TabsScreen : Screen {
+open class TabsScreen(val tab: String) : Screen {
     @Composable
     override fun Content() {
         val activity = LocalContext.current as Activity
         val screenModel: TabsScreenModel = getScreenModel()
+        screenModel.setTabFromNavigation(value = tab)
         val state by screenModel.state.collectAsStateWithLifecycle()
 
         BackHandler(enabled = true) {

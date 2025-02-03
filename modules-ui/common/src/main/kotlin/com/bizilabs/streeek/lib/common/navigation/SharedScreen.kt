@@ -9,7 +9,9 @@ sealed class SharedScreen : ScreenProvider {
 
     object Authentication : SharedScreen()
 
-    object Tabs : SharedScreen()
+    open class Tabs(val tab: String = "FEED") : SharedScreen() {
+        companion object : Tabs()
+    }
 
     object Setup : SharedScreen()
 

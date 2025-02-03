@@ -19,6 +19,7 @@ import com.bizilabs.streeek.feature.tabs.screens.feed.FeedModule
 import com.bizilabs.streeek.feature.tabs.screens.leaderboard.LeaderboardModule
 import com.bizilabs.streeek.feature.tabs.screens.notifications.ModuleNotifications
 import com.bizilabs.streeek.feature.tabs.screens.teams.TeamsListModule
+import com.bizilabs.streeek.lib.domain.helpers.tryOrNull
 import com.bizilabs.streeek.lib.domain.workers.startPeriodicAccountSyncWork
 import com.bizilabs.streeek.lib.domain.workers.startPeriodicDailySyncContributionsWork
 import com.bizilabs.streeek.lib.domain.workers.startPeriodicLeaderboardSyncWork
@@ -72,6 +73,7 @@ enum class Tabs {
 }
 
 data class TabsScreenState(
+    val hasSetTabFromNavigation: Boolean = false,
     val tab: Tabs = Tabs.FEED,
     val tabs: List<Tabs> = Tabs.entries.toList(),
 )
@@ -92,6 +94,12 @@ class TabsScreenModel(
             startPeriodicLeaderboardSyncWork()
             startPeriodicDailySyncContributionsWork()
         }
+    }
+
+    fun setTabFromNavigation(value: String) {
+        val tab = tryOrNull { Tabs.valueOf(value) } ?: return
+        if (state.value.hasSetTabFromNavigation) return
+        mutableState.update { it.copy(hasSetTabFromNavigation = true, tab = tab) }
     }
 
     fun onValueChangeTab(tab: Tabs) {
