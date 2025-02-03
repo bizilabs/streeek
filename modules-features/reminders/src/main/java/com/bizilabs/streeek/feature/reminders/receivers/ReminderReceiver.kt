@@ -7,7 +7,6 @@ import android.content.Intent
 import android.icu.util.Calendar
 import androidx.core.app.NotificationCompat
 import com.bizilabs.streeek.feature.reminders.manager.ReminderManager
-import com.bizilabs.streeek.feature.reminders.services.ReminderService
 import com.bizilabs.streeek.lib.common.notifications.AppNotificationChannel
 import com.bizilabs.streeek.lib.common.notifications.notify
 import com.bizilabs.streeek.lib.domain.helpers.asJson
@@ -15,7 +14,6 @@ import com.bizilabs.streeek.lib.domain.helpers.buildUri
 import com.bizilabs.streeek.lib.domain.models.notifications.NotificationResult
 import com.bizilabs.streeek.lib.resources.images.SafiDrawables
 import org.koin.java.KoinJavaComponent.inject
-import timber.log.Timber
 
 class ReminderReceiver : BroadcastReceiver() {
     private val manager: ReminderManager by inject(ReminderManager::class.java)
@@ -57,7 +55,6 @@ class ReminderReceiver : BroadcastReceiver() {
         day = intent.getIntExtra("reminder.day", -1)
         code = intent.getIntExtra("reminder.code", -1)
         val type = intent.getStringExtra("streeek.reminder.type")
-        Timber.d("STREEEKNOTIFAI sending broadcast $type")
         when (type) {
             "action" -> handleAction(intent = intent)
             "ring" -> handleRing(context = context)
@@ -66,18 +63,7 @@ class ReminderReceiver : BroadcastReceiver() {
     }
 
     private fun handleRing(context: Context) {
-        val intent = Intent(context, ReminderService::class.java)
-        intent.apply {
-            putExtra("streeek.receiver.type", "reminder")
-            putExtra("streeek.reminder.type", "ring")
-            putExtra("reminder.label", label)
-            putExtra("reminder.day", day)
-            putExtra("reminder.code", code)
-        }
-
-        context.startForegroundService(intent)
-
-        Timber.d("STREEEKNOTIFAI foreground service started 3: label>$label day>$day code>$code")
+        notify(context = context)
     }
 
     private fun handleAction(intent: Intent) {
