@@ -11,13 +11,13 @@ internal fun Project.configureKotlinAndroid(
     extension: CommonExtension<*, *, *, *, *>,
 ) {
     extension.apply {
-        compileSdk = AndroidSdk.compileSdk
+        compileSdk = AndroidSdk.COMPILE_SDK
         defaultConfig {
-            minSdk = AndroidSdk.minimumSdk
+            minSdk = AndroidSdk.MINIMUM_SDK
         }
         compileOptions {
-            sourceCompatibility = JavaVersion.VERSION_17
-            targetCompatibility = JavaVersion.VERSION_17
+            sourceCompatibility = JavaVersion.VERSION_21
+            targetCompatibility = JavaVersion.VERSION_21
         }
         buildFeatures {
             buildConfig = true
@@ -31,7 +31,7 @@ internal fun Project.configureKotlinAndroid(
                 "-opt-in=kotlinx.coroutines.FlowPreview",
                 "-opt-in=kotlin.Experimental",
             )
-            jvmTarget = JavaVersion.VERSION_17.toString()
+            jvmTarget = JavaVersion.VERSION_21.toString()
         }
     }
 }

@@ -1,42 +1,42 @@
 [versions]
 # gradle plugins
-gradle-plugin-android = "8.2.2"
+gradle-plugin-android = "8.8.0"
 gradle-plugin-firebase-crashlytics = "3.0.2"
 gradle-plugin-firebase-performance = "1.4.2"
 gradle-plugin-firebase-app-distribution = "4.0.0"
 gradle-plugin-google-services = "4.4.2"
 
 # kotlin libraries
-kotlin = "2.0.21"
+kotlin = "2.1.10"
 # Kotlinx
-kotlinx-coroutines = "1.9.0"
-kotlinx-serialization = "1.7.3"
+kotlinx-coroutines = "1.10.1"
+kotlinx-serialization = "1.8.0"
 kotlinx-datetime = "0.6.0"
 ktor = "3.0.0"
 
 # android libraries
 androidx-splash-screen = "1.0.1"
 androidx-core-ktx = "1.15.0"
-androidx-compose-material = "1.7.6"
+androidx-compose-material = "1.7.7"
 androidx-work-manager = "2.10.0"
 androidx-room = "2.6.1"
-androidx-datastore = "1.1.1"
+androidx-datastore = "1.1.2"
 androidx-lifecycle-runtime-ktx = "2.8.7"
 androidx-appcompat = "1.7.0"
 androidx-palette = "1.0.0"
 androidx-security-crypto = "1.0.0"
-androidx-paging = "3.3.2"
-androidx-activity = "1.9.2"
+androidx-paging = "3.3.5"
+androidx-activity = "1.10.0"
 
 # compose
-compose-bom = "2024.11.00"
-compose-tv-foundation = "1.0.0-alpha11"
+compose-bom = "2025.01.01"
+compose-tv-foundation = "1.0.0-alpha12"
 compose-tv-material = "1.0.0"
-androidx-activity-compose = "1.9.3"
+androidx-activity-compose = "1.10.0"
 
 # google libraries
-firebase_bom = "33.7.0"
-ksp = "2.0.21-1.0.27" # always match with kotlin version
+firebase_bom = "33.8.0"
+ksp = "2.1.0-1.0.29" # always match with kotlin version
 
 # saket
 saket-swipe = "1.2.0"
@@ -44,8 +44,8 @@ saket-cascade = "2.3.0"
 
 #testing
 testing-junit = "4.13.2"
-androidx-test-ext-junit = "1.1.5"
-androidx-test-espresso = "3.5.1"
+androidx-test-ext-junit = "1.2.1"
+androidx-test-espresso = "3.6.1"
 
 # other libraries
 koin-bom = "4.0.0"
@@ -55,7 +55,7 @@ com-google-android-material-material = "1.12.0"
 okhttp-bom = "4.12.0"
 voyager = "1.0.0"
 lottie = "6.6.0"
-media3 = "1.5.0"
+media3 = "1.5.1"
 junit = "4.13.2"
 compose-qr = "1.0.1"
 bcrypt = "0.10.2"
@@ -65,7 +65,7 @@ supabase-bom = "3.0.3"
 kalendar = "1.3.2"
 calendar = "2.6.1"
 chucker = "4.1.0"
-foundation-android = "1.7.5"
+foundation-android = "1.7.7"
 ktlint = "12.1.2"
 confetti = "2.0.5"
 updater = "2.1.0"

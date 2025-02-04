@@ -1,10 +1,6 @@
 import com.android.build.api.dsl.ApplicationExtension
-import extensions.androidTestImplementation
-import extensions.api
-import extensions.getBundle
 import extensions.getLibrary
 import extensions.implementation
-import extensions.testImplementation
 import helpers.configureKotlinAndroid
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -12,7 +8,6 @@ import org.gradle.api.artifacts.VersionCatalogsExtension
 import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.getByType
-import org.gradle.kotlin.dsl.kotlin
 
 class ApplicationConventionPlugin : Plugin<Project> {
     override fun apply(target: Project) {
@@ -23,7 +18,7 @@ class ApplicationConventionPlugin : Plugin<Project> {
             }
             extensions.configure<ApplicationExtension> {
                 configureKotlinAndroid(this)
-                defaultConfig.targetSdk = AndroidSdk.targetSdk
+                defaultConfig.targetSdk = AndroidSdk.TARGET_SDK
                 buildTypes {
                     debug {
                         applicationIdSuffix = ".debug"

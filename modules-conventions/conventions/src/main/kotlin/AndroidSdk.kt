@@ -1,5 +1,5 @@
 object AndroidSdk {
-    const val targetSdk = 34
-    const val compileSdk = 35
-    const val minimumSdk = 28
+    const val TARGET_SDK = 35
+    const val COMPILE_SDK = 35
+    const val MINIMUM_SDK = 28
 }
