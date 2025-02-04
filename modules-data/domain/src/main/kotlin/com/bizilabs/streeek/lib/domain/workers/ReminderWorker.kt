@@ -14,9 +14,10 @@ import java.util.UUID
 
 fun Context.startReminderWork(): String {
     val uuid = UUID.randomUUID()
-    val parameters = Data.Builder()
-        .putBoolean("reminder.playing", true)
-        .build()
+    val parameters =
+        Data.Builder()
+            .putBoolean("reminder.playing", true)
+            .build()
 
     val request =
         OneTimeWorkRequestBuilder<ReminderWorker>()
@@ -30,9 +31,10 @@ fun Context.startReminderWork(): String {
 }
 
 fun Context.stopReminderWork() {
-    val parameters = Data.Builder()
-        .putBoolean("reminder.playing", false)
-        .build()
+    val parameters =
+        Data.Builder()
+            .putBoolean("reminder.playing", false)
+            .build()
 
     val request =
         OneTimeWorkRequestBuilder<ReminderWorker>()
@@ -57,8 +59,11 @@ class ReminderWorker(
     override suspend fun doWork(): Result {
         Timber.d("Muchas is starting work")
         val playing = params.inputData.getBoolean("reminder.playing", false)
-        if (playing) playReminderSound()
-        else stopReminderSound()
+        if (playing) {
+            playReminderSound()
+        } else {
+            stopReminderSound()
+        }
         return Result.success()
     }
 
@@ -76,5 +81,4 @@ class ReminderWorker(
         if (player.isPlaying) player.stop()
         player.release()
     }
-
 }

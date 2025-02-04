@@ -5,7 +5,6 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.icu.util.Calendar
-import android.media.MediaPlayer
 import androidx.core.app.NotificationCompat
 import com.bizilabs.streeek.feature.reminders.manager.ReminderManager
 import com.bizilabs.streeek.lib.common.notifications.AppNotificationChannel
@@ -17,7 +16,6 @@ import com.bizilabs.streeek.lib.domain.workers.startReminderWork
 import com.bizilabs.streeek.lib.domain.workers.stopReminderWork
 import com.bizilabs.streeek.lib.resources.images.SafiDrawables
 import org.koin.java.KoinJavaComponent.inject
-import java.util.UUID
 
 class ReminderReceiver : BroadcastReceiver() {
     private val manager: ReminderManager by inject(ReminderManager::class.java)
