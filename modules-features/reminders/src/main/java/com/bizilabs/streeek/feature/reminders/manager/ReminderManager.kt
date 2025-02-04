@@ -35,9 +35,7 @@ internal class ReminderManagerImpl(
     val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
     override fun createAlarm(reminder: ReminderDomain) {
-        Timber.d("STREEEKNOTIFAI $reminder")
         if (reminder.enabled.not()) return
-        Timber.d("STREEEKNOTIFAI ${reminder.enabled}")
         reminder.repeat.forEach { dayOfWeek ->
             val calendar =
                 getNextAlarmTime(
