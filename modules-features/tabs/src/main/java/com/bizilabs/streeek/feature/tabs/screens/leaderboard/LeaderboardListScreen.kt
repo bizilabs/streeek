@@ -104,7 +104,7 @@ fun LeaderboardListScreenContent(
             initialPage =
                 state.leaderboards.indexOf(state.leaderboard).takeIf { it >= 0 }
                     ?: 0,
-        ) { 3 }
+        ) { state.leaderboards.count() }
 
     // Custom fling behavior for smooth swiping
     val flingBehavior = PagerDefaults.flingBehavior(state = pagerState)
