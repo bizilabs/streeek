@@ -9,6 +9,7 @@ import android.media.RingtoneManager
 import android.os.Build
 import android.os.IBinder
 import android.util.Log
+import com.bizilabs.streeek.lib.resources.SafiResources
 import timber.log.Timber
 
 class ReminderService : Service() {
@@ -16,27 +17,17 @@ class ReminderService : Service() {
 
     override fun onCreate() {
         super.onCreate()
-
-        Timber.d("Reminder Service oncreate $mediaPlayer")
-        mediaPlayer =
-            MediaPlayer().apply {
-                setDataSource(
-                    this@ReminderService,
-                    RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM),
+        Timber.d("Muchas received oncreate")
+        mediaPlayer = MediaPlayer
+            .create(this, SafiResources.Audio.reminder)
+            .apply {
+                setVolume(100f, 100f)
+                setAudioAttributes(
+                    AudioAttributes.Builder()
+                        .setUsage(AudioAttributes.USAGE_ALARM)
+                        .build(),
                 )
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    setAudioAttributes(
-                        AudioAttributes.Builder()
-                            .setUsage(AudioAttributes.USAGE_ALARM)
-                            .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
-                            .build(),
-                    )
-                } else {
-                    @Suppress("DEPRECATION")
-                    setAudioStreamType(AudioManager.STREAM_ALARM)
-                }
                 isLooping = true
-                prepare()
             }
     }
 
@@ -45,17 +36,19 @@ class ReminderService : Service() {
         flags: Int,
         startId: Int,
     ): Int {
-        Timber.d("Reminder Service onstart $mediaPlayer")
+        Timber.d("Muchas received onstart")
         mediaPlayer?.start()
         return START_STICKY
     }
 
     override fun onBind(p0: Intent?): IBinder? {
+        Timber.d("Muchas received onbind")
         return null
     }
 
     override fun onDestroy() {
         super.onDestroy()
+        Timber.d("Muchas received on destroy")
         mediaPlayer?.apply {
             if (isPlaying) stop()
             release()

@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.icu.util.Calendar
+import android.media.MediaPlayer
 import androidx.core.app.NotificationCompat
 import com.bizilabs.streeek.feature.reminders.manager.ReminderManager
 import com.bizilabs.streeek.lib.common.notifications.AppNotificationChannel
@@ -12,8 +13,11 @@ import com.bizilabs.streeek.lib.common.notifications.notify
 import com.bizilabs.streeek.lib.domain.helpers.asJson
 import com.bizilabs.streeek.lib.domain.helpers.buildUri
 import com.bizilabs.streeek.lib.domain.models.notifications.NotificationResult
+import com.bizilabs.streeek.lib.domain.workers.startReminderWork
+import com.bizilabs.streeek.lib.domain.workers.stopReminderWork
 import com.bizilabs.streeek.lib.resources.images.SafiDrawables
 import org.koin.java.KoinJavaComponent.inject
+import java.util.UUID
 
 class ReminderReceiver : BroadcastReceiver() {
     private val manager: ReminderManager by inject(ReminderManager::class.java)
@@ -56,7 +60,7 @@ class ReminderReceiver : BroadcastReceiver() {
         code = intent.getIntExtra("reminder.code", -1)
         val type = intent.getStringExtra("streeek.reminder.type")
         when (type) {
-            "action" -> handleAction(intent = intent)
+            "action" -> context.handleAction(intent = intent)
             "ring" -> handleRing(context = context)
             else -> {}
         }
@@ -64,17 +68,20 @@ class ReminderReceiver : BroadcastReceiver() {
 
     private fun handleRing(context: Context) {
         notify(context = context)
+        context.stopReminderWork()
+        context.startReminderWork()
     }
 
-    private fun handleAction(intent: Intent) {
+    private fun Context.handleAction(intent: Intent) {
         val action = intent.action ?: return
+        stopReminderWork()
         when (action) {
             ReminderActions.SNOOZE.action -> snoozeReminder()
             ReminderActions.CANCEL.action -> cancelReminder()
         }
     }
 
-    private fun snoozeReminder() {
+    private fun Context.snoozeReminder() {
         val calendar = Calendar.getInstance()
         calendar.timeInMillis = calendar.timeInMillis + 30 * 60 * 1000
         manager.cancelAlarm(label, day.toInt(), code.toInt())
@@ -86,7 +93,7 @@ class ReminderReceiver : BroadcastReceiver() {
         )
     }
 
-    private fun cancelReminder() {
+    private fun Context.cancelReminder() {
         manager.cancelAlarm(label = label, day = day.toInt(), code = code.toInt())
         val calendar = Calendar.getInstance()
         calendar.timeInMillis = calendar.timeInMillis + 7 * 24 * 60 * 60 * 1000

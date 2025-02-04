@@ -18,6 +18,7 @@ import com.bizilabs.streeek.feature.setup.setupModule
 import com.bizilabs.streeek.feature.tabs.FeatureTabsModule
 import com.bizilabs.streeek.feature.team.FeatureTeamModule
 import com.bizilabs.streeek.feature.updater.AppUpdaterModule
+import com.bizilabs.streeek.lib.domain.workers.ReminderWorker
 import com.bizilabs.streeek.lib.domain.workers.SaveFCMTokenWork
 import com.bizilabs.streeek.lib.domain.workers.SyncAccountWork
 import com.bizilabs.streeek.lib.domain.workers.SyncContributionsWork
@@ -72,4 +73,5 @@ val PresentationModule =
         workerOf(::SyncLeaderboardWork)
         workerOf(::SyncContributionsWork)
         workerOf(::SyncDailyContributionsWork)
+        workerOf(::ReminderWorker)
     }
