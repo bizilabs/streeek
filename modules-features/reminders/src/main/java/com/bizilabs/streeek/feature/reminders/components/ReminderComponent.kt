@@ -48,7 +48,7 @@ fun ReminderComponent(
         onClick = {
             onClick(reminder)
         },
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.onSurface),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.onBackground.copy(0.2f)),
         colors =
             CardDefaults.cardColors(
                 containerColor = containerColor,
