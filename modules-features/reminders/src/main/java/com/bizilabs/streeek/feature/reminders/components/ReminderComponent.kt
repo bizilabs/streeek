@@ -29,6 +29,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.bizilabs.streeek.lib.design.theme.SafiTheme
+import com.bizilabs.streeek.lib.domain.extensions.asMinimumTwoValues
 import com.bizilabs.streeek.lib.domain.models.ReminderDomain
 import java.time.DayOfWeek
 
@@ -69,7 +70,7 @@ fun ReminderComponent(
             }
             Text(
                 modifier = Modifier.padding(vertical = 8.dp),
-                text = "${reminder.hour}:${reminder.minute}",
+                text = "${reminder.hour.toLong().asMinimumTwoValues()}:${reminder.minute.toLong().asMinimumTwoValues()}",
                 style = MaterialTheme.typography.displayMedium,
                 fontWeight = FontWeight.Bold,
             )
@@ -130,8 +131,8 @@ private fun ReminderComponentPreview() {
                         ReminderDomain(
                             label = "Oontz",
                             enabled = false,
-                            hour = 12,
-                            minute = 0,
+                            hour = 1,
+                            minute = 4,
                             repeat = listOf(DayOfWeek.MONDAY, DayOfWeek.TUESDAY),
                         ),
                 ) { }
@@ -141,8 +142,8 @@ private fun ReminderComponentPreview() {
                         ReminderDomain(
                             label = "Oontz",
                             enabled = false,
-                            hour = 12,
-                            minute = 0,
+                            hour = 10,
+                            minute = 18,
                             repeat = listOf(DayOfWeek.MONDAY, DayOfWeek.TUESDAY),
                         ),
                 ) { }
@@ -152,8 +153,8 @@ private fun ReminderComponentPreview() {
                         ReminderDomain(
                             label = "Oontz",
                             enabled = true,
-                            hour = 12,
-                            minute = 0,
+                            hour = 21,
+                            minute = 56,
                             repeat = listOf(DayOfWeek.MONDAY, DayOfWeek.TUESDAY),
                         ),
                 ) { }
