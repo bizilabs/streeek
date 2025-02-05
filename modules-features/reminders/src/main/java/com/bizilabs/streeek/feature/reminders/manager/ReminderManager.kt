@@ -5,9 +5,9 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import com.bizilabs.streeek.feature.reminders.receivers.ReminderReceiver
+import com.bizilabs.streeek.lib.domain.managers.notifications.NotificationCode
 import com.bizilabs.streeek.lib.domain.models.ReminderDomain
 import kotlinx.datetime.DayOfWeek
-import timber.log.Timber
 import java.util.Calendar
 
 interface ReminderManager {
@@ -16,8 +16,7 @@ interface ReminderManager {
     fun createAlarm(
         label: String,
         day: Int,
-        hour: Int,
-        minute: Int,
+        millis: Long,
     )
 
     fun cancelAlarm(reminder: ReminderDomain)
@@ -56,22 +55,19 @@ internal class ReminderManagerImpl(
     override fun createAlarm(
         label: String,
         day: Int,
-        hour: Int,
-        minute: Int,
+        millis: Long,
     ) {
-        val calendar =
-            Calendar.getInstance().apply {
-                timeInMillis = System.currentTimeMillis()
-                set(Calendar.HOUR_OF_DAY, hour)
-                set(Calendar.MINUTE, minute)
-                set(Calendar.SECOND, 0)
-                set(Calendar.MILLISECOND, 0)
-            }
+        val calendar = Calendar.getInstance()
+        calendar.timeInMillis = millis
+        calendar.apply {
+            set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
+        }
         val alarmIntent =
             createPendingIntent(
                 label = label,
                 day = day,
-                requestCode = System.currentTimeMillis().toInt(),
+                requestCode = NotificationCode.REMINDER.code,
             )
         alarmManager.set(
             AlarmManager.RTC_WAKEUP,
@@ -136,7 +132,7 @@ internal class ReminderManagerImpl(
         return createPendingIntent(
             label = reminder.label,
             day = dayOfWeek.value,
-            requestCode = reminder.hashCode() + dayOfWeek.value,
+            requestCode = NotificationCode.REMINDER.code,
         )
     }
 
@@ -147,15 +143,12 @@ internal class ReminderManagerImpl(
     ): PendingIntent {
         val intent =
             Intent(context, ReminderReceiver::class.java).apply {
-                action = "com.example.alarm.ACTION_REMINDER"
                 putExtra("streeek.receiver.type", "reminder")
                 putExtra("streeek.reminder.type", "ring")
                 putExtra("reminder.label", label)
                 putExtra("reminder.day", day)
                 putExtra("reminder.code", requestCode)
             }
-
-        Timber.d("STREEEKNOTIFAI sending broadcast")
         return PendingIntent.getBroadcast(
             context,
             requestCode,

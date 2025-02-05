@@ -7,7 +7,6 @@ import cafe.adriel.voyager.navigator.Navigator
 import com.bizilabs.streeek.feature.landing.LandingScreen
 import com.bizilabs.streeek.feature.tabs.TabsScreen
 import com.bizilabs.streeek.lib.design.helpers.SafiBarColors
-import com.bizilabs.streeek.lib.domain.models.notifications.NotificationResult
 
 @Composable
 fun MainNavigation(onValueChangeBarColors: (SafiBarColors) -> Unit) {
@@ -43,9 +42,3 @@ fun Screen.getBarColors(): SafiBarColors {
         }
     }
 }
-
-fun NotificationResult?.asNavigationDestination(): Screen =
-    when (this) {
-        null -> LandingScreen
-        else -> LandingScreen
-    }

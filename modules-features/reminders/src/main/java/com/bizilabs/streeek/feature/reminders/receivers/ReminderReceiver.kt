@@ -5,7 +5,10 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.icu.util.Calendar
+import android.media.MediaPlayer
+import android.os.Build
 import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import com.bizilabs.streeek.feature.reminders.manager.ReminderManager
 import com.bizilabs.streeek.lib.common.notifications.AppNotificationChannel
 import com.bizilabs.streeek.lib.common.notifications.notify
@@ -16,6 +19,7 @@ import com.bizilabs.streeek.lib.domain.workers.startReminderWork
 import com.bizilabs.streeek.lib.domain.workers.stopReminderWork
 import com.bizilabs.streeek.lib.resources.images.SafiDrawables
 import org.koin.java.KoinJavaComponent.inject
+import timber.log.Timber
 
 class ReminderReceiver : BroadcastReceiver() {
     private val manager: ReminderManager by inject(ReminderManager::class.java)
@@ -50,15 +54,30 @@ class ReminderReceiver : BroadcastReceiver() {
         context: Context?,
         intent: Intent?,
     ) {
+        Timber.d("Reminder Receiver got their attention")
         if (intent == null) return
         if (context == null) return
         val isReminder = intent.getStringExtra("streeek.receiver.type").equals("reminder")
+        Timber.d("Is a reminder type -> $isReminder")
         if (isReminder.not()) return
         label = intent.getStringExtra("reminder.label") ?: ""
         day = intent.getIntExtra("reminder.day", -1)
         code = intent.getIntExtra("reminder.code", -1)
         val type = intent.getStringExtra("streeek.reminder.type")
+        Timber.d(
+            "Reminder Values -> ${buildString {
+                append("\n")
+                append("label = $label")
+                append("\n")
+                append("day = $day")
+                append("\n")
+                append("code = $code")
+                append("\n")
+                append("type = $type")
+            }}",
+        )
         with(context) {
+            stopReminderWork()
             when (type) {
                 "action" -> handleAction(intent = intent)
                 "ring" -> handleRing()
@@ -69,40 +88,55 @@ class ReminderReceiver : BroadcastReceiver() {
 
     private fun Context.handleRing() {
         notify()
-        stopReminderWork()
         startReminderWork()
     }
 
     private fun Context.handleAction(intent: Intent) {
         val action = intent.action ?: return
-        stopReminderWork()
+        Timber.d("Actioning on the stuff -> $action")
+        cancelNotifications()
+        stopPlayingAllReminders()
         when (action) {
             ReminderActions.SNOOZE.action -> snoozeReminder()
             else -> cancelReminder()
         }
     }
 
+    private fun Context.cancelNotifications()  {
+        Timber.d("Cancelling all notifications")
+        NotificationManagerCompat.from(this).cancelAll()
+    }
+
+    private fun Context.stopPlayingAllReminders()  {
+        val player =
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+                MediaPlayer(this)
+            } else {
+                MediaPlayer()
+            }
+        player.stop()
+        player.release()
+    }
+
     private fun Context.snoozeReminder() {
+        Timber.d("Snoozing Reminder")
         val calendar = Calendar.getInstance()
-        calendar.timeInMillis = calendar.timeInMillis + 30 * 60 * 1000
-        manager.cancelAlarm(label, day.toInt(), code.toInt())
+        calendar.timeInMillis = calendar.timeInMillis + (1 * 60 * 1000)
         manager.createAlarm(
             label = label,
             day = day.toInt(),
-            hour = calendar.get(Calendar.HOUR_OF_DAY),
-            minute = calendar.get(Calendar.MINUTE),
+            millis = calendar.timeInMillis,
         )
     }
 
     private fun Context.cancelReminder() {
-        manager.cancelAlarm(label = label, day = day.toInt(), code = code.toInt())
+        Timber.d("Cancelling Reminder")
         val calendar = Calendar.getInstance()
-        calendar.timeInMillis = calendar.timeInMillis + 7 * 24 * 60 * 60 * 1000
+        calendar.timeInMillis = calendar.timeInMillis + (7 * 24 * 60 * 60 * 1000)
         manager.createAlarm(
             label = label,
             day = day.toInt(),
-            hour = calendar.get(Calendar.HOUR_OF_DAY),
-            minute = calendar.get(Calendar.MINUTE),
+            millis = calendar.timeInMillis,
         )
     }
 
@@ -125,7 +159,7 @@ class ReminderReceiver : BroadcastReceiver() {
         val actions =
             ReminderActions.entries.filter { it != ReminderActions.DELETE }.map { value ->
                 val intent =
-                    Intent(this, this::class.java).apply {
+                    Intent(this, ReminderReceiver::class.java).apply {
                         putExtra("streeek.receiver.type", "reminder")
                         putExtra("streeek.reminder.type", "action")
                         putExtra("reminder.label", label)
@@ -136,7 +170,7 @@ class ReminderReceiver : BroadcastReceiver() {
                 val pendingIntent: PendingIntent =
                     PendingIntent.getBroadcast(
                         this,
-                        System.currentTimeMillis().toInt(),
+                        code.toInt(),
                         intent,
                         PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
                     )
@@ -163,7 +197,7 @@ class ReminderReceiver : BroadcastReceiver() {
                         type = "reminder",
                         uri =
                             buildUri(
-                                "type" to "navigation",
+                                "action" to "navigate",
                                 "destination" to "REMINDERS",
                                 "label" to label,
                                 "day" to day,
@@ -175,7 +209,7 @@ class ReminderReceiver : BroadcastReceiver() {
         val contentIntent =
             PendingIntent.getActivity(
                 this,
-                0,
+                code.toInt(),
                 intent,
                 PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
             )
@@ -184,7 +218,7 @@ class ReminderReceiver : BroadcastReceiver() {
 
     private fun Context.getSwipeIntent(): PendingIntent? {
         val intent =
-            Intent(this, this::class.java).apply {
+            Intent(this, ReminderReceiver::class.java).apply {
                 putExtra("streeek.receiver.type", "reminder")
                 putExtra("streeek.reminder.type", "action")
                 putExtra("reminder.label", label)
@@ -194,7 +228,7 @@ class ReminderReceiver : BroadcastReceiver() {
             }
         return PendingIntent.getBroadcast(
             this,
-            System.currentTimeMillis().toInt(),
+            code.toInt(),
             intent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
         )

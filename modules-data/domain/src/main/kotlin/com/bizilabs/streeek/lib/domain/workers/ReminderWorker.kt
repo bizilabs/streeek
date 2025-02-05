@@ -2,6 +2,7 @@ package com.bizilabs.streeek.lib.domain.workers
 
 import android.content.Context
 import android.media.MediaPlayer
+import android.os.Build
 import androidx.work.CoroutineWorker
 import androidx.work.Data
 import androidx.work.OneTimeWorkRequestBuilder
@@ -57,7 +58,7 @@ class ReminderWorker(
     }
 
     override suspend fun doWork(): Result {
-        Timber.d("Muchas is starting work")
+        Timber.d("Staring Reminder work")
         val playing = params.inputData.getBoolean("reminder.playing", false)
         if (playing) {
             playReminderSound()
@@ -68,16 +69,26 @@ class ReminderWorker(
     }
 
     private suspend fun playReminderSound() {
+        Timber.d("Start playing sound for Reminder Work")
         val player = MediaPlayer.create(context, SafiResources.Audio.reminder)
+        player.apply {
+            isLooping = true
+        }
         player.start()
-        delay(1000 * 60 * 30)
+        delay(1000 * 60 * 5)
         player.stop()
         player.release()
     }
 
     private fun stopReminderSound() {
-        val player = MediaPlayer()
-        if (player.isPlaying) player.stop()
+        Timber.d("Stop playing sound for Reminder Work")
+        val player =
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+                MediaPlayer(context)
+            } else {
+                MediaPlayer()
+            }
+        player.stop()
         player.release()
     }
 }

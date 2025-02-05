@@ -26,6 +26,7 @@ import com.bizilabs.streeek.lib.domain.workers.startPeriodicLeaderboardSyncWork
 import com.bizilabs.streeek.lib.domain.workers.startPeriodicLevelsSyncWork
 import com.bizilabs.streeek.lib.domain.workers.startPeriodicTeamsSyncWork
 import com.bizilabs.streeek.lib.domain.workers.startSaveFCMTokenWork
+import com.bizilabs.streeek.lib.domain.workers.stopReminderWork
 import kotlinx.coroutines.flow.update
 import org.koin.dsl.module
 
@@ -87,6 +88,7 @@ class TabsScreenModel(
 
     private fun startWorkers() {
         with(context) {
+            stopReminderWork()
             startSaveFCMTokenWork()
             startPeriodicTeamsSyncWork()
             startPeriodicLevelsSyncWork()

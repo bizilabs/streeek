@@ -7,11 +7,14 @@ import cafe.adriel.voyager.core.registry.rememberScreen
 import cafe.adriel.voyager.core.screen.Screen
 import com.bizilabs.streeek.lib.common.navigation.SharedScreen
 import com.bizilabs.streeek.lib.domain.models.notifications.asNotificationResult
+import timber.log.Timber
 
 @Composable
 fun getNavigationDestinationFromURI(): List<Screen> {
+    Timber.d("Kawabanga -> notification result")
     val intent = (LocalContext.current as? ComponentActivity)?.intent ?: return emptyList()
     val result = intent.asNotificationResult() ?: return emptyList()
+    Timber.d("Kawabanga -> $result")
     val uri = result.uri
     if (uri.isBlank()) return emptyList()
     val map = uri.asIntentExtraArguments()
@@ -68,6 +71,7 @@ private fun getNavigationDestination(map: Map<String, String>): List<Screen> {
         }
 
         "REMINDERS" -> {
+            Timber.d("Navigation from URI received ->")
             val label = map["label"]
             val day = map["day"]?.toIntOrNull()
             val code = map["code"]?.toIntOrNull()
@@ -75,12 +79,12 @@ private fun getNavigationDestination(map: Map<String, String>): List<Screen> {
                 listOf(
                     rememberScreen(SharedScreen.Tabs(tab = "PROFILE")),
                     rememberScreen(SharedScreen.Reminders),
-                    rememberScreen(
-                        SharedScreen.Reminder(label = label, day = day, code = code),
-                    ),
+                    rememberScreen(SharedScreen.Reminder(label = label, day = day, code = code)),
                 )
             } else {
                 listOf(rememberScreen(SharedScreen.Tabs(tab = "PROFILE")))
+            }.also {
+                Timber.d("Navigation from URI parsed -> $it")
             }
         }
 
