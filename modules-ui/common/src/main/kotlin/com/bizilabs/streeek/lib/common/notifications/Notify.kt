@@ -33,6 +33,7 @@ fun Context.notify(
     channel: AppNotificationChannel,
     imageUrl: Uri? = null,
     contentIntent: PendingIntent? = null,
+    swipeIntent: PendingIntent? = null,
     actions: List<NotificationCompat.Action> = emptyList(),
 ) {
     createNotificationAndSend(
@@ -42,6 +43,7 @@ fun Context.notify(
         imageUrl = imageUrl,
         pendingIntent = contentIntent,
         actions = actions,
+        swipeIntent = swipeIntent,
     )
 }
 
@@ -52,16 +54,18 @@ private fun Context.createNotificationAndSend(
     channel: AppNotificationChannel,
     imageUrl: Uri? = null,
     pendingIntent: PendingIntent? = null,
+    swipeIntent: PendingIntent? = null,
     actions: List<NotificationCompat.Action> = emptyList(),
 ) {
     val notification =
         createNotification(
-            pendingIntent = pendingIntent,
+            clickIntent = pendingIntent,
             imageUrl = imageUrl,
             channel = channel,
             title = title,
             body = body,
             actions = actions,
+            swipeIntent = swipeIntent,
         )
 
     val id = System.currentTimeMillis().toInt()
@@ -72,11 +76,12 @@ private fun Context.createNotificationAndSend(
 }
 
 fun Context.createNotification(
-    pendingIntent: PendingIntent?,
-    imageUrl: Uri?,
-    channel: AppNotificationChannel,
     title: String,
     body: String,
+    clickIntent: PendingIntent?,
+    swipeIntent: PendingIntent?,
+    imageUrl: Uri?,
+    channel: AppNotificationChannel,
     actions: List<NotificationCompat.Action>,
 ): Notification {
     val intent =
@@ -89,7 +94,7 @@ fun Context.createNotification(
         }
 
     val contentIntent =
-        pendingIntent ?: PendingIntent.getActivity(
+        clickIntent ?: PendingIntent.getActivity(
             this,
             0,
             intent,
@@ -117,10 +122,11 @@ fun Context.createNotification(
             .setAutoCancel(true)
             .setGroup(channel.group.id)
             .setContentIntent(contentIntent)
+            .setDeleteIntent(swipeIntent)
             .setSound(sound)
             .setPriority(NotificationCompat.PRIORITY_MAX)
             .setCategory(NotificationCompat.CATEGORY_ALARM)
-            .setFullScreenIntent(pendingIntent, true)
+            .setFullScreenIntent(clickIntent, true)
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .apply {
                 actions.forEach { addAction(it) }

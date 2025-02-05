@@ -67,6 +67,23 @@ private fun getNavigationDestination(map: Map<String, String>): List<Screen> {
             }
         }
 
+        "REMINDERS" -> {
+            val label = map["label"]
+            val day = map["day"]?.toIntOrNull()
+            val code = map["code"]?.toIntOrNull()
+            if (label != null && day != null && code != null) {
+                listOf(
+                    rememberScreen(SharedScreen.Tabs(tab = "PROFILE")),
+                    rememberScreen(SharedScreen.Reminders),
+                    rememberScreen(
+                        SharedScreen.Reminder(label = label, day = day, code = code),
+                    ),
+                )
+            } else {
+                listOf(rememberScreen(SharedScreen.Tabs(tab = "PROFILE")))
+            }
+        }
+
         else -> emptyList()
     }
 }
