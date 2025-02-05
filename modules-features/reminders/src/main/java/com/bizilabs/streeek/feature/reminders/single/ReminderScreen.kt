@@ -48,10 +48,7 @@ class ReminderScreen(val label: String, val day: Int, val code: Int) : Screen {
 }
 
 @Composable
-fun ReminderScreenContent(
-    onDismiss: () -> Unit,
-) {
-
+fun ReminderScreenContent(onDismiss: () -> Unit) {
     var dragOffset by remember { mutableFloatStateOf(0f) }
     val dismissThreshold = -200f
 
@@ -63,25 +60,25 @@ fun ReminderScreenContent(
 
     Column(
         modifier =
-        Modifier
-            .fillMaxSize()
-            .background(Color.White)
-            .offset(y = animatedOffset.dp)
-            .pointerInput(Unit) {
-                detectVerticalDragGestures(
-                    onVerticalDrag = { _, dragAmount ->
-                        dragOffset =
-                            (dragOffset + dragAmount).coerceAtMost(0f)
-                    },
-                    onDragEnd = {
-                        if (dragOffset < dismissThreshold) {
-                            onDismiss()
-                        } else {
-                            dragOffset = 0f
-                        }
-                    },
-                )
-            },
+            Modifier
+                .fillMaxSize()
+                .background(Color.White)
+                .offset(y = animatedOffset.dp)
+                .pointerInput(Unit) {
+                    detectVerticalDragGestures(
+                        onVerticalDrag = { _, dragAmount ->
+                            dragOffset =
+                                (dragOffset + dragAmount).coerceAtMost(0f)
+                        },
+                        onDragEnd = {
+                            if (dragOffset < dismissThreshold) {
+                                onDismiss()
+                            } else {
+                                dragOffset = 0f
+                            }
+                        },
+                    )
+                },
         verticalArrangement = Arrangement.SpaceBetween,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
@@ -113,8 +110,8 @@ fun ReminderScreenContent(
                 colors = ButtonDefaults.buttonColors(containerColor = Color.Black),
                 shape = CircleShape,
                 modifier =
-                Modifier
-                    .clip(RoundedCornerShape(50)),
+                    Modifier
+                        .clip(RoundedCornerShape(50)),
             ) {
                 Text(
                     text = "Snooze",
@@ -128,8 +125,8 @@ fun ReminderScreenContent(
 
         Column(
             modifier =
-            Modifier
-                .padding(bottom = 32.dp),
+                Modifier
+                    .padding(bottom = 32.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Icon(

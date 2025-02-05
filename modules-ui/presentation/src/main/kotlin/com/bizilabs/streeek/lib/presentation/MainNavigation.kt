@@ -5,7 +5,6 @@ import androidx.compose.runtime.Composable
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.Navigator
 import com.bizilabs.streeek.feature.landing.LandingScreen
-import com.bizilabs.streeek.feature.reminders.single.ReminderScreen
 import com.bizilabs.streeek.feature.tabs.TabsScreen
 import com.bizilabs.streeek.lib.design.helpers.SafiBarColors
 import com.bizilabs.streeek.lib.domain.models.notifications.NotificationResult
