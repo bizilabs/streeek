@@ -1,21 +1,26 @@
 package com.bizilabs.streeek.feature.reminders.components
 
 import android.content.res.Configuration
-import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material3.Button
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TimePicker
+import androidx.compose.material3.TimePickerDefaults
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import kotlinx.datetime.Clock
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
+import androidx.compose.ui.unit.dp
+import com.bizilabs.streeek.lib.design.components.SafiButton
+import com.bizilabs.streeek.lib.design.components.SafiOutlinedButton
+import com.bizilabs.streeek.lib.design.theme.SafiTheme
+import com.bizilabs.streeek.lib.domain.helpers.SystemLocalDateTime
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -23,7 +28,7 @@ fun TimePickerComponent(
     onConfirm: (Int, Int) -> Unit,
     onDismiss: (Int, Int) -> Unit,
 ) {
-    val currentTime = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+    val currentTime = SystemLocalDateTime
 
     val timePickerState =
         rememberTimePickerState(
@@ -32,23 +37,43 @@ fun TimePickerComponent(
             is24Hour = true,
         )
 
-    Column(
-        modifier = Modifier.background(MaterialTheme.colorScheme.surface),
+    Surface(
+        modifier = Modifier.fillMaxWidth(),
     ) {
-        TimePicker(
-            state = timePickerState,
-        )
-        Button(
-            modifier = Modifier.fillMaxWidth(),
-            onClick = { onDismiss(timePickerState.hour, timePickerState.minute) },
-        ) {
-            Text("Dismiss picker")
-        }
-        Button(
-            modifier = Modifier.fillMaxWidth(),
-            onClick = { onConfirm(timePickerState.hour, timePickerState.minute) },
-        ) {
-            Text("Confirm selection")
+        Column {
+            TimePicker(
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(top = 16.dp),
+                state = timePickerState,
+                colors =
+                    TimePickerDefaults.colors(
+                        timeSelectorSelectedContentColor = MaterialTheme.colorScheme.primary,
+                        timeSelectorUnselectedContentColor = MaterialTheme.colorScheme.onSurface.copy(0.6f),
+                        timeSelectorSelectedContainerColor = MaterialTheme.colorScheme.primary.copy(0.1f),
+                    ),
+            )
+            Row(
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+            ) {
+                SafiOutlinedButton(
+                    modifier = Modifier.weight(1f),
+                    onClick = { onDismiss(timePickerState.hour, timePickerState.minute) },
+                ) {
+                    Text("dismiss")
+                }
+                SafiButton(
+                    modifier = Modifier.weight(1f),
+                    onClick = { onConfirm(timePickerState.hour, timePickerState.minute) },
+                ) {
+                    Text("confirm")
+                }
+            }
         }
     }
 }
@@ -57,8 +82,12 @@ fun TimePickerComponent(
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 private fun TimePickerDialogPreview() {
-    TimePickerComponent(
-        onConfirm = { _, _ -> },
-        onDismiss = { _, _ -> },
-    )
+    SafiTheme {
+        Surface {
+            TimePickerComponent(
+                onConfirm = { _, _ -> },
+                onDismiss = { _, _ -> },
+            )
+        }
+    }
 }

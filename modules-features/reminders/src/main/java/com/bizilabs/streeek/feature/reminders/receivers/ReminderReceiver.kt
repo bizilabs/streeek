@@ -102,12 +102,12 @@ class ReminderReceiver : BroadcastReceiver() {
         }
     }
 
-    private fun Context.cancelNotifications()  {
+    private fun Context.cancelNotifications() {
         Timber.d("Cancelling all notifications")
         NotificationManagerCompat.from(this).cancelAll()
     }
 
-    private fun Context.stopPlayingAllReminders()  {
+    private fun Context.stopPlayingAllReminders() {
         val player =
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
                 MediaPlayer(this)

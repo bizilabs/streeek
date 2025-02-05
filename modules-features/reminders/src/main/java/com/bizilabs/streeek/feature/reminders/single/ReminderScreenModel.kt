@@ -22,7 +22,6 @@ class ReminderScreenModel(
     private val context: Context,
     private val manager: ReminderManager,
 ) : StateScreenModel<ReminderScreenState>(ReminderScreenState()) {
-
     fun updateValues(
         label: String,
         day: Int,
@@ -38,7 +37,7 @@ class ReminderScreenModel(
             )
     }
 
-    fun onClickSnooze()  {
+    fun onClickSnooze() {
         stopPlayingReminderTone()
         val calendar = Calendar.getInstance()
         calendar.timeInMillis = calendar.timeInMillis + (15 * 60 * 1000)
@@ -50,7 +49,7 @@ class ReminderScreenModel(
         mutableState.update { it.copy(dismiss = true) }
     }
 
-    fun onSwipeDismiss()  {
+    fun onSwipeDismiss() {
         stopPlayingReminderTone()
         val calendar = Calendar.getInstance()
         calendar.timeInMillis = calendar.timeInMillis + (7 * 24 * 60 * 60 * 1000)
@@ -62,7 +61,7 @@ class ReminderScreenModel(
         mutableState.update { it.copy(dismiss = true) }
     }
 
-    private fun stopPlayingReminderTone()  {
+    private fun stopPlayingReminderTone() {
         context.stopReminderWork()
         try {
             val player =

@@ -2,6 +2,7 @@ package com.bizilabs.streeek.feature.reminders.list
 
 import android.Manifest
 import android.content.Context
+import android.os.Build
 import cafe.adriel.voyager.core.model.StateScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
 import com.bizilabs.streeek.feature.reminders.manager.ReminderManager
@@ -14,7 +15,6 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.datetime.DayOfWeek
-import timber.log.Timber
 import kotlin.enums.EnumEntries
 
 data class ReminderListScreenState(
@@ -87,10 +87,11 @@ class ReminderListScreenModel(
 
     private fun checkAlarmPermission() {
         val granted =
-            context.permissionIsGranted(permission = Manifest.permission.FOREGROUND_SERVICE_SPECIAL_USE)
-
-        Timber.d("STREEEKNOTIFAI permision granted $granted")
-
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                context.permissionIsGranted(permission = Manifest.permission.USE_EXACT_ALARM)
+            } else {
+                true
+            }
         mutableState.update { it.copy(isAlarmPermissionGranted = granted) }
     }
 
@@ -106,16 +107,13 @@ class ReminderListScreenModel(
         mutableState.update {
             it.copy(
                 isEditing = true,
-                reminder = reminder,
+                selectedReminder = reminder,
                 selectedHour = reminder.hour,
                 selectedMinute = reminder.minute,
                 selectedDays = reminder.repeat,
                 label = reminder.label,
             )
         }
-    }
-
-    fun onLongClickReminder(reminder: ReminderDomain) {
     }
 
     fun onValueChangeReminderLabel(label: String) {

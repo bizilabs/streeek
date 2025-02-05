@@ -13,7 +13,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.Label
 import androidx.compose.material.icons.rounded.AccessTimeFilled
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -35,6 +34,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.bizilabs.streeek.feature.reminders.list.ReminderListScreenState
+import com.bizilabs.streeek.lib.design.components.SafiButton
 import com.bizilabs.streeek.lib.design.theme.SafiTheme
 import kotlinx.coroutines.launch
 import kotlinx.datetime.DayOfWeek
@@ -195,7 +195,7 @@ private fun ReminderBottomSheetContent(
                     }
                 }
             }
-            Button(
+            SafiButton(
                 modifier =
                     Modifier
                         .fillMaxWidth()
