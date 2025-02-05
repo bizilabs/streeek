@@ -32,7 +32,7 @@ fun Context.notify(
     body: String,
     channel: AppNotificationChannel,
     imageUrl: Uri? = null,
-    contentIntent: PendingIntent? = null,
+    clickIntent: PendingIntent? = null,
     swipeIntent: PendingIntent? = null,
     actions: List<NotificationCompat.Action> = emptyList(),
 ) {
@@ -41,8 +41,8 @@ fun Context.notify(
         body = body,
         channel = channel,
         imageUrl = imageUrl,
-        pendingIntent = contentIntent,
         actions = actions,
+        clickIntent = clickIntent,
         swipeIntent = swipeIntent,
     )
 }
@@ -53,13 +53,13 @@ private fun Context.createNotificationAndSend(
     body: String,
     channel: AppNotificationChannel,
     imageUrl: Uri? = null,
-    pendingIntent: PendingIntent? = null,
+    clickIntent: PendingIntent? = null,
     swipeIntent: PendingIntent? = null,
     actions: List<NotificationCompat.Action> = emptyList(),
 ) {
     val notification =
         createNotification(
-            clickIntent = pendingIntent,
+            clickIntent = clickIntent,
             imageUrl = imageUrl,
             channel = channel,
             title = title,

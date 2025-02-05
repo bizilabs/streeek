@@ -77,7 +77,6 @@ class ReminderWorker(
 
     private fun stopReminderSound() {
         val player = MediaPlayer()
-        player.releaseDrm()
         if (player.isPlaying) player.stop()
         player.release()
     }

@@ -43,6 +43,7 @@ class ReminderReceiver : BroadcastReceiver() {
     ) {
         SNOOZE("streeek.action.reminder.snooze", "snooze"),
         CANCEL("streeek.action.reminder.cancel", "cancel"),
+        DELETE("streeek.action.reminder.delete", "delete"),
     }
 
     override fun onReceive(
@@ -57,17 +58,19 @@ class ReminderReceiver : BroadcastReceiver() {
         day = intent.getIntExtra("reminder.day", -1)
         code = intent.getIntExtra("reminder.code", -1)
         val type = intent.getStringExtra("streeek.reminder.type")
-        when (type) {
-            "action" -> context.handleAction(intent = intent)
-            "ring" -> handleRing(context = context)
-            else -> {}
+        with(context) {
+            when (type) {
+                "action" -> handleAction(intent = intent)
+                "ring" -> handleRing()
+                else -> {}
+            }
         }
     }
 
-    private fun handleRing(context: Context) {
-        notify(context = context)
-        context.stopReminderWork()
-        context.startReminderWork()
+    private fun Context.handleRing() {
+        notify()
+        stopReminderWork()
+        startReminderWork()
     }
 
     private fun Context.handleAction(intent: Intent) {
@@ -75,7 +78,7 @@ class ReminderReceiver : BroadcastReceiver() {
         stopReminderWork()
         when (action) {
             ReminderActions.SNOOZE.action -> snoozeReminder()
-            ReminderActions.CANCEL.action -> cancelReminder()
+            else -> cancelReminder()
         }
     }
 
@@ -103,24 +106,26 @@ class ReminderReceiver : BroadcastReceiver() {
         )
     }
 
-    private fun notify(context: Context) {
-        val actions = getNotificationActions(context = context)
-        val contentIntent = getContentIntent(context = context)
+    private fun Context.notify() {
+        val actions = getNotificationActions()
+        val clickIntent = getClickIntent()
+        val swipeIntent = getSwipeIntent()
         val (title, body) = quirkyNotifications.random()
-        context.notify(
+        notify(
             title = title,
             body = body,
             channel = AppNotificationChannel.REMINDERS,
             actions = actions,
-            contentIntent = contentIntent,
+            clickIntent = clickIntent,
+            swipeIntent = swipeIntent,
         )
     }
 
-    private fun getNotificationActions(context: Context): List<NotificationCompat.Action> {
+    private fun Context.getNotificationActions(): List<NotificationCompat.Action> {
         val actions =
-            ReminderActions.entries.map { value ->
+            ReminderActions.entries.filter { it != ReminderActions.DELETE }.map { value ->
                 val intent =
-                    Intent(context, this::class.java).apply {
+                    Intent(this, this::class.java).apply {
                         putExtra("streeek.receiver.type", "reminder")
                         putExtra("streeek.reminder.type", "action")
                         putExtra("reminder.label", label)
@@ -130,7 +135,7 @@ class ReminderReceiver : BroadcastReceiver() {
                     }
                 val pendingIntent: PendingIntent =
                     PendingIntent.getBroadcast(
-                        context,
+                        this,
                         System.currentTimeMillis().toInt(),
                         intent,
                         PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
@@ -144,11 +149,11 @@ class ReminderReceiver : BroadcastReceiver() {
         return actions
     }
 
-    private fun getContentIntent(context: Context): PendingIntent? {
+    private fun Context.getClickIntent(): PendingIntent? {
         val intent =
             Intent().apply {
                 setClassName(
-                    context,
+                    this@getClickIntent,
                     "com.bizilabs.streeek.lib.presentation.MainActivity",
                 )
                 flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
@@ -169,11 +174,29 @@ class ReminderReceiver : BroadcastReceiver() {
             }
         val contentIntent =
             PendingIntent.getActivity(
-                context,
+                this,
                 0,
                 intent,
                 PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
             )
         return contentIntent
+    }
+
+    private fun Context.getSwipeIntent(): PendingIntent? {
+        val intent =
+            Intent(this, this::class.java).apply {
+                putExtra("streeek.receiver.type", "reminder")
+                putExtra("streeek.reminder.type", "action")
+                putExtra("reminder.label", label)
+                putExtra("reminder.code", code)
+                putExtra("reminder.day", day)
+                action = ReminderActions.DELETE.action
+            }
+        return PendingIntent.getBroadcast(
+            this,
+            System.currentTimeMillis().toInt(),
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
+        )
     }
 }
