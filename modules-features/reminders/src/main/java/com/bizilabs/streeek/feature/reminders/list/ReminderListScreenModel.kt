@@ -6,6 +6,7 @@ import android.os.Build
 import cafe.adriel.voyager.core.model.StateScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
 import com.bizilabs.streeek.feature.reminders.manager.ReminderManager
+import com.bizilabs.streeek.feature.reminders.receivers.ReminderReceiver
 import com.bizilabs.streeek.lib.common.helpers.launcherState
 import com.bizilabs.streeek.lib.common.helpers.permissionIsGranted
 import com.bizilabs.streeek.lib.common.models.FetchListState
@@ -29,13 +30,14 @@ data class ReminderListScreenState(
     val selectedHour: Int? = null,
     val selectedMinute: Int? = null,
     val isTimePickerOpen: Boolean = false,
+    val isUpdating: Boolean = false,
 ) {
     val isEditActionEnabled: Boolean
         get() =
             when {
                 reminder != null -> {
                     label != reminder.label || selectedDays != reminder.repeat ||
-                        selectedHour != reminder.hour || selectedMinute != reminder.minute
+                            selectedHour != reminder.hour || selectedMinute != reminder.minute
                 }
 
                 else -> {
@@ -74,11 +76,11 @@ class ReminderListScreenModel(
                 mutableState.update { state ->
                     state.copy(
                         fetchListState =
-                            if (list.isEmpty()) {
-                                FetchListState.Empty
-                            } else {
-                                FetchListState.Success(list)
-                            },
+                        if (list.isEmpty()) {
+                            FetchListState.Empty
+                        } else {
+                            FetchListState.Success(list)
+                        },
                     )
                 }
             }
@@ -96,7 +98,7 @@ class ReminderListScreenModel(
     }
 
     fun onDismissSheet() {
-        mutableState.update { it.copy(isEditing = false, reminder = null) }
+        mutableState.update { it.copy(isEditing = false, reminder = null, isUpdating = false) }
     }
 
     fun onClickCreate() {
@@ -177,7 +179,79 @@ class ReminderListScreenModel(
             )
         }
     }
+
+    fun onLongClick(reminder: ReminderDomain) {
+        mutableState.update {
+            it.copy(
+                isUpdating = true,
+                reminder =
+                ReminderDomain(
+                    label = reminder.label,
+                    repeat = reminder.repeat,
+                    enabled = reminder.enabled,
+                    hour = reminder.hour,
+                    minute = reminder.minute,
+                ),
+            )
+        }
+    }
+
+    fun onDismissUpdateSheet() {
+        mutableState.update {
+            it.copy(
+                isUpdating = false,
+            )
+        }
+    }
+
+    fun editReminder(action: String) {
+        screenModelScope.launch {
+            when (action) {
+                ReminderReceiver.ReminderActions.ENABLE.name -> {
+                    val reminderDomain =
+                        ReminderDomain(
+                            label = state.value.label,
+                            repeat = state.value.selectedDays,
+                            enabled = true,
+                            hour = state.value.selectedHour ?: 0,
+                            minute = state.value.selectedMinute ?: 0,
+                        )
+                    mutableState.update {
+                        it.copy(isUpdating = false)
+                    }
+                    repository.update(reminder = reminderDomain)
+                }
+
+                ReminderReceiver.ReminderActions.DISABLE.name -> {
+                    val reminderDomain =
+                        ReminderDomain(
+                            label = state.value.label,
+                            repeat = state.value.selectedDays,
+                            enabled = false,
+                            hour = state.value.selectedHour ?: 0,
+                            minute = state.value.selectedMinute ?: 0,
+                        )
+                    mutableState.update {
+                        it.copy(isUpdating = false)
+                    }
+                    repository.update(reminder = reminderDomain)
+                }
+
+                ReminderReceiver.ReminderActions.DELETE.name -> {
+                    val reminderDomain =
+                        ReminderDomain(
+                            label = state.value.label,
+                            repeat = state.value.selectedDays,
+                            enabled = false,
+                            hour = state.value.selectedHour ?: 0,
+                            minute = state.value.selectedMinute ?: 0,
+                        )
+                    mutableState.update {
+                        it.copy(isUpdating = false)
+                    }
+                    repository.delete(reminder = reminderDomain)
+                }
+            }
+        }
+    }
 }
-// create - store locally
-// schedule
-//
