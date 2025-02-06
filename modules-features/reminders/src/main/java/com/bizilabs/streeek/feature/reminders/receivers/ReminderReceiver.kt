@@ -48,8 +48,8 @@ class ReminderReceiver : BroadcastReceiver() {
         SNOOZE("streeek.action.reminder.snooze", "snooze"),
         CANCEL("streeek.action.reminder.cancel", "cancel"),
         DELETE("streeek.action.reminder.delete", "delete"),
-        ENABLE("",""),
-        DISABLE("","")
+        ENABLE("", ""),
+        DISABLE("", ""),
     }
 
     override fun onReceive(

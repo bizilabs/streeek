@@ -37,7 +37,7 @@ data class ReminderListScreenState(
             when {
                 reminder != null -> {
                     label != reminder.label || selectedDays != reminder.repeat ||
-                            selectedHour != reminder.hour || selectedMinute != reminder.minute
+                        selectedHour != reminder.hour || selectedMinute != reminder.minute
                 }
 
                 else -> {
@@ -76,11 +76,11 @@ class ReminderListScreenModel(
                 mutableState.update { state ->
                     state.copy(
                         fetchListState =
-                        if (list.isEmpty()) {
-                            FetchListState.Empty
-                        } else {
-                            FetchListState.Success(list)
-                        },
+                            if (list.isEmpty()) {
+                                FetchListState.Empty
+                            } else {
+                                FetchListState.Success(list)
+                            },
                     )
                 }
             }
@@ -185,13 +185,13 @@ class ReminderListScreenModel(
             it.copy(
                 isUpdating = true,
                 reminder =
-                ReminderDomain(
-                    label = reminder.label,
-                    repeat = reminder.repeat,
-                    enabled = reminder.enabled,
-                    hour = reminder.hour,
-                    minute = reminder.minute,
-                ),
+                    ReminderDomain(
+                        label = reminder.label,
+                        repeat = reminder.repeat,
+                        enabled = reminder.enabled,
+                        hour = reminder.hour,
+                        minute = reminder.minute,
+                    ),
             )
         }
     }
