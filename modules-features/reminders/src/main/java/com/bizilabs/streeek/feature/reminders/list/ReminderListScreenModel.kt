@@ -207,7 +207,7 @@ class ReminderListScreenModel(
     fun editReminder(action: String) {
         screenModelScope.launch {
             when (action) {
-                ReminderReceiver.ReminderActions.ENABLE.name -> {
+                ReminderReceiver.ReminderActions.ENABLE.name.lowercase() -> {
                     val reminderDomain =
                         ReminderDomain(
                             label = state.value.label,
@@ -222,7 +222,7 @@ class ReminderListScreenModel(
                     repository.update(reminder = reminderDomain)
                 }
 
-                ReminderReceiver.ReminderActions.DISABLE.name -> {
+                ReminderReceiver.ReminderActions.DISABLE.name.lowercase() -> {
                     val reminderDomain =
                         ReminderDomain(
                             label = state.value.label,
@@ -237,7 +237,7 @@ class ReminderListScreenModel(
                     repository.update(reminder = reminderDomain)
                 }
 
-                ReminderReceiver.ReminderActions.DELETE.name -> {
+                ReminderReceiver.ReminderActions.DELETE.name.lowercase() -> {
                     val reminderDomain =
                         ReminderDomain(
                             label = state.value.label,
