@@ -18,4 +18,7 @@ dependencies {
     implementation(libs.confetti)
     // paging
     implementation(libs.bundles.paging)
+
+    // in app reviews
+    implementation(projects.modulesFeatures.reviews)
 }
