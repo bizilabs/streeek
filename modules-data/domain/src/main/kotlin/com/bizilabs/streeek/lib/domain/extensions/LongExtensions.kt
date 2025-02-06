@@ -5,3 +5,9 @@ fun Long.asRank() =
         this < 10 -> "0$this"
         else -> this.toString()
     }
+
+fun Long.asMinimumTwoValues() =
+    when {
+        this < 10 -> "0$this"
+        else -> this.toString()
+    }

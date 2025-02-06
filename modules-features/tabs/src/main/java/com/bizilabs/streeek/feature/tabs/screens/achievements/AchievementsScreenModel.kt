@@ -6,7 +6,6 @@ import androidx.compose.material.icons.filled.EmojiEvents
 import androidx.compose.material.icons.filled.Stairs
 import androidx.compose.material.icons.outlined.EmojiEvents
 import androidx.compose.material.icons.outlined.Stairs
-import androidx.compose.material.icons.rounded.EmojiEvents
 import androidx.compose.ui.graphics.vector.ImageVector
 import cafe.adriel.voyager.core.model.StateScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
@@ -53,6 +52,7 @@ data class AchievementScreenState(
     val tab: AchievementTab = AchievementTab.LEVELS,
     val tabs: EnumEntries<AchievementTab> = AchievementTab.entries,
     val levels: List<LevelDomain> = emptyList(),
+    val isSyncingAccount: Boolean = false,
 ) {
     val points: Long
         get() = account?.points ?: 0
@@ -68,6 +68,7 @@ class AchievementsScreenModel(
 ) : StateScreenModel<AchievementScreenState>(AchievementScreenState()) {
     init {
         initiateAccountSync()
+        observeAccountSync()
         observeAccount()
         observeLevels()
     }
@@ -75,6 +76,14 @@ class AchievementsScreenModel(
     private fun initiateAccountSync() {
         screenModelScope.launch {
             accountRepository.syncAccount()
+        }
+    }
+
+    private fun observeAccountSync() {
+        screenModelScope.launch {
+            accountRepository.isSyncingAccount.collectLatest { value ->
+                mutableState.update { it.copy(isSyncingAccount = value) }
+            }
         }
     }
 

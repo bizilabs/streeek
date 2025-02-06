@@ -35,10 +35,7 @@ class MainActivity : BaseActivity() {
                     isNetworkConnected = state.hasNetworkConnection,
                     barColors = state.barColors,
                 ) {
-                    MainNavigation(
-                        intent = intent,
-                        onValueChangeBarColors = viewModel::onValueChangeBarColors,
-                    )
+                    MainNavigation(onValueChangeBarColors = viewModel::onValueChangeBarColors)
                 }
             }
         }

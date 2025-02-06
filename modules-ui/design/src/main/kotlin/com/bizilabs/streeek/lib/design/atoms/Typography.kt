@@ -29,13 +29,15 @@ private fun getTypography(family: FontFamily): Typography {
 
 enum class SafiTypography {
     SANS,
-    MONO, ;
+    MONO,
+    NOTO, ;
 
     val label: String
         get() =
             when (this) {
                 SafiTypography.SANS -> "Sans Serif"
                 SafiTypography.MONO -> "Monospace"
+                SafiTypography.NOTO -> "Noto"
             }
 }
 
@@ -44,6 +46,7 @@ fun getTypography(typography: SafiTypography): Typography {
     return when (typography) {
         SafiTypography.SANS -> SansTypography
         SafiTypography.MONO -> MonoTypography
+        SafiTypography.NOTO -> NotoTypography
     }
 }
 
@@ -85,6 +88,27 @@ val MonoTypography: Typography
                 Font(SafiFonts.Mono.lightItalic, FontWeight.Light, FontStyle.Italic),
                 Font(SafiFonts.Mono.thin, FontWeight.Thin),
                 Font(SafiFonts.Mono.thinItalic, FontWeight.Thin, FontStyle.Italic),
+            )
+        return getTypography(family = family)
+    }
+
+val NotoTypography: Typography
+    @Composable
+    get() {
+        val family =
+            FontFamily(
+                Font(SafiFonts.Noto.bold, FontWeight.Bold),
+                Font(SafiFonts.Noto.boldItalic, FontWeight.Bold, FontStyle.Italic),
+                Font(SafiFonts.Noto.semiBold, FontWeight.SemiBold),
+                Font(SafiFonts.Noto.semiBoldItalic, FontWeight.SemiBold, FontStyle.Italic),
+                Font(SafiFonts.Noto.medium, FontWeight.Medium),
+                Font(SafiFonts.Noto.mediumItalic, FontWeight.Medium, FontStyle.Italic),
+                Font(SafiFonts.Noto.regular, FontWeight.Normal),
+                Font(SafiFonts.Noto.regularItalic, FontWeight.Normal, FontStyle.Italic),
+                Font(SafiFonts.Noto.light, FontWeight.Light),
+                Font(SafiFonts.Noto.lightItalic, FontWeight.Light, FontStyle.Italic),
+                Font(SafiFonts.Noto.thin, FontWeight.Thin),
+                Font(SafiFonts.Noto.thinItalic, FontWeight.Thin, FontStyle.Italic),
             )
         return getTypography(family = family)
     }

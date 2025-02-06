@@ -2,6 +2,11 @@ package com.bizilabs.streeek.feature.tabs.screens.leaderboard
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,6 +16,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerDefaults
+import androidx.compose.foundation.pager.PagerState
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Leaderboard
 import androidx.compose.material3.Badge
@@ -24,8 +33,10 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
@@ -47,6 +58,7 @@ import com.bizilabs.streeek.lib.design.helpers.onSuccess
 import com.bizilabs.streeek.lib.design.helpers.success
 import com.bizilabs.streeek.lib.domain.extensions.asRank
 import com.bizilabs.streeek.lib.domain.models.LeaderboardDomain
+import kotlinx.coroutines.launch
 import nl.dionsegijn.konfetti.compose.KonfettiView
 import nl.dionsegijn.konfetti.core.Party
 import nl.dionsegijn.konfetti.core.Position
@@ -87,6 +99,23 @@ fun LeaderboardListScreenContent(
         )
     }
 
+    val pagerState =
+        rememberPagerState(
+            initialPage =
+                state.leaderboards.indexOf(state.leaderboard).takeIf { it >= 0 }
+                    ?: 0,
+        ) { state.leaderboards.count() }
+
+    // Custom fling behavior for smooth swiping
+    val flingBehavior = PagerDefaults.flingBehavior(state = pagerState)
+
+    LaunchedEffect(pagerState.currentPage) {
+        if (state.leaderboards.isNotEmpty()) {
+            val currentLeaderboard = state.leaderboards[pagerState.currentPage]
+            onValueChangeLeaderboard(currentLeaderboard)
+        }
+    }
+
     Box(modifier = Modifier.fillMaxSize()) {
         Scaffold(
             modifier = Modifier.fillMaxSize(),
@@ -95,6 +124,7 @@ fun LeaderboardListScreenContent(
                     state = state,
                     modifier = Modifier.fillMaxWidth(),
                     onValueChangeLeaderboard = onValueChangeLeaderboard,
+                    pagerState = pagerState,
                 )
             },
         ) { paddingValues ->
@@ -110,6 +140,9 @@ fun LeaderboardListScreenContent(
                     label = "animate teams",
                     modifier = Modifier.fillMaxSize(),
                     targetState = state.leaderboard,
+                    transitionSpec = {
+                        EnterTransition.None togetherWith ExitTransition.None
+                    },
                 ) { leaderboard ->
                     when (leaderboard) {
                         null -> {
@@ -125,57 +158,63 @@ fun LeaderboardListScreenContent(
                         }
 
                         else -> {
-                            LazyColumn(modifier = Modifier.fillMaxSize()) {
-                                item {
-                                    Column(modifier = Modifier.fillMaxWidth()) {
-                                        Row(
-                                            modifier =
-                                                Modifier
-                                                    .fillMaxWidth()
-                                                    .padding(bottom = 16.dp),
-                                        ) {
-                                            TeamTopMemberComponent(
-                                                isFirst = false,
+                            HorizontalPager(
+                                modifier = Modifier.fillMaxSize(),
+                                state = pagerState,
+                                flingBehavior = flingBehavior,
+                            ) {
+                                LazyColumn(modifier = Modifier.fillMaxSize()) {
+                                    item {
+                                        Column(modifier = Modifier.fillMaxWidth()) {
+                                            Row(
                                                 modifier =
                                                     Modifier
-                                                        .weight(1f)
-                                                        .padding(top = 48.dp),
-                                                member = state.leaderboard?.top[1],
-                                            )
-                                            TeamTopMemberComponent(
-                                                isFirst = true,
-                                                modifier = Modifier.weight(1f),
-                                                member = state.leaderboard?.top[0],
-                                            )
-                                            TeamTopMemberComponent(
-                                                isFirst = false,
-                                                modifier =
-                                                    Modifier
-                                                        .weight(1f)
-                                                        .padding(top = 48.dp),
-                                                member = state.leaderboard?.top[2],
-                                            )
+                                                        .fillMaxWidth()
+                                                        .padding(bottom = 16.dp),
+                                            ) {
+                                                TeamTopMemberComponent(
+                                                    isFirst = false,
+                                                    modifier =
+                                                        Modifier
+                                                            .weight(1f)
+                                                            .padding(top = 48.dp),
+                                                    member = state.leaderboard?.top[1],
+                                                )
+                                                TeamTopMemberComponent(
+                                                    isFirst = true,
+                                                    modifier = Modifier.weight(1f),
+                                                    member = state.leaderboard?.top[0],
+                                                )
+                                                TeamTopMemberComponent(
+                                                    isFirst = false,
+                                                    modifier =
+                                                        Modifier
+                                                            .weight(1f)
+                                                            .padding(top = 48.dp),
+                                                    member = state.leaderboard?.top[2],
+                                                )
+                                            }
+                                            HorizontalDivider()
                                         }
-                                        HorizontalDivider()
                                     }
-                                }
-                                items(state.list) { member ->
-                                    LeaderboardComponent(
-                                        imageUrl = member.account.avatarUrl,
-                                        username = member.account.username,
-                                        points = member.rank.points,
-                                        rank = member.rank.position.asRank(),
-                                        modifier = Modifier.fillMaxWidth(),
-                                    ) {
-                                    }
-                                }
-                                item {
-                                    SafiCenteredRow(modifier = Modifier.fillMaxWidth()) {
-                                        Button(
-                                            modifier = Modifier.padding(16.dp),
-                                            onClick = onClickViewMore,
+                                    items(state.list) { member ->
+                                        LeaderboardComponent(
+                                            imageUrl = member.account.avatarUrl,
+                                            username = member.account.username,
+                                            points = member.rank.points,
+                                            rank = member.rank.position.asRank(),
+                                            modifier = Modifier.fillMaxWidth(),
                                         ) {
-                                            Text(text = "View More")
+                                        }
+                                    }
+                                    item {
+                                        SafiCenteredRow(modifier = Modifier.fillMaxWidth()) {
+                                            Button(
+                                                modifier = Modifier.padding(16.dp),
+                                                onClick = onClickViewMore,
+                                            ) {
+                                                Text(text = "View More")
+                                            }
                                         }
                                     }
                                 }
@@ -225,7 +264,10 @@ fun LeaderboardListScreenHeaderSection(
     state: LeaderboardListScreenState,
     onValueChangeLeaderboard: (LeaderboardDomain) -> Unit,
     modifier: Modifier = Modifier,
+    pagerState: PagerState,
 ) {
+    val coroutineScope = rememberCoroutineScope()
+
     Surface(modifier = modifier) {
         Column(
             modifier = Modifier.fillMaxWidth(),
@@ -251,18 +293,31 @@ fun LeaderboardListScreenHeaderSection(
                         .fillMaxWidth(),
                 visible = state.leaderboards.isNotEmpty() && (state.leaderboards.size != 1),
             ) {
-                val index = state.leaderboards.indexOf(state.leaderboard)
                 Column(modifier = Modifier.fillMaxWidth()) {
                     ScrollableTabRow(
                         modifier = Modifier.fillMaxWidth(),
-                        selectedTabIndex = index,
+                        selectedTabIndex = pagerState.currentPage,
                         divider = {},
                     ) {
-                        state.leaderboards.forEach { leaderboard ->
-                            val selected = leaderboard.name == state.leaderboard?.name
+                        state.leaderboards.forEachIndexed { index, leaderboard ->
+                            val selected = pagerState.currentPage == index
                             Tab(
                                 selected = selected,
-                                onClick = { onValueChangeLeaderboard(leaderboard) },
+                                onClick = {
+                                    coroutineScope.launch {
+                                        pagerState.animateScrollToPage(
+                                            state.leaderboards.indexOf(
+                                                leaderboard,
+                                            ),
+                                            animationSpec =
+                                                tween(
+                                                    durationMillis = 250,
+                                                    easing = FastOutSlowInEasing,
+                                                ),
+                                        )
+                                    }
+                                    onValueChangeLeaderboard(leaderboard)
+                                },
                             ) {
                                 Box {
                                     Text(

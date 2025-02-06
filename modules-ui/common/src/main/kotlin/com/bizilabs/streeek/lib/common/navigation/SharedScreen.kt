@@ -9,7 +9,9 @@ sealed class SharedScreen : ScreenProvider {
 
     object Authentication : SharedScreen()
 
-    object Tabs : SharedScreen()
+    open class Tabs(val tab: String = "FEED") : SharedScreen() {
+        companion object : Tabs()
+    }
 
     object Setup : SharedScreen()
 
@@ -28,4 +30,8 @@ sealed class SharedScreen : ScreenProvider {
     object Join : SharedScreen()
 
     object Notifications : SharedScreen()
+
+    object Reminders : SharedScreen()
+
+    data class Reminder(val label: String, val day: Int, val code: Int) : SharedScreen()
 }

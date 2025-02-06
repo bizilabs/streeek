@@ -9,6 +9,7 @@ import com.bizilabs.streeek.lib.data.repositories.LeaderboardRepositoryImpl
 import com.bizilabs.streeek.lib.data.repositories.LevelRepositoryImpl
 import com.bizilabs.streeek.lib.data.repositories.NotificationRepositoryImpl
 import com.bizilabs.streeek.lib.data.repositories.PreferenceRepositoryImpl
+import com.bizilabs.streeek.lib.data.repositories.ReminderRepositoryImpl
 import com.bizilabs.streeek.lib.data.repositories.TeamInvitationCodeRepositoryImpl
 import com.bizilabs.streeek.lib.data.repositories.TeamRepositoryImpl
 import com.bizilabs.streeek.lib.data.repositories.UserRepositoryImpl
@@ -26,6 +27,7 @@ import com.bizilabs.streeek.lib.domain.repositories.LevelRepository
 import com.bizilabs.streeek.lib.domain.repositories.NotificationRepository
 import com.bizilabs.streeek.lib.domain.repositories.PointsRepository
 import com.bizilabs.streeek.lib.domain.repositories.PreferenceRepository
+import com.bizilabs.streeek.lib.domain.repositories.ReminderRepository
 import com.bizilabs.streeek.lib.domain.repositories.TeamInvitationCodeRepository
 import com.bizilabs.streeek.lib.domain.repositories.TeamRepository
 import com.bizilabs.streeek.lib.domain.repositories.UserRepository
@@ -105,6 +107,7 @@ val dataModule =
                 accountLocalSource = get(),
             )
         }
+        single<ReminderRepository> { ReminderRepositoryImpl(localSource = get()) }
         single<NetworkMonitor> { NetworkMonitor(context = get(), repository = get()) }
         single<TeamMemberInvitationRepository> {
             TeamMemberInvitationRepositoryImpl(
