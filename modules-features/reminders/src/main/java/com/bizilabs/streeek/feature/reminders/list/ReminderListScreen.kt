@@ -36,6 +36,7 @@ import com.bizilabs.streeek.feature.reminders.components.ReminderEditBottomSheet
 import com.bizilabs.streeek.lib.common.helpers.requestSinglePermission
 import com.bizilabs.streeek.lib.common.models.FetchListState
 import com.bizilabs.streeek.lib.design.components.SafiBottomAction
+import com.bizilabs.streeek.lib.design.components.SafiBottomSheetPicker
 import com.bizilabs.streeek.lib.design.components.SafiBottomValue
 import com.bizilabs.streeek.lib.design.components.SafiCenteredColumn
 import com.bizilabs.streeek.lib.design.components.SafiCircularProgressIndicator
@@ -64,6 +65,9 @@ object ReminderListScreen : Screen {
             onOpenTimePicker = screenModel::onOpenTimePicker,
             onDismissTimePicker = screenModel::onDismissTimePicker,
             onCreateReminder = screenModel::onCreateReminder,
+            onLongClick = screenModel::onLongClick,
+            onDismissLongClick = screenModel::onDismissUpdateSheet,
+            editReminder = screenModel::editReminder,
         )
     }
 }
@@ -81,6 +85,9 @@ fun ReminderListScreenContent(
     onOpenTimePicker: () -> Unit,
     onCreateReminder: () -> Unit,
     onDismissTimePicker: (Int, Int) -> Unit,
+    onLongClick: (ReminderDomain) -> Unit,
+    onDismissLongClick: () -> Unit,
+    editReminder: (String) -> Unit,
 ) {
     val activity = LocalContext.current as ComponentActivity
 
@@ -93,6 +100,18 @@ fun ReminderListScreenContent(
             onOpenTimePicker = onOpenTimePicker,
             onCreateReminder = onCreateReminder,
             onDismissTimePicker = onDismissTimePicker,
+        )
+    }
+
+    if (state.isUpdating) {
+        SafiBottomSheetPicker(
+            modifier = Modifier.fillMaxWidth(),
+            title = "Update Reminder",
+            selected = "",
+            list = listOf(if (state.reminder?.enabled == true) "disable" else "enable", "delete"),
+            onDismiss = onDismissLongClick,
+            onItemSelected = { editReminder(it) },
+            name = { it },
         )
     }
 
@@ -203,6 +222,7 @@ fun ReminderListScreenContent(
                                         .fillMaxWidth()
                                         .padding(horizontal = 8.dp)
                                         .padding(top = 8.dp),
+                                onLongClick = onLongClick,
                             )
                         }
                     }
