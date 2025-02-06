@@ -1,6 +1,7 @@
 package com.bizilabs.streeek.feature.reviews
 
 import android.app.Activity
+import com.bizilabs.streeek.feature.reviews.presentation.helpers.isDeviceHuawei
 import com.google.android.play.core.review.ReviewInfo
 import com.google.android.play.core.review.ReviewManager
 import kotlinx.coroutines.suspendCancellableCoroutine
@@ -11,6 +12,7 @@ import kotlin.coroutines.resumeWithException
 class ReviewManagerHelper(private val reviewManager: ReviewManager) {
     suspend fun triggerInAppReview(activity: Activity): Result<Unit> {
         return runCatching {
+            if (isDeviceHuawei()) return Result.failure(Exception("Device OS Won't support In App Reviews"))
             val reviewInfo =
                 requestReviewInfo() ?: return Result.failure(Exception("ReviewInfo is null"))
             launchReviewFlow(activity, reviewInfo)
