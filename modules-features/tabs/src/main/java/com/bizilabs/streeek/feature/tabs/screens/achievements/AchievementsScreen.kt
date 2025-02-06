@@ -37,14 +37,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.LifecycleStartEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.core.registry.rememberScreen
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.getScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import coil.compose.SubcomposeAsyncImage
+import com.bizilabs.streeek.feature.reviews.presentation.InAppReviewModel
 import com.bizilabs.streeek.feature.tabs.screens.achievements.component.LevelComponent
+import com.bizilabs.streeek.lib.common.helpers.findActivity
 import com.bizilabs.streeek.lib.common.navigation.SharedScreen
 import com.bizilabs.streeek.lib.design.components.SafiCenteredColumn
 import com.bizilabs.streeek.lib.design.components.SafiCenteredRow
@@ -59,9 +63,12 @@ object AchievementsScreen : Screen {
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.current
+        val activity = LocalContext.current.findActivity()
         val profileScreen = rememberScreen(SharedScreen.Profile)
         val screenModel: AchievementsScreenModel = getScreenModel()
+        val reviewModel = getScreenModel<InAppReviewModel>()
         val state by screenModel.state.collectAsStateWithLifecycle()
+
         AchievementsScreenContent(
             state = state,
             onClickTab = screenModel::onClickTab,
@@ -71,6 +78,11 @@ object AchievementsScreen : Screen {
                 navigator?.push(profileScreen)
             },
         )
+
+        LifecycleStartEffect(Unit) {
+            activity?.let { reviewModel.requestReview(it) }
+            onStopOrDispose { Timber.d("Achievements page is onStopOrDispose") }
+        }
     }
 }
 

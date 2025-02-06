@@ -69,6 +69,7 @@ foundation-android = "1.7.5"
 ktlint = "12.1.2"
 confetti = "2.0.5"
 updater = "2.1.0"
+google-inapp-reviews-ktx = "2.0.2"
 rich-text-editor = "1.0.0-rc10"
 firebase-messaging-ktx = "24.1.0"
 firebase-database = "21.0.0"
@@ -169,6 +170,8 @@ firebase-analytics = { module = "com.google.firebase:firebase-analytics-ktx" }
 firebase-config = { module = "com.google.firebase:firebase-config-ktx" }
 firebase-performance = { module = "com.google.firebase:firebase-perf-ktx" }
 firebase-inappmessagging = { module = "com.google.firebase:firebase-inappmessaging-display-ktx" }
+google-inapp-reviews-ktx = { group = "com.google.android.play", name = "review-ktx", version.ref = "google-inapp-reviews-ktx" }
+
 
 # coil
 coil-kt = { group = "io.coil-kt", name = "coil", version.ref = "coil" }
