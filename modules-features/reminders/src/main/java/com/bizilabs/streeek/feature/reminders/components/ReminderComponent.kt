@@ -2,8 +2,10 @@ package com.bizilabs.streeek.feature.reminders.components
 
 import android.content.res.Configuration
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -33,21 +35,21 @@ import com.bizilabs.streeek.lib.domain.extensions.asMinimumTwoValues
 import com.bizilabs.streeek.lib.domain.models.ReminderDomain
 import java.time.DayOfWeek
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ReminderComponent(
     reminder: ReminderDomain,
     modifier: Modifier = Modifier,
     onClick: (ReminderDomain) -> Unit,
+    onLongClick: (ReminderDomain) -> Unit,
 ) {
     val containerColor =
         if (reminder.enabled) MaterialTheme.colorScheme.primary else CardDefaults.cardColors().containerColor
     val contentColor =
         if (reminder.enabled) MaterialTheme.colorScheme.onPrimary else CardDefaults.cardColors().contentColor
+
     Card(
         modifier = modifier,
-        onClick = {
-            onClick(reminder)
-        },
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.onBackground.copy(0.2f)),
         colors =
             CardDefaults.cardColors(
@@ -59,6 +61,10 @@ fun ReminderComponent(
             modifier =
                 Modifier
                     .fillMaxWidth()
+                    .combinedClickable(
+                        onClick = { onClick(reminder) },
+                        onLongClick = { onLongClick(reminder) },
+                    )
                     .padding(16.dp),
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -70,7 +76,9 @@ fun ReminderComponent(
             }
             Text(
                 modifier = Modifier.padding(vertical = 8.dp),
-                text = "${reminder.hour.toLong().asMinimumTwoValues()}:${reminder.minute.toLong().asMinimumTwoValues()}",
+                text = "${reminder.hour.toLong().asMinimumTwoValues()}:${
+                    reminder.minute.toLong().asMinimumTwoValues()
+                }",
                 style = MaterialTheme.typography.displayMedium,
                 fontWeight = FontWeight.Bold,
             )
@@ -135,7 +143,9 @@ private fun ReminderComponentPreview() {
                             minute = 4,
                             repeat = listOf(DayOfWeek.MONDAY, DayOfWeek.TUESDAY),
                         ),
-                ) { }
+                    onClick = {},
+                    onLongClick = {},
+                )
                 Spacer(modifier = Modifier.padding(16.dp))
                 ReminderComponent(
                     reminder =
@@ -146,7 +156,9 @@ private fun ReminderComponentPreview() {
                             minute = 18,
                             repeat = listOf(DayOfWeek.MONDAY, DayOfWeek.TUESDAY),
                         ),
-                ) { }
+                    onClick = {},
+                    onLongClick = {},
+                )
                 Spacer(modifier = Modifier.padding(16.dp))
                 ReminderComponent(
                     reminder =
@@ -157,7 +169,9 @@ private fun ReminderComponentPreview() {
                             minute = 56,
                             repeat = listOf(DayOfWeek.MONDAY, DayOfWeek.TUESDAY),
                         ),
-                ) { }
+                    onClick = {},
+                    onLongClick = {},
+                )
             }
         }
     }
