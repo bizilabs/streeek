@@ -39,7 +39,7 @@ data class ReminderListScreenState(
                 }
 
                 else -> {
-                    label.isNotBlank() && label.length > 4 && selectedDays.isNotEmpty() && selectedHour != null && selectedMinute != null
+                    label.isNotBlank() && label.length > 3 && selectedDays.isNotEmpty() && selectedHour != null && selectedMinute != null
                 }
             }
 
