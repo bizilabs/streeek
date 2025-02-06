@@ -201,7 +201,7 @@ private fun ReminderBottomSheetContent(
                         .fillMaxWidth()
                         .padding(vertical = 16.dp),
                 onClick = onCreateReminder,
-                enabled = state.isEditActionEnabled
+                enabled = state.isEditActionEnabled,
             ) {
                 Text(text = if (state.selectedReminder != null) "update" else "create")
             }
