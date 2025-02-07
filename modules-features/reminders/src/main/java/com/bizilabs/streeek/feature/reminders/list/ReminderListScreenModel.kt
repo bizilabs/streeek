@@ -36,7 +36,7 @@ data class ReminderListScreenState(
             when {
                 reminder != null -> {
                     label != reminder.label || selectedDays != reminder.repeat ||
-                            selectedHour != reminder.hour || selectedMinute != reminder.minute
+                        selectedHour != reminder.hour || selectedMinute != reminder.minute
                 }
 
                 else -> {
@@ -53,7 +53,6 @@ data class ReminderListScreenState(
 
     val isValidLabel: Boolean
         get() = label.isNotBlank() && label.length > 3
-
 }
 
 class ReminderListScreenModel(
@@ -79,11 +78,11 @@ class ReminderListScreenModel(
                 mutableState.update { state ->
                     state.copy(
                         fetchListState =
-                        if (list.isEmpty()) {
-                            FetchListState.Empty
-                        } else {
-                            FetchListState.Success(list)
-                        },
+                            if (list.isEmpty()) {
+                                FetchListState.Empty
+                            } else {
+                                FetchListState.Success(list)
+                            },
                     )
                 }
             }
@@ -113,7 +112,7 @@ class ReminderListScreenModel(
                 selectedMinute = null,
                 selectedDays = emptyList(),
                 selectedReminder = null,
-                reminder = null
+                reminder = null,
             )
         }
     }
@@ -198,7 +197,7 @@ class ReminderListScreenModel(
             it.copy(
                 isUpdating = true,
                 reminder = reminder,
-                selectedReminder = reminder
+                selectedReminder = reminder,
             )
         }
     }
@@ -216,8 +215,9 @@ class ReminderListScreenModel(
             when (action) {
                 UpdateReminderActions.ENABLE.name.lowercase() -> {
                     repository.update(
-                        reminder = state.value.selectedReminder?.copy(enabled = true)
-                            ?: return@launch
+                        reminder =
+                            state.value.selectedReminder?.copy(enabled = true)
+                                ?: return@launch,
                     )
                     mutableState.update {
                         it.copy(isUpdating = false)
@@ -226,12 +226,13 @@ class ReminderListScreenModel(
 
                 UpdateReminderActions.DISABLE.name.lowercase() -> {
                     repository.update(
-                        reminder = state.value.selectedReminder?.copy(enabled = false)
-                            ?: return@launch
+                        reminder =
+                            state.value.selectedReminder?.copy(enabled = false)
+                                ?: return@launch,
                     )
                     mutableState.update {
                         it.copy(
-                            isUpdating = false
+                            isUpdating = false,
                         )
                     }
                 }
