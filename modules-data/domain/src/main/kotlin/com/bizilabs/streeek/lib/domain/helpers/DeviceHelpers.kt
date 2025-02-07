@@ -1,4 +1,4 @@
-package com.bizilabs.streeek.feature.reviews.presentation.helpers
+package com.bizilabs.streeek.lib.domain.helpers
 
 import android.os.Build
 import java.util.Locale

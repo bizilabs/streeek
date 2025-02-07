@@ -1,7 +1,7 @@
 package com.bizilabs.streeek.feature.reviews
 
 import android.app.Activity
-import com.bizilabs.streeek.feature.reviews.presentation.helpers.isDeviceHuawei
+import com.bizilabs.streeek.lib.domain.helpers.isDeviceHuawei
 import com.google.android.play.core.review.ReviewInfo
 import com.google.android.play.core.review.ReviewManager
 import kotlinx.coroutines.suspendCancellableCoroutine
