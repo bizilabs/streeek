@@ -36,7 +36,7 @@ data class ReminderListScreenState(
             when {
                 reminder != null -> {
                     label != reminder.label || selectedDays != reminder.repeat ||
-                        selectedHour != reminder.hour || selectedMinute != reminder.minute
+                            selectedHour != reminder.hour || selectedMinute != reminder.minute
                 }
 
                 else -> {
@@ -75,11 +75,11 @@ class ReminderListScreenModel(
                 mutableState.update { state ->
                     state.copy(
                         fetchListState =
-                            if (list.isEmpty()) {
-                                FetchListState.Empty
-                            } else {
-                                FetchListState.Success(list)
-                            },
+                        if (list.isEmpty()) {
+                            FetchListState.Empty
+                        } else {
+                            FetchListState.Success(list)
+                        },
                     )
                 }
             }
@@ -109,6 +109,7 @@ class ReminderListScreenModel(
                 selectedMinute = null,
                 selectedDays = emptyList(),
                 selectedReminder = null,
+                reminder = null
             )
         }
     }
@@ -193,6 +194,7 @@ class ReminderListScreenModel(
             it.copy(
                 isUpdating = true,
                 reminder = reminder,
+                selectedReminder = reminder
             )
         }
     }
@@ -209,24 +211,34 @@ class ReminderListScreenModel(
         screenModelScope.launch {
             when (action) {
                 UpdateReminderActions.ENABLE.name.lowercase() -> {
+                    repository.update(
+                        reminder = state.value.selectedReminder?.copy(enabled = true)
+                            ?: return@launch
+                    )
                     mutableState.update {
                         it.copy(isUpdating = false)
                     }
-                    repository.update(reminder = state.value.selectedReminder ?: return@launch)
                 }
 
                 UpdateReminderActions.DISABLE.name.lowercase() -> {
+                    repository.update(
+                        reminder = state.value.selectedReminder?.copy(enabled = false)
+                            ?: return@launch
+                    )
                     mutableState.update {
-                        it.copy(isUpdating = false)
+                        it.copy(
+                            isUpdating = false
+                        )
                     }
-                    repository.update(reminder = state.value.selectedReminder ?: return@launch)
                 }
 
                 UpdateReminderActions.DELETE.name.lowercase() -> {
-                    mutableState.update {
-                        it.copy(isUpdating = false)
-                    }
                     repository.delete(reminder = state.value.selectedReminder ?: return@launch)
+                    mutableState.update {
+                        it.copy(
+                            isUpdating = false,
+                        )
+                    }
                 }
             }
         }
