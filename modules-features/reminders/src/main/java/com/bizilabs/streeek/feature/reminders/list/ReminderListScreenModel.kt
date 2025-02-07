@@ -6,7 +6,6 @@ import android.os.Build
 import cafe.adriel.voyager.core.model.StateScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
 import com.bizilabs.streeek.feature.reminders.manager.ReminderManager
-import com.bizilabs.streeek.feature.reminders.receivers.ReminderReceiver
 import com.bizilabs.streeek.lib.common.helpers.launcherState
 import com.bizilabs.streeek.lib.common.helpers.permissionIsGranted
 import com.bizilabs.streeek.lib.common.models.FetchListState
@@ -200,21 +199,21 @@ class ReminderListScreenModel(
     fun editReminder(action: String) {
         screenModelScope.launch {
             when (action) {
-                ReminderReceiver.ReminderActions.ENABLE.name.lowercase() -> {
+                UpdateReminderActions.ENABLE.name.lowercase() -> {
                     mutableState.update {
                         it.copy(isUpdating = false)
                     }
                     repository.update(reminder = state.value.selectedReminder ?: return@launch)
                 }
 
-                ReminderReceiver.ReminderActions.DISABLE.name.lowercase() -> {
+                UpdateReminderActions.DISABLE.name.lowercase() -> {
                     mutableState.update {
                         it.copy(isUpdating = false)
                     }
                     repository.update(reminder = state.value.selectedReminder ?: return@launch)
                 }
 
-                ReminderReceiver.ReminderActions.DELETE.name.lowercase() -> {
+                UpdateReminderActions.DELETE.name.lowercase() -> {
                     mutableState.update {
                         it.copy(isUpdating = false)
                     }
@@ -223,4 +222,8 @@ class ReminderListScreenModel(
             }
         }
     }
+}
+
+enum class UpdateReminderActions {
+    ENABLE, DISABLE, DELETE
 }

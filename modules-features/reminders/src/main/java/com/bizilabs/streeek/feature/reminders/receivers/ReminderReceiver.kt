@@ -48,8 +48,6 @@ class ReminderReceiver : BroadcastReceiver() {
         SNOOZE("streeek.action.reminder.snooze", "snooze"),
         CANCEL("streeek.action.reminder.cancel", "cancel"),
         DELETE("streeek.action.reminder.delete", "delete"),
-        ENABLE("", ""),
-        DISABLE("", ""),
     }
 
     override fun onReceive(
@@ -67,16 +65,18 @@ class ReminderReceiver : BroadcastReceiver() {
         code = intent.getIntExtra("reminder.code", -1)
         val type = intent.getStringExtra("streeek.reminder.type")
         Timber.d(
-            "Reminder Values -> ${buildString {
-                append("\n")
-                append("label = $label")
-                append("\n")
-                append("day = $day")
-                append("\n")
-                append("code = $code")
-                append("\n")
-                append("type = $type")
-            }}",
+            "Reminder Values -> ${
+                buildString {
+                    append("\n")
+                    append("label = $label")
+                    append("\n")
+                    append("day = $day")
+                    append("\n")
+                    append("code = $code")
+                    append("\n")
+                    append("type = $type")
+                }
+            }",
         )
         with(context) {
             stopReminderWork()
@@ -198,13 +198,13 @@ class ReminderReceiver : BroadcastReceiver() {
                     NotificationResult(
                         type = "reminder",
                         uri =
-                            buildUri(
-                                "action" to "navigate",
-                                "destination" to "REMINDERS",
-                                "label" to label,
-                                "day" to day,
-                                "code" to code,
-                            ),
+                        buildUri(
+                            "action" to "navigate",
+                            "destination" to "REMINDERS",
+                            "label" to label,
+                            "day" to day,
+                            "code" to code,
+                        ),
                     ).asJson(),
                 )
             }
