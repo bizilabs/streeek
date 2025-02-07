@@ -37,7 +37,7 @@ data class ReminderListScreenState(
             when {
                 reminder != null -> {
                     label != reminder.label || selectedDays != reminder.repeat ||
-                        selectedHour != reminder.hour || selectedMinute != reminder.minute
+                            selectedHour != reminder.hour || selectedMinute != reminder.minute
                 }
 
                 else -> {
@@ -76,11 +76,11 @@ class ReminderListScreenModel(
                 mutableState.update { state ->
                     state.copy(
                         fetchListState =
-                            if (list.isEmpty()) {
-                                FetchListState.Empty
-                            } else {
-                                FetchListState.Success(list)
-                            },
+                        if (list.isEmpty()) {
+                            FetchListState.Empty
+                        } else {
+                            FetchListState.Success(list)
+                        },
                     )
                 }
             }
@@ -184,14 +184,7 @@ class ReminderListScreenModel(
         mutableState.update {
             it.copy(
                 isUpdating = true,
-                reminder =
-                    ReminderDomain(
-                        label = reminder.label,
-                        repeat = reminder.repeat,
-                        enabled = reminder.enabled,
-                        hour = reminder.hour,
-                        minute = reminder.minute,
-                    ),
+                reminder = reminder,
             )
         }
     }
@@ -208,48 +201,24 @@ class ReminderListScreenModel(
         screenModelScope.launch {
             when (action) {
                 ReminderReceiver.ReminderActions.ENABLE.name.lowercase() -> {
-                    val reminderDomain =
-                        ReminderDomain(
-                            label = state.value.label,
-                            repeat = state.value.selectedDays,
-                            enabled = true,
-                            hour = state.value.selectedHour ?: 0,
-                            minute = state.value.selectedMinute ?: 0,
-                        )
                     mutableState.update {
                         it.copy(isUpdating = false)
                     }
-                    repository.update(reminder = reminderDomain)
+                    repository.update(reminder = state.value.selectedReminder ?: return@launch)
                 }
 
                 ReminderReceiver.ReminderActions.DISABLE.name.lowercase() -> {
-                    val reminderDomain =
-                        ReminderDomain(
-                            label = state.value.label,
-                            repeat = state.value.selectedDays,
-                            enabled = false,
-                            hour = state.value.selectedHour ?: 0,
-                            minute = state.value.selectedMinute ?: 0,
-                        )
                     mutableState.update {
                         it.copy(isUpdating = false)
                     }
-                    repository.update(reminder = reminderDomain)
+                    repository.update(reminder = state.value.selectedReminder ?: return@launch)
                 }
 
                 ReminderReceiver.ReminderActions.DELETE.name.lowercase() -> {
-                    val reminderDomain =
-                        ReminderDomain(
-                            label = state.value.label,
-                            repeat = state.value.selectedDays,
-                            enabled = false,
-                            hour = state.value.selectedHour ?: 0,
-                            minute = state.value.selectedMinute ?: 0,
-                        )
                     mutableState.update {
                         it.copy(isUpdating = false)
                     }
-                    repository.delete(reminder = reminderDomain)
+                    repository.delete(reminder = state.value.selectedReminder ?: return@launch)
                 }
             }
         }
