@@ -5,9 +5,12 @@ import cafe.adriel.voyager.core.model.StateScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
 import com.bizilabs.streeek.feature.reviews.ReviewManagerHelper
 import com.bizilabs.streeek.lib.domain.models.LeaderboardDomain
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 
 class InAppReviewModel(private val reviewManagerHelper: ReviewManagerHelper) :
@@ -19,16 +22,23 @@ class InAppReviewModel(private val reviewManagerHelper: ReviewManagerHelper) :
 
     fun requestReview(activity: Activity) {
         screenModelScope.launch {
-            _reviewState.value = ReviewState.Loading
-            val result = reviewManagerHelper.triggerInAppReview(activity)
-            _reviewState.value =
+            _reviewState.update { ReviewState.Loading }
+            try {
+                val result =
+                    withContext(Dispatchers.IO) { reviewManagerHelper.triggerInAppReview(activity) }
                 if (result.isSuccess) {
-                    logStep("Successfully Launched In App Review")
-                    ReviewState.Success
+                    logStep("Successfully Launched In-App Review")
+                    _reviewState.update { ReviewState.Success }
                 } else {
-                    logStep("Error  Launching In App Review")
-                    ReviewState.Error(result.exceptionOrNull()?.localizedMessage ?: "Unknown error")
+                    val errorMessage = result.exceptionOrNull()?.localizedMessage ?: "Unknown error"
+                    logStep("Error Launching In-App Review: $errorMessage")
+                    _reviewState.update { ReviewState.Error(errorMessage) }
                 }
+            } catch (e: Exception) {
+                val errorMessage = e.localizedMessage ?: "Unexpected error"
+                logStep("Exception in In-App Review: $errorMessage")
+                _reviewState.update { ReviewState.Error(errorMessage) }
+            }
         }
     }
 
