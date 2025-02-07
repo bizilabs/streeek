@@ -40,7 +40,7 @@ data class ReminderListScreenState(
                 }
 
                 else -> {
-                    label.isNotBlank() && label.length > 3 && selectedDays.isNotEmpty() && selectedHour != null && selectedMinute != null
+                    isValidLabel && selectedDays.isNotEmpty() && selectedHour != null && selectedMinute != null
                 }
             }
 
@@ -50,6 +50,10 @@ data class ReminderListScreenState(
                 selectedHour != null && selectedMinute != null -> "$selectedHour:$selectedMinute"
                 else -> ""
             }
+
+    val isValidLabel: Boolean
+        get() = label.isNotBlank() && label.length > 3
+
 }
 
 class ReminderListScreenModel(

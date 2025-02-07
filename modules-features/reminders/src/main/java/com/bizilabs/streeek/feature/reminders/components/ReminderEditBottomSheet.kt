@@ -11,6 +11,7 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.Label
+import androidx.compose.material.icons.filled.Error
 import androidx.compose.material.icons.rounded.AccessTimeFilled
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
@@ -29,6 +30,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -36,6 +38,7 @@ import androidx.compose.ui.unit.dp
 import com.bizilabs.streeek.feature.reminders.list.ReminderListScreenState
 import com.bizilabs.streeek.lib.design.components.SafiButton
 import com.bizilabs.streeek.lib.design.theme.SafiTheme
+import com.bizilabs.streeek.lib.resources.strings.SafiStrings
 import kotlinx.coroutines.launch
 import kotlinx.datetime.DayOfWeek
 
@@ -112,9 +115,9 @@ private fun ReminderBottomSheetContent(
         Text(
             text = "Reminder".uppercase(),
             modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(top = 16.dp),
+            Modifier
+                .fillMaxWidth()
+                .padding(top = 16.dp),
             textAlign = TextAlign.Center,
             fontWeight = FontWeight.Bold,
         )
@@ -123,14 +126,14 @@ private fun ReminderBottomSheetContent(
         )
         Column(
             modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
+            Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
         ) {
             TextField(
                 modifier =
-                    Modifier
-                        .fillMaxWidth(),
+                Modifier
+                    .fillMaxWidth(),
                 value = state.label,
                 onValueChange = onValueChangeReminderLabel,
                 label = { Text(text = "Label") },
@@ -140,18 +143,29 @@ private fun ReminderBottomSheetContent(
                         contentDescription = "update label",
                     )
                 },
+                isError = !state.isValidLabel && state.label.isNotBlank(),
+                supportingText = {
+                    if (!state.isValidLabel && state.label.isNotBlank()) {
+                        Text(text = stringResource(SafiStrings.InvalidReminderLabel))
+                    }
+                },
+                trailingIcon = {
+                    if (!state.isValidLabel && state.label.isNotBlank()) {
+                        Icon(Icons.Default.Error, "error")
+                    }
+                }
             )
             TextField(
                 value = state.time ?: "",
                 onValueChange = {},
                 label = { Text(text = "Time") },
                 modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 16.dp)
-                        .clickable {
-                            onOpenTimePicker()
-                        },
+                Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 16.dp)
+                    .clickable {
+                        onOpenTimePicker()
+                    },
                 leadingIcon = {
                     Icon(
                         imageVector = Icons.Rounded.AccessTimeFilled,
@@ -168,8 +182,8 @@ private fun ReminderBottomSheetContent(
             )
             LazyRow(
                 modifier =
-                    Modifier
-                        .fillMaxWidth(),
+                Modifier
+                    .fillMaxWidth(),
             ) {
                 items(DayOfWeek.entries) { day ->
                     val isSelected = state.selectedDays.contains(day)
@@ -177,15 +191,15 @@ private fun ReminderBottomSheetContent(
                         modifier = Modifier.padding(end = 4.dp),
                         onClick = { onClickReminderDayOfWeek(day) },
                         border =
-                            BorderStroke(
-                                width = 1.dp,
-                                color = MaterialTheme.colorScheme.onSurface,
-                            ),
+                        BorderStroke(
+                            width = 1.dp,
+                            color = MaterialTheme.colorScheme.onSurface,
+                        ),
                         colors =
-                            CardDefaults.cardColors(
-                                containerColor = if (isSelected) MaterialTheme.colorScheme.onSurface else Color.Transparent,
-                                contentColor = if (isSelected) MaterialTheme.colorScheme.surface else MaterialTheme.colorScheme.onSurface,
-                            ),
+                        CardDefaults.cardColors(
+                            containerColor = if (isSelected) MaterialTheme.colorScheme.onSurface else Color.Transparent,
+                            contentColor = if (isSelected) MaterialTheme.colorScheme.surface else MaterialTheme.colorScheme.onSurface,
+                        ),
                     ) {
                         Text(
                             modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
@@ -197,9 +211,9 @@ private fun ReminderBottomSheetContent(
             }
             SafiButton(
                 modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 16.dp),
+                Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 16.dp),
                 onClick = onCreateReminder,
                 enabled = state.isEditActionEnabled,
             ) {
@@ -242,12 +256,12 @@ private fun ReminderEditBottomSheetSelectedPreview() {
                 Surface {
                     ReminderBottomSheetContent(
                         state =
-                            ReminderListScreenState(
-                                label = "poach",
-                                selectedHour = 13,
-                                selectedMinute = 15,
-                                selectedDays = listOf(DayOfWeek.MONDAY, DayOfWeek.WEDNESDAY),
-                            ),
+                        ReminderListScreenState(
+                            label = "poach",
+                            selectedHour = 13,
+                            selectedMinute = 15,
+                            selectedDays = listOf(DayOfWeek.MONDAY, DayOfWeek.WEDNESDAY),
+                        ),
                         onValueChangeReminderLabel = {},
                         onClickReminderDayOfWeek = {},
                         onCreateReminder = {},
