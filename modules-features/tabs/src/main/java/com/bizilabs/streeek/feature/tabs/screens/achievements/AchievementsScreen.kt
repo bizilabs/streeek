@@ -47,7 +47,6 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.getScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import coil.compose.SubcomposeAsyncImage
-import com.bizilabs.streeek.feature.reviews.presentation.InAppReviewModel
 import com.bizilabs.streeek.feature.tabs.screens.achievements.component.LevelComponent
 import com.bizilabs.streeek.lib.common.navigation.SharedScreen
 import com.bizilabs.streeek.lib.design.components.SafiCenteredColumn
@@ -66,7 +65,6 @@ object AchievementsScreen : Screen {
         val activity = LocalContext.current as ComponentActivity
         val profileScreen = rememberScreen(SharedScreen.Profile)
         val screenModel: AchievementsScreenModel = getScreenModel()
-        val reviewModel = getScreenModel<InAppReviewModel>()
         val state by screenModel.state.collectAsStateWithLifecycle()
 
         AchievementsScreenContent(
@@ -80,7 +78,7 @@ object AchievementsScreen : Screen {
         )
 
         LifecycleStartEffect(Unit) {
-            activity.let { reviewModel.requestReview(it) }
+            activity.let { screenModel.requestReview(it) }
             onStopOrDispose { Timber.d("Achievements page is onStopOrDispose") }
         }
     }
