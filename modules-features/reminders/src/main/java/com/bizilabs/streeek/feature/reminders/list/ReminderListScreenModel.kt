@@ -36,7 +36,7 @@ data class ReminderListScreenState(
             when {
                 reminder != null -> {
                     label != reminder.label || selectedDays != reminder.repeat ||
-                            selectedHour != reminder.hour || selectedMinute != reminder.minute
+                        selectedHour != reminder.hour || selectedMinute != reminder.minute
                 }
 
                 else -> {
@@ -75,11 +75,11 @@ class ReminderListScreenModel(
                 mutableState.update { state ->
                     state.copy(
                         fetchListState =
-                        if (list.isEmpty()) {
-                            FetchListState.Empty
-                        } else {
-                            FetchListState.Success(list)
-                        },
+                            if (list.isEmpty()) {
+                                FetchListState.Empty
+                            } else {
+                                FetchListState.Success(list)
+                            },
                     )
                 }
             }
@@ -225,5 +225,7 @@ class ReminderListScreenModel(
 }
 
 enum class UpdateReminderActions {
-    ENABLE, DISABLE, DELETE
+    ENABLE,
+    DISABLE,
+    DELETE,
 }

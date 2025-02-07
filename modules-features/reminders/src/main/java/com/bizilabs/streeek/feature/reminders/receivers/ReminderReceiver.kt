@@ -198,13 +198,13 @@ class ReminderReceiver : BroadcastReceiver() {
                     NotificationResult(
                         type = "reminder",
                         uri =
-                        buildUri(
-                            "action" to "navigate",
-                            "destination" to "REMINDERS",
-                            "label" to label,
-                            "day" to day,
-                            "code" to code,
-                        ),
+                            buildUri(
+                                "action" to "navigate",
+                                "destination" to "REMINDERS",
+                                "label" to label,
+                                "day" to day,
+                                "code" to code,
+                            ),
                     ).asJson(),
                 )
             }
