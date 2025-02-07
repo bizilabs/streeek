@@ -101,7 +101,16 @@ class ReminderListScreenModel(
     }
 
     fun onClickCreate() {
-        mutableState.update { it.copy(isEditing = true) }
+        mutableState.update {
+            it.copy(
+                isEditing = true,
+                label = "",
+                selectedHour = null,
+                selectedMinute = null,
+                selectedDays = emptyList(),
+                selectedReminder = null,
+            )
+        }
     }
 
     fun onClickReminder(reminder: ReminderDomain) {
