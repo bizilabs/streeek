@@ -180,7 +180,6 @@ data class TeamScreenState(
     val inviteAccountState: InviteAccountState? = null,
     val accountsInvitedIds: List<Long> = emptyList(),
     val searchParam: String = "",
-    val joinerTab: TeamJoinersTab = TeamJoinersTab.REQUESTS,
     val joinerTabs: EnumEntries<TeamJoinersTab> = TeamJoinersTab.entries,
     val inviteWithdrawalState: InviteWithdrawalState? = null,
     val withdrawnInvitesIds: List<Long> = emptyList(),
@@ -892,10 +891,6 @@ class TeamScreenModel(
     fun onClickClearSearch() {
         mutableState.update { it.copy(searchParam = "") }
         observeAccountsNotInTeam()
-    }
-
-    fun onClickTab(joinersTab: TeamJoinersTab) {
-        mutableState.update { it.copy(joinerTab = joinersTab) }
     }
 
     private fun observeTeamAccountInvites() {

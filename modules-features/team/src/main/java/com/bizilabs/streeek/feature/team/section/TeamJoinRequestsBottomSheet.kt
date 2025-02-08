@@ -13,6 +13,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerState
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.CheckCircle
@@ -81,11 +84,15 @@ fun TeamJoinRequestsBottomSheet(
     onClickProcessSelectedRequests: (Boolean) -> Unit,
     onClickSelectedRequestsSelection: (SelectionAction, List<TeamAccountJoinRequestDomain>) -> Unit,
     onClickProcessRequest: (TeamAccountJoinRequestDomain, TeamRequestAction) -> Unit,
-    onClickTab: (TeamJoinersTab) -> Unit,
     onClickWithdraw: (TeamAccountInvitesDomain) -> Unit,
 ) {
     val scope = rememberCoroutineScope()
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    val pagerState =
+        rememberPagerState(
+            initialPage = state.joinerTabs.indexOf(state.joinerTabs.first()),
+        ) { state.joinerTabs.size }
+
     ModalBottomSheet(
         modifier = modifier,
         sheetState = sheetState,
@@ -101,17 +108,17 @@ fun TeamJoinRequestsBottomSheet(
                     modifier = Modifier,
                     state = state,
                     onDismissSheet = onDismissSheet,
-                    onClickTab = onClickTab,
                     requestsData = requestsData,
                     invitesData = teamAccountsInvites,
+                    pagerState = pagerState,
                 )
             },
         ) { innerPadding ->
-            AnimatedContent(
-                targetState = state.joinerTab,
-                label = "animate sections",
-            ) { tab ->
-                when (tab) {
+            HorizontalPager(
+                modifier = Modifier.fillMaxWidth(),
+                state = pagerState,
+            ) { pageIndex ->
+                when (state.joinerTabs[pageIndex]) {
                     TeamJoinersTab.REQUESTS -> {
                         Column(
                             modifier =
@@ -435,10 +442,11 @@ fun TeamJoinersSheetHeader(
     modifier: Modifier,
     state: TeamScreenState,
     onDismissSheet: () -> Unit,
-    onClickTab: (TeamJoinersTab) -> Unit,
     requestsData: LazyPagingItems<TeamAccountJoinRequestDomain>,
     invitesData: LazyPagingItems<TeamAccountInvitesDomain>,
+    pagerState: PagerState,
 ) {
+    val coroutineScope = rememberCoroutineScope()
     Column(modifier = modifier.fillMaxWidth()) {
         TopAppBar(
             navigationIcon = {
@@ -472,13 +480,17 @@ fun TeamJoinersSheetHeader(
         )
         TabRow(
             modifier = Modifier.fillMaxWidth(),
-            selectedTabIndex = state.joinerTabs.indexOf(state.joinerTab),
+            selectedTabIndex = pagerState.currentPage,
         ) {
-            state.joinerTabs.forEach { tab ->
-                val isSelected = tab == state.joinerTab
+            state.joinerTabs.forEachIndexed { index, tab ->
+                val isSelected = pagerState.currentPage == index
                 Tab(
                     selected = isSelected,
-                    onClick = { onClickTab(tab) },
+                    onClick = {
+                        coroutineScope.launch {
+                            pagerState.animateScrollToPage(state.joinerTabs.indexOf(tab))
+                        }
+                    },
                     selectedContentColor = MaterialTheme.colorScheme.primary,
                     unselectedContentColor = MaterialTheme.colorScheme.onSurface.copy(0.25f),
                 ) {
