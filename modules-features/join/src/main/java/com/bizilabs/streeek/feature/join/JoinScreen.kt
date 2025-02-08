@@ -6,6 +6,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
@@ -27,6 +29,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -56,6 +59,7 @@ import com.bizilabs.streeek.lib.design.components.SafiTopBarHeader
 import com.bizilabs.streeek.lib.domain.extensions.asCount
 import com.bizilabs.streeek.lib.domain.models.TeamAndMembersDomain
 import com.bizilabs.streeek.lib.domain.models.team.AccountTeamInvitesDomain
+import kotlinx.coroutines.launch
 
 val ScreenJoinTeam =
     screenModule {
@@ -82,7 +86,6 @@ object JoinScreen : Screen {
             onClickJoinWithCode = screenModel::onClickJoinWithCode,
             onClickCreateTeam = screenModel::onClickCreateTeam,
             navigate = { screen -> navigator?.replace(screen) },
-            onClickTab = screenModel::onClickJoinTab,
             onClickProcessInvite = screenModel::onClickProcessInvite,
             onRefreshTeamInvites = screenModel::onRefreshTeamInvites,
         )
@@ -103,7 +106,6 @@ fun JoinScreenContent(
     onClickJoinWithCode: (Boolean) -> Unit,
     onClickCreateTeam: () -> Unit,
     navigate: (Screen) -> Unit,
-    onClickTab: (JoinTab) -> Unit,
     onClickProcessInvite: (TeamInviteAction, AccountTeamInvitesDomain) -> Unit,
     onRefreshTeamInvites: () -> Unit,
 ) {
@@ -121,6 +123,12 @@ fun JoinScreenContent(
             onClickDismiss = onClickDismissDialog,
         )
     }
+
+    val pagerState =
+        rememberPagerState(
+            initialPage = state.joinerTabs.indexOf(state.joinerTabs.first()),
+        ) { state.joinerTabs.size }
+    val coroutineScope = rememberCoroutineScope()
 
     Scaffold(
         topBar = {
@@ -241,13 +249,17 @@ fun JoinScreenContent(
                         Column {
                             TabRow(
                                 modifier = Modifier.fillMaxWidth(),
-                                selectedTabIndex = state.joinerTabs.indexOf(state.joinerTab),
+                                selectedTabIndex = pagerState.currentPage,
                             ) {
-                                state.joinerTabs.forEach { tab ->
-                                    val isSelected = tab == state.joinerTab
+                                state.joinerTabs.forEachIndexed { index, tab ->
+                                    val isSelected = pagerState.currentPage == index
                                     Tab(
                                         selected = isSelected,
-                                        onClick = { onClickTab(tab) },
+                                        onClick = {
+                                            coroutineScope.launch {
+                                                pagerState.scrollToPage(state.joinerTabs.indexOf(tab))
+                                            }
+                                        },
                                         selectedContentColor = MaterialTheme.colorScheme.primary,
                                         unselectedContentColor =
                                             MaterialTheme.colorScheme.onSurface.copy(
@@ -261,98 +273,104 @@ fun JoinScreenContent(
                                 }
                             }
 
-                            when (state.joinerTab) {
-                                JoinTab.PUBLIC_TEAMS -> {
-                                    SafiRefreshBox(
-                                        modifier = Modifier.fillMaxSize(),
-                                        isRefreshing = teams.loadState.refresh is LoadState.Loading,
-                                        onRefresh = teams::refresh,
-                                    ) {
-                                        SafiPagingComponent(
-                                            data = teams,
+                            HorizontalPager(
+                                state = pagerState,
+                                modifier = Modifier.fillMaxSize(),
+                            ) { pageIndex ->
+                                when (state.joinerTabs[pageIndex]) {
+                                    JoinTab.PUBLIC_TEAMS -> {
+                                        SafiRefreshBox(
                                             modifier = Modifier.fillMaxSize(),
-                                            refreshEmpty = {
-                                                SafiCenteredColumn(modifier = Modifier.fillMaxSize()) {
-                                                    SafiInfoSection(
-                                                        icon = Icons.Rounded.People,
-                                                        title = "No Public Teams",
-                                                        description = "No public teams found. \nCreate a team to start collaborating",
-                                                    )
-                                                    Button(onClick = onClickCreateTeam) {
-                                                        Text(text = "create")
+                                            isRefreshing = teams.loadState.refresh is LoadState.Loading,
+                                            onRefresh = teams::refresh,
+                                        ) {
+                                            SafiPagingComponent(
+                                                data = teams,
+                                                modifier = Modifier.fillMaxSize(),
+                                                refreshEmpty = {
+                                                    SafiCenteredColumn(modifier = Modifier.fillMaxSize()) {
+                                                        SafiInfoSection(
+                                                            icon = Icons.Rounded.People,
+                                                            title = "No Public Teams",
+                                                            description = "No public teams found. \nCreate a team to start collaborating",
+                                                        )
+                                                        Button(onClick = onClickCreateTeam) {
+                                                            Text(text = "create")
+                                                        }
                                                     }
-                                                }
-                                            },
-                                            refreshError = {
-                                                SafiCenteredColumn(modifier = Modifier.fillMaxSize()) {
-                                                    SafiInfoSection(
-                                                        icon = Icons.Rounded.People,
-                                                        title = "Failed Getting Teams",
-                                                        description = it.localizedMessage ?: "",
-                                                    )
-                                                    Button(onClick = teams::retry) {
-                                                        Text(text = "retry")
+                                                },
+                                                refreshError = {
+                                                    SafiCenteredColumn(modifier = Modifier.fillMaxSize()) {
+                                                        SafiInfoSection(
+                                                            icon = Icons.Rounded.People,
+                                                            title = "Failed Getting Teams",
+                                                            description = it.localizedMessage ?: "",
+                                                        )
+                                                        Button(onClick = teams::retry) {
+                                                            Text(text = "retry")
+                                                        }
                                                     }
-                                                }
-                                            },
-                                        ) { team ->
-                                            val requested = team.team.id in state.requestedTeamIds
-                                            TeamItemComponent(
-                                                modifier =
-                                                    Modifier
-                                                        .padding(vertical = 8.dp)
-                                                        .padding(horizontal = 16.dp),
-                                                teamId = team.team.id,
-                                                teamName = team.team.name,
-                                                teamCount = team.team.count,
-                                                teamCountLabel = "member".asCount(team.team.count),
-                                                requested = requested,
-                                                enabled = state.requestState == null && !requested,
-                                                requestTeamId = state.requestState?.teamId,
-                                                requestState = state.requestState?.requestState,
-                                                membersAvatarUrl = team.members.map { it.avatarUrl },
-                                            ) { onClickTeamRequest(team) }
+                                                },
+                                            ) { team ->
+                                                val requested =
+                                                    team.team.id in state.requestedTeamIds
+                                                TeamItemComponent(
+                                                    modifier =
+                                                        Modifier
+                                                            .padding(vertical = 8.dp)
+                                                            .padding(horizontal = 16.dp),
+                                                    teamId = team.team.id,
+                                                    teamName = team.team.name,
+                                                    teamCount = team.team.count,
+                                                    teamCountLabel = "member".asCount(team.team.count),
+                                                    requested = requested,
+                                                    enabled = state.requestState == null && !requested,
+                                                    requestTeamId = state.requestState?.teamId,
+                                                    requestState = state.requestState?.requestState,
+                                                    membersAvatarUrl = team.members.map { it.avatarUrl },
+                                                ) { onClickTeamRequest(team) }
+                                            }
                                         }
                                     }
-                                }
 
-                                JoinTab.TEAM_INVITES -> {
-                                    SafiRefreshBox(
-                                        modifier = Modifier.fillMaxSize(),
-                                        isRefreshing = accountInvites.loadState.refresh is LoadState.Loading,
-                                        onRefresh = onRefreshTeamInvites,
-                                    ) {
-                                        SafiPagingComponent(
-                                            data = accountInvites,
+                                    JoinTab.TEAM_INVITES -> {
+                                        SafiRefreshBox(
                                             modifier = Modifier.fillMaxSize(),
-                                            refreshEmpty = {
-                                                SafiCenteredColumn(modifier = Modifier.fillMaxSize()) {
-                                                    SafiInfoSection(
-                                                        icon = Icons.Rounded.People,
-                                                        title = "No Team Invites",
-                                                        description = "You have not been invited to any team yet.",
-                                                    )
-                                                }
-                                            },
-                                            refreshError = {
-                                                SafiCenteredColumn(modifier = Modifier.fillMaxSize()) {
-                                                    SafiInfoSection(
-                                                        icon = Icons.Rounded.People,
-                                                        title = "Failed Getting Invites",
-                                                        description = it.localizedMessage ?: "",
-                                                    )
-                                                    Button(onClick = accountInvites::retry) {
-                                                        Text(text = "retry")
+                                            isRefreshing = accountInvites.loadState.refresh is LoadState.Loading,
+                                            onRefresh = onRefreshTeamInvites,
+                                        ) {
+                                            SafiPagingComponent(
+                                                data = accountInvites,
+                                                modifier = Modifier.fillMaxSize(),
+                                                refreshEmpty = {
+                                                    SafiCenteredColumn(modifier = Modifier.fillMaxSize()) {
+                                                        SafiInfoSection(
+                                                            icon = Icons.Rounded.People,
+                                                            title = "No Team Invites",
+                                                            description = "You have not been invited to any team yet.",
+                                                        )
                                                     }
-                                                }
-                                            },
-                                        ) { inviteDetails ->
-                                            AccountTeamInviteComponent(
-                                                modifier = Modifier,
-                                                state = state,
-                                                accountTeamInvite = inviteDetails,
-                                                onClickProcessInvite = onClickProcessInvite,
-                                            )
+                                                },
+                                                refreshError = {
+                                                    SafiCenteredColumn(modifier = Modifier.fillMaxSize()) {
+                                                        SafiInfoSection(
+                                                            icon = Icons.Rounded.People,
+                                                            title = "Failed Getting Invites",
+                                                            description = it.localizedMessage ?: "",
+                                                        )
+                                                        Button(onClick = accountInvites::retry) {
+                                                            Text(text = "retry")
+                                                        }
+                                                    }
+                                                },
+                                            ) { inviteDetails ->
+                                                AccountTeamInviteComponent(
+                                                    modifier = Modifier,
+                                                    state = state,
+                                                    accountTeamInvite = inviteDetails,
+                                                    onClickProcessInvite = onClickProcessInvite,
+                                                )
+                                            }
                                         }
                                     }
                                 }

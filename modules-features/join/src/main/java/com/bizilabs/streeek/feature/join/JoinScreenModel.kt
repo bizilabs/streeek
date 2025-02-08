@@ -74,7 +74,6 @@ data class JoinScreenState(
     val token: String = "",
     val teamId: Long? = null,
     val joiningWithCode: Boolean = false,
-    val joinerTab: JoinTab = JoinTab.PUBLIC_TEAMS,
     val joinerTabs: EnumEntries<JoinTab> = JoinTab.entries,
     // This is the map of the state and list
     val processedInvites: Map<TeamInviteAction, List<Long>> = emptyMap(),
@@ -210,10 +209,6 @@ class JoinScreenModel(
 
     fun onClickCreateTeam() {
         mutableState.update { it.copy(hasClickedCreateTeam = true) }
-    }
-
-    fun onClickJoinTab(joinersTab: JoinTab) {
-        mutableState.update { it.copy(joinerTab = joinersTab) }
     }
 
     private fun observeAccountInvites() {
