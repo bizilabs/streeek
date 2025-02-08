@@ -162,7 +162,10 @@ fun LeaderboardListScreenContent(
                                 modifier = Modifier.fillMaxSize(),
                                 state = pagerState,
                                 flingBehavior = flingBehavior,
-                            ) {
+                            ) { pageIndex ->
+                                val currentLeaderboard = state.leaderboards[pageIndex]
+                                onValueChangeLeaderboard(currentLeaderboard)
+
                                 LazyColumn(modifier = Modifier.fillMaxSize()) {
                                     item {
                                         Column(modifier = Modifier.fillMaxWidth()) {
