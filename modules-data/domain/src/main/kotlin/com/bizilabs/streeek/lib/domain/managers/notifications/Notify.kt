@@ -1,4 +1,4 @@
-package com.bizilabs.streeek.lib.common.notifications
+package com.bizilabs.streeek.lib.domain.managers.notifications
 
 import android.annotation.SuppressLint
 import android.app.Notification

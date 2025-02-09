@@ -10,10 +10,10 @@ import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.bizilabs.streeek.feature.reminders.manager.ReminderManager
-import com.bizilabs.streeek.lib.common.notifications.AppNotificationChannel
-import com.bizilabs.streeek.lib.common.notifications.notify
 import com.bizilabs.streeek.lib.domain.helpers.asJson
 import com.bizilabs.streeek.lib.domain.helpers.buildUri
+import com.bizilabs.streeek.lib.domain.managers.notifications.AppNotificationChannel
+import com.bizilabs.streeek.lib.domain.managers.notifications.notify
 import com.bizilabs.streeek.lib.domain.models.notifications.NotificationResult
 import com.bizilabs.streeek.lib.domain.workers.startReminderWork
 import com.bizilabs.streeek.lib.domain.workers.stopReminderWork

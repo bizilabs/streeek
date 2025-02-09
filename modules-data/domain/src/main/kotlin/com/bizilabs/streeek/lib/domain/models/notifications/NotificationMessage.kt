@@ -92,3 +92,27 @@ val ClimbedPositionMessage =
             body = "Your climb is legendary. Soon, they’ll write songs about you!",
         ),
     )
+
+val LevelledUpMessages =
+    listOf(
+        NotificationMessage(
+            title = "🌟 Level Up! Welcome to {level_name} 🌟",
+            body = "You're unstoppable! Keep those contributions coming and dominate the leaderboard. 🚀",
+        ),
+        NotificationMessage(
+            title = "🎉 Boom! You've Hit {level_name}! 🎉",
+            body = "Your coding streak is on fire! 🔥 Let's see how high you can climb. 💪",
+        ),
+        NotificationMessage(
+            title = "⚡ Leveling Up to {level_name}! ⚡",
+            body = "Your skills are leveling up faster than a speedrun! Keep crushing it! 💥",
+        ),
+        NotificationMessage(
+            title = "🏆 New Level Unlocked: {level_name}! 🏆",
+            body = "Congratulations! Your contributions are now legendary. Go claim that throne! 👑",
+        ),
+        NotificationMessage(
+            title = "🎮 Next Level: {level_name} Unlocked! 🎮",
+            body = "You’re in the big leagues now! Ready for your next coding quest? 💻✨",
+        ),
+    )

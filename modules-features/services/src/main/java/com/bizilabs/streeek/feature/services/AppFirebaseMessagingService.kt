@@ -1,7 +1,7 @@
 package com.bizilabs.streeek.feature.services
 
-import com.bizilabs.streeek.lib.common.notifications.AppNotificationChannel
-import com.bizilabs.streeek.lib.common.notifications.notify
+import com.bizilabs.streeek.lib.domain.managers.notifications.AppNotificationChannel
+import com.bizilabs.streeek.lib.domain.managers.notifications.notify
 import com.bizilabs.streeek.lib.domain.models.notifications.asNotificationResult
 import com.bizilabs.streeek.lib.domain.workers.startProcessingNotificationWork
 import com.bizilabs.streeek.lib.domain.workers.startSaveFCMTokenWork

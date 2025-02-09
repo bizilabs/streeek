@@ -1,4 +1,4 @@
-package com.bizilabs.streeek.lib.common.notifications
+package com.bizilabs.streeek.lib.domain.managers.notifications
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -26,6 +26,13 @@ enum class AppNotificationChannel(
         group = AppNotificationGroup.REMINDERS,
         description = "alarms for contributing to the app",
     ),
+    TEAM(
+        id = "streeek.team",
+        label = "Team",
+        importance = NotificationManager.IMPORTANCE_HIGH,
+        group = AppNotificationGroup.USER,
+        description = "updates on what's happening in all teams",
+    ),
     TEAM_REQUESTS(
         id = "streeek.team.requests",
         label = "Team Requests",
@@ -39,6 +46,13 @@ enum class AppNotificationChannel(
         importance = NotificationManager.IMPORTANCE_HIGH,
         group = AppNotificationGroup.USER,
         description = "regular team updates",
+    ),
+    LEADERBOARD(
+        id = "streeek.leaderboard",
+        label = "Leaderboard",
+        importance = NotificationManager.IMPORTANCE_HIGH,
+        group = AppNotificationGroup.USER,
+        description = "updates on what's happening in all leaderboards",
     ),
 }
 

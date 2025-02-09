@@ -46,6 +46,7 @@ val dataModule =
         single<UserRepository> { UserRepositoryImpl(remote = get(), accountLocalSource = get()) }
         single<AccountRepository> {
             AccountRepositoryImpl(
+                context = get(),
                 remote = get(),
                 local = get(),
                 contributionsLocalSource = get(),
