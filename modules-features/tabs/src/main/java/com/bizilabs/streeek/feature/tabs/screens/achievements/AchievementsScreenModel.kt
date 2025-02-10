@@ -134,23 +134,19 @@ class AchievementsScreenModel(
                 val result =
                     withContext(Dispatchers.IO) { reviewManagerHelper.triggerInAppReview(activity) }
                 if (result.isSuccess) {
-                    logStep("Successfully Launched In-App Review")
+                    Timber.d("Successfully Launched In-App Review")
                     mutableState.update { it.copy(reviewState = ReviewState.Success) }
                 } else {
                     val errorMessage = result.exceptionOrNull()?.localizedMessage ?: "Unknown error"
-                    logStep("Error Launching In-App Review: $errorMessage")
+                    Timber.d("Error Launching In-App Review: $errorMessage")
                     mutableState.update { it.copy(reviewState = ReviewState.Error(errorMessage)) }
                 }
             } catch (e: Exception) {
                 val errorMessage = e.localizedMessage ?: "Unexpected error"
-                logStep("Exception in In-App Review: $errorMessage")
+                Timber.d("Exception in In-App Review: $errorMessage")
                 mutableState.update { it.copy(reviewState = ReviewState.Error(errorMessage)) }
             }
         }
-    }
-
-    private fun logStep(s: String) {
-        Timber.tag("IN-APPREVIEWS").d(s)
     }
 }
 
