@@ -161,6 +161,7 @@ class ReminderListScreenModel(
                 )
             repository.update(
                 reminder = reminderDomain,
+                currentLabel = state.value.selectedReminder?.label,
             )
 
             manager.createAlarm(reminderDomain)
@@ -218,6 +219,7 @@ class ReminderListScreenModel(
                         reminder =
                             state.value.selectedReminder?.copy(enabled = true)
                                 ?: return@launch,
+                        "",
                     )
                     mutableState.update {
                         it.copy(isUpdating = false)
@@ -229,6 +231,7 @@ class ReminderListScreenModel(
                         reminder =
                             state.value.selectedReminder?.copy(enabled = false)
                                 ?: return@launch,
+                        "",
                     )
                     mutableState.update {
                         it.copy(

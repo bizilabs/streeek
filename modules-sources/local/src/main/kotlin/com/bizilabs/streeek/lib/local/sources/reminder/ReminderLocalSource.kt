@@ -14,7 +14,10 @@ interface ReminderLocalSource {
 
     suspend fun insert(reminder: ReminderCache)
 
-    suspend fun update(reminder: ReminderCache)
+    suspend fun update(
+        reminder: ReminderCache,
+        currentLabel: String?,
+    )
 
     suspend fun delete(reminder: ReminderCache)
 }
@@ -42,10 +45,20 @@ internal class ReminderLocalSourceImpl(
         save(map)
     }
 
-    override suspend fun update(reminder: ReminderCache) {
+    override suspend fun update(
+        reminder: ReminderCache,
+        currentLabel: String?,
+    ) {
         val map = get()
-        map[reminder.label] = reminder
-        save(map)
+        val currentReminder = map[currentLabel]
+        if (currentReminder?.label?.isNotEmpty() == true) {
+            map.remove(currentLabel)
+            map[reminder.label] = reminder
+            save(map)
+        } else {
+            map[reminder.label] = reminder
+            save(map)
+        }
     }
 
     override suspend fun delete(reminder: ReminderCache) {

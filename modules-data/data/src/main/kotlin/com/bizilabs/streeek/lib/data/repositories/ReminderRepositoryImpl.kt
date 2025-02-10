@@ -14,8 +14,11 @@ class ReminderRepositoryImpl(
     override val reminders: Flow<Map<String, ReminderDomain>>
         get() = localSource.reminders.mapLatest { map -> map.mapValues { reminder -> reminder.value.toDomain() } }
 
-    override suspend fun update(reminder: ReminderDomain) {
-        localSource.update(reminder = reminder.toCache())
+    override suspend fun update(
+        reminder: ReminderDomain,
+        currentLabel: String?,
+    ) {
+        localSource.update(reminder = reminder.toCache(), currentLabel = currentLabel)
     }
 
     override suspend fun delete(reminder: ReminderDomain) {
