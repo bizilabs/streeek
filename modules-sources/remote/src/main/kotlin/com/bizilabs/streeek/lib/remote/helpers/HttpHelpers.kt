@@ -13,7 +13,6 @@ import io.ktor.serialization.kotlinx.json.json
 import okhttp3.logging.HttpLoggingInterceptor
 
 sealed class Header(val name: String, val value: String) {
-
     data class Authorization(val key: String) : Header(name = "Authorization", value = key)
 
     data class Language(val language: String) :

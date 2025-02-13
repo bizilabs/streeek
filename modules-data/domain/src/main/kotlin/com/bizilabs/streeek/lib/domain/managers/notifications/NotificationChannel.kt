@@ -19,6 +19,13 @@ enum class AppNotificationChannel(
         group = AppNotificationGroup.UPDATES,
         description = "general updates",
     ),
+    UPDATES(
+        id = "streeek.updates",
+        label = "Updates",
+        importance = NotificationManager.IMPORTANCE_DEFAULT,
+        group = AppNotificationGroup.UPDATES,
+        description = "All application updates",
+    ),
     REMINDERS(
         id = "streeek.team.reminders",
         label = "Reminders",
