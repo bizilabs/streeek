@@ -211,6 +211,35 @@ fun LeaderboardListScreenContent(
                                         }
                                     }
                                     item {
+                                        val rank = state.leaderboard?.rank?.current
+                                        val account = state.account
+                                        account?.let {
+                                            Column(
+                                                modifier = Modifier.fillMaxWidth(),
+                                                horizontalAlignment = Alignment.CenterHorizontally,
+                                            ) {
+                                                Text(
+                                                    modifier =
+                                                        Modifier
+                                                            .fillMaxWidth()
+                                                            .padding(vertical = 16.dp),
+                                                    textAlign = TextAlign.Center,
+                                                    text = "· · ·",
+                                                    style = MaterialTheme.typography.titleLarge,
+                                                )
+                                                HorizontalDivider()
+                                                LeaderboardComponent(
+                                                    imageUrl = account.avatarUrl,
+                                                    username = account.username,
+                                                    points = rank?.points ?: 0L,
+                                                    rank = rank?.position?.asRank() ?: "",
+                                                    modifier = Modifier.fillMaxWidth(),
+                                                    onClick = { },
+                                                )
+                                            }
+                                        }
+                                    }
+                                    item {
                                         SafiCenteredRow(modifier = Modifier.fillMaxWidth()) {
                                             Button(
                                                 modifier = Modifier.padding(16.dp),

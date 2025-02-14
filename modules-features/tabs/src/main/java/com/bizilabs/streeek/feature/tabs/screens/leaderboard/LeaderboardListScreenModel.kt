@@ -3,8 +3,10 @@ package com.bizilabs.streeek.feature.tabs.screens.leaderboard
 import android.content.Context
 import cafe.adriel.voyager.core.model.StateScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
+import com.bizilabs.streeek.lib.domain.models.AccountDomain
 import com.bizilabs.streeek.lib.domain.models.LeaderboardAccountDomain
 import com.bizilabs.streeek.lib.domain.models.LeaderboardDomain
+import com.bizilabs.streeek.lib.domain.repositories.AccountRepository
 import com.bizilabs.streeek.lib.domain.repositories.LeaderboardRepository
 import com.bizilabs.streeek.lib.domain.workers.startImmediateSyncLeaderboardWork
 import kotlinx.coroutines.delay
@@ -19,7 +21,7 @@ import kotlin.collections.get
 internal val LeaderboardModule =
     module {
         factory<LeaderboardListScreenModel> {
-            LeaderboardListScreenModel(context = get(), repository = get())
+            LeaderboardListScreenModel(context = get(), accountRepository = get(), leaderboardRepository = get())
         }
     }
 
@@ -29,6 +31,7 @@ data class LeaderboardListScreenState(
     val leaderboard: LeaderboardDomain? = null,
     val leaderboards: List<LeaderboardDomain> = emptyList(),
     val showConfetti: Boolean = false,
+    val account: AccountDomain? = null,
 ) {
     val list: List<LeaderboardAccountDomain>
         get() =
@@ -41,17 +44,27 @@ data class LeaderboardListScreenState(
 
 class LeaderboardListScreenModel(
     private val context: Context,
-    private val repository: LeaderboardRepository,
+    private val accountRepository: AccountRepository,
+    private val leaderboardRepository: LeaderboardRepository,
 ) : StateScreenModel<LeaderboardListScreenState>(LeaderboardListScreenState()) {
     private val selectedLeaderboard =
-        combine(repository.selectedLeaderBoardId, repository.leaderboards) { id, map ->
+        combine(leaderboardRepository.selectedLeaderBoardId, leaderboardRepository.leaderboards) { id, map ->
             map[id]
         }
 
     init {
+        observeAccount()
         observeLeaderboards()
         observeSyncingLeaderboards()
         observeSelectedLeaderboard()
+    }
+
+    private fun observeAccount()  {
+        screenModelScope.launch {
+            accountRepository.account.collectLatest { value ->
+                mutableState.update { it.copy(account = value) }
+            }
+        }
     }
 
     private fun observeSelectedLeaderboard() {
@@ -68,7 +81,7 @@ class LeaderboardListScreenModel(
 
     private fun observeSyncingLeaderboards() {
         screenModelScope.launch {
-            repository.syncing.collectLatest { value ->
+            leaderboardRepository.syncing.collectLatest { value ->
                 mutableState.update { it.copy(isSyncing = value) }
             }
         }
@@ -76,7 +89,7 @@ class LeaderboardListScreenModel(
 
     private fun observeLeaderboards() {
         screenModelScope.launch {
-            repository.leaderboards.collectLatest { map ->
+            leaderboardRepository.leaderboards.collectLatest { map ->
                 mutableState.update { it.copy(leaderboards = map.map { (_, value) -> value }) }
             }
         }
@@ -92,7 +105,7 @@ class LeaderboardListScreenModel(
 
     fun onValueChangeLeaderboard(leaderboard: LeaderboardDomain) {
         screenModelScope.launch {
-            repository.set(leaderboard = leaderboard)
+            leaderboardRepository.set(leaderboard = leaderboard)
         }
     }
 
