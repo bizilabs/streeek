@@ -59,7 +59,7 @@ class LeaderboardListScreenModel(
         observeSelectedLeaderboard()
     }
 
-    private fun observeAccount()  {
+    private fun observeAccount() {
         screenModelScope.launch {
             accountRepository.account.collectLatest { value ->
                 mutableState.update { it.copy(account = value) }
