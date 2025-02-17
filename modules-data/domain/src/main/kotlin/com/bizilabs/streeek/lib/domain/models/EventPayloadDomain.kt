@@ -24,8 +24,8 @@ data class CreateEventDomain(
             pusherType.equals("user", true) -> {
                 when {
                     refType.equals("repository", true) -> 15
-                    refType.equals("tag", true) -> 10
-                    refType.equals("branch", true) -> 5
+                    refType.equals("tag", true) -> 20
+                    refType.equals("branch", true) -> 10
                     else -> 5
                 }
             }
@@ -41,7 +41,7 @@ data class DeleteEventDomain(
     override fun getPoints(account: AccountDomain): Long =
         when {
             refType.equals("tag", true) -> -10
-            refType.equals("branch", true) -> -5
+            refType.equals("branch", true) -> 5
             else -> 0
         }
 }

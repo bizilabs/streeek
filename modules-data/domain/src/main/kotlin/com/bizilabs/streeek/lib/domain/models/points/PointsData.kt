@@ -21,12 +21,12 @@ internal fun getAllPoints(): List<EventPointsDomain> {
                     ),
                     EventPointsDomain.MultipleActioned.MultiplePoint(
                         action = "tag",
-                        points = 10,
+                        points = 20,
                         description = "you get 10 points when you create a new tag",
                     ),
                     EventPointsDomain.MultipleActioned.MultiplePoint(
                         action = "branch",
-                        points = 5,
+                        points = 10,
                         description = "you get 5 points when you create a new branch",
                     ),
                 ),
@@ -39,7 +39,7 @@ internal fun getAllPoints(): List<EventPointsDomain> {
                 listOf(
                     EventPointsDomain.MultipleActioned.MultiplePoint(
                         action = "branch",
-                        points = -5,
+                        points = 5,
                         description = "you get -5 points when you delete a branch",
                     ),
                     EventPointsDomain.MultipleActioned.MultiplePoint(
