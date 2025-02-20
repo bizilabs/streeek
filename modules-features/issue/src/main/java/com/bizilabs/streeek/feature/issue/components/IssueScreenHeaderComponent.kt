@@ -12,6 +12,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.automirrored.rounded.Send
+import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -61,18 +62,30 @@ fun IssueScreenHeaderComponent(
                             onClick = onClickCreateIssue,
                             enabled = state.isCreateActionEnabled,
                             colors =
-                                IconButtonDefaults.iconButtonColors(
-                                    contentColor =
-                                        if (state.isCreateActionEnabled) {
-                                            MaterialTheme.colorScheme.primary
-                                        } else {
-                                            MaterialTheme.colorScheme.onSurface.copy(0.25f)
-                                        },
-                                ),
+                            IconButtonDefaults.iconButtonColors(
+                                contentColor =
+                                if (state.isCreateActionEnabled) {
+                                    MaterialTheme.colorScheme.primary
+                                } else {
+                                    MaterialTheme.colorScheme.onSurface.copy(0.25f)
+                                },
+                            ),
                         ) {
                             Icon(
                                 imageVector = Icons.AutoMirrored.Rounded.Send,
                                 contentDescription = "create feedback",
+                            )
+                        }
+                    }
+
+                    AnimatedVisibility(visible = state.number != null) {
+                        IconButton(
+                            onClick = onClickCreateIssue,
+                            enabled = true,
+                        ) {
+                            Icon(
+                                imageVector = Icons.Outlined.Edit,
+                                contentDescription = "Edit feedback",
                             )
                         }
                     }
@@ -92,9 +105,9 @@ fun IssueScreenHeaderComponent(
                         val issue = state.issueState.value
                         Column(
                             modifier =
-                                Modifier
-                                    .fillMaxWidth()
-                                    .padding(16.dp),
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
                         ) {
                             Text(
                                 text = "Title",
@@ -115,11 +128,11 @@ fun IssueScreenHeaderComponent(
                                 readOnly = true,
                                 state = state,
                                 colors =
-                                    RichTextEditorDefaults.outlinedRichTextEditorColors(
-                                        containerColor = Color.Transparent,
-                                        textColor = MaterialTheme.colorScheme.onBackground,
-                                        unfocusedBorderColor = Color.Transparent,
-                                    ),
+                                RichTextEditorDefaults.outlinedRichTextEditorColors(
+                                    containerColor = Color.Transparent,
+                                    textColor = MaterialTheme.colorScheme.onBackground,
+                                    unfocusedBorderColor = Color.Transparent,
+                                ),
                             )
                             Spacer(modifier = Modifier.padding(8.dp))
                             LazyRow {
@@ -127,17 +140,17 @@ fun IssueScreenHeaderComponent(
                                     Card(
                                         modifier = Modifier.padding(horizontal = 4.dp),
                                         colors =
-                                            CardDefaults.cardColors(
-                                                containerColor = Color.fromHex(label.color),
-                                                contentColor = Color.Black,
-                                            ),
+                                        CardDefaults.cardColors(
+                                            containerColor = Color.fromHex(label.color),
+                                            contentColor = Color.Black,
+                                        ),
                                     ) {
                                         Text(
                                             modifier =
-                                                Modifier.padding(
-                                                    vertical = 4.dp,
-                                                    horizontal = 8.dp,
-                                                ),
+                                            Modifier.padding(
+                                                vertical = 4.dp,
+                                                horizontal = 8.dp,
+                                            ),
                                             text = label.name,
                                             style = MaterialTheme.typography.labelLarge,
                                         )
