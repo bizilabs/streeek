@@ -30,6 +30,8 @@ data class IssueScreenState(
     val labelsState: FetchListState<LabelDomain> = FetchListState.Loading,
     val issueState: FetchState<IssueDomain> = FetchState.Loading,
     val dialogState: DialogState? = null,
+    val issueWriterId: Long? = null,
+    val editIssue: IssueDomain? = null,
 ) {
     val isCreateActionEnabled: Boolean
         get() = title.isNotBlank()
@@ -74,8 +76,17 @@ class IssueScreenModel(
             val update =
                 when (val result = issueRepository.getIssue(id = id)) {
                     is DataResult.Error -> FetchState.Error(result.message)
-                    is DataResult.Success -> FetchState.Success(result.data)
+                    is DataResult.Success -> {
+                        mutableState.update {
+                            it.copy(
+                                issueWriterId = result.data.user.id,
+                                editIssue = result.data,
+                            )
+                        }
+                        FetchState.Success(result.data)
+                    }
                 }
+
             mutableState.update { it.copy(issueState = update) }
         }
     }
