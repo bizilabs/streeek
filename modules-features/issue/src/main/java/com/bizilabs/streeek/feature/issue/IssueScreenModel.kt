@@ -142,10 +142,8 @@ class IssueScreenModel(
                     labels = labels ?: arrayListOf(),
                     repo = editIssue?.user?.url ?: "",
                     owner = editIssue?.user?.name ?: "",
-                    state = "open",
                     issue_number = editIssue?.number.toString(),
-                    assignees = arrayListOf(editIssue?.user?.name ?: ""),
-                    milestone = 1,
+
                 )
 
             mutableState.update { it.copy(dialogState = DialogState.Loading()) }

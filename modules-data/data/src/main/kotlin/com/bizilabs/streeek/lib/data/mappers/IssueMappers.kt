@@ -23,12 +23,12 @@ fun GithubIssueDTO.toDomain() =
         user = user.toDomain(),
         labels = labels.map { it.toDomain() },
         createdAt =
-            createdAt.asDate()?.toLocalDateTime(TimeZone.UTC) ?: Clock.System.now().toLocalDateTime(
-                TimeZone.UTC,
-            ),
+        createdAt.asDate()?.toLocalDateTime(TimeZone.UTC) ?: Clock.System.now().toLocalDateTime(
+            TimeZone.UTC,
+        ),
         updatedAt =
-            updatedAt.asDate()?.toLocalDateTime(TimeZone.UTC) ?: Clock.System.now()
-                .toLocalDateTime(TimeZone.UTC),
+        updatedAt.asDate()?.toLocalDateTime(TimeZone.UTC) ?: Clock.System.now()
+            .toLocalDateTime(TimeZone.UTC),
         closedAt = closedAt?.asDate()?.toLocalDateTime(TimeZone.UTC),
     )
 
@@ -58,9 +58,6 @@ fun EditIssueDomain.toDTO(): EditIssueDTO =
         title = title,
         body = body,
         labels = labels,
-        assignees = assignees,
-        milestone = milestone,
-        state = state,
         issue_number = issue_number,
         repo = repo,
         owner = owner,
