@@ -220,6 +220,13 @@ class IssueScreenModel(
         mutableState.update { it.copy(labels = labels) }
     }
 
+    fun onClickRemoveEditLabel(label: LabelDomain) {
+        val labels =
+            (state.value.editIssue?.labels ?: emptyList()).union(state.value.labels).toMutableList()
+        labels.remove(label)
+        mutableState.update { it.copy(editIssue = state.value.editIssue?.copy(labels = labels)) }
+    }
+
     fun onClickLabelsDismissSheet() {
         mutableState.update { it.copy(isSelectingLabels = false) }
     }
