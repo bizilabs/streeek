@@ -45,7 +45,7 @@ val FeatureTabsModule =
     }
 
 enum class Tabs {
-    LEADERBOARD,
+    LEADERBOARDS,
     TEAMS,
     FEED,
     ACHIEVEMENTS,
@@ -56,7 +56,7 @@ enum class Tabs {
         get() =
             when (this) {
                 FEED -> Pair(Icons.Outlined.Explore, Icons.Rounded.Explore)
-                LEADERBOARD -> Pair(Icons.Outlined.Leaderboard, Icons.Rounded.Leaderboard)
+                LEADERBOARDS -> Pair(Icons.Outlined.Leaderboard, Icons.Rounded.Leaderboard)
                 TEAMS -> Pair(Icons.Outlined.PeopleAlt, Icons.Rounded.PeopleAlt)
                 ACHIEVEMENTS -> Pair(Icons.Outlined.EmojiEvents, Icons.Rounded.EmojiEvents)
                 NOTIFICATIONS -> Pair(Icons.Outlined.Notifications, Icons.Rounded.Notifications)
@@ -66,7 +66,7 @@ enum class Tabs {
         get() =
             when (this) {
                 FEED -> "Feed"
-                LEADERBOARD -> "Leaderboard"
+                LEADERBOARDS -> "Leaderboard"
                 TEAMS -> "Teams"
                 ACHIEVEMENTS -> "Achievements"
                 NOTIFICATIONS -> "Notifications"
@@ -99,7 +99,7 @@ class TabsScreenModel(
     }
 
     fun setTabFromNavigation(value: String) {
-        val tab = tryOrNull { Tabs.valueOf(value) } ?: return
+        val tab = tryOrNull { Tabs.valueOf(value.uppercase()) } ?: return
         if (state.value.hasSetTabFromNavigation) return
         mutableState.update { it.copy(hasSetTabFromNavigation = true, tab = tab) }
     }

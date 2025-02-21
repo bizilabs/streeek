@@ -108,7 +108,7 @@ fun TabsScreenContent(
             val screen =
                 when (tab) {
                     Tabs.FEED -> FeedScreen
-                    Tabs.LEADERBOARD -> LeaderboardListScreen
+                    Tabs.LEADERBOARDS -> LeaderboardListScreen
                     Tabs.TEAMS -> TeamsListScreen
                     Tabs.ACHIEVEMENTS -> AchievementsScreen
                     Tabs.NOTIFICATIONS -> NotificationsScreen
