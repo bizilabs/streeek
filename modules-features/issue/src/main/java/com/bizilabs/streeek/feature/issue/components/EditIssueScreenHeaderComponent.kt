@@ -6,8 +6,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.outlined.Check
-import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -20,6 +18,8 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import com.bizilabs.streeek.feature.issue.IssueScreenState
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -34,7 +34,15 @@ fun EditIssueScreenHeaderComponent(
         Column(modifier = Modifier.fillMaxWidth()) {
             TopAppBar(
                 modifier = Modifier.fillMaxWidth(),
-                title = { Text("Edit Issue") },
+                title = {
+                    Text(
+                        modifier = Modifier.fillMaxWidth(),
+                        text = "Edit Issue",
+                        style = MaterialTheme.typography.titleSmall,
+                        fontWeight = FontWeight.Bold,
+                        textAlign = TextAlign.Start,
+                    )
+                },
                 navigationIcon = {
                     IconButton(onClick = onClickNavigateBack) {
                         Icon(
