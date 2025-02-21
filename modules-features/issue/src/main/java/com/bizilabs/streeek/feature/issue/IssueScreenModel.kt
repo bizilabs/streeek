@@ -143,7 +143,6 @@ class IssueScreenModel(
                     repo = editIssue?.user?.url ?: "",
                     owner = editIssue?.user?.name ?: "",
                     issue_number = editIssue?.number.toString(),
-
                 )
 
             mutableState.update { it.copy(dialogState = DialogState.Loading()) }
