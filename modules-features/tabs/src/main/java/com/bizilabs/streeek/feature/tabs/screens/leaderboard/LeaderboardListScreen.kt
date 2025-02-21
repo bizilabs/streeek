@@ -1,5 +1,6 @@
 package com.bizilabs.streeek.feature.tabs.screens.leaderboard
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.EnterTransition
@@ -17,7 +18,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.PagerDefaults
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
@@ -65,7 +65,9 @@ import nl.dionsegijn.konfetti.core.Position
 import nl.dionsegijn.konfetti.core.emitter.Emitter
 import java.util.concurrent.TimeUnit
 
-object LeaderboardListScreen : Screen {
+class LeaderboardListScreen(
+    private val onNavigateBack: () -> Unit,
+) : Screen {
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.current
@@ -78,6 +80,7 @@ object LeaderboardListScreen : Screen {
             onValueChangeLeaderboard = screenModel::onValueChangeLeaderboard,
             onClickViewMore = screenModel::onClickViewMore,
             onTriggerRefreshLeaderboards = screenModel::onTriggerRefreshLeaderboards,
+            onNavigateBack = onNavigateBack,
         ) { screen ->
             navigator?.push(screen)
         }
@@ -91,6 +94,7 @@ fun LeaderboardListScreenContent(
     onValueChangeLeaderboard: (LeaderboardDomain) -> Unit,
     onClickViewMore: () -> Unit,
     onTriggerRefreshLeaderboards: () -> Unit,
+    onNavigateBack: () -> Unit,
     navigate: (Screen) -> Unit,
 ) {
     if (state.leaderboardName != null) {
@@ -102,12 +106,13 @@ fun LeaderboardListScreenContent(
     val pagerState =
         rememberPagerState(
             initialPage =
-                state.leaderboards.indexOf(state.leaderboard).takeIf { it >= 0 }
-                    ?: 0,
-        ) { state.leaderboards.count() }
+                state.leaderboards.indexOf(state.leaderboard).takeIf { it >= 0 } ?: 0,
+        ) { state.leaderboards.size }
 
-    // Custom fling behavior for smooth swiping
-    val flingBehavior = PagerDefaults.flingBehavior(state = pagerState)
+    BackHandler(enabled = true) {
+        onValueChangeLeaderboard(state.leaderboards[pagerState.currentPage])
+        onNavigateBack()
+    }
 
     LaunchedEffect(pagerState.currentPage) {
         if (state.leaderboards.isNotEmpty()) {
@@ -161,11 +166,8 @@ fun LeaderboardListScreenContent(
                             HorizontalPager(
                                 modifier = Modifier.fillMaxSize(),
                                 state = pagerState,
-                                flingBehavior = flingBehavior,
                             ) { pageIndex ->
-                                val currentLeaderboard = state.leaderboards[pageIndex]
-                                onValueChangeLeaderboard(currentLeaderboard)
-
+                                val leaderboard = state.leaderboards[pageIndex]
                                 LazyColumn(modifier = Modifier.fillMaxSize()) {
                                     item {
                                         Column(modifier = Modifier.fillMaxWidth()) {
@@ -181,12 +183,12 @@ fun LeaderboardListScreenContent(
                                                         Modifier
                                                             .weight(1f)
                                                             .padding(top = 48.dp),
-                                                    member = state.leaderboard?.top[1],
+                                                    member = leaderboard.top[1],
                                                 )
                                                 TeamTopMemberComponent(
                                                     isFirst = true,
                                                     modifier = Modifier.weight(1f),
-                                                    member = state.leaderboard?.top[0],
+                                                    member = leaderboard.top[0],
                                                 )
                                                 TeamTopMemberComponent(
                                                     isFirst = false,
@@ -194,13 +196,13 @@ fun LeaderboardListScreenContent(
                                                         Modifier
                                                             .weight(1f)
                                                             .padding(top = 48.dp),
-                                                    member = state.leaderboard?.top[2],
+                                                    member = leaderboard.top[2],
                                                 )
                                             }
                                             HorizontalDivider()
                                         }
                                     }
-                                    items(state.list) { member ->
+                                    items(leaderboard.list) { member ->
                                         LeaderboardComponent(
                                             imageUrl = member.account.avatarUrl,
                                             username = member.account.username,
@@ -211,10 +213,10 @@ fun LeaderboardListScreenContent(
                                         }
                                     }
                                     item {
-                                        val rank = state.leaderboard?.rank?.current
+                                        val rank = leaderboard.rank.current
                                         val account = state.account
                                         account?.let {
-                                            if (rank != null && rank.position > 20L) {
+                                            if (rank.position > 20L) {
                                                 Column(
                                                     modifier = Modifier.fillMaxWidth(),
                                                     horizontalAlignment = Alignment.CenterHorizontally,
