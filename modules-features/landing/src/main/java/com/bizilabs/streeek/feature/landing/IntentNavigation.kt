@@ -11,10 +11,10 @@ import timber.log.Timber
 
 @Composable
 fun getNavigationDestinationFromURI(): List<Screen> {
-    Timber.d("Kawabanga -> notification result")
+    Timber.d("NotificationResult -> getting nav destinations from intent")
     val intent = (LocalContext.current as? ComponentActivity)?.intent ?: return emptyList()
     val result = intent.asNotificationResult() ?: return emptyList()
-    Timber.d("Kawabanga -> $result")
+    Timber.d("NotificationResult -> $result")
     val uri = result.uri
     if (uri.isBlank()) return emptyList()
     val map = uri.asIntentExtraArguments()
@@ -42,11 +42,11 @@ private fun String.asIntentExtraArguments(): Map<String, String> {
 @Composable
 private fun getNavigationDestination(map: Map<String, String>): List<Screen> {
     val destination = map["destination"] ?: return emptyList()
-    return when (destination) {
-        "NOTIFICATIONS" -> listOf(rememberScreen(SharedScreen.Tabs(tab = destination)))
-        "ACHIEVEMENTS" -> listOf(rememberScreen(SharedScreen.Tabs(tab = destination)))
-        "FEED" -> listOf(rememberScreen(SharedScreen.Tabs))
-        "LEADERBOARDS" -> {
+    return when {
+        destination.equals("FEED", true) -> listOf(rememberScreen(SharedScreen.Tabs))
+        destination.equals("ACHIEVEMENTS", true) -> listOf(rememberScreen(SharedScreen.Tabs(tab = destination)))
+        destination.equals("NOTIFICATIONS", true) -> listOf(rememberScreen(SharedScreen.Tabs(tab = destination)))
+        destination.equals("LEADERBOARDS", true) -> {
             val name = map["name"]?.uppercase()
             if (name == null) {
                 listOf(rememberScreen(SharedScreen.Tabs(tab = destination)))
@@ -58,7 +58,7 @@ private fun getNavigationDestination(map: Map<String, String>): List<Screen> {
             }
         }
 
-        "TEAMS" -> {
+        destination.equals("TEAMS", true) -> {
             val teamId = map["teamId"]?.toLongOrNull()
             if (teamId == null) {
                 listOf(rememberScreen(SharedScreen.Tabs(tab = destination)))
@@ -70,7 +70,7 @@ private fun getNavigationDestination(map: Map<String, String>): List<Screen> {
             }
         }
 
-        "REMINDERS" -> {
+        destination.equals("REMINDERS", true) -> {
             Timber.d("Navigation from URI received ->")
             val label = map["label"]
             val day = map["day"]?.toIntOrNull()
