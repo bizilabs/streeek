@@ -9,8 +9,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.paging.compose.LazyPagingItems
-import androidx.paging.compose.collectAsLazyPagingItems
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.getScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
@@ -18,7 +16,6 @@ import com.bizilabs.streeek.feature.issue.components.EditIssueScreenHeaderCompon
 import com.bizilabs.streeek.feature.issue.components.IssueScreenEditSection
 import com.bizilabs.streeek.feature.issue.components.IssueScreenLabelsSheet
 import com.bizilabs.streeek.lib.design.components.SafiBottomDialog
-import com.bizilabs.streeek.lib.domain.models.CommentDomain
 import com.bizilabs.streeek.lib.domain.models.LabelDomain
 import timber.log.Timber
 
@@ -30,11 +27,9 @@ class IssueEditScreen(val id: Long? = null) : Screen {
         val screenModel = getScreenModel<IssueScreenModel>()
         val state by screenModel.state.collectAsStateWithLifecycle()
         screenModel.onValueChangeId(id)
-        val comments = screenModel.comments.collectAsLazyPagingItems()
 
         IssueEditScreenContent(
             state = state,
-            comments = comments,
             onClickNavigateBack = { navigator?.pop() },
             onClickEditIssue = screenModel::onClickEditIssue,
             onEditValueChangeTitle = screenModel::onEditValueChangeTitle,
@@ -44,7 +39,10 @@ class IssueEditScreen(val id: Long? = null) : Screen {
             onClickOpenLabels = screenModel::onClickOpenLabels,
             onClickLabelsDismissSheet = screenModel::onClickLabelsDismissSheet,
             onClickLabelsRetry = screenModel::onClickLabelsRetry,
-            onClickDismissDialog = screenModel::onClickDismissDialog,
+            onClickDismissDialog = {
+                screenModel.onClickDismissDialog()
+                navigator?.pop()
+            },
         )
     }
 }
@@ -52,7 +50,6 @@ class IssueEditScreen(val id: Long? = null) : Screen {
 @Composable
 fun IssueEditScreenContent(
     state: IssueScreenState,
-    comments: LazyPagingItems<CommentDomain>,
     onClickNavigateBack: () -> Unit,
     onClickEditIssue: () -> Unit,
     onEditValueChangeTitle: (String) -> Unit,

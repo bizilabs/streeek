@@ -168,6 +168,7 @@ class IssueScreenModel(
                         val number = result.data.number
                         mutableState.update { it.copy(number = number) }
                         stateNumber.update { number }
+
                         getIssue()
                         DialogState.Success(
                             title = "Success",
