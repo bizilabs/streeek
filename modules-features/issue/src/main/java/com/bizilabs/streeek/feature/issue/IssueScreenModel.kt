@@ -31,8 +31,9 @@ data class IssueScreenState(
     val labelsState: FetchListState<LabelDomain> = FetchListState.Loading,
     val issueState: FetchState<IssueDomain> = FetchState.Loading,
     val dialogState: DialogState? = null,
-    val issueWriterId: Long? = null,
+    val isIssueAuther: Boolean? = false,
     val editIssue: IssueDomain? = null,
+    val currentUsername: String? = null,
 ) {
     val isCreateActionEnabled: Boolean
         get() = title.isNotBlank()
@@ -70,6 +71,17 @@ class IssueScreenModel(
         }
     }
 
+    init {
+        getUsername()
+    }
+
+    private fun getUsername() {
+        screenModelScope.launch {
+            val username = issueRepository.getUsername()
+            mutableState.update { it.copy(currentUsername = username) }
+        }
+    }
+
     private fun getIssue() {
         val id = state.value.number ?: return
         screenModelScope.launch {
@@ -80,7 +92,7 @@ class IssueScreenModel(
                     is DataResult.Success -> {
                         mutableState.update {
                             it.copy(
-                                issueWriterId = result.data.user.id,
+                                isIssueAuther = state.value.currentUsername == result.data.user.name,
                                 editIssue = result.data,
                             )
                         }

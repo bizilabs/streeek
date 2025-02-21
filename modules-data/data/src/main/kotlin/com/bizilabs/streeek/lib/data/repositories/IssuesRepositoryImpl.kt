@@ -19,6 +19,7 @@ import com.bizilabs.streeek.lib.domain.repositories.IssueRepository
 import com.bizilabs.streeek.lib.local.sources.account.AccountLocalSource
 import com.bizilabs.streeek.lib.remote.sources.issues.IssuesRemoteSource
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.firstOrNull
 
 class IssuesRepositoryImpl(
     private val remoteSource: IssuesRemoteSource,
@@ -56,6 +57,10 @@ class IssuesRepositoryImpl(
                 )
             },
         ).flow
+
+    override suspend fun getUsername(): String {
+        return accountLocalSource.account.firstOrNull()?.username ?: ""
+    }
 
     override fun searchIssues(
         searchQuery: String,

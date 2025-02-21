@@ -25,4 +25,6 @@ interface IssueRepository {
     suspend fun createIssue(createIssueDomain: CreateIssueDomain): DataResult<IssueDomain>
 
     suspend fun editIssue(editIssueDomain: EditIssueDomain): DataResult<IssueDomain>
+
+    suspend fun getUsername(): String?
 }

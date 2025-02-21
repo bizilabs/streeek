@@ -31,6 +31,7 @@ class IssueEditScreen(val id: Long? = null) : Screen {
         val state by screenModel.state.collectAsStateWithLifecycle()
         screenModel.onValueChangeId(id)
         val comments = screenModel.comments.collectAsLazyPagingItems()
+
         IssueEditScreenContent(
             state = state,
             comments = comments,

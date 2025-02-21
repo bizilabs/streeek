@@ -27,6 +27,8 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.bizilabs.streeek.feature.issue.IssueScreenState
 import com.bizilabs.streeek.lib.common.helpers.fromHex
@@ -48,7 +50,15 @@ fun IssueScreenHeaderComponent(
         Column(modifier = Modifier.fillMaxWidth()) {
             TopAppBar(
                 modifier = Modifier.fillMaxWidth(),
-                title = {},
+                title = {
+                    Text(
+                        modifier = Modifier.fillMaxWidth(),
+                        text = "ISSUE #${state.number}",
+                        style = MaterialTheme.typography.titleSmall,
+                        fontWeight = FontWeight.Bold,
+                        textAlign = TextAlign.Start,
+                    )
+                },
                 navigationIcon = {
                     IconButton(onClick = onClickNavigateBack) {
                         Icon(
@@ -79,7 +89,7 @@ fun IssueScreenHeaderComponent(
                         }
                     }
 
-                    AnimatedVisibility(visible = state.issueWriterId != null) {
+                    AnimatedVisibility(visible = state.isIssueAuther == true) {
                         IconButton(
                             onClick = onNavigateToEditIssue,
                             enabled = true,

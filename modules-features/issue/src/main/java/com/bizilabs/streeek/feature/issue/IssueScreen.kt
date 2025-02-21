@@ -44,7 +44,6 @@ import com.bizilabs.streeek.lib.domain.models.LabelDomain
 import com.mohamedrejeb.richeditor.model.rememberRichTextState
 import com.mohamedrejeb.richeditor.ui.material3.OutlinedRichTextEditor
 import com.mohamedrejeb.richeditor.ui.material3.RichTextEditorDefaults
-import timber.log.Timber
 
 class IssueScreen(val id: Long?) : Screen {
     @Composable
@@ -125,7 +124,6 @@ fun IssueScreenContent(
             targetState = state.number,
             label = "animate issue",
         ) { id ->
-            Timber.d("Issue id: $id")
             when (id) {
                 null -> {
                     IssueScreenCreateSection(
