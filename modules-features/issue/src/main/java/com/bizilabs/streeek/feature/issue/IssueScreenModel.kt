@@ -10,6 +10,7 @@ import com.bizilabs.streeek.lib.design.components.DialogState
 import com.bizilabs.streeek.lib.domain.helpers.DataResult
 import com.bizilabs.streeek.lib.domain.models.CommentDomain
 import com.bizilabs.streeek.lib.domain.models.CreateIssueDomain
+import com.bizilabs.streeek.lib.domain.models.EditIssueDomain
 import com.bizilabs.streeek.lib.domain.models.IssueDomain
 import com.bizilabs.streeek.lib.domain.models.LabelDomain
 import com.bizilabs.streeek.lib.domain.repositories.IssueRepository
@@ -123,8 +124,61 @@ class IssueScreenModel(
         }
     }
 
+    private fun editIssue() {
+//        val data = state.value
+//        val title = data.title
+//        val description = data.description
+//        val labels = data.labels.map { it.name }
+
+        val editIssue = state.value.editIssue
+        val title = editIssue?.title ?: ""
+        val labels = editIssue?.labels?.map { it.name }
+        if (title.isBlank()) return
+        screenModelScope.launch {
+            val issue =
+                EditIssueDomain(
+                    title = editIssue?.title ?: "",
+                    body = editIssue?.body ?: "",
+                    labels = labels ?: arrayListOf(),
+                    repo = editIssue?.user?.url ?: "",
+                    owner = editIssue?.user?.name ?: "",
+                    state = "open",
+                    issue_number = editIssue?.number.toString(),
+                    assignees = arrayListOf(editIssue?.user?.name ?: ""),
+                    milestone = 1,
+                )
+
+            mutableState.update { it.copy(dialogState = DialogState.Loading()) }
+
+            val update =
+                when (val result = issueRepository.editIssue(editIssueDomain = issue)) {
+                    is DataResult.Error ->
+                        DialogState.Error(
+                            title = "Error",
+                            message = result.message,
+                        )
+
+                    is DataResult.Success -> {
+                        val number = result.data.number
+                        mutableState.update { it.copy(number = number) }
+                        stateNumber.update { number }
+                        getIssue()
+                        DialogState.Success(
+                            title = "Success",
+                            message = "Issue Edited successfully",
+                        )
+                    }
+                }
+            mutableState.update { it.copy(dialogState = update) }
+        }
+    }
+
     fun onClickCreateIssue() {
         createIssue()
+    }
+
+    fun onClickEditIssue() {
+        editIssue()
     }
 
     fun onValueChangeId(id: Long?) {
@@ -139,8 +193,16 @@ class IssueScreenModel(
         mutableState.update { it.copy(title = title) }
     }
 
+    fun onEditValueChangeTitle(title: String) {
+        mutableState.update { it.copy(editIssue = it.editIssue?.copy(title = title)) }
+    }
+
     fun onValueChangeDescription(description: String) {
         mutableState.update { it.copy(description = description) }
+    }
+
+    fun onEditValueChangeDescription(description: String) {
+        mutableState.update { it.copy(editIssue = it.editIssue?.copy(body = description)) }
     }
 
     fun onClickOpenLabels() {

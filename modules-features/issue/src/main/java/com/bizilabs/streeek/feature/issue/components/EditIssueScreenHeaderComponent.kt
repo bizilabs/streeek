@@ -27,7 +27,7 @@ import com.bizilabs.streeek.feature.issue.IssueScreenState
 fun EditIssueScreenHeaderComponent(
     state: IssueScreenState,
     onClickNavigateBack: () -> Unit,
-    onClickCreateIssue: () -> Unit,
+    onClickEditIssue: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Surface(modifier = modifier) {
@@ -46,7 +46,7 @@ fun EditIssueScreenHeaderComponent(
                 actions = {
                     AnimatedVisibility(visible = true) {
                         IconButton(
-                            onClick = onClickCreateIssue,
+                            onClick = onClickEditIssue,
                             enabled = true,
                             colors =
                                 IconButtonDefaults.iconButtonColors(

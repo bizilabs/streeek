@@ -30,15 +30,14 @@ class IssueEditScreen(val id: Long? = null) : Screen {
         val screenModel = getScreenModel<IssueScreenModel>()
         val state by screenModel.state.collectAsStateWithLifecycle()
         screenModel.onValueChangeId(id)
-
         val comments = screenModel.comments.collectAsLazyPagingItems()
         IssueEditScreenContent(
             state = state,
             comments = comments,
             onClickNavigateBack = { navigator?.pop() },
-            onClickCreateIssue = screenModel::onClickCreateIssue,
-            onValueChangeTitle = screenModel::onValueChangeTitle,
-            onValueChangeDescription = screenModel::onValueChangeDescription,
+            onClickEditIssue = screenModel::onClickEditIssue,
+            onEditValueChangeTitle = screenModel::onEditValueChangeTitle,
+            onEditValueChangeDescription = screenModel::onEditValueChangeDescription,
             onClickInsertLabel = screenModel::onClickInsertLabel,
             onClickRemoveLabel = screenModel::onClickRemoveLabel,
             onClickOpenLabels = screenModel::onClickOpenLabels,
@@ -54,9 +53,9 @@ fun IssueEditScreenContent(
     state: IssueScreenState,
     comments: LazyPagingItems<CommentDomain>,
     onClickNavigateBack: () -> Unit,
-    onClickCreateIssue: () -> Unit,
-    onValueChangeTitle: (String) -> Unit,
-    onValueChangeDescription: (String) -> Unit,
+    onClickEditIssue: () -> Unit,
+    onEditValueChangeTitle: (String) -> Unit,
+    onEditValueChangeDescription: (String) -> Unit,
     onClickInsertLabel: (LabelDomain) -> Unit,
     onClickRemoveLabel: (LabelDomain) -> Unit,
     onClickOpenLabels: () -> Unit,
@@ -83,7 +82,7 @@ fun IssueEditScreenContent(
                 state = state,
                 modifier = Modifier.fillMaxWidth(),
                 onClickNavigateBack = onClickNavigateBack,
-                onClickCreateIssue = onClickCreateIssue,
+                onClickEditIssue = onClickEditIssue,
             )
         },
     ) { innerPadding ->
@@ -99,8 +98,8 @@ fun IssueEditScreenContent(
             IssueScreenEditSection(
                 modifier = Modifier.fillMaxSize(),
                 state = state,
-                onValueChangeTitle = onValueChangeTitle,
-                onValueChangeDescription = onValueChangeDescription,
+                onValueChangeTitle = onEditValueChangeTitle,
+                onValueChangeDescription = onEditValueChangeDescription,
                 onClickOpenLabels = onClickOpenLabels,
                 onClickRemoveLabel = onClickRemoveLabel,
             )
