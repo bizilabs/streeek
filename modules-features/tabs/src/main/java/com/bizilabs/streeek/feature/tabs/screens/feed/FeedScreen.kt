@@ -51,6 +51,7 @@ import cafe.adriel.voyager.koin.getScreenModel
 import com.bizilabs.streeek.feature.tabs.screens.feed.components.FeedCalendarItemComponent
 import com.bizilabs.streeek.feature.tabs.screens.feed.components.FeedContributionItemComponent
 import com.bizilabs.streeek.feature.tabs.screens.feed.components.FeedMonthViewSection
+import com.bizilabs.streeek.lib.common.helpers.LifecycleHandler
 import com.bizilabs.streeek.lib.common.helpers.openAppSettings
 import com.bizilabs.streeek.lib.common.helpers.requestSinglePermission
 import com.bizilabs.streeek.lib.design.components.SafiBottomAction
@@ -69,6 +70,8 @@ object FeedScreen : Screen {
         val state by screenModel.state.collectAsStateWithLifecycle()
         val date by screenModel.date.collectAsStateWithLifecycle()
         val contributions by screenModel.contributions.collectAsStateWithLifecycle(emptyList())
+
+        LifecycleHandler(onResumed = screenModel::checkNotificationPermission)
 
         FeedScreenContent(
             state = state,

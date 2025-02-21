@@ -120,7 +120,7 @@ class FeedScreenModel(
         }
     }
 
-    private fun checkNotificationPermission() {
+    fun checkNotificationPermission() {
         val granted =
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 context.permissionIsGranted(permission = Manifest.permission.POST_NOTIFICATIONS)
