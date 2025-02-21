@@ -125,28 +125,25 @@ class IssueScreenModel(
     }
 
     private fun editIssue() {
-//        val data = state.value
-//        val title = data.title
-//        val description = data.description
-//        val labels = data.labels.map { it.name }
-
         val editIssue = state.value.editIssue
         val title = editIssue?.title ?: ""
-        val labels = editIssue?.labels?.map { it.name }
+        val labels =
+            (editIssue?.labels ?: emptyList()).union(state.value.labels).toList()
+
+        val description = editIssue?.body ?: ""
         if (title.isBlank()) return
         screenModelScope.launch {
             val issue =
                 EditIssueDomain(
                     title = editIssue?.title ?: "",
-                    body = editIssue?.body ?: "",
-                    labels = labels ?: arrayListOf(),
+                    body = description,
+                    labels = labels.map { it.name },
                     repo = editIssue?.user?.url ?: "",
                     owner = editIssue?.user?.name ?: "",
                     issue_number = editIssue?.number.toString(),
                 )
 
             mutableState.update { it.copy(dialogState = DialogState.Loading()) }
-
             val update =
                 when (val result = issueRepository.editIssue(editIssueDomain = issue)) {
                     is DataResult.Error ->

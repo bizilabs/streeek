@@ -108,7 +108,9 @@ fun IssueScreenEditSection(
             LazyRow(
                 modifier = Modifier.weight(1f),
             ) {
-                items(state.labels) { label ->
+                items(
+                    (state.editIssue?.labels ?: emptyList()).union(state.labels).toList(),
+                ) { label ->
                     Card(
                         modifier = Modifier.padding(horizontal = 4.dp),
                         onClick = { onClickRemoveLabel(label) },
