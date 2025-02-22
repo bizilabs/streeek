@@ -3,7 +3,10 @@ package com.bizilabs.streeek.feature.issue.components
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
@@ -14,7 +17,6 @@ import androidx.compose.material.icons.rounded.KeyboardArrowDown
 import androidx.compose.material.icons.rounded.KeyboardArrowUp
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -25,7 +27,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.bizilabs.streeek.feature.issue.IssueScreenState
@@ -34,7 +35,7 @@ import com.bizilabs.streeek.lib.domain.models.LabelDomain
 import com.bizilabs.streeek.lib.resources.strings.SafiStringLabels
 
 @Composable
-fun IssueScreenCreateSection(
+fun IssueScreenEditSection(
     state: IssueScreenState,
     onValueChangeTitle: (String) -> Unit,
     onValueChangeDescription: (String) -> Unit,
@@ -42,39 +43,59 @@ fun IssueScreenCreateSection(
     onClickRemoveLabel: (LabelDomain) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Column(modifier = modifier) {
+    Column(
+        modifier =
+            modifier
+                .fillMaxSize()
+                .padding(16.dp),
+    ) {
+        // Title Label
+        Text(
+            text = stringResource(SafiStringLabels.title),
+            style = MaterialTheme.typography.labelLarge,
+            color = MaterialTheme.colorScheme.onSurface,
+            modifier = Modifier.padding(bottom = 4.dp),
+        )
         TextField(
             modifier = Modifier.fillMaxWidth(),
-            value = state.title,
+            value = state.editIssue?.title ?: "",
             onValueChange = onValueChangeTitle,
-            shape = RectangleShape,
-            placeholder = {
-                Text(text = stringResource(SafiStringLabels.title))
-            },
+            shape = MaterialTheme.shapes.small,
+            placeholder = { Text(text = "Enter title...") },
             colors =
                 TextFieldDefaults.colors(
                     focusedContainerColor = MaterialTheme.colorScheme.background,
                     unfocusedContainerColor = MaterialTheme.colorScheme.background,
                 ),
+        )
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        // Description Label
+        Text(
+            text = stringResource(SafiStringLabels.description),
+            style = MaterialTheme.typography.labelLarge,
+            color = MaterialTheme.colorScheme.onSurface,
+            modifier = Modifier.padding(bottom = 4.dp),
         )
         TextField(
             modifier =
                 Modifier
                     .fillMaxWidth()
                     .weight(1f),
-            value = state.description,
+            value = state.editIssue?.body ?: "",
             onValueChange = onValueChangeDescription,
-            shape = RectangleShape,
-            placeholder = {
-                Text(text = "Description (optional)")
-            },
+            shape = MaterialTheme.shapes.small,
+            placeholder = { Text(text = "Enter description (optional)...") },
             colors =
                 TextFieldDefaults.colors(
                     focusedContainerColor = MaterialTheme.colorScheme.background,
                     unfocusedContainerColor = MaterialTheme.colorScheme.background,
                 ),
         )
-        HorizontalDivider()
+
+        Spacer(modifier = Modifier.height(12.dp))
+        // Add Label Button
         Row(
             modifier =
                 Modifier
@@ -89,7 +110,9 @@ fun IssueScreenCreateSection(
             LazyRow(
                 modifier = Modifier.weight(1f),
             ) {
-                items(state.labels) { label ->
+                items(
+                    (state.editIssue?.labels ?: emptyList()).union(state.labels).toList(),
+                ) { label ->
                     Card(
                         modifier = Modifier.padding(horizontal = 4.dp),
                         onClick = { onClickRemoveLabel(label) },

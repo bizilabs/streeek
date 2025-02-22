@@ -13,11 +13,13 @@ import com.bizilabs.streeek.lib.data.paging.SearchIssuesPagingSource
 import com.bizilabs.streeek.lib.domain.helpers.DataResult
 import com.bizilabs.streeek.lib.domain.models.CommentDomain
 import com.bizilabs.streeek.lib.domain.models.CreateIssueDomain
+import com.bizilabs.streeek.lib.domain.models.EditIssueDomain
 import com.bizilabs.streeek.lib.domain.models.IssueDomain
 import com.bizilabs.streeek.lib.domain.repositories.IssueRepository
 import com.bizilabs.streeek.lib.local.sources.account.AccountLocalSource
 import com.bizilabs.streeek.lib.remote.sources.issues.IssuesRemoteSource
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.firstOrNull
 
 class IssuesRepositoryImpl(
     private val remoteSource: IssuesRemoteSource,
@@ -56,6 +58,10 @@ class IssuesRepositoryImpl(
             },
         ).flow
 
+    override suspend fun getUsername(): String {
+        return accountLocalSource.account.firstOrNull()?.username ?: ""
+    }
+
     override fun searchIssues(
         searchQuery: String,
         isFetchingUserIssues: Boolean,
@@ -84,6 +90,11 @@ class IssuesRepositoryImpl(
 
     override suspend fun createIssue(createIssueDomain: CreateIssueDomain): DataResult<IssueDomain> {
         return remoteSource.createIssue(request = createIssueDomain.toDTO())
+            .asDataResult { it.toDomain() }
+    }
+
+    override suspend fun editIssue(editIssueDomain: EditIssueDomain): DataResult<IssueDomain> {
+        return remoteSource.editIssue(request = editIssueDomain.toDTO())
             .asDataResult { it.toDomain() }
     }
 }
