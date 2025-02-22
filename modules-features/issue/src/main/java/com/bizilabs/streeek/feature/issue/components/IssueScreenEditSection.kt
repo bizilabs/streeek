@@ -27,10 +27,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.bizilabs.streeek.feature.issue.IssueScreenState
 import com.bizilabs.streeek.lib.common.helpers.fromHex
 import com.bizilabs.streeek.lib.domain.models.LabelDomain
+import com.bizilabs.streeek.lib.resources.strings.SafiStringLabels
 
 @Composable
 fun IssueScreenEditSection(
@@ -49,7 +51,7 @@ fun IssueScreenEditSection(
     ) {
         // Title Label
         Text(
-            text = "Title",
+            text = stringResource(SafiStringLabels.title),
             style = MaterialTheme.typography.labelLarge,
             color = MaterialTheme.colorScheme.onSurface,
             modifier = Modifier.padding(bottom = 4.dp),
@@ -71,7 +73,7 @@ fun IssueScreenEditSection(
 
         // Description Label
         Text(
-            text = "Description",
+            text = stringResource(SafiStringLabels.description),
             style = MaterialTheme.typography.labelLarge,
             color = MaterialTheme.colorScheme.onSurface,
             modifier = Modifier.padding(bottom = 4.dp),

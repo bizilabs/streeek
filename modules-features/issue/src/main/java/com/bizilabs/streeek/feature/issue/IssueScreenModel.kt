@@ -252,7 +252,7 @@ class IssueScreenModel(
         mutableState.update { it.copy(dialogState = null) }
     }
 
-    fun refreshIssue()  {
+    fun refreshIssue() {
         getIssue()
     }
 }

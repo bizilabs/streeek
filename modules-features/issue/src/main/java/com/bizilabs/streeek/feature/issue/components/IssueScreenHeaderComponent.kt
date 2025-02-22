@@ -27,12 +27,14 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.bizilabs.streeek.feature.issue.IssueScreenState
 import com.bizilabs.streeek.lib.common.helpers.fromHex
 import com.bizilabs.streeek.lib.common.models.FetchState
+import com.bizilabs.streeek.lib.resources.strings.SafiStringLabels
 import com.mohamedrejeb.richeditor.model.rememberRichTextState
 import com.mohamedrejeb.richeditor.ui.material3.OutlinedRichTextEditor
 import com.mohamedrejeb.richeditor.ui.material3.RichTextEditorDefaults
@@ -53,7 +55,9 @@ fun IssueScreenHeaderComponent(
                 title = {
                     Text(
                         modifier = Modifier.fillMaxWidth(),
-                        text = "ISSUE #${state.number}",
+                        text =
+                            "ISSUE #${state.number}".takeIf { state.number != null }
+                                ?: stringResource(SafiStringLabels.newIssue),
                         style = MaterialTheme.typography.titleSmall,
                         fontWeight = FontWeight.Bold,
                         textAlign = TextAlign.Start,

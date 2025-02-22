@@ -26,10 +26,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.bizilabs.streeek.feature.issue.IssueScreenState
 import com.bizilabs.streeek.lib.common.helpers.fromHex
 import com.bizilabs.streeek.lib.domain.models.LabelDomain
+import com.bizilabs.streeek.lib.resources.strings.SafiStringLabels
 
 @Composable
 fun IssueScreenCreateSection(
@@ -47,7 +49,7 @@ fun IssueScreenCreateSection(
             onValueChange = onValueChangeTitle,
             shape = RectangleShape,
             placeholder = {
-                Text(text = "Title")
+                Text(text = stringResource(SafiStringLabels.title))
             },
             colors =
                 TextFieldDefaults.colors(

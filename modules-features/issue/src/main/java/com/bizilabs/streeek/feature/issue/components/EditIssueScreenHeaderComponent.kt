@@ -18,9 +18,11 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import com.bizilabs.streeek.feature.issue.IssueScreenState
+import com.bizilabs.streeek.lib.resources.strings.SafiStringLabels
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -37,7 +39,7 @@ fun EditIssueScreenHeaderComponent(
                 title = {
                     Text(
                         modifier = Modifier.fillMaxWidth(),
-                        text = "Edit Issue",
+                        text = stringResource(SafiStringLabels.editIssue),
                         style = MaterialTheme.typography.titleSmall,
                         fontWeight = FontWeight.Bold,
                         textAlign = TextAlign.Start,
