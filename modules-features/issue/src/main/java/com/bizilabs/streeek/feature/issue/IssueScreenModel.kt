@@ -251,4 +251,8 @@ class IssueScreenModel(
     fun onClickDismissDialog() {
         mutableState.update { it.copy(dialogState = null) }
     }
+
+    fun refreshIssue()  {
+        getIssue()
+    }
 }

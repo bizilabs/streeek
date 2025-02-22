@@ -23,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -52,6 +53,11 @@ class IssueScreen(val id: Long?) : Screen {
         val screenModel = getScreenModel<IssueScreenModel>()
         val state by screenModel.state.collectAsStateWithLifecycle()
         screenModel.onValueChangeId(id)
+
+        LifecycleResumeEffect(Unit) {
+            screenModel.refreshIssue()
+            onPauseOrDispose { }
+        }
 
         val screenEditIssue = rememberScreen(SharedScreen.EditIssue(id))
         // Handle navigation to a specific issue
