@@ -14,6 +14,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.CheckCircle
 import androidx.compose.material.icons.rounded.Error
+import androidx.compose.material.icons.rounded.People
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -33,7 +34,9 @@ import coil.compose.AsyncImage
 import com.bizilabs.streeek.feature.tabs.screens.notifications.NotificationsScreenState
 import com.bizilabs.streeek.lib.common.components.paging.SafiPagingComponent
 import com.bizilabs.streeek.lib.common.models.FetchState
+import com.bizilabs.streeek.lib.design.components.SafiCenteredColumn
 import com.bizilabs.streeek.lib.design.components.SafiCircularProgressIndicator
+import com.bizilabs.streeek.lib.design.components.SafiInfoSection
 import com.bizilabs.streeek.lib.design.components.SafiRefreshBox
 import com.bizilabs.streeek.lib.domain.extensions.asCount
 import com.bizilabs.streeek.lib.domain.models.team.MemberAccountRequestDomain
@@ -54,6 +57,20 @@ fun NotificationRequestsSection(
         SafiPagingComponent(
             modifier = Modifier.fillMaxSize(),
             data = data,
+            refreshEmpty = {
+                SafiCenteredColumn(
+                    modifier =
+                        Modifier
+                            .fillMaxSize(),
+                ) {
+                    SafiInfoSection(
+                        icon = Icons.Rounded.People,
+                        title = "No Requests Currently",
+                        description = "",
+                    ) {
+                    }
+                }
+            },
         ) { value ->
             JoinRequestComponent(value, state, onClickCancelRequest)
         }
