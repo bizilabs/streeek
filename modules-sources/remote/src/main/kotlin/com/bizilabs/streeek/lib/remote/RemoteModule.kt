@@ -26,6 +26,8 @@ import com.bizilabs.streeek.lib.remote.sources.notifications.NotificationRemoteS
 import com.bizilabs.streeek.lib.remote.sources.notifications.NotificationRemoteSourceImpl
 import com.bizilabs.streeek.lib.remote.sources.preferences.RemotePreferencesSource
 import com.bizilabs.streeek.lib.remote.sources.preferences.RemotePreferencesSourceImpl
+import com.bizilabs.streeek.lib.remote.sources.taunt.TauntRemoteSource
+import com.bizilabs.streeek.lib.remote.sources.taunt.TauntRemoteSourceImpl
 import com.bizilabs.streeek.lib.remote.sources.team.TeamRemoteSource
 import com.bizilabs.streeek.lib.remote.sources.team.TeamRemoteSourceImpl
 import com.bizilabs.streeek.lib.remote.sources.team.invitations.TeamInvitationCodeRemoteSource
@@ -41,6 +43,7 @@ import io.ktor.client.HttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
+import kotlin.math.sin
 
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "streeek.remote")
 
@@ -95,4 +98,5 @@ val RemoteModule =
         single<LeaderboardRemoteSource> { LeaderboardRemoteSourceImpl(supabase = get()) }
         single<TeamRequestRemoteSource> { TeamRequestRemoteSourceImpl(supabase = get()) }
         single<TeamMemberInvitationRemoteSource> { TeamMemberInvitationRemoteSourceImpl(supabase = get()) }
+        single<TauntRemoteSource> { TauntRemoteSourceImpl(client = get()) }
     }
