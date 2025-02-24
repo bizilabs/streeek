@@ -10,6 +10,7 @@ import com.bizilabs.streeek.lib.data.repositories.LevelRepositoryImpl
 import com.bizilabs.streeek.lib.data.repositories.NotificationRepositoryImpl
 import com.bizilabs.streeek.lib.data.repositories.PreferenceRepositoryImpl
 import com.bizilabs.streeek.lib.data.repositories.ReminderRepositoryImpl
+import com.bizilabs.streeek.lib.data.repositories.TauntRepositoryImpl
 import com.bizilabs.streeek.lib.data.repositories.TeamInvitationCodeRepositoryImpl
 import com.bizilabs.streeek.lib.data.repositories.TeamRepositoryImpl
 import com.bizilabs.streeek.lib.data.repositories.UserRepositoryImpl
@@ -28,6 +29,7 @@ import com.bizilabs.streeek.lib.domain.repositories.NotificationRepository
 import com.bizilabs.streeek.lib.domain.repositories.PointsRepository
 import com.bizilabs.streeek.lib.domain.repositories.PreferenceRepository
 import com.bizilabs.streeek.lib.domain.repositories.ReminderRepository
+import com.bizilabs.streeek.lib.domain.repositories.TauntRepository
 import com.bizilabs.streeek.lib.domain.repositories.TeamInvitationCodeRepository
 import com.bizilabs.streeek.lib.domain.repositories.TeamRepository
 import com.bizilabs.streeek.lib.domain.repositories.UserRepository
@@ -114,6 +116,12 @@ val dataModule =
             TeamMemberInvitationRepositoryImpl(
                 invitationRemoteSource = get(),
                 accountLocalSource = get(),
+            )
+        }
+        single<TauntRepository> {
+            TauntRepositoryImpl(
+                tauntRemoteSource = get(),
+                accountLocalSource = get()
             )
         }
     }
