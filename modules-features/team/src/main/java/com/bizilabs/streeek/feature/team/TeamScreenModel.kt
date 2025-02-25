@@ -1,7 +1,6 @@
 package com.bizilabs.streeek.feature.team
 
 import android.content.Context
-import android.provider.ContactsContract.Data
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ExitToApp
 import androidx.compose.material.icons.rounded.Delete
@@ -64,7 +63,7 @@ val FeatureTeamModule =
                 teamMemberInvitationRepository = get(),
                 teamRequestRepository = get(),
                 tauntRepository = get(),
-                accountRepository = get()
+                accountRepository = get(),
             )
         }
     }
@@ -211,11 +210,11 @@ data class TeamScreenState(
             if (fetchState is FetchState.Success) {
                 val team = fetchState.value.team
                 name.isNotBlank() && (
-                        !team.name.equals(
-                            name,
-                            ignoreCase = false,
-                        ) || team.public != isPublic
-                        )
+                    !team.name.equals(
+                        name,
+                        ignoreCase = false,
+                    ) || team.public != isPublic
+                )
             } else {
                 isValidName && value.isNotBlank()
             }
@@ -242,7 +241,7 @@ class TeamScreenModel(
     private val teamMemberInvitationRepository: TeamMemberInvitationRepository,
     private val teamRequestRepository: TeamRequestRepository,
     private val tauntRepository: TauntRepository,
-    private val accountRepository: AccountRepository
+    private val accountRepository: AccountRepository,
 ) : StateScreenModel<TeamScreenState>(TeamScreenState()) {
     private var _pages = MutableStateFlow(getPagingDataLoading<TeamMemberDomain>())
     val pages: Flow<PagingData<TeamMemberDomain>> = _pages.asStateFlow().cachedIn(screenModelScope)
@@ -418,10 +417,10 @@ class TeamScreenModel(
                     mutableState.update {
                         it.copy(
                             dialogState =
-                            DialogState.Error(
-                                title = "Error",
-                                message = result.message,
-                            ),
+                                DialogState.Error(
+                                    title = "Error",
+                                    message = result.message,
+                                ),
                         )
                     }
                 }
@@ -430,10 +429,10 @@ class TeamScreenModel(
                     mutableState.update {
                         it.copy(
                             dialogState =
-                            DialogState.Success(
-                                title = "Success",
-                                message = "Left team successfully. \nHope you come back soon!",
-                            ),
+                                DialogState.Success(
+                                    title = "Success",
+                                    message = "Left team successfully. \nHope you come back soon!",
+                                ),
                         )
                     }
                     delay(2000)
@@ -452,10 +451,10 @@ class TeamScreenModel(
                     mutableState.update {
                         it.copy(
                             dialogState =
-                            DialogState.Error(
-                                title = "Error",
-                                message = result.message,
-                            ),
+                                DialogState.Error(
+                                    title = "Error",
+                                    message = result.message,
+                                ),
                         )
                     }
                 }
@@ -464,10 +463,10 @@ class TeamScreenModel(
                     mutableState.update {
                         it.copy(
                             dialogState =
-                            DialogState.Success(
-                                title = "Success",
-                                message = "Team deleted successfully!",
-                            ),
+                                DialogState.Success(
+                                    title = "Success",
+                                    message = "Team deleted successfully!",
+                                ),
                             shouldNavigateBack = true,
                         )
                     }
@@ -496,9 +495,9 @@ class TeamScreenModel(
                         mutableState.update {
                             it.copy(
                                 codeInvitationsState =
-                                FetchState.Error(
-                                    message = result.message,
-                                ),
+                                    FetchState.Error(
+                                        message = result.message,
+                                    ),
                                 isInvitationSnackBarOpen = true,
                             )
                         }
@@ -727,10 +726,10 @@ class TeamScreenModel(
                     mutableState.update {
                         it.copy(
                             processingMultipleRequestsState =
-                            it.processingMultipleRequestsState?.copy(
-                                fetchState =
-                                FetchState.Error(result.message),
-                            ),
+                                it.processingMultipleRequestsState?.copy(
+                                    fetchState =
+                                        FetchState.Error(result.message),
+                                ),
                         )
                     }
                 }
@@ -739,10 +738,10 @@ class TeamScreenModel(
                     mutableState.update {
                         it.copy(
                             processingMultipleRequestsState =
-                            it.processingMultipleRequestsState?.copy(
-                                fetchState =
-                                FetchState.Success(true),
-                            ),
+                                it.processingMultipleRequestsState?.copy(
+                                    fetchState =
+                                        FetchState.Success(true),
+                                ),
                         )
                     }
                 }
@@ -829,10 +828,10 @@ class TeamScreenModel(
         mutableState.update {
             it.copy(
                 inviteAccountState =
-                InviteAccountState(
-                    accountId = accountNotInTeamDomain.accountId,
-                    inviteState = FetchState.Loading,
-                ),
+                    InviteAccountState(
+                        accountId = accountNotInTeamDomain.accountId,
+                        inviteState = FetchState.Loading,
+                    ),
             )
         }
         screenModelScope.launch {
@@ -847,15 +846,15 @@ class TeamScreenModel(
                     mutableState.update {
                         it.copy(
                             inviteAccountState =
-                            InviteAccountState(
-                                accountId = accountNotInTeamDomain.accountId,
-                                inviteState = FetchState.Error(result.message),
-                            ),
+                                InviteAccountState(
+                                    accountId = accountNotInTeamDomain.accountId,
+                                    inviteState = FetchState.Error(result.message),
+                                ),
                             dialogState =
-                            DialogState.Error(
-                                title = "Error",
-                                message = result.message,
-                            ),
+                                DialogState.Error(
+                                    title = "Error",
+                                    message = result.message,
+                                ),
                         )
                     }
                     delay(2000)
@@ -873,10 +872,10 @@ class TeamScreenModel(
                     mutableState.update {
                         it.copy(
                             inviteAccountState =
-                            InviteAccountState(
-                                accountId = accountNotInTeamDomain.accountId,
-                                inviteState = FetchState.Success(value = result.data),
-                            ),
+                                InviteAccountState(
+                                    accountId = accountNotInTeamDomain.accountId,
+                                    inviteState = FetchState.Success(value = result.data),
+                                ),
                         )
                     }
 
@@ -973,10 +972,10 @@ class TeamScreenModel(
         mutableState.update {
             it.copy(
                 inviteWithdrawalState =
-                InviteWithdrawalState(
-                    inviteId = teamAccountInviteDomain.inviteId,
-                    withdrawalState = FetchState.Loading,
-                ),
+                    InviteWithdrawalState(
+                        inviteId = teamAccountInviteDomain.inviteId,
+                        withdrawalState = FetchState.Loading,
+                    ),
             )
         }
         screenModelScope.launch {
@@ -990,15 +989,15 @@ class TeamScreenModel(
                     mutableState.update {
                         it.copy(
                             inviteWithdrawalState =
-                            InviteWithdrawalState(
-                                inviteId = teamAccountInviteDomain.inviteId,
-                                withdrawalState = FetchState.Error(result.message),
-                            ),
+                                InviteWithdrawalState(
+                                    inviteId = teamAccountInviteDomain.inviteId,
+                                    withdrawalState = FetchState.Error(result.message),
+                                ),
                             dialogState =
-                            DialogState.Error(
-                                title = "Error",
-                                message = result.message,
-                            ),
+                                DialogState.Error(
+                                    title = "Error",
+                                    message = result.message,
+                                ),
                         )
                     }
                     delay(2000)
@@ -1016,10 +1015,10 @@ class TeamScreenModel(
                     mutableState.update {
                         it.copy(
                             inviteWithdrawalState =
-                            InviteWithdrawalState(
-                                inviteId = teamAccountInviteDomain.inviteId,
-                                withdrawalState = FetchState.Success(value = result.data),
-                            ),
+                                InviteWithdrawalState(
+                                    inviteId = teamAccountInviteDomain.inviteId,
+                                    withdrawalState = FetchState.Success(value = result.data),
+                                ),
                         )
                     }
 
@@ -1093,10 +1092,10 @@ class TeamScreenModel(
                 mutableState.update {
                     it.copy(
                         dialogState =
-                        DialogState.Error(
-                            title = "Error",
-                            message = "You can only taunt members below you",
-                        )
+                            DialogState.Error(
+                                title = "Error",
+                                message = "You can only taunt members below you",
+                            ),
                     )
                 }
             } else {
@@ -1105,10 +1104,10 @@ class TeamScreenModel(
                         mutableState.update {
                             it.copy(
                                 dialogState =
-                                DialogState.Success(
-                                    title = "Success",
-                                    message = "Taunt delivered to ${teamMember.account.username}",
-                                )
+                                    DialogState.Success(
+                                        title = "Success",
+                                        message = "Taunt delivered to ${teamMember.account.username}",
+                                    ),
                             )
                         }
                     }
@@ -1117,10 +1116,10 @@ class TeamScreenModel(
                         mutableState.update {
                             it.copy(
                                 dialogState =
-                                DialogState.Error(
-                                    title = "Error",
-                                    message = result.message,
-                                )
+                                    DialogState.Error(
+                                        title = "Error",
+                                        message = result.message,
+                                    ),
                             )
                         }
                     }
