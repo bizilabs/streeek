@@ -1,10 +1,12 @@
 package com.bizilabs.streeek.lib.remote.helpers
 
+import com.bizilabs.streeek.lib.remote.BuildConfig
+
 sealed class StreeekEndpoint(private val route: String) {
     val url: String
         get() =
             buildString {
-                append("http://streeek.up.railway.app/v1/accounts")
+                append(BuildConfig.StreeekUrl)
                 append(route)
             }
 
