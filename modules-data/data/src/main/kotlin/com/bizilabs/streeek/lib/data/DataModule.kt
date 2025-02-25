@@ -121,7 +121,7 @@ val dataModule =
         single<TauntRepository> {
             TauntRepositoryImpl(
                 tauntRemoteSource = get(),
-                accountLocalSource = get()
+                accountLocalSource = get(),
             )
         }
     }

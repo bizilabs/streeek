@@ -127,7 +127,7 @@ class TeamScreen(val teamId: Long?) : Screen {
             onSearchParamChanged = screenModel::onSearchParamChanged,
             onClickClearSearch = screenModel::onClickClearSearch,
             onClickWithdraw = screenModel::onClickWithdrawAccount,
-            onClickMember = screenModel::onClickMember
+            onClickMember = screenModel::onClickMember,
         )
     }
 }
@@ -166,7 +166,7 @@ fun TeamScreenContent(
     onSearchParamChanged: (String) -> Unit,
     onClickClearSearch: () -> Unit,
     onClickWithdraw: (TeamAccountInvitesDomain) -> Unit,
-    onClickMember: (Long) -> Unit
+    onClickMember: (Long) -> Unit,
 ) {
     val activity = LocalContext.current as Activity
 
@@ -233,9 +233,9 @@ fun TeamScreenContent(
     ) { innerPadding ->
         AnimatedContent(
             modifier =
-            Modifier
-                .padding(innerPadding)
-                .fillMaxSize(),
+                Modifier
+                    .padding(innerPadding)
+                    .fillMaxSize(),
             targetState = state.isManagingTeam,
             label = "",
         ) { isManaging ->
@@ -257,7 +257,7 @@ fun TeamScreenContent(
                         data = data,
                         onClickInviteMore = onClickInviteMore,
                         onRefreshTeams = onRefreshTeams,
-                        onClickMember = onClickMember
+                        onClickMember = onClickMember,
                     )
                 }
             }
@@ -301,11 +301,11 @@ private fun TeamScreenHeaderComponent(
                                 modifier = Modifier.fillMaxWidth(),
                                 title = team.value.team.name,
                                 subtitle =
-                                buildString {
-                                    append(count)
-                                    append(" Member")
-                                    append(if (count > 1) "s" else "")
-                                },
+                                    buildString {
+                                        append(count)
+                                        append(" Member")
+                                        append(if (count > 1) "s" else "")
+                                    },
                             )
                         }
                     }
@@ -343,10 +343,10 @@ private fun TeamScreenHeaderComponent(
                                     .forEach { menu ->
                                         DropdownMenuItem(
                                             contentPadding =
-                                            PaddingValues(
-                                                start = 16.dp,
-                                                end = 24.dp,
-                                            ),
+                                                PaddingValues(
+                                                    start = 16.dp,
+                                                    end = 24.dp,
+                                                ),
                                             text = { Text(menu.label) },
                                             leadingIcon = {
                                                 Icon(
@@ -375,7 +375,7 @@ fun ViewTeamSection(
     data: LazyPagingItems<TeamMemberDomain>,
     onClickInviteMore: () -> Unit,
     onRefreshTeams: () -> Unit,
-    onClickMember: (Long) -> Unit
+    onClickMember: (Long) -> Unit,
 ) {
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -408,7 +408,7 @@ fun ViewTeamSection(
                         data = data,
                         onClickInviteMore = onClickInviteMore,
                         onRefreshTeams = onRefreshTeams,
-                        onClickMember = onClickMember
+                        onClickMember = onClickMember,
                     )
                 }
             }
@@ -423,7 +423,7 @@ fun TeamDetailsSection(
     data: LazyPagingItems<TeamMemberDomain>,
     onClickInviteMore: () -> Unit,
     onRefreshTeams: () -> Unit,
-    onClickMember: (Long) -> Unit
+    onClickMember: (Long) -> Unit,
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
         SafiRefreshBox(
@@ -438,16 +438,16 @@ fun TeamDetailsSection(
                     TeamsScreenTopSection(
                         state = state,
                         modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .wrapContentHeight(),
+                            Modifier
+                                .fillMaxWidth()
+                                .wrapContentHeight(),
                     )
                 },
                 refreshEmpty = {
                     SafiCenteredColumn(
                         modifier =
-                        Modifier
-                            .fillMaxSize(),
+                            Modifier
+                                .fillMaxSize(),
                     ) {
                         SafiInfoSection(
                             icon = Icons.Rounded.People,
@@ -466,12 +466,12 @@ fun TeamDetailsSection(
             ) { member ->
                 TeamMemberComponent(
                     modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp)
-                        .padding(top = 8.dp),
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp)
+                            .padding(top = 8.dp),
                     member = member,
-                    onClickMember = onClickMember
+                    onClickMember = onClickMember,
                 )
             }
         }
@@ -482,28 +482,28 @@ fun TeamDetailsSection(
             KonfettiView(
                 modifier = Modifier.fillMaxSize(),
                 parties =
-                remember {
-                    listOf(
-                        Party(
-                            speed = 0f,
-                            maxSpeed = 30f,
-                            damping = 0.9f,
-                            spread = 360,
-                            colors = listOf(0xfce18a, 0xff726d, 0xf4306d, 0xb48def),
-                            position = Position.Relative(0.5, 0.3),
-                            emitter = Emitter(duration = 100, TimeUnit.MILLISECONDS).max(100),
-                        ),
-                        Party(
-                            speed = 0f,
-                            maxSpeed = 30f,
-                            damping = 0.9f,
-                            spread = 360,
-                            colors = listOf(0xfce18a, 0xff726d, 0xf4306d, 0xb48def),
-                            position = Position.Relative(0.5, 0.3),
-                            emitter = Emitter(duration = 100, TimeUnit.MILLISECONDS).max(100),
-                        ),
-                    )
-                },
+                    remember {
+                        listOf(
+                            Party(
+                                speed = 0f,
+                                maxSpeed = 30f,
+                                damping = 0.9f,
+                                spread = 360,
+                                colors = listOf(0xfce18a, 0xff726d, 0xf4306d, 0xb48def),
+                                position = Position.Relative(0.5, 0.3),
+                                emitter = Emitter(duration = 100, TimeUnit.MILLISECONDS).max(100),
+                            ),
+                            Party(
+                                speed = 0f,
+                                maxSpeed = 30f,
+                                damping = 0.9f,
+                                spread = 360,
+                                colors = listOf(0xfce18a, 0xff726d, 0xf4306d, 0xb48def),
+                                position = Position.Relative(0.5, 0.3),
+                                emitter = Emitter(duration = 100, TimeUnit.MILLISECONDS).max(100),
+                            ),
+                        )
+                    },
             )
         }
     }
@@ -525,16 +525,16 @@ fun TeamsScreenTopSection(
                 if (state.team != null) {
                     Row(
                         modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 16.dp),
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 16.dp),
                     ) {
                         TeamTopMemberComponent(
                             isFirst = false,
                             modifier =
-                            Modifier
-                                .weight(1f)
-                                .padding(top = 48.dp),
+                                Modifier
+                                    .weight(1f)
+                                    .padding(top = 48.dp),
                             member = state.team.top[1],
                         )
                         TeamTopMemberComponent(
@@ -545,9 +545,9 @@ fun TeamsScreenTopSection(
                         TeamTopMemberComponent(
                             isFirst = false,
                             modifier =
-                            Modifier
-                                .weight(1f)
-                                .padding(top = 48.dp),
+                                Modifier
+                                    .weight(1f)
+                                    .padding(top = 48.dp),
                             member = state.team.top[2],
                         )
                     }
@@ -571,10 +571,10 @@ fun ManageTeamSection(
     ) {
         TextField(
             modifier =
-            Modifier
-                .fillMaxWidth()
-                .padding(top = 16.dp)
-                .padding(horizontal = 16.dp),
+                Modifier
+                    .fillMaxWidth()
+                    .padding(top = 16.dp)
+                    .padding(horizontal = 16.dp),
             value = state.name,
             onValueChange = onValueChangeName,
             label = {
@@ -604,10 +604,10 @@ fun ManageTeamSection(
 
         Button(
             modifier =
-            Modifier
-                .fillMaxWidth()
-                .padding(top = 16.dp)
-                .padding(horizontal = 16.dp),
+                Modifier
+                    .fillMaxWidth()
+                    .padding(top = 16.dp)
+                    .padding(horizontal = 16.dp),
             onClick = onClickAction,
             enabled = state.isActionEnabled,
         ) {
@@ -616,17 +616,17 @@ fun ManageTeamSection(
 
         AnimatedVisibility(
             modifier =
-            Modifier
-                .fillMaxWidth()
-                .weight(1f),
+                Modifier
+                    .fillMaxWidth()
+                    .weight(1f),
             visible = state.isEditing,
         ) {
             Column(modifier = Modifier.padding(horizontal = 16.dp)) {
                 OutlinedButton(
                     modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(top = 8.dp),
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(top = 8.dp),
                     onClick = onClickActionCancel,
                 ) {
                     Text(text = "Cancel")
@@ -636,15 +636,15 @@ fun ManageTeamSection(
 
                 Button(
                     modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 16.dp),
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 16.dp),
                     onClick = onClickActionDelete,
                     colors =
-                    ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.error,
-                        contentColor = MaterialTheme.colorScheme.onError,
-                    ),
+                        ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.error,
+                            contentColor = MaterialTheme.colorScheme.onError,
+                        ),
                 ) {
                     Text(text = "Delete")
                 }

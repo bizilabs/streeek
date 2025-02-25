@@ -43,7 +43,6 @@ import io.ktor.client.HttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
-import kotlin.math.sin
 
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "streeek.remote")
 

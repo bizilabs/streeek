@@ -9,13 +9,19 @@ import io.ktor.client.request.get
 import io.ktor.client.request.url
 
 interface TauntRemoteSource {
-    suspend fun taunt(tauntedId: String, taunterId: String): NetworkResult<TauntDTO>
+    suspend fun taunt(
+        tauntedId: String,
+        taunterId: String,
+    ): NetworkResult<TauntDTO>
 }
 
 internal class TauntRemoteSourceImpl(
-    private val client: HttpClient
+    private val client: HttpClient,
 ) : TauntRemoteSource {
-    override suspend fun taunt(tauntedId: String, taunterId: String): NetworkResult<TauntDTO> =
+    override suspend fun taunt(
+        tauntedId: String,
+        taunterId: String,
+    ): NetworkResult<TauntDTO> =
         safeApiCall {
             client.get {
                 url(StreeekEndpoint.Taunt(tauntedId = tauntedId, taunterId = taunterId).url)
