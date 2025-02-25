@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.firstOrNull
 
 class TauntRepositoryImpl(
     private val tauntRemoteSource: TauntRemoteSource,
-    private val accountLocalSource: AccountLocalSource
+    private val accountLocalSource: AccountLocalSource,
 ) : TauntRepository {
     override suspend fun taunt(tauntedId: String): DataResult<TauntDomain> {
         val accountId = accountLocalSource.account.firstOrNull()?.id

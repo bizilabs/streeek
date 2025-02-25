@@ -1,7 +1,6 @@
 package com.bizilabs.streeek.feature.team.components
 
 import android.content.res.Configuration
-import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -18,7 +17,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
@@ -40,7 +38,7 @@ import com.bizilabs.streeek.lib.domain.models.TeamWithMembersDomain
 fun TeamMemberComponent(
     member: TeamMemberDomain,
     modifier: Modifier = Modifier,
-    onClickMember: (Long) -> Unit
+    onClickMember: (Long) -> Unit,
 ) {
     Card(
         modifier = modifier,
@@ -58,9 +56,9 @@ fun TeamMemberComponent(
             ) {
                 AsyncImage(
                     modifier =
-                    Modifier
-                        .size(52.dp)
-                        .clip(RoundedCornerShape(20)),
+                        Modifier
+                            .size(52.dp)
+                            .clip(RoundedCornerShape(20)),
                     model = member.account.avatarUrl,
                     contentDescription = "user avatar url",
                     contentScale = ContentScale.Crop,
@@ -71,10 +69,10 @@ fun TeamMemberComponent(
                 if (member.account.role.isAdmin) {
                     Text(
                         modifier =
-                        Modifier
-                            .clip(MaterialTheme.shapes.medium)
-                            .background(MaterialTheme.colorScheme.success)
-                            .padding(horizontal = 8.dp),
+                            Modifier
+                                .clip(MaterialTheme.shapes.medium)
+                                .background(MaterialTheme.colorScheme.success)
+                                .padding(horizontal = 8.dp),
                         text = member.account.role.label,
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSuccess,
@@ -87,10 +85,10 @@ fun TeamMemberComponent(
                 )
                 Text(
                     text =
-                    buildString {
-                        append(member.points)
-                        append(" pts")
-                    },
+                        buildString {
+                            append(member.points)
+                            append(" pts")
+                        },
                 )
             }
 
@@ -100,11 +98,11 @@ fun TeamMemberComponent(
                 modifier = Modifier.padding(16.dp),
                 text = member.rank.asRank(),
                 fontSize =
-                if (member.rank < 100) {
-                    MaterialTheme.typography.titleLarge.fontSize
-                } else {
-                    MaterialTheme.typography.bodyLarge.fontSize
-                },
+                    if (member.rank < 100) {
+                        MaterialTheme.typography.titleLarge.fontSize
+                    } else {
+                        MaterialTheme.typography.bodyLarge.fontSize
+                    },
             )
         }
     }
@@ -113,41 +111,41 @@ fun TeamMemberComponent(
 private val DummyTeamWithMembers =
     TeamWithMembersDomain(
         team =
-        TeamDomain(
-            id = 1,
-            name = "Streeek",
-            public = true,
-            createdAt = SystemLocalDateTime,
-            count = 10,
-        ),
+            TeamDomain(
+                id = 1,
+                name = "Streeek",
+                public = true,
+                createdAt = SystemLocalDateTime,
+                count = 10,
+            ),
         details =
-        TeamMemberDetailsDomain(
-            role = TeamMemberRole.MEMBER,
-            rank = 20,
-        ),
+            TeamMemberDetailsDomain(
+                role = TeamMemberRole.MEMBER,
+                rank = 20,
+            ),
         members =
-        listOf(
-            TeamMemberDomain(
-                account =
-                TeamMemberAccountDomain(
-                    avatarUrl = "",
-                    createdAt = SystemLocalDateTime,
-                    id = 1,
-                    role = TeamMemberRole.MEMBER,
-                    username = "mambo",
-                ),
-                rank = 1,
-                points = 1000,
-                level =
-                TeamMemberLevelDomain(
-                    id = 1,
-                    name = "kawabanga",
-                    number = 1,
-                    maxPoints = 1000,
-                    minPoints = 0,
+            listOf(
+                TeamMemberDomain(
+                    account =
+                        TeamMemberAccountDomain(
+                            avatarUrl = "",
+                            createdAt = SystemLocalDateTime,
+                            id = 1,
+                            role = TeamMemberRole.MEMBER,
+                            username = "mambo",
+                        ),
+                    rank = 1,
+                    points = 1000,
+                    level =
+                        TeamMemberLevelDomain(
+                            id = 1,
+                            name = "kawabanga",
+                            number = 1,
+                            maxPoints = 1000,
+                            minPoints = 0,
+                        ),
                 ),
             ),
-        ),
     )
 
 @Preview
@@ -159,10 +157,10 @@ private fun TeamMemberComponentPreview() {
             TeamMemberComponent(
                 member = DummyTeamWithMembers.members.first(),
                 modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                onClickMember = {}
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                onClickMember = {},
             )
         }
     }
@@ -176,14 +174,14 @@ private fun TeamMemberComponentAdminPreview() {
         Surface {
             TeamMemberComponent(
                 member =
-                DummyTeamWithMembers.members.first().let {
-                    it.copy(account = it.account.copy(role = TeamMemberRole.ADMIN))
-                },
+                    DummyTeamWithMembers.members.first().let {
+                        it.copy(account = it.account.copy(role = TeamMemberRole.ADMIN))
+                    },
                 modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                onClickMember = {}
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                onClickMember = {},
             )
         }
     }
