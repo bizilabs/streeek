@@ -127,6 +127,7 @@ class TeamScreen(val teamId: Long?) : Screen {
             onSearchParamChanged = screenModel::onSearchParamChanged,
             onClickClearSearch = screenModel::onClickClearSearch,
             onClickWithdraw = screenModel::onClickWithdrawAccount,
+            onClickMember = screenModel::onClickMember,
         )
     }
 }
@@ -165,6 +166,7 @@ fun TeamScreenContent(
     onSearchParamChanged: (String) -> Unit,
     onClickClearSearch: () -> Unit,
     onClickWithdraw: (TeamAccountInvitesDomain) -> Unit,
+    onClickMember: (TeamMemberDomain) -> Unit,
 ) {
     val activity = LocalContext.current as Activity
 
@@ -255,6 +257,7 @@ fun TeamScreenContent(
                         data = data,
                         onClickInviteMore = onClickInviteMore,
                         onRefreshTeams = onRefreshTeams,
+                        onClickMember = onClickMember,
                     )
                 }
             }
@@ -372,6 +375,7 @@ fun ViewTeamSection(
     data: LazyPagingItems<TeamMemberDomain>,
     onClickInviteMore: () -> Unit,
     onRefreshTeams: () -> Unit,
+    onClickMember: (TeamMemberDomain) -> Unit,
 ) {
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -404,6 +408,7 @@ fun ViewTeamSection(
                         data = data,
                         onClickInviteMore = onClickInviteMore,
                         onRefreshTeams = onRefreshTeams,
+                        onClickMember = onClickMember,
                     )
                 }
             }
@@ -418,6 +423,7 @@ fun TeamDetailsSection(
     data: LazyPagingItems<TeamMemberDomain>,
     onClickInviteMore: () -> Unit,
     onRefreshTeams: () -> Unit,
+    onClickMember: (TeamMemberDomain) -> Unit,
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
         SafiRefreshBox(
@@ -465,6 +471,7 @@ fun TeamDetailsSection(
                             .padding(horizontal = 16.dp)
                             .padding(top = 8.dp),
                     member = member,
+                    onClickMember = onClickMember,
                 )
             }
         }

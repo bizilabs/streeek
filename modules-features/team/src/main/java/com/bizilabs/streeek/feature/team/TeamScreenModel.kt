@@ -33,6 +33,8 @@ import com.bizilabs.streeek.lib.domain.models.team.JoinTeamInvitationDomain
 import com.bizilabs.streeek.lib.domain.models.team.TeamAccountInvitesDomain
 import com.bizilabs.streeek.lib.domain.models.team.TeamAccountJoinRequestDomain
 import com.bizilabs.streeek.lib.domain.models.team.TeamInvitationDomain
+import com.bizilabs.streeek.lib.domain.repositories.AccountRepository
+import com.bizilabs.streeek.lib.domain.repositories.TauntRepository
 import com.bizilabs.streeek.lib.domain.repositories.TeamInvitationCodeRepository
 import com.bizilabs.streeek.lib.domain.repositories.TeamRepository
 import com.bizilabs.streeek.lib.domain.repositories.team.TeamMemberInvitationRepository
@@ -61,6 +63,8 @@ val FeatureTeamModule =
                 teamInvitationCodeRepository = get(),
                 teamMemberInvitationRepository = get(),
                 teamRequestRepository = get(),
+                tauntRepository = get(),
+                accountRepository = get(),
             )
         }
     }
@@ -228,6 +232,8 @@ class TeamScreenModel(
     private val teamInvitationCodeRepository: TeamInvitationCodeRepository,
     private val teamMemberInvitationRepository: TeamMemberInvitationRepository,
     private val teamRequestRepository: TeamRequestRepository,
+    private val tauntRepository: TauntRepository,
+    private val accountRepository: AccountRepository,
 ) : StateScreenModel<TeamScreenState>(TeamScreenState()) {
     private var _pages = MutableStateFlow(getPagingDataLoading<TeamMemberDomain>())
     val pages: Flow<PagingData<TeamMemberDomain>> = _pages.asStateFlow().cachedIn(screenModelScope)
@@ -985,4 +991,51 @@ class TeamScreenModel(
         }
     }
     // </editor-fold>
+
+    fun onClickMember(teamMember: TeamMemberDomain) {
+        mutableState.update { it.copy(dialogState = DialogState.Loading()) }
+        screenModelScope.launch {
+            val member = accountRepository.account.first()
+
+            if (teamMember.account.id == member?.id ||
+                teamMember.points > (member?.points ?: 0L)
+            ) {
+                mutableState.update {
+                    it.copy(
+                        dialogState =
+                            DialogState.Error(
+                                title = "Error",
+                                message = "You can only taunt members below you",
+                            ),
+                    )
+                }
+            } else {
+                when (val result = tauntRepository.taunt(teamMember.account.id.toString())) {
+                    is DataResult.Success -> {
+                        mutableState.update {
+                            it.copy(
+                                dialogState =
+                                    DialogState.Success(
+                                        title = "Success",
+                                        message = "Taunt delivered to ${teamMember.account.username}",
+                                    ),
+                            )
+                        }
+                    }
+
+                    is DataResult.Error -> {
+                        mutableState.update {
+                            it.copy(
+                                dialogState =
+                                    DialogState.Error(
+                                        title = "Error",
+                                        message = result.message,
+                                    ),
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
 }

@@ -1,6 +1,5 @@
 package com.bizilabs.streeek.lib.data.mappers
 
-import android.R.attr.data
 import com.bizilabs.streeek.lib.domain.helpers.DataResult
 import com.bizilabs.streeek.lib.local.helpers.LocalResult
 import com.bizilabs.streeek.lib.remote.helpers.NetworkResult
