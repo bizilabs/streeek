@@ -17,7 +17,14 @@ data class LeaderboardDomain(
     val rank: RankDetailsDomain,
     val list: List<LeaderboardAccountDomain>,
     val top: Map<Long, LeaderboardAccountDomain>,
-)
+) {
+    val accounts: List<LeaderboardAccountDomain>
+        get() =
+            when {
+                page == 1 -> list.filterIndexed { index, _ -> index > 2 }
+                else -> list
+            }
+}
 
 fun LeaderboardDomain?.updateOrCreate(value: LeaderboardDomain): LeaderboardDomain {
     return when {

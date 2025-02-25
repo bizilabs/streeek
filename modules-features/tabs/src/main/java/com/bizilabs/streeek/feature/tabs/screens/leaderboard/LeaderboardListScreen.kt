@@ -202,7 +202,7 @@ fun LeaderboardListScreenContent(
                                             HorizontalDivider()
                                         }
                                     }
-                                    items(leaderboard.list) { member ->
+                                    items(leaderboard.accounts) { member ->
                                         LeaderboardComponent(
                                             imageUrl = member.account.avatarUrl,
                                             username = member.account.username,
