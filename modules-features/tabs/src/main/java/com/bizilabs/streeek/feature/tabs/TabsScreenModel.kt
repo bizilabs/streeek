@@ -48,8 +48,8 @@ enum class Tabs {
     LEADERBOARDS,
     TEAMS,
     FEED,
-    ACHIEVEMENTS,
     NOTIFICATIONS,
+    ACHIEVEMENTS,
     ;
 
     val icon: Pair<ImageVector, ImageVector>
@@ -58,8 +58,8 @@ enum class Tabs {
                 FEED -> Pair(Icons.Outlined.Explore, Icons.Rounded.Explore)
                 LEADERBOARDS -> Pair(Icons.Outlined.Leaderboard, Icons.Rounded.Leaderboard)
                 TEAMS -> Pair(Icons.Outlined.PeopleAlt, Icons.Rounded.PeopleAlt)
-                ACHIEVEMENTS -> Pair(Icons.Outlined.EmojiEvents, Icons.Rounded.EmojiEvents)
                 NOTIFICATIONS -> Pair(Icons.Outlined.Notifications, Icons.Rounded.Notifications)
+                ACHIEVEMENTS -> Pair(Icons.Outlined.EmojiEvents, Icons.Rounded.EmojiEvents)
             }
 
     val label: String
@@ -68,8 +68,8 @@ enum class Tabs {
                 FEED -> "Feed"
                 LEADERBOARDS -> "Leaderboard"
                 TEAMS -> "Teams"
-                ACHIEVEMENTS -> "Achievements"
                 NOTIFICATIONS -> "Notifications"
+                ACHIEVEMENTS -> "Achievements"
             }
 }
 
