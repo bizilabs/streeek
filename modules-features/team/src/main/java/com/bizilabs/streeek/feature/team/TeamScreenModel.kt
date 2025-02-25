@@ -1,6 +1,7 @@
 package com.bizilabs.streeek.feature.team
 
 import android.content.Context
+import android.provider.ContactsContract.Data
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ExitToApp
 import androidx.compose.material.icons.rounded.Delete
@@ -1082,17 +1083,47 @@ class TeamScreenModel(
     // </editor-fold>
 
     fun onClickMember(teamMember: TeamMemberDomain) {
+        mutableState.update { it.copy(dialogState = DialogState.Loading()) }
         screenModelScope.launch {
             val member = accountRepository.account.first()
-            if (teamMember.points <= (member?.points ?: 0L)
-                && teamMember.account.id != member?.id
+
+            if (teamMember.account.id == member?.id ||
+                teamMember.points > (member?.points ?: 0L)
             ) {
-                tauntRepository.taunt(teamMember.account.id.toString())
-            } else {
                 mutableState.update {
                     it.copy(
-                        tauntMessage = "You can taunt members below you"
+                        dialogState =
+                        DialogState.Error(
+                            title = "Error",
+                            message = "You can only taunt members below you",
+                        )
                     )
+                }
+            } else {
+                when (val result = tauntRepository.taunt(teamMember.account.id.toString())) {
+                    is DataResult.Success -> {
+                        mutableState.update {
+                            it.copy(
+                                dialogState =
+                                DialogState.Success(
+                                    title = "Success",
+                                    message = "Taunt delivered to ${teamMember.account.username}",
+                                )
+                            )
+                        }
+                    }
+
+                    is DataResult.Error -> {
+                        mutableState.update {
+                            it.copy(
+                                dialogState =
+                                DialogState.Error(
+                                    title = "Error",
+                                    message = result.message,
+                                )
+                            )
+                        }
+                    }
                 }
             }
         }
