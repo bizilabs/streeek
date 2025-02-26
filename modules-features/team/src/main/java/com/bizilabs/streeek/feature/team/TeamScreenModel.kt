@@ -1004,7 +1004,7 @@ class TeamScreenModel(
                     it.copy(
                         dialogState =
                             DialogState.Error(
-                                title = "Error",
+                                title = "Oops",
                                 message = "You can only taunt members below you",
                             ),
                     )
