@@ -68,10 +68,9 @@ Ensure thorough testing at **EVERY** stage:
 
 #### **Outcome**
 The app’s data layer is fully functional in the shared module and tested for both Android and iOS.
-
 ---
 
-### **Weeks 2 & 3: Resources, UI, and Features (9th - 22nd March 2025)**
+### **Weeks 2: Resources, UI, and Initial Features (9th - 15th March 2025)**
 #### **Tasks**
 1. **Resources Module**:
     - Consolidate all app resources (strings, fonts, audio, images) into a single shared module.
@@ -83,6 +82,10 @@ The app’s data layer is fully functional in the shared module and tested for b
 
 3. **Feature Module**:
     - Migrate individual feature modules for core features like:
+      - contributions
+      - leaderboards
+      - teams
+      - levels
     - Refactor feature logic to use shared data and UI modules.
 
 4. **Testing**:
@@ -90,6 +93,26 @@ The app’s data layer is fully functional in the shared module and tested for b
 
 #### **Outcome**
 All features are refactored and functional in the shared and feature-specific module, with a Compose Multiplatform UI.
+
+---
+
+### **Week 3: Remaining Features (16th - 22nd March 2025)**
+#### **Tasks**
+1. **Feature Module (Remaining)**:
+   - Complete the migration of remaining feature modules, including:
+      - Gamified GitHub contributions.
+      - Analytics and progress tracking.
+   - Ensure feature logic is fully integrated with shared data and UI modules.
+
+2. **UI Enhancements**:
+   - Refine and finalize common UI components.
+   - Address any platform-specific UI challenges.
+
+3. **Testing**:
+   - Write unit and integration tests for the remaining features and enhanced UI components.
+
+#### **Outcome**
+All features are fully refactored and functional in the shared and feature-specific modules, with a Compose Multiplatform UI implemented.
 
 ---
 
@@ -149,4 +172,3 @@ The Streeek app is successfully migrated and released as a Kotlin Multiplatform 
 
 ## **Conclusion**
 This migration plan outlines a clear path to transition Streeek from Android Native to Kotlin Multiplatform and Compose Multiplatform, ensuring the app’s functionality and user experience are preserved while enabling code sharing and maintainability.
-
