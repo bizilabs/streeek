@@ -8,7 +8,7 @@ The migration project is **_targeted_** for completion by **`31st March 2025`**.
 
 ---
 
-## **Why Migrate to KMM and Compose Multiplatform?**
+## **Why Migrate to KMP and Compose Multiplatform?**
 
 ### **1. Code Reusability**
 - Sharing business logic across Android and iOS will reduce duplication and improve development efficiency.
