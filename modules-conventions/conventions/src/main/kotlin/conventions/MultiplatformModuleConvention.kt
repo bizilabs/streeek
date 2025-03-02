@@ -2,6 +2,7 @@ package conventions
 
 import com.android.build.gradle.LibraryExtension
 import extensions.androidLibrary
+import extensions.getBundle
 import extensions.getLibrary
 import extensions.getPlugin
 import extensions.multiplatform
@@ -80,13 +81,20 @@ class MultiplatformModuleConvention : Plugin<Project> {
                 configureIOS()
                 sources {
                     commonMain.dependencies {
+                        // kotlinx
                         implementation(catalogs.getLibrary("kotlinx-datetime"))
                         implementation(catalogs.getLibrary("kotlinx-coroutines-core"))
                         implementation(catalogs.getLibrary("kotlinx-serialization-json"))
-
+                        // koin
+                        implementation(project.dependencies.platform(catalogs.getLibrary("koin-bom")))
+                        implementation(catalogs.getBundle("kmp-koin"))
                     }
                     commonTest.dependencies {
                         implementation(catalogs.getLibrary("kotlinx-coroutines-test"))
+                        // koin
+                        implementation(catalogs.getLibrary("koin-test"))
+                        implementation(catalogs.getLibrary("koin-test-junit4"))
+                        implementation(catalogs.getLibrary("koin-test-junit5"))
                     }
                     androidMain.dependencies {
                         implementation(catalogs.getLibrary("kotlinx-coroutines-android"))
