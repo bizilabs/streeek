@@ -1,5 +1,6 @@
 [versions]
 # gradle plugins
+buildkonfig-gradle-plugin = "0.17.0"
 gradle-plugin-android = "8.2.2"
 gradle-plugin-firebase-crashlytics = "3.0.2"
 gradle-plugin-firebase-performance = "1.4.2"
@@ -42,6 +43,8 @@ compose-multiplatform = "1.7.0"
 
 # google libraries
 firebase_bom = "33.7.0"
+firebase-messaging-ktx = "24.1.0"
+firebase-database = "21.0.0"
 ksp = "2.0.21-1.0.27" # always match with kotlin version
 
 # saket
@@ -77,8 +80,7 @@ confetti = "2.0.5"
 updater = "2.1.0"
 google-inapp-reviews-ktx = "2.0.2"
 rich-text-editor = "1.0.0-rc10"
-firebase-messaging-ktx = "24.1.0"
-firebase-database = "21.0.0"
+buildconfig = "5.5.1"
 
 [libraries]
 # androidx
@@ -181,7 +183,6 @@ firebase-performance = { module = "com.google.firebase:firebase-perf-ktx" }
 firebase-inappmessagging = { module = "com.google.firebase:firebase-inappmessaging-display-ktx" }
 google-inapp-reviews-ktx = { group = "com.google.android.play", name = "review-ktx", version.ref = "google-inapp-reviews-ktx" }
 
-
 # coil
 coil-kt = { group = "io.coil-kt", name = "coil", version.ref = "coil" }
 coil-kt-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
@@ -243,6 +244,7 @@ firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "
 firebase-performance = { id = "com.google.firebase.firebase-perf", version.ref = "gradle-plugin-firebase-performance" }
 google-services = { id = "com.google.gms.google-services", version.ref = "gradle-plugin-google-services" }
 ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }
+buildconfig = { id = "com.github.gmazzo.buildconfig", version.ref = "buildconfig" }
 
 [bundles]
 android = [

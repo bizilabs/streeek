@@ -17,6 +17,7 @@ plugins {
     alias(libs.plugins.firebase.crashlytics) apply false
     // others
     alias(libs.plugins.ktlint)
+    alias(libs.plugins.buildconfig)
 }
 
 allprojects {

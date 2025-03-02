@@ -74,6 +74,7 @@ class MultiplatformModuleConvention : Plugin<Project> {
                 apply(catalogs.getPlugin("android-library"))
                 apply(catalogs.getPlugin("kotlin-serialization"))
                 apply(catalogs.getPlugin("ktlint"))
+                apply(catalogs.getPlugin("buildconfig"))
             }
             // setup multiplatform
             multiplatform {
