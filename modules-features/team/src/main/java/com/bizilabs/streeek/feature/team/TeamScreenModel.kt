@@ -142,6 +142,11 @@ data class InviteAccountState(
     val inviteState: FetchState<Boolean> = FetchState.Loading,
 )
 
+data class InviteMultipleAccountsState(
+    val accountIds: List<Long>,
+    val multipleInvitesState: FetchState<Boolean> = FetchState.Loading,
+)
+
 data class InviteWithdrawalState(
     val inviteId: Long,
     val withdrawalState: FetchState<DeleteAccountInvitationDomain> = FetchState.Loading,
@@ -183,6 +188,9 @@ data class TeamScreenState(
     val joinerTabs: EnumEntries<TeamJoinersTab> = TeamJoinersTab.entries,
     val inviteWithdrawalState: InviteWithdrawalState? = null,
     val withdrawnInvitesIds: List<Long> = emptyList(),
+    // This state holds the list of selected accounts not in team awaiting to be invited
+    val selectedAccountsIds: List<Long> = listOf(),
+    val inviteMultipleAccountsState: InviteMultipleAccountsState? = null,
 ) {
     val isManagingTeam: Boolean
         get() = isEditing || teamId == null
@@ -982,6 +990,31 @@ class TeamScreenModel(
                     }
                     countDownJob = null
                 }
+        }
+    }
+
+    fun onClickToggleAccountSelectedState(account: AccountsNotInTeamDomain) {
+        val selectedAccountsIds = state.value.selectedAccountsIds.toMutableList()
+        if (selectedAccountsIds.contains(account.accountId)) {
+            selectedAccountsIds.remove(account.accountId)
+        } else {
+            selectedAccountsIds.add(account.accountId)
+        }
+        mutableState.update { it.copy(selectedAccountsIds = selectedAccountsIds) }
+    }
+
+    fun onClickSelectedAccountsSelection(
+        action: SelectionAction,
+        list: List<AccountsNotInTeamDomain>,
+    ) {
+        when (action) {
+            SelectionAction.SELECT_ALL -> {
+                mutableState.update { it.copy(selectedAccountsIds = list.map { it.accountId }) }
+            }
+
+            SelectionAction.CLEAR_ALL -> {
+                mutableState.update { it.copy(selectedAccountsIds = listOf()) }
+            }
         }
     }
     // </editor-fold>
