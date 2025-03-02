@@ -8,8 +8,11 @@ kotlin {
             // ktor
             implementation(libs.bundles.kmp.ktor)
             // supabase
-//            implementation(platform(libs.supabase.bom))
-//            implementation(libs.bundles.supabase)
+            implementation(project.dependencies.platform(libs.supabase.bom))
+            implementation(libs.bundles.supabase)
+        }
+        commonTest.dependencies {
+            implementation(libs.ktor.client.mock)
         }
         androidMain.dependencies {
             implementation(libs.ktor.client.okhttp)

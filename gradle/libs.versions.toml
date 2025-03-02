@@ -285,4 +285,7 @@ paging = ["androidx-paging-runtime", "androidx-paging-compose"]
 kmp-ktor = [
     "ktor-client-core", "ktor-logging", "ktor-content-negotiation", "ktor-serialization-json",
 ]
-kmp-koin = ["koin-core", "koin-core-coroutines",]
+kmp-koin = [
+    "koin-core", "koin-core-coroutines", "ktor-logging", "ktor-content-negotiation",
+    "ktor-serialization-json"
+]
