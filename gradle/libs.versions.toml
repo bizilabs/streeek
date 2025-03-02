@@ -12,7 +12,12 @@ kotlin = "2.0.21"
 kotlinx-coroutines = "1.9.0"
 kotlinx-serialization = "1.7.3"
 kotlinx-datetime = "0.6.0"
-ktor = "3.0.0"
+ktor = "3.1.1"
+
+# android sdk
+android-sdk-compile = "35"
+android-sdk-min = "28"
+android-sdk-target = "34"
 
 # android libraries
 androidx-splash-screen = "1.0.1"
@@ -32,7 +37,8 @@ androidx-activity = "1.9.2"
 compose-bom = "2024.11.00"
 compose-tv-foundation = "1.0.0-alpha11"
 compose-tv-material = "1.0.0"
-androidx-activity-compose = "1.9.3"
+androidx-activity-compose = "1.10.1"
+compose-multiplatform = "1.7.0"
 
 # google libraries
 firebase_bom = "33.7.0"
@@ -136,11 +142,13 @@ kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.
 # serialization
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
 # coroutines
-kotlinx-coroutines = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "kotlinx-coroutines" }
+kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "kotlinx-coroutines" }
+kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
 kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "kotlinx-coroutines" }
 # ktor
 ktor-client-core = { group = "io.ktor", name = "ktor-client-core", version.ref = "ktor" }
 ktor-client-okhttp = { group = "io.ktor", name = "ktor-client-okhttp", version.ref = "ktor" }
+ktor-client-darwin = { module = "io.ktor:ktor-client-darwin", version.ref = "ktor" }
 ktor-client-mock = { group = "io.ktor", name = "ktor-client-mock", version.ref = "ktor" }
 ktor-logging = { group = "io.ktor", name = "ktor-client-logging", version.ref = "ktor" }
 ktor-serialization-json = { group = "io.ktor", name = "ktor-serialization-kotlinx-json", version.ref = "ktor" }
@@ -194,7 +202,6 @@ media3-ui = { module = "androidx.media3:media3-ui", version.ref = "media3" }
 # gradle plugins
 android-gradle-plugin = { group = "com.android.tools.build", name = "gradle", version.ref = "gradle-plugin-android" }
 kotlin-gradle-plugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }
-ksp-gradle-plugin = { group = "com.google.devtools.ksp", name = "com.google.devtools.ksp.gradle.plugin", version.ref = "ksp" }
 
 # saket
 saket-swipe = { module = "me.saket.swipe:swipe", version.ref = "saket-swipe" }
@@ -223,14 +230,17 @@ google-firebase-database = { group = "com.google.firebase", name = "firebase-dat
 [plugins]
 android-application = { id = "com.android.application", version.ref = "gradle-plugin-android" }
 android-library = { id = "com.android.library", version.ref = "gradle-plugin-android" }
+
 kotlin-ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+kotlin-compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+kotlin-compose-multiplatform = { id = "org.jetbrains.compose", version.ref = "compose-multiplatform" }
+
 firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "gradle-plugin-firebase-crashlytics" }
 firebase-performance = { id = "com.google.firebase.firebase-perf", version.ref = "gradle-plugin-firebase-performance" }
 google-services = { id = "com.google.gms.google-services", version.ref = "gradle-plugin-google-services" }
-realm = { id = "io.realm.kotlin", version.ref = "realm" }
-kotlin-compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }
 
 [bundles]
@@ -267,3 +277,7 @@ supabase = [
     "supabase-storage", "supabase-functions"
 ]
 paging = ["androidx-paging-runtime", "androidx-paging-compose"]
+kmp-ktor = [
+    "ktor-client-core", "ktor-logging", "ktor-content-negotiation", "ktor-serialization-json",
+]
+kmp-koin = ["koin-core", "koin-core-coroutines",]
