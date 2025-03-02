@@ -93,7 +93,7 @@ data class SendAccountInvitationDTO(
 data class SendMultipleAccountInvitationDTO(
     @SerialName("team_id_param") val teamId: Long,
     @SerialName("admin_id_param") val adminId: Long,
-    @SerialName("invitee_ids_param") val inviteeIds: List<Long>,
+    @SerialName("invitees_id_param") val inviteeIds: List<Long>,
 )
 
 @Serializable
