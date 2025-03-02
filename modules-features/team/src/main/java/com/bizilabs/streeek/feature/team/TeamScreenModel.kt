@@ -1,6 +1,5 @@
 package com.bizilabs.streeek.feature.team
 
-import android.annotation.SuppressLint
 import android.content.Context
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ExitToApp
@@ -683,7 +682,7 @@ class TeamScreenModel(
         }
     }
 
-    @SuppressLint("CheckResult")
+    // @SuppressLint("CheckResult")
     private fun selectAllRequests(list: List<TeamAccountJoinRequestDomain>) {
         mutableState.update { it.copy(selectedRequestIds = list.map { it.request.id }) }
     }
@@ -878,6 +877,62 @@ class TeamScreenModel(
                         it.copy(
                             accountsInvitedIds = invitedAccounts,
                             inviteAccountState = null,
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    fun onClickInviteMultipleAccounts() {
+        val selectedAccountsIds = state.value.selectedAccountsIds
+        val teamId = state.value.teamId ?: return
+        mutableState.update {
+            it.copy(inviteMultipleAccountsState = InviteMultipleAccountsState(accountIds = selectedAccountsIds))
+        }
+        screenModelScope.launch {
+            val result =
+                teamMemberInvitationRepository.sendMultipleAccountInvitation(
+                    teamId = teamId,
+                    inviteeIds = selectedAccountsIds,
+                )
+            when (result) {
+                is DataResult.Error -> {
+                    mutableState.update {
+                        it.copy(
+                            inviteMultipleAccountsState =
+                                it.inviteMultipleAccountsState?.copy(
+                                    multipleInvitesState = FetchState.Error(message = result.message),
+                                ),
+                        )
+                    }
+                    delay(2000)
+                    mutableState.update {
+                        it.copy(
+                            inviteMultipleAccountsState = null,
+                            // selectedAccountsIds = emptyList()
+                        )
+                    }
+                }
+
+                is DataResult.Success -> {
+                    val invitedAccounts = state.value.accountsInvitedIds.toMutableList()
+                    invitedAccounts.addAll(selectedAccountsIds)
+                    mutableState.update {
+                        it.copy(
+                            inviteMultipleAccountsState =
+                                it.inviteMultipleAccountsState?.copy(
+                                    multipleInvitesState = FetchState.Success(value = true),
+                                ),
+                        )
+                    }
+
+                    delay(2000)
+                    mutableState.update {
+                        it.copy(
+                            accountsInvitedIds = invitedAccounts,
+                            inviteMultipleAccountsState = null,
+                            selectedAccountsIds = emptyList(),
                         )
                     }
                 }
