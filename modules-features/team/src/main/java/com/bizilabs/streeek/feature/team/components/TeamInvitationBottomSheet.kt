@@ -85,6 +85,9 @@ fun TeamInvitationBottomSheet(
     onClickInviteAccount: (AccountsNotInTeamDomain) -> Unit,
     onSearchParamChanged: (String) -> Unit,
     onClickClearSearch: () -> Unit,
+    onClickAccountAvatar: (AccountsNotInTeamDomain) -> Unit,
+    onClickSelectedAccountsSelection: (SelectionAction, List<AccountsNotInTeamDomain>) -> Unit,
+    onClickMultipleInvitationCreate: () -> Unit,
 ) {
     val scope = rememberCoroutineScope()
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
@@ -204,13 +207,15 @@ fun TeamInvitationBottomSheet(
                     },
                 ) { accountNotInTeam ->
 
-                    val invited = accountNotInTeam.accountId in state.accountsInvitedIds
+                    val invited = accountNotInTeam.accountId in state.accountsInvitedIds || accountNotInTeam.isInvited
                     InviteAccountCardComponent(
                         modifier = modifier.fillMaxWidth(),
+                        state = state,
                         isInvited = invited,
                         accountNotInTeam = accountNotInTeam,
                         inviteAccountState = state.inviteAccountState,
                         onClickInvite = onClickInviteAccount,
+                        onClickAccountAvatar = onClickAccountAvatar,
                     )
                 }
 
