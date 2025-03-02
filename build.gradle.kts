@@ -16,8 +16,8 @@ plugins {
     alias(libs.plugins.google.services) apply false
     alias(libs.plugins.firebase.crashlytics) apply false
     // others
+    alias(libs.plugins.buildconfig) apply false
     alias(libs.plugins.ktlint)
-    alias(libs.plugins.buildconfig)
 }
 
 allprojects {
