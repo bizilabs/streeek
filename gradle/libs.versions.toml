@@ -81,6 +81,7 @@ updater = "2.1.0"
 google-inapp-reviews-ktx = "2.0.2"
 rich-text-editor = "1.0.0-rc10"
 buildconfig = "5.5.1"
+napier = "2.7.1"
 
 [libraries]
 # androidx
@@ -228,6 +229,7 @@ updater = { module = "com.google.android.play:app-update", version.ref = "update
 richtexteditor = { module = "com.mohamedrejeb.richeditor:richeditor-compose", version.ref = "rich-text-editor"}
 firebase-messaging-ktx = { group = "com.google.firebase", name = "firebase-messaging-ktx", version.ref = "firebase-messaging-ktx" }
 google-firebase-database = { group = "com.google.firebase", name = "firebase-database", version.ref = "firebase-database" }
+napier = { group = "io.github.aakira", name="napier", version.ref = "napier" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "gradle-plugin-android" }

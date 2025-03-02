@@ -89,6 +89,8 @@ class MultiplatformModuleConvention : Plugin<Project> {
                         // koin
                         implementation(project.dependencies.platform(catalogs.getLibrary("koin-bom")))
                         implementation(catalogs.getBundle("kmp-koin"))
+                        // napier
+                        implementation(catalogs.getLibrary("napier"))
                     }
                     commonTest.dependencies {
                         implementation(catalogs.getLibrary("kotlinx-coroutines-test"))
