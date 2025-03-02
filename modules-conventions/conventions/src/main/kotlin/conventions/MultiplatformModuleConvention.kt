@@ -93,8 +93,6 @@ class MultiplatformModuleConvention : Plugin<Project> {
                         implementation(catalogs.getLibrary("kotlinx-coroutines-test"))
                         // koin
                         implementation(catalogs.getLibrary("koin-test"))
-                        implementation(catalogs.getLibrary("koin-test-junit4"))
-                        implementation(catalogs.getLibrary("koin-test-junit5"))
                     }
                     androidMain.dependencies {
                         implementation(catalogs.getLibrary("kotlinx-coroutines-android"))
