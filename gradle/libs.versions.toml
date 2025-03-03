@@ -26,7 +26,7 @@ androidx-core-ktx = "1.15.0"
 androidx-compose-material = "1.7.6"
 androidx-work-manager = "2.10.0"
 androidx-room = "2.6.1"
-androidx-datastore = "1.1.1"
+androidx-datastore = "1.1.3"
 androidx-lifecycle-runtime-ktx = "2.8.7"
 androidx-appcompat = "1.7.0"
 androidx-palette = "1.0.0"
@@ -82,6 +82,8 @@ google-inapp-reviews-ktx = "2.0.2"
 rich-text-editor = "1.0.0-rc10"
 buildconfig = "5.5.1"
 napier = "2.7.1"
+uri = "0.0.19"
+multiplatfrom-settings = "1.3.0"
 
 [libraries]
 # androidx
@@ -96,6 +98,8 @@ androidx-security-crypto = { module = "androidx.security:security-crypto", versi
 androidx-core-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "androidx-splash-screen" }
 androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "androidx-lifecycle-runtime-ktx" }
 androidx-activity = { group = "androidx.activity", name = "activity-ktx", version.ref = "androidx-activity" }
+androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences-core", version.ref = "androidx-datastore" }
+androidx-datastore-proto = { module = "androidx.datastore:datastore-core", version.ref = "androidx-datastore" }
 
 # androidx-paging
 androidx-paging-runtime = {module = "androidx.paging:paging-runtime", version.ref= "androidx-paging"}
@@ -230,6 +234,14 @@ richtexteditor = { module = "com.mohamedrejeb.richeditor:richeditor-compose", ve
 firebase-messaging-ktx = { group = "com.google.firebase", name = "firebase-messaging-ktx", version.ref = "firebase-messaging-ktx" }
 google-firebase-database = { group = "com.google.firebase", name = "firebase-database", version.ref = "firebase-database" }
 napier = { group = "io.github.aakira", name="napier", version.ref = "napier" }
+uri = { group = "com.eygraber", name="uri-kmp", version.ref = "uri" }
+
+# multiplatform settings
+multiplatform-settings = { group = "com.russhwolf", name="multiplatform-settings", version.ref = "multiplatfrom-settings" }
+multiplatform-settings-tests = { group = "com.russhwolf", name="multiplatform-settings-test", version.ref = "multiplatfrom-settings" }
+multiplatform-settings-no-arg = { group = "com.russhwolf", name="multiplatform-settings-no-arg", version.ref = "multiplatfrom-settings" }
+multiplatform-settings-coroutines = { group = "com.russhwolf", name="multiplatform-settings-coroutines", version.ref = "multiplatfrom-settings" }
+multiplatform-settings-serialization = { group = "com.russhwolf", name="multiplatform-settings-serialization", version.ref = "multiplatfrom-settings" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "gradle-plugin-android" }
@@ -252,6 +264,7 @@ buildconfig = { id = "com.github.gmazzo.buildconfig", version.ref = "buildconfig
 android = [
     "androidx-appcompat", "androidx-core-ktx", "androidx-lifecycle-runtime-ktx"
 ]
+androidx-datastore = ["androidx-datastore-preferences", "androidx-datastore-proto"]
 compose = [
     "compose-activity", "compose-foundation", "compose-foundation-layout",
     "compose-material-iconsExtended", "compose-ui", "compose-ui-graphics",
@@ -282,6 +295,10 @@ supabase = [
     "supabase-storage", "supabase-functions"
 ]
 paging = ["androidx-paging-runtime", "androidx-paging-compose"]
+multiplatform-settings = [
+    "multiplatform-settings", "multiplatform-settings-no-arg", "multiplatform-settings-coroutines",
+    "multiplatform-settings-serialization"
+]
 kmp-ktor = [
     "ktor-client-core", "ktor-logging", "ktor-content-negotiation", "ktor-serialization-json",
 ]
