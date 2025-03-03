@@ -47,7 +47,7 @@ data class LeaderboardScreen(val name: String) : Screen {
             state = state,
             data = data,
             onClickNavigateBack = { navigator?.pop() },
-            onClickMember = screenModel::onClickMember,
+            onClickMember = { _, _, _ -> },
             onClickDismissDialog = screenModel::onClickDismissDialog,
         )
     }
