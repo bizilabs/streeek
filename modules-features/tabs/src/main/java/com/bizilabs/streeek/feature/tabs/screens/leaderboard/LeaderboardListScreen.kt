@@ -83,7 +83,7 @@ class LeaderboardListScreen(
             onTriggerRefreshLeaderboards = screenModel::onTriggerRefreshLeaderboards,
             onNavigateBack = onNavigateBack,
             onClickMember = screenModel::onClickMember,
-            onClickDismissDialog = screenModel::onClickDismissDialog
+            onClickDismissDialog = screenModel::onClickDismissDialog,
         ) { screen ->
             navigator?.push(screen)
         }
@@ -100,7 +100,7 @@ fun LeaderboardListScreenContent(
     onNavigateBack: () -> Unit,
     onClickMember: (Long, Long, String) -> Unit,
     onClickDismissDialog: () -> Unit,
-    navigate: (Screen) -> Unit
+    navigate: (Screen) -> Unit,
 ) {
     if (state.dialogState != null) {
         SafiBottomDialog(
@@ -118,7 +118,7 @@ fun LeaderboardListScreenContent(
     val pagerState =
         rememberPagerState(
             initialPage =
-            state.leaderboards.indexOf(state.leaderboard).takeIf { it >= 0 } ?: 0,
+                state.leaderboards.indexOf(state.leaderboard).takeIf { it >= 0 } ?: 0,
         ) { state.leaderboards.size }
 
     BackHandler(enabled = true) {
@@ -147,9 +147,9 @@ fun LeaderboardListScreenContent(
         ) { paddingValues ->
             SafiRefreshBox(
                 modifier =
-                Modifier
-                    .fillMaxSize()
-                    .padding(top = paddingValues.calculateTopPadding()),
+                    Modifier
+                        .fillMaxSize()
+                        .padding(top = paddingValues.calculateTopPadding()),
                 isRefreshing = state.isSyncing,
                 onRefresh = onTriggerRefreshLeaderboards,
             ) {
@@ -185,16 +185,16 @@ fun LeaderboardListScreenContent(
                                         Column(modifier = Modifier.fillMaxWidth()) {
                                             Row(
                                                 modifier =
-                                                Modifier
-                                                    .fillMaxWidth()
-                                                    .padding(bottom = 16.dp),
+                                                    Modifier
+                                                        .fillMaxWidth()
+                                                        .padding(bottom = 16.dp),
                                             ) {
                                                 TeamTopMemberComponent(
                                                     isFirst = false,
                                                     modifier =
-                                                    Modifier
-                                                        .weight(1f)
-                                                        .padding(top = 48.dp),
+                                                        Modifier
+                                                            .weight(1f)
+                                                            .padding(top = 48.dp),
                                                     member = leaderboard.top[1],
                                                 )
                                                 TeamTopMemberComponent(
@@ -205,9 +205,9 @@ fun LeaderboardListScreenContent(
                                                 TeamTopMemberComponent(
                                                     isFirst = false,
                                                     modifier =
-                                                    Modifier
-                                                        .weight(1f)
-                                                        .padding(top = 48.dp),
+                                                        Modifier
+                                                            .weight(1f)
+                                                            .padding(top = 48.dp),
                                                     member = leaderboard.top[2],
                                                 )
                                             }
@@ -225,9 +225,9 @@ fun LeaderboardListScreenContent(
                                                 onClickMember(
                                                     member.rank.points,
                                                     member.account.id,
-                                                    member.account.username
+                                                    member.account.username,
                                                 )
-                                            }
+                                            },
                                         )
                                     }
                                     item {
@@ -241,9 +241,9 @@ fun LeaderboardListScreenContent(
                                                 ) {
                                                     Text(
                                                         modifier =
-                                                        Modifier
-                                                            .fillMaxWidth()
-                                                            .padding(vertical = 16.dp),
+                                                            Modifier
+                                                                .fillMaxWidth()
+                                                                .padding(vertical = 16.dp),
                                                         textAlign = TextAlign.Center,
                                                         text = "· · ·",
                                                         style = MaterialTheme.typography.titleLarge,
@@ -259,7 +259,7 @@ fun LeaderboardListScreenContent(
                                                             onClickMember(
                                                                 rank.points,
                                                                 account.id,
-                                                                account.username
+                                                                account.username,
                                                             )
                                                         },
                                                     )
@@ -291,28 +291,28 @@ fun LeaderboardListScreenContent(
             KonfettiView(
                 modifier = Modifier.fillMaxSize(),
                 parties =
-                remember {
-                    listOf(
-                        Party(
-                            speed = 0f,
-                            maxSpeed = 30f,
-                            damping = 0.9f,
-                            spread = 360,
-                            colors = listOf(0xfce18a, 0xff726d, 0xf4306d, 0xb48def),
-                            position = Position.Relative(0.5, 0.3),
-                            emitter = Emitter(duration = 100, TimeUnit.MILLISECONDS).max(100),
-                        ),
-                        Party(
-                            speed = 0f,
-                            maxSpeed = 30f,
-                            damping = 0.9f,
-                            spread = 360,
-                            colors = listOf(0xfce18a, 0xff726d, 0xf4306d, 0xb48def),
-                            position = Position.Relative(0.5, 0.3),
-                            emitter = Emitter(duration = 100, TimeUnit.MILLISECONDS).max(100),
-                        ),
-                    )
-                },
+                    remember {
+                        listOf(
+                            Party(
+                                speed = 0f,
+                                maxSpeed = 30f,
+                                damping = 0.9f,
+                                spread = 360,
+                                colors = listOf(0xfce18a, 0xff726d, 0xf4306d, 0xb48def),
+                                position = Position.Relative(0.5, 0.3),
+                                emitter = Emitter(duration = 100, TimeUnit.MILLISECONDS).max(100),
+                            ),
+                            Party(
+                                speed = 0f,
+                                maxSpeed = 30f,
+                                damping = 0.9f,
+                                spread = 360,
+                                colors = listOf(0xfce18a, 0xff726d, 0xf4306d, 0xb48def),
+                                position = Position.Relative(0.5, 0.3),
+                                emitter = Emitter(duration = 100, TimeUnit.MILLISECONDS).max(100),
+                            ),
+                        )
+                    },
             )
         }
     }
@@ -338,9 +338,9 @@ fun LeaderboardListScreenHeaderSection(
             ) {
                 Text(
                     modifier =
-                    Modifier
-                        .weight(1f)
-                        .padding(vertical = 16.dp),
+                        Modifier
+                            .weight(1f)
+                            .padding(vertical = 16.dp),
                     text = "Leaderboard".uppercase(),
                     style = MaterialTheme.typography.titleSmall,
                     textAlign = TextAlign.Center,
@@ -348,9 +348,9 @@ fun LeaderboardListScreenHeaderSection(
             }
             AnimatedVisibility(
                 modifier =
-                Modifier
-                    .padding(top = 16.dp)
-                    .fillMaxWidth(),
+                    Modifier
+                        .padding(top = 16.dp)
+                        .fillMaxWidth(),
                 visible = state.leaderboards.isNotEmpty() && (state.leaderboards.size != 1),
             ) {
                 Column(modifier = Modifier.fillMaxWidth()) {
@@ -370,10 +370,10 @@ fun LeaderboardListScreenHeaderSection(
                                                 leaderboard,
                                             ),
                                             animationSpec =
-                                            tween(
-                                                durationMillis = 250,
-                                                easing = FastOutSlowInEasing,
-                                            ),
+                                                tween(
+                                                    durationMillis = 250,
+                                                    easing = FastOutSlowInEasing,
+                                                ),
                                         )
                                     }
                                     onValueChangeLeaderboard(leaderboard)
@@ -382,25 +382,25 @@ fun LeaderboardListScreenHeaderSection(
                                 Box {
                                     Text(
                                         modifier =
-                                        Modifier.padding(
-                                            vertical = 8.dp,
-                                            horizontal = 24.dp,
-                                        ),
+                                            Modifier.padding(
+                                                vertical = 8.dp,
+                                                horizontal = 24.dp,
+                                            ),
                                         text =
-                                        leaderboard.name.lowercase()
-                                            .replaceFirstChar { it.uppercase() },
+                                            leaderboard.name.lowercase()
+                                                .replaceFirstChar { it.uppercase() },
                                         color =
-                                        if (selected) {
-                                            MaterialTheme.colorScheme.primary
-                                        } else {
-                                            MaterialTheme.colorScheme.onSurface.copy(0.75f)
-                                        },
+                                            if (selected) {
+                                                MaterialTheme.colorScheme.primary
+                                            } else {
+                                                MaterialTheme.colorScheme.onSurface.copy(0.75f)
+                                            },
                                     )
                                     Column(
                                         modifier =
-                                        Modifier
-                                            .align(Alignment.TopEnd)
-                                            .padding(bottom = 24.dp),
+                                            Modifier
+                                                .align(Alignment.TopEnd)
+                                                .padding(bottom = 24.dp),
                                     ) {
                                         AnimatedVisibility(
                                             visible = !selected,

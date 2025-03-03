@@ -20,7 +20,6 @@ import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.koin.dsl.module
-import timber.log.Timber
 
 val FeatureLeaderboard =
     module {
@@ -28,7 +27,7 @@ val FeatureLeaderboard =
             LeaderboardScreenModel(
                 repository = get(),
                 accountRepository = get(),
-                tauntRepository = get()
+                tauntRepository = get(),
             )
         }
     }
@@ -37,13 +36,13 @@ data class LeaderboardScreenState(
     val hasPassedNavigationArgument: Boolean = false,
     val name: String? = null,
     val leaderboard: LeaderboardDomain? = null,
-    val dialogState: DialogState? = null
+    val dialogState: DialogState? = null,
 )
 
 class LeaderboardScreenModel(
     private val repository: LeaderboardRepository,
     private val accountRepository: AccountRepository,
-    private val tauntRepository: TauntRepository
+    private val tauntRepository: TauntRepository,
 ) : StateScreenModel<LeaderboardScreenState>(LeaderboardScreenState()) {
     private var _pages = MutableStateFlow(getPagingDataLoading<LeaderboardAccountDomain>())
     val pages: Flow<PagingData<LeaderboardAccountDomain>> =
@@ -71,7 +70,11 @@ class LeaderboardScreenModel(
         mutableState.update { it.copy(dialogState = null) }
     }
 
-    fun onClickMember(teamMemberPoints: Long, teamMemberId: Long, teamMemberName: String) {
+    fun onClickMember(
+        teamMemberPoints: Long,
+        teamMemberId: Long,
+        teamMemberName: String,
+    ) {
         mutableState.update { it.copy(dialogState = DialogState.Loading()) }
         screenModelScope.launch {
             val memberId = accountRepository.account.first()?.id
@@ -84,10 +87,10 @@ class LeaderboardScreenModel(
                 mutableState.update {
                     it.copy(
                         dialogState =
-                        DialogState.Error(
-                            title = "Oops",
-                            message = "You can only taunt members below you",
-                        ),
+                            DialogState.Error(
+                                title = "Oops",
+                                message = "You can only taunt members below you",
+                            ),
                     )
                 }
             } else {
@@ -96,10 +99,10 @@ class LeaderboardScreenModel(
                         mutableState.update {
                             it.copy(
                                 dialogState =
-                                DialogState.Success(
-                                    title = "Success",
-                                    message = "Taunt delivered to $teamMemberName",
-                                ),
+                                    DialogState.Success(
+                                        title = "Success",
+                                        message = "Taunt delivered to $teamMemberName",
+                                    ),
                             )
                         }
                     }
@@ -108,10 +111,10 @@ class LeaderboardScreenModel(
                         mutableState.update {
                             it.copy(
                                 dialogState =
-                                DialogState.Error(
-                                    title = "Error",
-                                    message = result.message,
-                                ),
+                                    DialogState.Error(
+                                        title = "Error",
+                                        message = result.message,
+                                    ),
                             )
                         }
                     }

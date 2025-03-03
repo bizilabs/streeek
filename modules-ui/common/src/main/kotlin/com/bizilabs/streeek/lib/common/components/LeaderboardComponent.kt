@@ -34,10 +34,10 @@ fun LeaderboardComponent(
         modifier = modifier,
         onClick = onClick,
         colors =
-        CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.background,
-            contentColor = MaterialTheme.colorScheme.onBackground,
-        ),
+            CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.background,
+                contentColor = MaterialTheme.colorScheme.onBackground,
+            ),
         shape = ShapeDefaults.ExtraSmall,
     ) {
         Column(
@@ -45,9 +45,9 @@ fun LeaderboardComponent(
         ) {
             Row(
                 modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 16.dp),
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 16.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
@@ -56,18 +56,18 @@ fun LeaderboardComponent(
                 )
                 AsyncImage(
                     modifier =
-                    Modifier
-                        .size(48.dp)
-                        .clip(CircleShape),
+                        Modifier
+                            .size(48.dp)
+                            .clip(CircleShape),
                     model = imageUrl,
                     contentDescription = "user avatar url",
                     contentScale = ContentScale.Crop,
                 )
                 Column(
                     modifier =
-                    Modifier
-                        .weight(1f)
-                        .padding(start = 16.dp),
+                        Modifier
+                            .weight(1f)
+                            .padding(start = 16.dp),
                 ) {
                     Text(
                         text = username,
