@@ -39,7 +39,7 @@ data class LeaderboardScreenState(
     val name: String? = null,
     val leaderboard: LeaderboardDomain? = null,
     val dialogState: DialogState? = null,
-    val account: AccountDomain? = null
+    val account: AccountDomain? = null,
 )
 
 class LeaderboardScreenModel(
@@ -98,10 +98,10 @@ class LeaderboardScreenModel(
                 mutableState.update {
                     it.copy(
                         dialogState =
-                        DialogState.Error(
-                            title = "Oops",
-                            message = "You can only taunt members below you",
-                        ),
+                            DialogState.Error(
+                                title = "Oops",
+                                message = "You can only taunt members below you",
+                            ),
                     )
                 }
             } else {
@@ -110,10 +110,10 @@ class LeaderboardScreenModel(
                         mutableState.update {
                             it.copy(
                                 dialogState =
-                                DialogState.Success(
-                                    title = "Success",
-                                    message = "Taunt delivered to $teamMemberName",
-                                ),
+                                    DialogState.Success(
+                                        title = "Success",
+                                        message = "Taunt delivered to $teamMemberName",
+                                    ),
                             )
                         }
                     }
@@ -122,10 +122,10 @@ class LeaderboardScreenModel(
                         mutableState.update {
                             it.copy(
                                 dialogState =
-                                DialogState.Error(
-                                    title = "Error",
-                                    message = result.message,
-                                ),
+                                    DialogState.Error(
+                                        title = "Error",
+                                        message = result.message,
+                                    ),
                             )
                         }
                     }
