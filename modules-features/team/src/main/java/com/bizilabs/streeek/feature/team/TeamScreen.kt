@@ -172,8 +172,7 @@ fun TeamScreenContent(
     onClickAccountAvatar: (AccountsNotInTeamDomain) -> Unit,
     onClickSelectedAccountsSelection: (SelectionAction, List<AccountsNotInTeamDomain>) -> Unit,
     onClickMultipleInvitationCreate: () -> Unit,
-    onClickMember: (TeamMemberDomain) -> Unit
-
+    onClickMember: (TeamMemberDomain) -> Unit,
 ) {
     val activity = LocalContext.current as Activity
 
