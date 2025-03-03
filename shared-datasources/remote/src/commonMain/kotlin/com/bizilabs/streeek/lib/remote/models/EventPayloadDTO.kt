@@ -1,14 +1,13 @@
 package com.bizilabs.streeek.lib.remote.models
 
 import com.bizilabs.streeek.lib.remote.models.github.GithubReleaseDTO
+import io.github.aakira.napier.Napier
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.builtins.serializer
 import kotlinx.serialization.json.JsonContentPolymorphicSerializer
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.jsonObject
-import timber.log.Timber
 
 @Serializable(with = EventPayloadSerializer::class)
 sealed interface EventPayloadDTO
@@ -127,7 +126,7 @@ data class WatchEventDTO(val action: String) : EventPayloadDTO
 object EventPayloadSerializer :
     JsonContentPolymorphicSerializer<EventPayloadDTO>(EventPayloadDTO::class) {
     override fun selectDeserializer(element: JsonElement): KSerializer<out EventPayloadDTO> {
-        Timber.d("Kachari : Serializing -> $element")
+        Napier.d("Kachari : Serializing -> $element")
         val keys = element.jsonObject.keys
         return when {
             "forkee" in keys -> ForkEventDTO.serializer()
@@ -154,7 +153,7 @@ object EventPayloadSerializer :
             keys.isEmpty() -> PublicEventDTO.serializer()
             else -> WatchEventDTO.serializer()
         }.also {
-            Timber.d("Kachari : Serialized to -> $it")
+            Napier.d("Kachari : Serialized to -> $it")
             it
         }
     }

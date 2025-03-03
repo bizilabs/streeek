@@ -46,7 +46,7 @@ val RemoteModule =
         // supabase
         single { createSupabase() }
         // sources
-        single<RemotePreferencesSource> { RemotePreferencesSourceImpl(settings = get(named("remote"))) }
+        single<RemotePreferencesSource> { RemotePreferencesSourceImpl(dataStore = get(named("remote"))) }
         single<AuthenticationRemoteSource> {
             AuthenticationRemoteSourceImpl(
                 client = get(),

@@ -23,12 +23,19 @@ plugins {
 allprojects {
     apply(plugin = "org.jlleitschuh.gradle.ktlint")
     configure<org.jlleitschuh.gradle.ktlint.KtlintExtension> {
+        enableExperimentalRules.set(true)
+        additionalEditorconfig.set(
+            mapOf(
+                "ktlint_standard_package-naming" to "disabled",
+            ),
+        )
         reporters {
             reporter(ReporterType.JSON)
         }
         filter {
             exclude("**/generated/**")
             exclude("**/build/**")
+            exclude("**/shared_datasources/**")
         }
     }
 }
