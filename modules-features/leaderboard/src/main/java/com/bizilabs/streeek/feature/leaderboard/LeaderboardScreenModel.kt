@@ -7,6 +7,7 @@ import cafe.adriel.voyager.core.model.screenModelScope
 import com.bizilabs.streeek.lib.common.components.paging.getPagingDataLoading
 import com.bizilabs.streeek.lib.design.components.DialogState
 import com.bizilabs.streeek.lib.domain.helpers.DataResult
+import com.bizilabs.streeek.lib.domain.models.AccountDomain
 import com.bizilabs.streeek.lib.domain.models.LeaderboardAccountDomain
 import com.bizilabs.streeek.lib.domain.models.LeaderboardDomain
 import com.bizilabs.streeek.lib.domain.repositories.AccountRepository
@@ -15,6 +16,7 @@ import com.bizilabs.streeek.lib.domain.repositories.TauntRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.update
@@ -37,6 +39,7 @@ data class LeaderboardScreenState(
     val name: String? = null,
     val leaderboard: LeaderboardDomain? = null,
     val dialogState: DialogState? = null,
+    val account: AccountDomain? = null
 )
 
 class LeaderboardScreenModel(
@@ -52,6 +55,7 @@ class LeaderboardScreenModel(
         if (state.value.hasPassedNavigationArgument) return
         mutableState.update { it.copy(name = name, hasPassedNavigationArgument = true) }
         getLeaderboard()
+        fetchAccount()
     }
 
     private fun getLeaderboard() {
@@ -70,6 +74,16 @@ class LeaderboardScreenModel(
         mutableState.update { it.copy(dialogState = null) }
     }
 
+    private fun fetchAccount() {
+        screenModelScope.launch {
+            accountRepository.account.collectLatest { account ->
+                mutableState.update {
+                    it.copy(account = account)
+                }
+            }
+        }
+    }
+
     fun onClickMember(
         teamMemberPoints: Long,
         teamMemberId: Long,
@@ -77,20 +91,17 @@ class LeaderboardScreenModel(
     ) {
         mutableState.update { it.copy(dialogState = DialogState.Loading()) }
         screenModelScope.launch {
-            val memberId = accountRepository.account.first()?.id
-            val memberPoints =
-                state.value.leaderboard?.list?.find { it.account.id == memberId }?.rank?.points
-                    ?: 0L
-            if (teamMemberId == memberId ||
-                teamMemberPoints > memberPoints
+            val state = state.value
+            if (teamMemberId == state.account?.id ||
+                teamMemberPoints > (state.leaderboard?.rank?.current?.points ?: 0L)
             ) {
                 mutableState.update {
                     it.copy(
                         dialogState =
-                            DialogState.Error(
-                                title = "Oops",
-                                message = "You can only taunt members below you",
-                            ),
+                        DialogState.Error(
+                            title = "Oops",
+                            message = "You can only taunt members below you",
+                        ),
                     )
                 }
             } else {
@@ -99,10 +110,10 @@ class LeaderboardScreenModel(
                         mutableState.update {
                             it.copy(
                                 dialogState =
-                                    DialogState.Success(
-                                        title = "Success",
-                                        message = "Taunt delivered to $teamMemberName",
-                                    ),
+                                DialogState.Success(
+                                    title = "Success",
+                                    message = "Taunt delivered to $teamMemberName",
+                                ),
                             )
                         }
                     }
@@ -111,10 +122,10 @@ class LeaderboardScreenModel(
                         mutableState.update {
                             it.copy(
                                 dialogState =
-                                    DialogState.Error(
-                                        title = "Error",
-                                        message = result.message,
-                                    ),
+                                DialogState.Error(
+                                    title = "Error",
+                                    message = result.message,
+                                ),
                             )
                         }
                     }
