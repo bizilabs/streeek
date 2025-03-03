@@ -23,6 +23,7 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import com.bizilabs.streeek.lib.common.components.LeaderboardComponent
 import com.bizilabs.streeek.lib.common.components.paging.SafiPagingComponent
 import com.bizilabs.streeek.lib.common.navigation.SharedScreen
+import com.bizilabs.streeek.lib.design.components.SafiBottomDialog
 import com.bizilabs.streeek.lib.design.components.SafiTopBarHeader
 import com.bizilabs.streeek.lib.domain.extensions.asRank
 import com.bizilabs.streeek.lib.domain.models.LeaderboardAccountDomain
@@ -46,6 +47,8 @@ data class LeaderboardScreen(val name: String) : Screen {
             state = state,
             data = data,
             onClickNavigateBack = { navigator?.pop() },
+            onClickMember = screenModel::onClickMember,
+            onClickDismissDialog = screenModel::onClickDismissDialog
         )
     }
 }
@@ -55,7 +58,9 @@ data class LeaderboardScreen(val name: String) : Screen {
 fun LeaderboardScreenContent(
     state: LeaderboardScreenState,
     data: LazyPagingItems<LeaderboardAccountDomain>,
+    onClickMember: (Long, Long, String) -> Unit,
     onClickNavigateBack: () -> Unit,
+    onClickDismissDialog:()-> Unit
 ) {
     Scaffold(
         topBar = {
@@ -79,11 +84,18 @@ fun LeaderboardScreenContent(
         },
     ) { innerPadding ->
 
+        if (state.dialogState != null) {
+            SafiBottomDialog(
+                state = state.dialogState,
+                onClickDismiss = onClickDismissDialog,
+            )
+        }
+
         SafiPagingComponent(
             modifier =
-                Modifier
-                    .padding(innerPadding)
-                    .fillMaxSize(),
+            Modifier
+                .padding(innerPadding)
+                .fillMaxSize(),
             data = data,
         ) { item ->
             LeaderboardComponent(
@@ -92,8 +104,14 @@ fun LeaderboardScreenContent(
                 points = item.rank.points,
                 rank = item.rank.position.asRank(),
                 modifier = Modifier.fillMaxWidth(),
-            ) {
-            }
+                onClick = {
+                    onClickMember(
+                        item.rank.points,
+                        item.account.id,
+                        item.account.username
+                    )
+                }
+            )
         }
     }
 }

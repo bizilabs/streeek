@@ -3,15 +3,20 @@ package com.bizilabs.streeek.feature.tabs.screens.leaderboard
 import android.content.Context
 import cafe.adriel.voyager.core.model.StateScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
+import com.bizilabs.streeek.lib.design.components.DialogState
+import com.bizilabs.streeek.lib.domain.helpers.DataResult
 import com.bizilabs.streeek.lib.domain.models.AccountDomain
 import com.bizilabs.streeek.lib.domain.models.LeaderboardAccountDomain
 import com.bizilabs.streeek.lib.domain.models.LeaderboardDomain
+import com.bizilabs.streeek.lib.domain.models.TeamMemberDomain
 import com.bizilabs.streeek.lib.domain.repositories.AccountRepository
 import com.bizilabs.streeek.lib.domain.repositories.LeaderboardRepository
+import com.bizilabs.streeek.lib.domain.repositories.TauntRepository
 import com.bizilabs.streeek.lib.domain.workers.startImmediateSyncLeaderboardWork
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.koin.dsl.module
@@ -21,7 +26,12 @@ import kotlin.collections.get
 internal val LeaderboardModule =
     module {
         factory<LeaderboardListScreenModel> {
-            LeaderboardListScreenModel(context = get(), accountRepository = get(), leaderboardRepository = get())
+            LeaderboardListScreenModel(
+                context = get(),
+                accountRepository = get(),
+                leaderboardRepository = get(),
+                tauntRepository = get()
+            )
         }
     }
 
@@ -32,6 +42,7 @@ data class LeaderboardListScreenState(
     val leaderboards: List<LeaderboardDomain> = emptyList(),
     val showConfetti: Boolean = false,
     val account: AccountDomain? = null,
+    val dialogState: DialogState? = null
 ) {
     val list: List<LeaderboardAccountDomain>
         get() =
@@ -46,9 +57,13 @@ class LeaderboardListScreenModel(
     private val context: Context,
     private val accountRepository: AccountRepository,
     private val leaderboardRepository: LeaderboardRepository,
+    private val tauntRepository: TauntRepository,
 ) : StateScreenModel<LeaderboardListScreenState>(LeaderboardListScreenState()) {
     private val selectedLeaderboard =
-        combine(leaderboardRepository.selectedLeaderBoardId, leaderboardRepository.leaderboards) { id, map ->
+        combine(
+            leaderboardRepository.selectedLeaderBoardId,
+            leaderboardRepository.leaderboards
+        ) { id, map ->
             map[id]
         }
 
@@ -119,5 +134,59 @@ class LeaderboardListScreenModel(
 
     fun onTriggerRefreshLeaderboards() {
         context.startImmediateSyncLeaderboardWork()
+    }
+
+    fun onClickDismissDialog() {
+        mutableState.update { it.copy(dialogState = null) }
+    }
+
+    fun onClickMember(teamMemberPoints: Long, teamMemberId: Long, teamMemberName: String) {
+        mutableState.update { it.copy(dialogState = DialogState.Loading()) }
+        screenModelScope.launch {
+
+            val memberPoints =
+                selectedLeaderboard.first()?.list?.find { it.account.id == state.value.account?.id }?.rank?.points
+                    ?: 0L
+
+            if (teamMemberId == (state.value.account?.id ?: "") ||
+                teamMemberPoints > memberPoints
+            ) {
+                mutableState.update {
+                    it.copy(
+                        dialogState =
+                        DialogState.Error(
+                            title = "Oops",
+                            message = "You can only taunt members below you",
+                        ),
+                    )
+                }
+            } else {
+                when (val result = tauntRepository.taunt(teamMemberId.toString())) {
+                    is DataResult.Success -> {
+                        mutableState.update {
+                            it.copy(
+                                dialogState =
+                                DialogState.Success(
+                                    title = "Success",
+                                    message = "Taunt delivered to $teamMemberName",
+                                ),
+                            )
+                        }
+                    }
+
+                    is DataResult.Error -> {
+                        mutableState.update {
+                            it.copy(
+                                dialogState =
+                                DialogState.Error(
+                                    title = "Error",
+                                    message = result.message,
+                                ),
+                            )
+                        }
+                    }
+                }
+            }
+        }
     }
 }
