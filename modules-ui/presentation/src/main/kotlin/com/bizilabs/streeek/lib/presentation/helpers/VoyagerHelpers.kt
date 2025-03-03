@@ -4,6 +4,7 @@ import android.app.Application
 import cafe.adriel.voyager.core.registry.ScreenRegistry
 import cafe.adriel.voyager.core.registry.ScreenRegistry.invoke
 import com.bizilabs.streeek.feature.authentication.featureAuthentication
+import com.bizilabs.streeek.feature.issue.editScreenIssue
 import com.bizilabs.streeek.feature.issue.screenIssue
 import com.bizilabs.streeek.feature.issues.screenIssues
 import com.bizilabs.streeek.feature.join.ScreenJoinTeam
@@ -27,6 +28,7 @@ fun Application.initVoyager() {
         screenTeam()
         screenIssues()
         screenIssue()
+        editScreenIssue()
         ScreenLeaderboard()
         ScreenPoints()
         ScreenJoinTeam()

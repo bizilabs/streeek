@@ -60,7 +60,7 @@ internal object Supabase {
                 const val GETACCOUNTSNOTINTEAM = "get_accounts_not_in_team"
                 const val SEARCHACCOUNTSNOTINTEAM = "search_accounts_not_in_team"
                 const val SENDMEMBERINVITE = "send_member_team_invite"
-                const val SENDMULTIPLEMEMBERINVITE = "send_multiple_member_team_invite"
+                const val SENDMULTIPLEMEMBERINVITE = "send_multiple_account_team_invites"
                 const val DELETEINVITE = "delete_member_team_invite"
                 const val UPDATEINVITESTATUS = "update_invite_status"
                 const val UPDATEMULTIPLEINVITESTATUS = "update_multiple_invite_status"

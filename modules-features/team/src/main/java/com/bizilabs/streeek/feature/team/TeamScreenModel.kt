@@ -1,6 +1,5 @@
 package com.bizilabs.streeek.feature.team
 
-import android.annotation.SuppressLint
 import android.content.Context
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ExitToApp
@@ -146,6 +145,11 @@ data class InviteAccountState(
     val inviteState: FetchState<Boolean> = FetchState.Loading,
 )
 
+data class InviteMultipleAccountsState(
+    val accountIds: List<Long>,
+    val multipleInvitesState: FetchState<Boolean> = FetchState.Loading,
+)
+
 data class InviteWithdrawalState(
     val inviteId: Long,
     val withdrawalState: FetchState<DeleteAccountInvitationDomain> = FetchState.Loading,
@@ -187,6 +191,9 @@ data class TeamScreenState(
     val joinerTabs: EnumEntries<TeamJoinersTab> = TeamJoinersTab.entries,
     val inviteWithdrawalState: InviteWithdrawalState? = null,
     val withdrawnInvitesIds: List<Long> = emptyList(),
+    // This state holds the list of selected accounts not in team awaiting to be invited
+    val selectedAccountsIds: List<Long> = listOf(),
+    val inviteMultipleAccountsState: InviteMultipleAccountsState? = null,
 ) {
     val isManagingTeam: Boolean
         get() = isEditing || teamId == null
@@ -681,7 +688,7 @@ class TeamScreenModel(
         }
     }
 
-    @SuppressLint("CheckResult")
+    // @SuppressLint("CheckResult")
     private fun selectAllRequests(list: List<TeamAccountJoinRequestDomain>) {
         mutableState.update { it.copy(selectedRequestIds = list.map { it.request.id }) }
     }
@@ -883,6 +890,62 @@ class TeamScreenModel(
         }
     }
 
+    fun onClickInviteMultipleAccounts() {
+        val selectedAccountsIds = state.value.selectedAccountsIds
+        val teamId = state.value.teamId ?: return
+        mutableState.update {
+            it.copy(inviteMultipleAccountsState = InviteMultipleAccountsState(accountIds = selectedAccountsIds))
+        }
+        screenModelScope.launch {
+            val result =
+                teamMemberInvitationRepository.sendMultipleAccountInvitation(
+                    teamId = teamId,
+                    inviteeIds = selectedAccountsIds,
+                )
+            when (result) {
+                is DataResult.Error -> {
+                    mutableState.update {
+                        it.copy(
+                            inviteMultipleAccountsState =
+                                it.inviteMultipleAccountsState?.copy(
+                                    multipleInvitesState = FetchState.Error(message = result.message),
+                                ),
+                        )
+                    }
+                    delay(2000)
+                    mutableState.update {
+                        it.copy(
+                            inviteMultipleAccountsState = null,
+                            // selectedAccountsIds = emptyList()
+                        )
+                    }
+                }
+
+                is DataResult.Success -> {
+                    val invitedAccounts = state.value.accountsInvitedIds.toMutableList()
+                    invitedAccounts.addAll(selectedAccountsIds)
+                    mutableState.update {
+                        it.copy(
+                            inviteMultipleAccountsState =
+                                it.inviteMultipleAccountsState?.copy(
+                                    multipleInvitesState = FetchState.Success(value = true),
+                                ),
+                        )
+                    }
+
+                    delay(2000)
+                    mutableState.update {
+                        it.copy(
+                            accountsInvitedIds = invitedAccounts,
+                            inviteMultipleAccountsState = null,
+                            selectedAccountsIds = emptyList(),
+                        )
+                    }
+                }
+            }
+        }
+    }
+
     fun onSearchParamChanged(searchParam: String) {
         mutableState.update { it.copy(searchParam = searchParam) }
         searchAccounts(searchParam)
@@ -988,6 +1051,31 @@ class TeamScreenModel(
                     }
                     countDownJob = null
                 }
+        }
+    }
+
+    fun onClickToggleAccountSelectedState(account: AccountsNotInTeamDomain) {
+        val selectedAccountsIds = state.value.selectedAccountsIds.toMutableList()
+        if (selectedAccountsIds.contains(account.accountId)) {
+            selectedAccountsIds.remove(account.accountId)
+        } else {
+            selectedAccountsIds.add(account.accountId)
+        }
+        mutableState.update { it.copy(selectedAccountsIds = selectedAccountsIds) }
+    }
+
+    fun onClickSelectedAccountsSelection(
+        action: SelectionAction,
+        list: List<AccountsNotInTeamDomain>,
+    ) {
+        when (action) {
+            SelectionAction.SELECT_ALL -> {
+                mutableState.update { it.copy(selectedAccountsIds = list.map { it.accountId }) }
+            }
+
+            SelectionAction.CLEAR_ALL -> {
+                mutableState.update { it.copy(selectedAccountsIds = listOf()) }
+            }
         }
     }
     // </editor-fold>

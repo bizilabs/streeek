@@ -14,8 +14,11 @@ object SafiStringLabels {
     val OnBoardingTitle1 = R.string.label_onboarding_title_1
     val OnBoardingTitle2 = R.string.label_onboarding_title_2
     val OnBoardingTitle3 = R.string.label_onboarding_title_3
-
     val Teams = R.string.teams
+    val newIssue = R.string.new_issue
+    val editIssue = R.string.edit_issue
+    val title = R.string.title
+    val description = R.string.description
 }
 
 object SafiStringMessages {

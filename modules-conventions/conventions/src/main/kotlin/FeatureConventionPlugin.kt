@@ -39,7 +39,7 @@ class FeatureConventionPlugin : Plugin<Project> {
                 implementation(libs.getLibrary("androidx-core-ktx"))
                 implementation(libs.getLibrary("androidx-appcompat"))
                 // coroutines
-                implementation(libs.getLibrary("kotlinx-coroutines"))
+                implementation(libs.getLibrary("kotlinx-coroutines-android"))
                 testImplementation(libs.getLibrary("kotlinx-coroutines-test"))
                 // voyager
                 implementation(libs.getBundle("voyager"))

@@ -10,6 +10,7 @@ import com.bizilabs.streeek.lib.design.components.DialogState
 import com.bizilabs.streeek.lib.domain.helpers.DataResult
 import com.bizilabs.streeek.lib.domain.models.CommentDomain
 import com.bizilabs.streeek.lib.domain.models.CreateIssueDomain
+import com.bizilabs.streeek.lib.domain.models.EditIssueDomain
 import com.bizilabs.streeek.lib.domain.models.IssueDomain
 import com.bizilabs.streeek.lib.domain.models.LabelDomain
 import com.bizilabs.streeek.lib.domain.repositories.IssueRepository
@@ -30,6 +31,9 @@ data class IssueScreenState(
     val labelsState: FetchListState<LabelDomain> = FetchListState.Loading,
     val issueState: FetchState<IssueDomain> = FetchState.Loading,
     val dialogState: DialogState? = null,
+    val isIssueAuther: Boolean? = false,
+    val editIssue: IssueDomain? = null,
+    val currentUsername: String? = null,
 ) {
     val isCreateActionEnabled: Boolean
         get() = title.isNotBlank()
@@ -67,6 +71,17 @@ class IssueScreenModel(
         }
     }
 
+    init {
+        getUsername()
+    }
+
+    private fun getUsername() {
+        screenModelScope.launch {
+            val username = issueRepository.getUsername()
+            mutableState.update { it.copy(currentUsername = username) }
+        }
+    }
+
     private fun getIssue() {
         val id = state.value.number ?: return
         screenModelScope.launch {
@@ -74,8 +89,17 @@ class IssueScreenModel(
             val update =
                 when (val result = issueRepository.getIssue(id = id)) {
                     is DataResult.Error -> FetchState.Error(result.message)
-                    is DataResult.Success -> FetchState.Success(result.data)
+                    is DataResult.Success -> {
+                        mutableState.update {
+                            it.copy(
+                                isIssueAuther = state.value.currentUsername == result.data.user.name,
+                                editIssue = result.data,
+                            )
+                        }
+                        FetchState.Success(result.data)
+                    }
                 }
+
             mutableState.update { it.copy(issueState = update) }
         }
     }
@@ -112,8 +136,56 @@ class IssueScreenModel(
         }
     }
 
+    private fun editIssue() {
+        val editIssue = state.value.editIssue
+        val title = editIssue?.title ?: ""
+        val labels =
+            (editIssue?.labels ?: emptyList()).union(state.value.labels).toList()
+
+        val description = editIssue?.body ?: ""
+        if (title.isBlank()) return
+        screenModelScope.launch {
+            val issue =
+                EditIssueDomain(
+                    title = editIssue?.title ?: "",
+                    body = description,
+                    labels = labels.map { it.name },
+                    repo = editIssue?.user?.url ?: "",
+                    owner = editIssue?.user?.name ?: "",
+                    issue_number = editIssue?.number.toString(),
+                )
+
+            mutableState.update { it.copy(dialogState = DialogState.Loading()) }
+            val update =
+                when (val result = issueRepository.editIssue(editIssueDomain = issue)) {
+                    is DataResult.Error ->
+                        DialogState.Error(
+                            title = "Error",
+                            message = result.message,
+                        )
+
+                    is DataResult.Success -> {
+                        val number = result.data.number
+                        mutableState.update { it.copy(number = number) }
+                        stateNumber.update { number }
+
+                        getIssue()
+                        DialogState.Success(
+                            title = "Success",
+                            message = "Issue Edited successfully",
+                        )
+                    }
+                }
+            mutableState.update { it.copy(dialogState = update) }
+        }
+    }
+
     fun onClickCreateIssue() {
         createIssue()
+    }
+
+    fun onClickEditIssue() {
+        editIssue()
     }
 
     fun onValueChangeId(id: Long?) {
@@ -128,8 +200,16 @@ class IssueScreenModel(
         mutableState.update { it.copy(title = title) }
     }
 
+    fun onEditValueChangeTitle(title: String) {
+        mutableState.update { it.copy(editIssue = it.editIssue?.copy(title = title)) }
+    }
+
     fun onValueChangeDescription(description: String) {
         mutableState.update { it.copy(description = description) }
+    }
+
+    fun onEditValueChangeDescription(description: String) {
+        mutableState.update { it.copy(editIssue = it.editIssue?.copy(body = description)) }
     }
 
     fun onClickOpenLabels() {
@@ -153,6 +233,13 @@ class IssueScreenModel(
         mutableState.update { it.copy(labels = labels) }
     }
 
+    fun onClickRemoveEditLabel(label: LabelDomain) {
+        val labels =
+            (state.value.editIssue?.labels ?: emptyList()).union(state.value.labels).toMutableList()
+        labels.remove(label)
+        mutableState.update { it.copy(editIssue = state.value.editIssue?.copy(labels = labels)) }
+    }
+
     fun onClickLabelsDismissSheet() {
         mutableState.update { it.copy(isSelectingLabels = false) }
     }
@@ -163,5 +250,9 @@ class IssueScreenModel(
 
     fun onClickDismissDialog() {
         mutableState.update { it.copy(dialogState = null) }
+    }
+
+    fun refreshIssue() {
+        getIssue()
     }
 }

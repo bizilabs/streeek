@@ -116,8 +116,8 @@ fun TabsScreenContent(
                         )
 
                     Tabs.TEAMS -> TeamsListScreen
-                    Tabs.ACHIEVEMENTS -> AchievementsScreen
                     Tabs.NOTIFICATIONS -> NotificationsScreen
+                    Tabs.ACHIEVEMENTS -> AchievementsScreen
                 }
             screen.Content()
         }

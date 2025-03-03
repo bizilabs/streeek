@@ -9,6 +9,11 @@ val screenIssue =
         register<SharedScreen.Issue> { IssueScreen(id = it.id) }
     }
 
+val editScreenIssue =
+    screenModule {
+        register<SharedScreen.EditIssue> { IssueEditScreen(id = it.id) }
+    }
+
 val FeatureIssueModule =
     module {
         factory { IssueScreenModel(issueRepository = get(), labelRepository = get()) }

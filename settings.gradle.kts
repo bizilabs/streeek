@@ -2,6 +2,8 @@ enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 pluginManagement {
     includeBuild("modules-conventions/conventions")
     repositories {
+        gradlePluginPortal()
+        mavenCentral()
         google {
             content {
                 includeGroupByRegex("com\\.android.*")
@@ -9,15 +11,19 @@ pluginManagement {
                 includeGroupByRegex("androidx.*")
             }
         }
-        mavenCentral()
-        gradlePluginPortal()
     }
 }
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
-        google()
         mavenCentral()
+        google {
+            mavenContent {
+                includeGroupAndSubgroups("androidx")
+                includeGroupAndSubgroups("com.android")
+                includeGroupAndSubgroups("com.google")
+            }
+        }
     }
 }
 
@@ -62,3 +68,9 @@ include(":modules-features:services")
 include(":modules-features:onboarding")
 include(":modules-features:reminders")
 include(":modules-features:reviews")
+
+// KMP module folders
+include(":shared-datasources")
+
+// KMP data sources modules
+include(":shared-datasources:remote")

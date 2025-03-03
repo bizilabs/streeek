@@ -7,4 +7,8 @@
     <string name="message_no_issues">We couldn\'t find any issues matching your criteria, try something else</string>
     <string name="invalid_team_name">Name can\'t have uppercase, space, symbols and length should be more than 4</string>
     <string name="invalid_reminder_label">length should be more than 3</string>
+    <string name="new_issue">NEW ISSUE</string>
+    <string name="edit_issue">Edit Issue</string>
+    <string name="title">Title</string>
+    <string name="description">Description</string>
 </resources>

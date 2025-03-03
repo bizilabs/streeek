@@ -127,6 +127,9 @@ class TeamScreen(val teamId: Long?) : Screen {
             onSearchParamChanged = screenModel::onSearchParamChanged,
             onClickClearSearch = screenModel::onClickClearSearch,
             onClickWithdraw = screenModel::onClickWithdrawAccount,
+            onClickAccountAvatar = screenModel::onClickToggleAccountSelectedState,
+            onClickSelectedAccountsSelection = screenModel::onClickSelectedAccountsSelection,
+            onClickMultipleInvitationCreate = screenModel::onClickInviteMultipleAccounts,
             onClickMember = screenModel::onClickMember,
         )
     }
@@ -166,7 +169,11 @@ fun TeamScreenContent(
     onSearchParamChanged: (String) -> Unit,
     onClickClearSearch: () -> Unit,
     onClickWithdraw: (TeamAccountInvitesDomain) -> Unit,
-    onClickMember: (TeamMemberDomain) -> Unit,
+    onClickAccountAvatar: (AccountsNotInTeamDomain) -> Unit,
+    onClickSelectedAccountsSelection: (SelectionAction, List<AccountsNotInTeamDomain>) -> Unit,
+    onClickMultipleInvitationCreate: () -> Unit,
+    onClickMember: (TeamMemberDomain) -> Unit
+
 ) {
     val activity = LocalContext.current as Activity
 
@@ -218,6 +225,9 @@ fun TeamScreenContent(
             onClickInviteAccount = onClickInviteAccount,
             onSearchParamChanged = onSearchParamChanged,
             onClickClearSearch = onClickClearSearch,
+            onClickAccountAvatar = onClickAccountAvatar,
+            onClickSelectedAccountsSelection = onClickSelectedAccountsSelection,
+            onClickMultipleInvitationCreate = onClickMultipleInvitationCreate,
         )
     }
 

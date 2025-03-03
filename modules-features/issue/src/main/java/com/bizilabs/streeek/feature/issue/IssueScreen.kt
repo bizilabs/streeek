@@ -1,6 +1,5 @@
 package com.bizilabs.streeek.feature.issue
 
-import android.R.attr.top
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -13,21 +12,22 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.Comment
-import androidx.compose.material.icons.rounded.Comment
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.LifecycleResumeEffect
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
+import cafe.adriel.voyager.core.registry.rememberScreen
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.getScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
@@ -36,6 +36,7 @@ import com.bizilabs.streeek.feature.issue.components.IssueScreenCreateSection
 import com.bizilabs.streeek.feature.issue.components.IssueScreenHeaderComponent
 import com.bizilabs.streeek.feature.issue.components.IssueScreenLabelsSheet
 import com.bizilabs.streeek.lib.common.components.paging.SafiPagingComponent
+import com.bizilabs.streeek.lib.common.navigation.SharedScreen
 import com.bizilabs.streeek.lib.design.components.SafiBottomDialog
 import com.bizilabs.streeek.lib.design.components.SafiInfoSection
 import com.bizilabs.streeek.lib.domain.helpers.toTimeAgo
@@ -50,14 +51,23 @@ class IssueScreen(val id: Long?) : Screen {
     override fun Content() {
         val navigator = LocalNavigator.current
         val screenModel = getScreenModel<IssueScreenModel>()
+        val state by screenModel.state.collectAsStateWithLifecycle()
         screenModel.onValueChangeId(id)
-        val state by screenModel.state.collectAsState()
+
+        LifecycleResumeEffect(Unit) {
+            screenModel.refreshIssue()
+            onPauseOrDispose { }
+        }
+
+        val screenEditIssue = rememberScreen(SharedScreen.EditIssue(id))
+        // Handle navigation to a specific issue
         val comments = screenModel.comments.collectAsLazyPagingItems()
         IssueScreenContent(
             state = state,
             comments = comments,
             onClickNavigateBack = { navigator?.pop() },
             onClickCreateIssue = screenModel::onClickCreateIssue,
+            onNavigateToEditIssue = { navigator?.push(screenEditIssue) },
             onValueChangeTitle = screenModel::onValueChangeTitle,
             onValueChangeDescription = screenModel::onValueChangeDescription,
             onClickInsertLabel = screenModel::onClickInsertLabel,
@@ -77,6 +87,7 @@ fun IssueScreenContent(
     comments: LazyPagingItems<CommentDomain>,
     onClickNavigateBack: () -> Unit,
     onClickCreateIssue: () -> Unit,
+    onNavigateToEditIssue: () -> Unit,
     onValueChangeTitle: (String) -> Unit,
     onValueChangeDescription: (String) -> Unit,
     onClickInsertLabel: (LabelDomain) -> Unit,
@@ -106,6 +117,7 @@ fun IssueScreenContent(
                 modifier = Modifier.fillMaxWidth(),
                 onClickNavigateBack = onClickNavigateBack,
                 onClickCreateIssue = onClickCreateIssue,
+                onNavigateToEditIssue = onNavigateToEditIssue,
             )
         },
     ) { innerPadding ->

@@ -1,10 +1,15 @@
 package extensions
 
+import com.android.build.api.dsl.ApplicationExtension
 import com.android.build.api.dsl.CommonExtension
+import com.android.build.gradle.LibraryExtension
 import org.gradle.api.Project
 import org.gradle.api.artifacts.VersionCatalogsExtension
+import org.gradle.api.plugins.PluginManager
 import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.getByType
+import org.gradle.kotlin.dsl.configure
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 
 internal fun Project.configureAndroidCompose(
     commonExtension: CommonExtension<*, *, *, *, *>,
@@ -33,4 +38,20 @@ internal fun Project.configureAndroidCompose(
             androidTestImplementation(libs.getLibrary("compose-ui-test-junit4"))
         }
     }
+}
+
+internal fun Project.plugins(block: PluginManager.() -> Unit) {
+    with(pluginManager) { block() }
+}
+
+internal fun Project.multiplatform(block: KotlinMultiplatformExtension.() -> Unit) {
+    extensions.configure<KotlinMultiplatformExtension> { block() }
+}
+
+internal fun Project.androidLibrary(block: LibraryExtension.() -> Unit) {
+    extensions.configure<LibraryExtension> { block() }
+}
+
+internal fun Project.androidApplication(block: ApplicationExtension.() -> Unit) {
+    extensions.configure<ApplicationExtension> { block() }
 }

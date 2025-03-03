@@ -51,5 +51,12 @@ gradlePlugin {
             id = "bizilabs.convention.feature"
             implementationClass = "FeatureConventionPlugin"
         }
+        fun createPlugin(value: String, className: String) {
+            plugins.register(value) {
+                id = value
+                implementationClass = className
+            }
+        }
+        createPlugin("bizilabs.multiplatform.module", "conventions.MultiplatformModuleConvention")
     }
 }

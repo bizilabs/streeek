@@ -43,7 +43,7 @@ class ModuleConventionPlugin : Plugin<Project> {
                 // timber
                 implementation(libs.getLibrary("timber"))
                 // coroutines
-                implementation(libs.getLibrary("kotlinx-coroutines"))
+                implementation(libs.getLibrary("kotlinx-coroutines-android"))
                 testImplementation(libs.getLibrary("kotlinx-coroutines-test"))
                 // serialization
                 implementation(libs.getLibrary("kotlinx-serialization-json"))

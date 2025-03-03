@@ -9,11 +9,14 @@ plugins {
     alias(libs.plugins.kotlin.android) apply false
     alias(libs.plugins.kotlin.ksp) apply false
     alias(libs.plugins.kotlin.serialization) apply false
+    alias(libs.plugins.kotlin.multiplatform) apply false
     alias(libs.plugins.kotlin.compose.compiler) apply false
+    alias(libs.plugins.kotlin.compose.multiplatform) apply false
     // google
     alias(libs.plugins.google.services) apply false
     alias(libs.plugins.firebase.crashlytics) apply false
     // others
+    alias(libs.plugins.buildconfig) apply false
     alias(libs.plugins.ktlint)
 }
 

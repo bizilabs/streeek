@@ -4,8 +4,10 @@ import com.bizilabs.streeek.lib.domain.helpers.DateFormats
 import com.bizilabs.streeek.lib.domain.helpers.asDate
 import com.bizilabs.streeek.lib.domain.helpers.asString
 import com.bizilabs.streeek.lib.domain.models.CreateIssueDomain
+import com.bizilabs.streeek.lib.domain.models.EditIssueDomain
 import com.bizilabs.streeek.lib.domain.models.IssueDomain
 import com.bizilabs.streeek.lib.remote.models.CreateIssueDTO
+import com.bizilabs.streeek.lib.remote.models.EditIssueDTO
 import com.bizilabs.streeek.lib.remote.models.GithubIssueDTO
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
@@ -24,7 +26,9 @@ fun GithubIssueDTO.toDomain() =
             createdAt.asDate()?.toLocalDateTime(TimeZone.UTC) ?: Clock.System.now().toLocalDateTime(
                 TimeZone.UTC,
             ),
-        updatedAt = updatedAt.asDate()?.toLocalDateTime(TimeZone.UTC) ?: Clock.System.now().toLocalDateTime(TimeZone.UTC),
+        updatedAt =
+            updatedAt.asDate()?.toLocalDateTime(TimeZone.UTC) ?: Clock.System.now()
+                .toLocalDateTime(TimeZone.UTC),
         closedAt = closedAt?.asDate()?.toLocalDateTime(TimeZone.UTC),
     )
 
@@ -47,4 +51,14 @@ fun CreateIssueDomain.toDTO(): CreateIssueDTO =
         title = title,
         body = body,
         labels = labels,
+    )
+
+fun EditIssueDomain.toDTO(): EditIssueDTO =
+    EditIssueDTO(
+        title = title,
+        body = body,
+        labels = labels,
+        issue_number = issue_number,
+        repo = repo,
+        owner = owner,
     )

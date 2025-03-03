@@ -12,6 +12,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.automirrored.rounded.Send
+import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -26,10 +27,14 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.bizilabs.streeek.feature.issue.IssueScreenState
 import com.bizilabs.streeek.lib.common.helpers.fromHex
 import com.bizilabs.streeek.lib.common.models.FetchState
+import com.bizilabs.streeek.lib.resources.strings.SafiStringLabels
 import com.mohamedrejeb.richeditor.model.rememberRichTextState
 import com.mohamedrejeb.richeditor.ui.material3.OutlinedRichTextEditor
 import com.mohamedrejeb.richeditor.ui.material3.RichTextEditorDefaults
@@ -40,13 +45,24 @@ fun IssueScreenHeaderComponent(
     state: IssueScreenState,
     onClickNavigateBack: () -> Unit,
     onClickCreateIssue: () -> Unit,
+    onNavigateToEditIssue: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Surface(modifier = modifier) {
         Column(modifier = Modifier.fillMaxWidth()) {
             TopAppBar(
                 modifier = Modifier.fillMaxWidth(),
-                title = {},
+                title = {
+                    Text(
+                        modifier = Modifier.fillMaxWidth(),
+                        text =
+                            "ISSUE #${state.number}".takeIf { state.number != null }
+                                ?: stringResource(SafiStringLabels.newIssue),
+                        style = MaterialTheme.typography.titleSmall,
+                        fontWeight = FontWeight.Bold,
+                        textAlign = TextAlign.Start,
+                    )
+                },
                 navigationIcon = {
                     IconButton(onClick = onClickNavigateBack) {
                         Icon(
@@ -73,6 +89,18 @@ fun IssueScreenHeaderComponent(
                             Icon(
                                 imageVector = Icons.AutoMirrored.Rounded.Send,
                                 contentDescription = "create feedback",
+                            )
+                        }
+                    }
+
+                    AnimatedVisibility(visible = state.isIssueAuther == true) {
+                        IconButton(
+                            onClick = onNavigateToEditIssue,
+                            enabled = true,
+                        ) {
+                            Icon(
+                                imageVector = Icons.Outlined.Edit,
+                                contentDescription = "Edit feedback",
                             )
                         }
                     }

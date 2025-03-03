@@ -23,6 +23,7 @@ import androidx.compose.material.icons.rounded.PeopleAlt
 import androidx.compose.material.icons.rounded.Refresh
 import androidx.compose.material.icons.rounded.Share
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
@@ -43,6 +44,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
@@ -51,6 +53,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.paging.compose.LazyPagingItems
+import com.bizilabs.streeek.feature.team.SelectionAction
 import com.bizilabs.streeek.feature.team.SnackBarType
 import com.bizilabs.streeek.feature.team.TeamScreenState
 import com.bizilabs.streeek.lib.common.components.paging.SafiPagingComponent
@@ -85,6 +88,9 @@ fun TeamInvitationBottomSheet(
     onClickInviteAccount: (AccountsNotInTeamDomain) -> Unit,
     onSearchParamChanged: (String) -> Unit,
     onClickClearSearch: () -> Unit,
+    onClickAccountAvatar: (AccountsNotInTeamDomain) -> Unit,
+    onClickSelectedAccountsSelection: (SelectionAction, List<AccountsNotInTeamDomain>) -> Unit,
+    onClickMultipleInvitationCreate: () -> Unit,
 ) {
     val scope = rememberCoroutineScope()
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
@@ -170,20 +176,83 @@ fun TeamInvitationBottomSheet(
                         .padding(innerPadding),
                 verticalArrangement = Arrangement.Bottom,
             ) {
-                Column(
-                    modifier =
-                        modifier
-                            .fillMaxWidth(),
-                ) {
-                    HorizontalDivider(color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.2f))
+                AnimatedContent(
+                    label = "Animate Account Selection",
+                    targetState = state.selectedAccountsIds.isEmpty(),
+                ) { selectedAccountsIsEmpty ->
+                    when (selectedAccountsIsEmpty) {
+                        // Show the Search Field
+                        true -> {
+                            Column(
+                                modifier = modifier.fillMaxWidth(),
+                            ) {
+                                HorizontalDivider(
+                                    color =
+                                        MaterialTheme.colorScheme.onBackground
+                                            .copy(alpha = 0.2f),
+                                )
 
-                    SafiSearchComponent(
-                        searchParam = state.searchParam,
-                        onSearchParamChanged = onSearchParamChanged,
-                        onClickClearSearch = onClickClearSearch,
-                        placeholder = "Search for an account",
-                    )
-                    HorizontalDivider(color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.2f))
+                                SafiSearchComponent(
+                                    searchParam = state.searchParam,
+                                    onSearchParamChanged = onSearchParamChanged,
+                                    onClickClearSearch = onClickClearSearch,
+                                    placeholder = "Search for an account",
+                                )
+                                HorizontalDivider(
+                                    color =
+                                        MaterialTheme.colorScheme.onBackground.copy(
+                                            alpha = 0.2f,
+                                        ),
+                                )
+                            }
+                        }
+
+                        // Show the selected items actions
+                        false -> {
+                            Row(
+                                modifier =
+                                    Modifier
+                                        .fillMaxWidth()
+                                        .padding(horizontal = 16.dp, vertical = 8.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                            ) {
+                                Text(text = "${state.selectedAccountsIds.size} selected")
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                ) {
+                                    TextButton(
+                                        onClick = {
+                                            onClickSelectedAccountsSelection(
+                                                SelectionAction.SELECT_ALL,
+                                                accountsNotInTeam.itemSnapshotList.items,
+                                            )
+                                        },
+                                        colors =
+                                            ButtonDefaults.textButtonColors(
+                                                contentColor = MaterialTheme.colorScheme.success,
+                                            ),
+                                    ) {
+                                        Text(text = "Select All (${accountsNotInTeam.itemCount})")
+                                    }
+                                    TextButton(
+                                        onClick = {
+                                            onClickSelectedAccountsSelection(
+                                                SelectionAction.CLEAR_ALL,
+                                                listOf(),
+                                            )
+                                        },
+                                        colors =
+                                            ButtonDefaults.textButtonColors(
+                                                contentColor = MaterialTheme.colorScheme.error,
+                                            ),
+                                    ) {
+                                        Text(text = "Clear (${state.selectedAccountsIds.size})")
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
 
                 SafiPagingComponent(
@@ -204,159 +273,205 @@ fun TeamInvitationBottomSheet(
                     },
                 ) { accountNotInTeam ->
 
-                    val invited = accountNotInTeam.accountId in state.accountsInvitedIds
+                    val invited = accountNotInTeam.accountId in state.accountsInvitedIds || accountNotInTeam.isInvited
                     InviteAccountCardComponent(
                         modifier = modifier.fillMaxWidth(),
+                        state = state,
                         isInvited = invited,
                         accountNotInTeam = accountNotInTeam,
                         inviteAccountState = state.inviteAccountState,
                         onClickInvite = onClickInviteAccount,
+                        onClickAccountAvatar = onClickAccountAvatar,
                     )
                 }
 
-                // Generate Code section
-                Column(
-                    modifier =
-                        Modifier
-                            .background(color = MaterialTheme.colorScheme.surface)
-                            .fillMaxWidth()
-                            .wrapContentHeight()
-                            .padding(bottom = 24.dp),
-                ) {
-                    HorizontalDivider(
-                        modifier =
-                            Modifier
-                                .fillMaxWidth(),
-                    )
-                    Text(
-                        modifier =
-                            Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 16.dp, vertical = 12.dp),
-                        text = "Or Generate Code",
-                        textAlign = TextAlign.Center,
-                    )
-                    AnimatedContent(
-                        modifier =
-                            Modifier
-                                .fillMaxWidth()
-                                .wrapContentHeight(),
-                        targetState = state.codeInvitationsState,
-                        label = "animated_invitations",
-                    ) { result ->
-                        when (result) {
-                            null -> {
-                                SafiCenteredRow(
+                AnimatedContent(
+                    label = "Animate Account Selection",
+                    targetState = state.selectedAccountsIds.isEmpty(),
+                ) { selectedAccountsIsEmpty ->
+                    when (selectedAccountsIsEmpty) {
+                        // Show the Invitation code
+                        true -> {
+                            // Generate Code section
+                            Column(
+                                modifier =
+                                    Modifier
+                                        .background(color = MaterialTheme.colorScheme.surface)
+                                        .fillMaxWidth()
+                                        .wrapContentHeight()
+                                        .padding(bottom = 24.dp),
+                            ) {
+                                HorizontalDivider(
                                     modifier =
                                         Modifier
-                                            .padding(horizontal = 16.dp)
-                                            .clip(RoundedCornerShape(8.dp))
-                                            .background(color = MaterialTheme.colorScheme.surfaceContainerHighest)
-                                            .fillMaxWidth()
-                                            .wrapContentHeight()
-                                            .padding(16.dp),
-                                ) {
-                                    Icon(
-                                        modifier = Modifier.size(50.dp),
-                                        imageVector = Icons.Rounded.People,
-                                        contentDescription = "No Invitation code",
-                                    )
-                                    Column(
-                                        modifier =
-                                            Modifier
-                                                .wrapContentHeight()
-                                                .weight(1f)
-                                                .padding(horizontal = 16.dp),
-                                    ) {
-                                        Text(
-                                            modifier = Modifier.fillMaxWidth(),
-                                            text = "No invitations",
-                                            maxLines = 1,
-                                            fontSize = MaterialTheme.typography.bodyLarge.fontSize,
-                                            fontStyle = MaterialTheme.typography.bodyLarge.fontStyle,
-                                        )
-                                        Text(
-                                            modifier =
-                                                Modifier
-                                                    .fillMaxWidth()
-                                                    .padding(top = 4.dp),
-                                            text = "You have no codes yet.",
-                                            fontSize = MaterialTheme.typography.labelSmall.fontSize,
-                                            fontStyle = MaterialTheme.typography.labelSmall.fontStyle,
-                                        )
-                                    }
-                                    Button(onClick = onClickInvitationCreate) {
-                                        Text(text = "Generate")
-                                    }
-                                }
-                            }
-
-                            FetchState.Loading -> {
-                                SafiCenteredColumn(
-                                    modifier =
-                                        Modifier
-                                            .wrapContentHeight()
-                                            .padding(24.dp),
-                                ) {
-                                    CircularProgressIndicator()
-                                }
-                            }
-
-                            is FetchState.Error -> {
-                                SafiCenteredRow(
-                                    modifier =
-                                        Modifier
-                                            .padding(16.dp)
-                                            .clip(RoundedCornerShape(8.dp))
-                                            .background(color = MaterialTheme.colorScheme.surfaceContainerHighest)
-                                            .fillMaxWidth()
-                                            .wrapContentHeight()
-                                            .padding(16.dp),
-                                ) {
-                                    Icon(
-                                        modifier = Modifier.size(50.dp),
-                                        imageVector = Icons.Rounded.People,
-                                        contentDescription = "Error Getting Invitations",
-                                    )
-                                    Column(
-                                        modifier =
-                                            Modifier
-                                                .wrapContentHeight()
-                                                .weight(1f)
-                                                .padding(horizontal = 16.dp),
-                                    ) {
-                                        Text(
-                                            modifier = Modifier.fillMaxWidth(),
-                                            text = "Error Getting Invitations",
-                                            maxLines = 1,
-                                            fontSize = MaterialTheme.typography.bodyLarge.fontSize,
-                                            fontStyle = MaterialTheme.typography.bodyLarge.fontStyle,
-                                        )
-                                        Text(
-                                            modifier =
-                                                Modifier
-                                                    .fillMaxWidth()
-                                                    .padding(top = 4.dp),
-                                            text = result.message,
-                                            fontSize = MaterialTheme.typography.labelSmall.fontSize,
-                                            fontStyle = MaterialTheme.typography.labelSmall.fontStyle,
-                                        )
-                                    }
-                                    Button(onClick = onClickInvitationRetry) {
-                                        Text(text = "Retry")
-                                    }
-                                }
-                            }
-
-                            is FetchState.Success -> {
-                                TeamInvitationsSection(
-                                    activity = activity,
-                                    state = state,
-                                    result = result,
-                                    onSwipeInvitationDelete = onSwipeInvitationDelete,
-                                    onClickInvitationCreate = onClickInvitationCreate,
-                                    onSuccessOrErrorCodeCreation = onSuccessOrErrorCodeCreation,
+                                            .fillMaxWidth(),
                                 )
+                                Text(
+                                    modifier =
+                                        Modifier
+                                            .fillMaxWidth()
+                                            .padding(horizontal = 16.dp, vertical = 12.dp),
+                                    text = "Or Generate Code",
+                                    textAlign = TextAlign.Center,
+                                )
+                                AnimatedContent(
+                                    modifier =
+                                        Modifier
+                                            .fillMaxWidth()
+                                            .wrapContentHeight(),
+                                    targetState = state.codeInvitationsState,
+                                    label = "animated_invitations",
+                                ) { result ->
+                                    when (result) {
+                                        null -> {
+                                            SafiCenteredRow(
+                                                modifier =
+                                                    Modifier
+                                                        .padding(horizontal = 16.dp)
+                                                        .clip(RoundedCornerShape(8.dp))
+                                                        .background(color = MaterialTheme.colorScheme.surfaceContainerHighest)
+                                                        .fillMaxWidth()
+                                                        .wrapContentHeight()
+                                                        .padding(16.dp),
+                                            ) {
+                                                Icon(
+                                                    modifier = Modifier.size(50.dp),
+                                                    imageVector = Icons.Rounded.People,
+                                                    contentDescription = "No Invitation code",
+                                                )
+                                                Column(
+                                                    modifier =
+                                                        Modifier
+                                                            .wrapContentHeight()
+                                                            .weight(1f)
+                                                            .padding(horizontal = 16.dp),
+                                                ) {
+                                                    Text(
+                                                        modifier = Modifier.fillMaxWidth(),
+                                                        text = "No invitations",
+                                                        maxLines = 1,
+                                                        fontSize = MaterialTheme.typography.bodyLarge.fontSize,
+                                                        fontStyle = MaterialTheme.typography.bodyLarge.fontStyle,
+                                                    )
+                                                    Text(
+                                                        modifier =
+                                                            Modifier
+                                                                .fillMaxWidth()
+                                                                .padding(top = 4.dp),
+                                                        text = "You have no codes yet.",
+                                                        fontSize = MaterialTheme.typography.labelSmall.fontSize,
+                                                        fontStyle = MaterialTheme.typography.labelSmall.fontStyle,
+                                                    )
+                                                }
+                                                Button(onClick = onClickInvitationCreate) {
+                                                    Text(text = "Generate")
+                                                }
+                                            }
+                                        }
+
+                                        FetchState.Loading -> {
+                                            SafiCenteredColumn(
+                                                modifier =
+                                                    Modifier
+                                                        .wrapContentHeight()
+                                                        .padding(24.dp),
+                                            ) {
+                                                CircularProgressIndicator()
+                                            }
+                                        }
+
+                                        is FetchState.Error -> {
+                                            SafiCenteredRow(
+                                                modifier =
+                                                    Modifier
+                                                        .padding(16.dp)
+                                                        .clip(RoundedCornerShape(8.dp))
+                                                        .background(color = MaterialTheme.colorScheme.surfaceContainerHighest)
+                                                        .fillMaxWidth()
+                                                        .wrapContentHeight()
+                                                        .padding(16.dp),
+                                            ) {
+                                                Icon(
+                                                    modifier = Modifier.size(50.dp),
+                                                    imageVector = Icons.Rounded.People,
+                                                    contentDescription = "Error Getting Invitations",
+                                                )
+                                                Column(
+                                                    modifier =
+                                                        Modifier
+                                                            .wrapContentHeight()
+                                                            .weight(1f)
+                                                            .padding(horizontal = 16.dp),
+                                                ) {
+                                                    Text(
+                                                        modifier = Modifier.fillMaxWidth(),
+                                                        text = "Error Getting Invitations",
+                                                        maxLines = 1,
+                                                        fontSize = MaterialTheme.typography.bodyLarge.fontSize,
+                                                        fontStyle = MaterialTheme.typography.bodyLarge.fontStyle,
+                                                    )
+                                                    Text(
+                                                        modifier =
+                                                            Modifier
+                                                                .fillMaxWidth()
+                                                                .padding(top = 4.dp),
+                                                        text = result.message,
+                                                        fontSize = MaterialTheme.typography.labelSmall.fontSize,
+                                                        fontStyle = MaterialTheme.typography.labelSmall.fontStyle,
+                                                    )
+                                                }
+                                                Button(onClick = onClickInvitationRetry) {
+                                                    Text(text = "Retry")
+                                                }
+                                            }
+                                        }
+
+                                        is FetchState.Success -> {
+                                            TeamInvitationsSection(
+                                                activity = activity,
+                                                state = state,
+                                                result = result,
+                                                onSwipeInvitationDelete = onSwipeInvitationDelete,
+                                                onClickInvitationCreate = onClickInvitationCreate,
+                                                onSuccessOrErrorCodeCreation = onSuccessOrErrorCodeCreation,
+                                            )
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        // Show the actions
+                        false -> {
+                            Column(
+                                modifier =
+                                    Modifier
+                                        .background(color = MaterialTheme.colorScheme.surface)
+                                        .fillMaxWidth()
+                                        .wrapContentHeight()
+                                        .padding(bottom = 24.dp),
+                            ) {
+                                HorizontalDivider(modifier = Modifier.fillMaxWidth())
+                                Row(
+                                    modifier =
+                                        Modifier
+                                            .fillMaxWidth()
+                                            .padding(horizontal = 16.dp, vertical = 8.dp),
+                                    verticalAlignment = Alignment.CenterVertically,
+                                ) {
+                                    Button(
+                                        enabled = state.inviteMultipleAccountsState == null,
+                                        modifier = Modifier.weight(1f),
+                                        onClick = onClickMultipleInvitationCreate,
+                                        colors =
+                                            ButtonDefaults.buttonColors(
+                                                containerColor = MaterialTheme.colorScheme.success,
+                                                contentColor = MaterialTheme.colorScheme.onSuccess,
+                                            ),
+                                    ) {
+                                        Text(text = if (state.selectedAccountsIds.size == 1) "Send Invite" else "Send Invites")
+                                    }
+                                }
                             }
                         }
                     }
