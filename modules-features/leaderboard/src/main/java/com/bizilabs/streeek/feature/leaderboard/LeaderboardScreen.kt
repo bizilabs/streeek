@@ -48,7 +48,7 @@ data class LeaderboardScreen(val name: String) : Screen {
             data = data,
             onClickNavigateBack = { navigator?.pop() },
             onClickMember = screenModel::onClickMember,
-            onClickDismissDialog = screenModel::onClickDismissDialog
+            onClickDismissDialog = screenModel::onClickDismissDialog,
         )
     }
 }
@@ -60,7 +60,7 @@ fun LeaderboardScreenContent(
     data: LazyPagingItems<LeaderboardAccountDomain>,
     onClickMember: (Long, Long, String) -> Unit,
     onClickNavigateBack: () -> Unit,
-    onClickDismissDialog:()-> Unit
+    onClickDismissDialog: () -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -93,9 +93,9 @@ fun LeaderboardScreenContent(
 
         SafiPagingComponent(
             modifier =
-            Modifier
-                .padding(innerPadding)
-                .fillMaxSize(),
+                Modifier
+                    .padding(innerPadding)
+                    .fillMaxSize(),
             data = data,
         ) { item ->
             LeaderboardComponent(
@@ -108,9 +108,9 @@ fun LeaderboardScreenContent(
                     onClickMember(
                         item.rank.points,
                         item.account.id,
-                        item.account.username
+                        item.account.username,
                     )
-                }
+                },
             )
         }
     }
