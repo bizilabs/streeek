@@ -32,25 +32,25 @@ fun FeedContributionItemComponent(
             Toast.makeText(context, contribution.githubEventType, Toast.LENGTH_SHORT).show()
         },
         border =
-        BorderStroke(
-            1.dp,
-            MaterialTheme.colorScheme.onBackground.copy(
-                0.2f,
+            BorderStroke(
+                1.dp,
+                MaterialTheme.colorScheme.onBackground.copy(
+                    0.2f,
+                ),
             ),
-        ),
     ) {
         Box(
             modifier =
-            Modifier
-                .padding(16.dp)
-                .fillMaxWidth()
-                .height(100.dp),
+                Modifier
+                    .padding(16.dp)
+                    .fillMaxWidth()
+                    .height(100.dp),
         ) {
             Column(
                 modifier =
-                Modifier
-                    .alpha(0.1f)
-                    .align(Alignment.TopEnd),
+                    Modifier
+                        .alpha(0.1f)
+                        .align(Alignment.TopEnd),
                 horizontalAlignment = Alignment.End,
             ) {
                 Text(
@@ -71,9 +71,9 @@ fun FeedContributionItemComponent(
 
             Column(
                 modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .align(Alignment.BottomStart),
+                    Modifier
+                        .fillMaxWidth()
+                        .align(Alignment.BottomStart),
             ) {
                 Text(text = contribution.githubEventType)
                 Text(text = contribution.githubEventRepo.name)
