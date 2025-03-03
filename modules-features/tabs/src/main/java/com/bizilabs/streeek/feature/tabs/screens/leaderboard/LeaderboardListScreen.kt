@@ -82,7 +82,7 @@ class LeaderboardListScreen(
             onClickViewMore = screenModel::onClickViewMore,
             onTriggerRefreshLeaderboards = screenModel::onTriggerRefreshLeaderboards,
             onNavigateBack = onNavigateBack,
-            onClickMember = screenModel::onClickMember,
+            onClickMember = { _, _, _ -> },
             onClickDismissDialog = screenModel::onClickDismissDialog,
         ) { screen ->
             navigator?.push(screen)

@@ -130,7 +130,7 @@ class TeamScreen(val teamId: Long?) : Screen {
             onClickAccountAvatar = screenModel::onClickToggleAccountSelectedState,
             onClickSelectedAccountsSelection = screenModel::onClickSelectedAccountsSelection,
             onClickMultipleInvitationCreate = screenModel::onClickInviteMultipleAccounts,
-            onClickMember = screenModel::onClickMember,
+            onClickMember = { },
         )
     }
 }
