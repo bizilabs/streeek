@@ -40,11 +40,13 @@ buildConfig {
     className("StreeekRemoteConfig")
     val properties = findProperties(file = "local.properties")
     // github secrets
-    buildConfigField("GithubClientId", "\"${properties.getProperty("github.client.id")}\"")
-    buildConfigField("GithubClientName", "\"${properties.getProperty("github.client.name")}\"")
-    buildConfigField("GithubClientSecret", "\"${properties.getProperty("github.client.secret")}\"")
-    buildConfigField("GithubClientRedirectUrl", "\"${properties.getProperty("github.client.redirect.url")}\"")
+    buildConfigField("GithubClientId", "${properties.getProperty("github.client.id")}")
+    buildConfigField("GithubClientName", "${properties.getProperty("github.client.name")}")
+    buildConfigField("GithubClientSecret", "${properties.getProperty("github.client.secret")}")
+    buildConfigField("GithubClientRedirectUrl", "${properties.getProperty("github.client.redirect.url")}")
     // supabase secrets
-    buildConfigField("SupabaseUrl", "\"${properties.getProperty("supabase.url")}\"")
-    buildConfigField("SupabaseKey", "\"${properties.getProperty("supabase.key")}\"")
+    buildConfigField("SupabaseUrl", "${properties.getProperty("supabase.url")}")
+    buildConfigField("SupabaseKey", "${properties.getProperty("supabase.key")}")
+    // bizilabs secrets
+    buildConfigField("StreeekUrl", "${properties.getProperty("streeek.api")}")
 }

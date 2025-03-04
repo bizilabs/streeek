@@ -1,11 +1,10 @@
 package com.bizilabs.streeek.lib.data.repositories
 
-import android.content.Intent
-import android.net.Uri
 import com.bizilabs.streeek.lib.domain.helpers.DataResult
 import com.bizilabs.streeek.lib.domain.repositories.AuthenticationRepository
 import com.bizilabs.streeek.lib.remote.helpers.NetworkResult
 import com.bizilabs.streeek.lib.remote.sources.auth.AuthenticationRemoteSource
+import com.eygraber.uri.Uri
 import kotlinx.coroutines.flow.Flow
 
 class AuthenticationRepositoryImpl(
@@ -14,8 +13,8 @@ class AuthenticationRepositoryImpl(
     override val authenticated: Flow<Boolean>
         get() = remote.authenticated
 
-    override suspend fun getAuthenticationIntent(): Intent {
-        return remote.getAuthenticationIntent()
+    override suspend fun getAuthenticationUri(): Uri {
+        return remote.getAuthenticationUri()
     }
 
     override suspend fun getAuthenticationToken(uri: Uri): DataResult<String> {

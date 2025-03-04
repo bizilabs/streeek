@@ -1,18 +1,17 @@
 package com.bizilabs.streeek.feature.authentication
 
-import android.content.Intent
-import android.net.Uri
 import cafe.adriel.voyager.core.model.StateScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
 import com.bizilabs.streeek.lib.common.models.FetchState
 import com.bizilabs.streeek.lib.domain.helpers.DataResult
 import com.bizilabs.streeek.lib.domain.repositories.AuthenticationRepository
+import com.eygraber.uri.Uri
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 data class AuthenticationScreenState(
-    val intent: Intent? = null,
+    val intent: Uri? = null,
     val uri: Uri? = null,
     val fetchState: FetchState<String>? = null,
     val navigateToTabs: Boolean = false,
@@ -33,7 +32,7 @@ class AuthenticationScreenModel(
 
     private fun getAuthenticationIntent() {
         screenModelScope.launch {
-            val value = authenticationRepository.getAuthenticationIntent()
+            val value = authenticationRepository.getAuthenticationUri()
             mutableState.update { it.copy(intent = value) }
         }
     }

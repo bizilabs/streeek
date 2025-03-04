@@ -1,7 +1,8 @@
 package com.bizilabs.streeek.feature.authentication
 
-import android.net.Uri
+import android.content.Intent
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.LocalActivity
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Column
@@ -21,7 +22,6 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -40,6 +40,9 @@ import com.bizilabs.streeek.lib.design.helpers.onSuccess
 import com.bizilabs.streeek.lib.design.helpers.success
 import com.bizilabs.streeek.lib.resources.images.SafiDrawables
 import com.bizilabs.streeek.lib.resources.strings.SafiStrings
+import com.eygraber.uri.Uri
+import com.eygraber.uri.toAndroidUriOrNull
+import com.eygraber.uri.toUri
 
 object AuthenticationScreen : Screen {
     @Composable
@@ -65,7 +68,11 @@ fun AuthenticationScreenContent(
     navigateToSetup: () -> Unit,
 ) {
     if (state.intent != null && state.fetchState == null) {
-        StartActivity(intent = state.intent)
+        val uri = state.intent.toAndroidUriOrNull()
+        uri?.let { value ->
+            val intent = Intent(Intent.ACTION_VIEW, value)
+            StartActivity(intent = intent)
+        }
     }
 
     if (state.uri == null) {
@@ -190,7 +197,7 @@ fun AuthenticationScreenContent(
 
 @Composable
 fun HandleIntent(onUriReceived: (Uri) -> Unit) {
-    val activity = LocalContext.current as ComponentActivity
-    val uri: Uri? = activity.findActivity()?.intent?.data
+    val activity = LocalActivity.current as ComponentActivity
+    val uri: Uri? = activity.findActivity()?.intent?.data?.toUri()
     if (uri != null) onUriReceived(uri)
 }

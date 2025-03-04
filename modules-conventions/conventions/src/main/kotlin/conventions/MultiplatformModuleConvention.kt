@@ -46,7 +46,7 @@ private fun KotlinMultiplatformExtension.sources(block: NamedDomainObjectContain
 private fun LibraryExtension.configureAndroidLibrary() {
     compileSdk = AndroidSdk.compileSdk
     defaultConfig {
-        minSdk = AndroidSdk.compileSdk
+        minSdk = AndroidSdk.minimumSdk
     }
     packaging {
         resources {
@@ -55,6 +55,9 @@ private fun LibraryExtension.configureAndroidLibrary() {
     }
     buildTypes {
         getByName("release") {
+            isMinifyEnabled = true
+        }
+        create("beta") {
             isMinifyEnabled = true
         }
     }

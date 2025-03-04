@@ -8,12 +8,12 @@ android {
 }
 
 dependencies {
-
     // modules
-    implementation(projects.modulesSources.remote)
+    implementation(projects.sharedDatasources.remote)
     implementation(projects.modulesSources.local)
     implementation(projects.modulesData.domain)
-
     // paging
     implementation(libs.androidx.paging.runtime)
+    // uri
+    implementation(libs.uri)
 }

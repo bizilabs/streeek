@@ -8,7 +8,7 @@ import org.koin.core.module.Module
 
 expect val DataStoreModule: Module
 
-internal const val DATASTORE_FILE_NAME = "streeek.remote"
+internal const val DATASTORE_FILE_NAME = "streeek.remote.preferences_pb"
 
 fun createDataStore(producePath: () -> String): DataStore<Preferences> =
     PreferenceDataStoreFactory.createWithPath(

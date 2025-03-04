@@ -17,4 +17,6 @@ dependencies {
     // firebase
     implementation(platform(libs.firebase.bom))
     implementation(libs.bundles.firebase)
+    // uri
+    implementation(libs.uri)
 }
