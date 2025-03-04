@@ -57,6 +57,9 @@ private fun LibraryExtension.configureAndroidLibrary() {
         getByName("release") {
             isMinifyEnabled = true
         }
+        create("beta") {
+            isMinifyEnabled = true
+        }
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
