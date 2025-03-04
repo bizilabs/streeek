@@ -16,7 +16,6 @@ jobs:
       pull-requests: write # Grant write access to pull requests (if needed)
 
     steps:
-      # Check approvals and merge
       - name: Check and Merge Pull Request
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -75,7 +74,7 @@ jobs:
          while true; do
          APPROVAL_COUNT=$(get_approval_count)
          echo "Approvals: $APPROVAL_COUNT / $REQUIRED_APPROVALS"
-  
+
          if [ "$APPROVAL_COUNT" -ge "$REQUIRED_APPROVALS" ]; then
          while are_workflows_running; do
          sleep 30
