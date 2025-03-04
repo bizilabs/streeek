@@ -26,6 +26,10 @@ tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>>().configureEach
     }
 }
 
+tasks.named("runKtlintCheckOverCommonMainSourceSet") {
+    mustRunAfter("kspCommonMainKotlinMetadata")
+}
+
 android {
     namespace = "com.bizilabs.streeek.lib.local"
 }
