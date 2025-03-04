@@ -47,9 +47,7 @@ allprojects {
         defaults {
             xml {
                 onCheck = true
-            }
-            html {
-                onCheck = true
+                setReportFile(layout.buildDirectory.file("custom/reports/kover/report.xml"))
             }
         }
         filters {
