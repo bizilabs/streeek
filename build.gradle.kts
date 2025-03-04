@@ -26,7 +26,6 @@ plugins {
 
 allprojects {
     apply(plugin = "org.jlleitschuh.gradle.ktlint")
-    apply(plugin = "org.jetbrains.kotlinx.kover")
     configure<org.jlleitschuh.gradle.ktlint.KtlintExtension> {
         enableExperimentalRules.set(true)
         additionalEditorconfig.set(
@@ -43,14 +42,21 @@ allprojects {
             exclude("**/shared_datasources/**")
         }
     }
+
+    apply(plugin = "org.jetbrains.kotlinx.kover")
     configure<KoverReportExtension> {
         defaults {
             xml {
                 onCheck = true
-                setReportFile(layout.buildDirectory.file("custom/reports/kover/report.xml"))
+                setReportFile(layout.buildDirectory.file("reports/kover/report.xml"))
             }
         }
+        dependencies {
+            kover(project(":shared-datasources:remote"))
+        }
         filters {
+            includes {
+            }
             excludes {
                 classes("**/build/**")
             }
@@ -64,7 +70,6 @@ allprojects {
                     aggregation = AggregationType.COVERED_PERCENTAGE
                 }
             }
-
             rule("Branch Coverage") {
                 isEnabled = true
                 bound {
