@@ -24,6 +24,10 @@ plugins {
     alias(libs.plugins.kover)
 }
 
+dependencies {
+    kover(project(":shared-datasources:remote"))
+}
+
 allprojects {
     apply(plugin = "org.jlleitschuh.gradle.ktlint")
     configure<org.jlleitschuh.gradle.ktlint.KtlintExtension> {
@@ -42,7 +46,9 @@ allprojects {
             exclude("**/shared_datasources/**")
         }
     }
+}
 
+subprojects {
     apply(plugin = "org.jetbrains.kotlinx.kover")
     configure<KoverReportExtension> {
         defaults {
@@ -51,12 +57,7 @@ allprojects {
                 setReportFile(layout.buildDirectory.file("reports/kover/report.xml"))
             }
         }
-        dependencies {
-            kover(project(":shared-datasources:remote"))
-        }
         filters {
-            includes {
-            }
             excludes {
                 classes("**/build/**")
             }
