@@ -18,6 +18,7 @@ plugins {
     // others
     alias(libs.plugins.buildconfig) apply false
     alias(libs.plugins.ktlint)
+    alias(libs.plugins.kover)
 }
 
 allprojects {
