@@ -25,7 +25,7 @@ androidx-splash-screen = "1.0.1"
 androidx-core-ktx = "1.15.0"
 androidx-compose-material = "1.7.6"
 androidx-work-manager = "2.10.0"
-androidx-room = "2.6.1"
+androidx-room = "2.7.0-alpha01"
 androidx-datastore = "1.1.3"
 androidx-lifecycle-runtime-ktx = "2.8.7"
 androidx-appcompat = "1.7.0"
@@ -102,8 +102,8 @@ androidx-datastore-preferences = { module = "androidx.datastore:datastore-prefer
 androidx-datastore-proto = { module = "androidx.datastore:datastore-core", version.ref = "androidx-datastore" }
 
 # androidx-paging
-androidx-paging-runtime = {module = "androidx.paging:paging-runtime", version.ref= "androidx-paging"}
-androidx-paging-compose = {module = "androidx.paging:paging-compose", version.ref= "androidx-paging"}
+androidx-paging-runtime = { module = "androidx.paging:paging-runtime", version.ref = "androidx-paging" }
+androidx-paging-compose = { module = "androidx.paging:paging-compose", version.ref = "androidx-paging" }
 
 # koin
 koin-bom = { module = "io.insert-koin:koin-bom", version.ref = "koin-bom" }
@@ -144,6 +144,7 @@ compose-qr-code = { module = "com.lightspark:compose-qr-code", version.ref = "co
 androidx-room = { module = "androidx.room:room-ktx", version.ref = "androidx-room" }
 androidx-room-test = { module = "androidx.room:room-testing", version.ref = "androidx-room" }
 androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "androidx-room" }
+androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "androidx-room" }
 
 # kotlin
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinx-datetime" }
@@ -228,11 +229,12 @@ realm = { module = "io.realm.kotlin:library-base", version.ref = "realm" }
 kalendar = { module = "com.himanshoe:kalendar", version.ref = "kalendar" }
 calendar = { module = "com.kizitonwose.calendar:compose-multiplatform", version.ref = "calendar" }
 androidx-foundation-android = { group = "androidx.compose.foundation", name = "foundation-android", version.ref = "foundation-android" }
-confetti = { module = "nl.dionsegijn:konfetti-compose", version.ref = "confetti"}
-updater = { module = "com.google.android.play:app-update", version.ref = "updater"}
-richtexteditor = { module = "com.mohamedrejeb.richeditor:richeditor-compose", version.ref = "rich-text-editor"}
+confetti = { module = "nl.dionsegijn:konfetti-compose", version.ref = "confetti" }
+updater = { module = "com.google.android.play:app-update", version.ref = "updater" }
+richtexteditor = { module = "com.mohamedrejeb.richeditor:richeditor-compose", version.ref = "rich-text-editor" }
 firebase-messaging-ktx = { group = "com.google.firebase", name = "firebase-messaging-ktx", version.ref = "firebase-messaging-ktx" }
 google-firebase-database = { group = "com.google.firebase", name = "firebase-database", version.ref = "firebase-database" }
+napier = { group = "io.github.aakira", name = "napier", version.ref = "napier" }
 napier = { group = "io.github.aakira", name="napier", version.ref = "napier" }
 uri = { group = "com.eygraber", name="uri-kmp", version.ref = "uri" }
 
@@ -259,6 +261,10 @@ firebase-performance = { id = "com.google.firebase.firebase-perf", version.ref =
 google-services = { id = "com.google.gms.google-services", version.ref = "gradle-plugin-google-services" }
 ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }
 buildconfig = { id = "com.github.gmazzo.buildconfig", version.ref = "buildconfig" }
+
+bizilabs-multliplatform = { id = "bizilabs.multiplatform.module", version = "unspecified" }
+
+androidx-room = { id = "androidx.room", version.ref = "androidx-room" }
 
 [bundles]
 android = [
