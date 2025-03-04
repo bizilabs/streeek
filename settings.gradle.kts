@@ -74,3 +74,4 @@ include(":shared-datasources")
 
 // KMP data sources modules
 include(":shared-datasources:remote")
+include(":shared-datasources:local")
