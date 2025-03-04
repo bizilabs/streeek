@@ -55,6 +55,8 @@ saket-cascade = "2.3.0"
 testing-junit = "4.13.2"
 androidx-test-ext-junit = "1.1.5"
 androidx-test-espresso = "3.5.1"
+test-resource = "0.4.1"
+kover = "0.7.6"
 
 # other libraries
 koin-bom = "4.0.0"
@@ -86,6 +88,9 @@ uri = "0.0.19"
 multiplatfrom-settings = "1.3.0"
 
 [libraries]
+# test
+test-resources = { module = "com.goncalossilva:resources", version.ref = "test-resource" }
+
 # androidx
 androidx-palette = { group = "androidx.palette", name = "palette-ktx", version.ref = "androidx-palette" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "androidx-core-ktx" }
@@ -260,6 +265,7 @@ firebase-performance = { id = "com.google.firebase.firebase-perf", version.ref =
 google-services = { id = "com.google.gms.google-services", version.ref = "gradle-plugin-google-services" }
 ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }
 buildconfig = { id = "com.github.gmazzo.buildconfig", version.ref = "buildconfig" }
+kover = { id = "org.jetbrains.kotlinx.kover", version.ref="kover" }
 
 bizilabs-multiplatform = { id = "bizilabs.multiplatform.module", version = "unspecified" }
 
