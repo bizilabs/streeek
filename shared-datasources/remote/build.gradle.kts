@@ -2,6 +2,7 @@ import extensions.findProperties
 
 plugins {
     alias(libs.plugins.bizilabs.multiplatform)
+    alias(libs.plugins.kover)
 }
 
 kotlin {
@@ -22,6 +23,8 @@ kotlin {
         commonTest.dependencies {
             implementation(libs.ktor.client.mock)
             implementation(libs.multiplatform.settings.tests)
+            implementation(kotlin("test"))
+            implementation(libs.test.resources)
         }
         androidMain.dependencies {
             implementation(libs.ktor.client.okhttp)

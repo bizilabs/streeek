@@ -1,0 +1,57 @@
+[
+  {
+    "id": 1,
+    "github_id": 12345678,
+    "username": "coding_ninja",
+    "email": "ninja@example.com",
+    "bio": "A passionate developer turning coffee into code.",
+    "avatar_url": "https://avatars.githubusercontent.com/u/12345678?v=4",
+    "created_at": "2025-01-01T12:00:00Z",
+    "updated_at": "2025-02-01T18:30:00Z",
+    "fcm_token": "abc123fcm456token789"
+  },
+  {
+    "id": 2,
+    "github_id": 87654321,
+    "username": "debug_master",
+    "email": "debug.master@example.com",
+    "bio": "Fixing bugs, one line at a time.",
+    "avatar_url": "https://avatars.githubusercontent.com/u/87654321?v=4",
+    "created_at": "2024-12-15T08:45:00Z",
+    "updated_at": "2025-01-15T14:20:00Z",
+    "fcm_token": "xyz987fcm654token321"
+  },
+  {
+    "id": 3,
+    "github_id": 11223344,
+    "username": "test_titan",
+    "email": "test.titan@example.com",
+    "bio": "Testing is my superpower. 💪",
+    "avatar_url": "https://avatars.githubusercontent.com/u/11223344?v=4",
+    "created_at": "2025-02-05T10:00:00Z",
+    "updated_at": "2025-02-20T16:45:00Z",
+    "fcm_token": null
+  },
+  {
+    "id": 4,
+    "github_id": 44332211,
+    "username": "api_wizard",
+    "email": "api.wizard@example.com",
+    "bio": "Conjuring seamless integrations.",
+    "avatar_url": "https://avatars.githubusercontent.com/u/44332211?v=4",
+    "created_at": "2024-11-30T09:30:00Z",
+    "updated_at": "2025-01-10T11:50:00Z",
+    "fcm_token": "lmn456fcm789token012"
+  },
+  {
+    "id": 5,
+    "github_id": 99887766,
+    "username": "frontend_freak",
+    "email": "frontend.freak@example.com",
+    "bio": "Turning designs into reality.",
+    "avatar_url": "https://avatars.githubusercontent.com/u/99887766?v=4",
+    "created_at": "2024-10-25T14:00:00Z",
+    "updated_at": "2025-02-25T20:30:00Z",
+    "fcm_token": "opq123fcm890token345"
+  }
+]
