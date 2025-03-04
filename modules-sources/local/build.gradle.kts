@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.bizilabs.streeek.lib.local"
+    namespace = "com.bizilabs.streeek.shared.lib.local"
 }
 
 dependencies {
