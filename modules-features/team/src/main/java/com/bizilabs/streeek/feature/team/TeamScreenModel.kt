@@ -194,7 +194,7 @@ data class TeamScreenState(
     // This state holds the list of selected accounts not in team awaiting to be invited
     val selectedAccountsIds: List<Long> = listOf(),
     val inviteMultipleAccountsState: InviteMultipleAccountsState? = null,
-    val tauntMessage: String = ""
+    val tauntMessage: String = "",
 ) {
     val isManagingTeam: Boolean
         get() = isEditing || teamId == null
