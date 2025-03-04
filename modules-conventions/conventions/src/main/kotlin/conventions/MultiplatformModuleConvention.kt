@@ -46,7 +46,7 @@ private fun KotlinMultiplatformExtension.sources(block: NamedDomainObjectContain
 private fun LibraryExtension.configureAndroidLibrary() {
     compileSdk = AndroidSdk.compileSdk
     defaultConfig {
-        minSdk = AndroidSdk.compileSdk
+        minSdk = AndroidSdk.minimumSdk
     }
     packaging {
         resources {

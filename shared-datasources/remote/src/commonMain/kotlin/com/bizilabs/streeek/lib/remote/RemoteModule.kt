@@ -21,6 +21,8 @@ import com.bizilabs.streeek.lib.remote.sources.notifications.NotificationRemoteS
 import com.bizilabs.streeek.lib.remote.sources.notifications.NotificationRemoteSourceImpl
 import com.bizilabs.streeek.lib.remote.sources.preferences.RemotePreferencesSource
 import com.bizilabs.streeek.lib.remote.sources.preferences.RemotePreferencesSourceImpl
+import com.bizilabs.streeek.lib.remote.sources.taunt.TauntRemoteSource
+import com.bizilabs.streeek.lib.remote.sources.taunt.TauntRemoteSourceImpl
 import com.bizilabs.streeek.lib.remote.sources.team.TeamRemoteSource
 import com.bizilabs.streeek.lib.remote.sources.team.TeamRemoteSourceImpl
 import com.bizilabs.streeek.lib.remote.sources.team.invitations.TeamInvitationCodeRemoteSource
@@ -69,4 +71,5 @@ val RemoteModule =
         single<LeaderboardRemoteSource> { LeaderboardRemoteSourceImpl(supabase = get()) }
         single<TeamRequestRemoteSource> { TeamRequestRemoteSourceImpl(supabase = get()) }
         single<TeamMemberInvitationRemoteSource> { TeamMemberInvitationRemoteSourceImpl(supabase = get()) }
+        single<TauntRemoteSource> { TauntRemoteSourceImpl(client = get()) }
     }

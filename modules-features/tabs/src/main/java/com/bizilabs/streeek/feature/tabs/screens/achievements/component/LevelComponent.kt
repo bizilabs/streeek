@@ -61,7 +61,7 @@ fun LevelComponent(
         }
     val subtitle =
         when {
-            difference <= 0L -> "${current.minPoints - 1} EXP"
+            difference <= 0L -> "${(if (current.minPoints == 0L) 2 else current.minPoints) - 1} EXP"
             difference == 1L -> "${current.maxPoints - points} EXP to go"
             else -> "Locked"
         }

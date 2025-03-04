@@ -18,7 +18,7 @@ interface AuthenticationRemoteSource {
 
     suspend fun updateAccessToken(token: String)
 
-    suspend fun getAuthenticationIntent(): Uri
+    suspend fun getAuthenticationUri(): Uri
 
     suspend fun getAuthenticationToken(uri: Uri): NetworkResult<AccessTokenDTO>
 }
@@ -31,7 +31,7 @@ class AuthenticationRemoteSourceImpl(
     override val authenticated: Flow<Boolean>
         get() = preferences.accessToken.mapLatest { it != null }
 
-    override suspend fun getAuthenticationIntent(): Uri {
+    override suspend fun getAuthenticationUri(): Uri {
         val url =
             buildString {
                 append("https://github.com/login/oauth/authorize")
