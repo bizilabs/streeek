@@ -41,8 +41,8 @@ jobs:
         uses: mi-kas/kover-report@v1
         with:
           path: |
-            ${{ github.workspace }}/build/custom/reports/kover/report.xml
-            ${{ github.workspace }}/build/custom/reports/kover/report.xml
+            $GITHUB_WORKSPACE/build/custom/reports/kover/report.xml
+            $GITHUB_WORKSPACE/build/custom/reports/kover/report.xml
           title: Code Coverage
           update-comment: true
           min-coverage-overall: 80
