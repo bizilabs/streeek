@@ -1,3 +1,6 @@
+import kotlinx.kover.gradle.plugin.dsl.AggregationType
+import kotlinx.kover.gradle.plugin.dsl.KoverReportExtension
+import kotlinx.kover.gradle.plugin.dsl.MetricType
 import org.jlleitschuh.gradle.ktlint.reporter.ReporterType
 
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
@@ -23,6 +26,7 @@ plugins {
 
 allprojects {
     apply(plugin = "org.jlleitschuh.gradle.ktlint")
+    apply(plugin = "org.jetbrains.kotlinx.kover")
     configure<org.jlleitschuh.gradle.ktlint.KtlintExtension> {
         enableExperimentalRules.set(true)
         additionalEditorconfig.set(
@@ -37,6 +41,39 @@ allprojects {
             exclude("**/generated/**")
             exclude("**/build/**")
             exclude("**/shared_datasources/**")
+        }
+    }
+    configure<KoverReportExtension> {
+        defaults {
+            xml {
+                onCheck = true
+            }
+            html {
+                onCheck = true
+            }
+        }
+        filters {
+            excludes {
+                classes("**/build/**")
+            }
+        }
+        verify {
+            rule("Basic Line Coverage") {
+                isEnabled = true
+                bound {
+                    minValue = 75
+                    metric = MetricType.LINE
+                    aggregation = AggregationType.COVERED_PERCENTAGE
+                }
+            }
+
+            rule("Branch Coverage") {
+                isEnabled = true
+                bound {
+                    minValue = 75
+                    metric = MetricType.BRANCH
+                }
+            }
         }
     }
 }
