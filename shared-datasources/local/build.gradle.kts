@@ -27,7 +27,7 @@ tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>>().configureEach
 }
 
 android {
-    namespace = "com.bizilabs.streeek.shared.lib.local"
+    namespace = "com.bizilabs.streeek.lib.local"
 }
 
 room {
