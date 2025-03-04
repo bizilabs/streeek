@@ -1,7 +1,7 @@
 import extensions.findProperties
 
 plugins {
-    id("bizilabs.multiplatform.module")
+    alias(libs.plugins.bizilabs.multliplatform)
 }
 
 kotlin {
