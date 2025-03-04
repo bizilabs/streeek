@@ -262,7 +262,7 @@ google-services = { id = "com.google.gms.google-services", version.ref = "gradle
 ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }
 buildconfig = { id = "com.github.gmazzo.buildconfig", version.ref = "buildconfig" }
 
-bizilabs-multliplatform = { id = "bizilabs.multiplatform.module", version = "unspecified" }
+bizilabs-multiplatform = { id = "bizilabs.multiplatform.module", version = "unspecified" }
 
 androidx-room = { id = "androidx.room", version.ref = "androidx-room" }
 

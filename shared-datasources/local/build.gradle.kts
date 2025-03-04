@@ -1,5 +1,5 @@
 plugins {
-    alias(libs.plugins.bizilabs.multliplatform)
+    alias(libs.plugins.bizilabs.multiplatform)
     alias(libs.plugins.kotlin.ksp)
     alias(libs.plugins.androidx.room)
 }
