@@ -235,7 +235,6 @@ richtexteditor = { module = "com.mohamedrejeb.richeditor:richeditor-compose", ve
 firebase-messaging-ktx = { group = "com.google.firebase", name = "firebase-messaging-ktx", version.ref = "firebase-messaging-ktx" }
 google-firebase-database = { group = "com.google.firebase", name = "firebase-database", version.ref = "firebase-database" }
 napier = { group = "io.github.aakira", name = "napier", version.ref = "napier" }
-napier = { group = "io.github.aakira", name="napier", version.ref = "napier" }
 uri = { group = "com.eygraber", name="uri-kmp", version.ref = "uri" }
 
 # multiplatform settings
