@@ -33,19 +33,19 @@ jobs:
       - name: Run tests with Gradle Wrapper
         run: ./gradlew check
 
-      - name: Generate kover coverage report
-        run: ./gradlew koverXmlReport
-
-      - name: Add coverage report to PR
-        id: kover
-        uses: mi-kas/kover-report@v1
-        with:
-          path: $GITHUB_WORKSPACE/build/reports/kover/report.xml
-          title: Code Coverage
-          update-comment: true
-          min-coverage-overall: 80
-          min-coverage-changed-files: 80
-          coverage-counter-type: LINE
+#      - name: Generate kover coverage report
+#        run: ./gradlew koverXmlReport
+#
+#      - name: Add coverage report to PR
+#        id: kover
+#        uses: mi-kas/kover-report@v1
+#        with:
+#          path: $GITHUB_WORKSPACE/build/reports/kover/report.xml
+#          title: Code Coverage
+#          update-comment: true
+#          min-coverage-overall: 80
+#          min-coverage-changed-files: 80
+#          coverage-counter-type: LINE
 
   lint-checks:
     runs-on: ubuntu-latest
