@@ -8,11 +8,11 @@ gradle-plugin-firebase-app-distribution = "4.0.0"
 gradle-plugin-google-services = "4.4.2"
 
 # kotlin libraries
-kotlin = "2.0.21"
+kotlin = "2.1.10"
 # Kotlinx
-kotlinx-coroutines = "1.9.0"
-kotlinx-serialization = "1.7.3"
-kotlinx-datetime = "0.6.0"
+kotlinx-coroutines = "1.10.1"
+kotlinx-serialization = "1.8.0"
+kotlinx-datetime = "0.6.1"
 ktor = "3.1.1"
 
 # android sdk
@@ -45,7 +45,7 @@ compose-multiplatform = "1.7.0"
 firebase_bom = "33.7.0"
 firebase-messaging-ktx = "24.1.0"
 firebase-database = "21.0.0"
-ksp = "2.0.21-1.0.27" # always match with kotlin version
+ksp = "2.1.10-1.0.31" # always match with kotlin version
 
 # saket
 saket-swipe = "1.2.0"
