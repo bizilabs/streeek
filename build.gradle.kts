@@ -23,6 +23,22 @@ plugins {
 
 allprojects {
     apply(plugin = "org.jlleitschuh.gradle.ktlint")
+    ktlint {
+        enableExperimentalRules.set(true)
+        additionalEditorconfig.set(
+            mapOf(
+                "ktlint_standard_package-naming" to "disabled",
+            ),
+        )
+        reporters {
+            reporter(ReporterType.JSON)
+        }
+        filter {
+            exclude("**/generated/**")
+            exclude("**/build/**")
+            exclude("**/shared_datasources/**")
+        }
+    }
 }
 
 subprojects {
@@ -31,23 +47,6 @@ subprojects {
 
 dependencies {
     kover(project(":shared-datasources:remote"))
-}
-
-ktlint {
-    enableExperimentalRules.set(true)
-    additionalEditorconfig.set(
-        mapOf(
-            "ktlint_standard_package-naming" to "disabled",
-        ),
-    )
-    reporters {
-        reporter(ReporterType.JSON)
-    }
-    filter {
-        exclude("**/generated/**")
-        exclude("**/build/**")
-        exclude("**/shared_datasources/**")
-    }
 }
 
 kover {
