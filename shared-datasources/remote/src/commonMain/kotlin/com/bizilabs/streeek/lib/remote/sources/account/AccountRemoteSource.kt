@@ -19,7 +19,7 @@ interface AccountRemoteSource {
 
     suspend fun createAccount(request: AccountCreateRequestDTO): NetworkResult<AccountDTO>
 
-    suspend fun getAccount(id: Long): NetworkResult<AccountFullDTO>
+    suspend fun fetchAccount(id: Long): NetworkResult<AccountFullDTO>
 
     suspend fun saveFcmToken(
         accountId: Long,
@@ -72,7 +72,7 @@ class AccountRemoteSourceImpl(
             true
         }
 
-    override suspend fun getAccount(id: Long): NetworkResult<AccountFullDTO> =
+    override suspend fun fetchAccount(id: Long): NetworkResult<AccountFullDTO> =
         safeSupabaseCall {
             val body = Json.encodeToJsonElement(mapOf("value_account_id" to id))
             supabase.postgrest

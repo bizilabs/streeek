@@ -105,7 +105,7 @@ class AccountRemoteSourceTest {
         runTest(testDispatcher) {
             val response = JsonLoader().load("account_full.json")
             val source = getSource(status = HttpStatusCode.OK, response = response)
-            val result = source.getAccount(id = 1)
+            val result = source.fetchAccount(id = 1)
             assertTrue { result is NetworkResult.Success }
             val expected = JsonLoader().load<AccountFullDTO>("account_full.json")
             val actual = (result as NetworkResult.Success).data
