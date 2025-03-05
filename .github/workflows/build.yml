@@ -11,6 +11,8 @@ concurrency:
 jobs:
   run-tests:
     runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
     steps:
       - name: Checkout project sources
         uses: actions/checkout@v4
