@@ -1,4 +1,3 @@
-import com.intellij.rt.coverage.report.api.ReportApi.xmlReport
 import org.jlleitschuh.gradle.ktlint.reporter.ReporterType
 
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
