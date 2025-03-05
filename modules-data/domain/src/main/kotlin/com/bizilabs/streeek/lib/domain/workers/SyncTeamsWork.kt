@@ -126,8 +126,8 @@ class SyncTeamsWork(
             val current = details.rank.current
             val message =
                 when {
-                    prev > current -> DroppedPositionMessage.random()
-                    prev < current -> ClimbedPositionMessage.random()
+                    prev < current -> DroppedPositionMessage.random()
+                    prev > current -> ClimbedPositionMessage.random()
                     else -> null
                 }
             if (message == null) return@launch
