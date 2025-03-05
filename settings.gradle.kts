@@ -37,7 +37,6 @@ include("modules-sources")
 include("modules-features")
 
 // sources modules
-include(":modules-sources:remote")
 include(":modules-sources:local")
 
 // data modules

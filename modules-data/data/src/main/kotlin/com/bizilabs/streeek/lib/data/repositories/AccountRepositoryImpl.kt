@@ -56,7 +56,7 @@ class AccountRepositoryImpl(
     }
 
     override suspend fun getAccount(id: Long): DataResult<AccountDomain> {
-        return when (val result = remote.getAccount(id)) {
+        return when (val result = remote.fetchAccount(id)) {
             is NetworkResult.Failure -> DataResult.Error(result.exception.localizedMessage)
             is NetworkResult.Success -> DataResult.Success(result.data.toDomain())
         }
@@ -92,7 +92,7 @@ class AccountRepositoryImpl(
     override suspend fun syncAccount(): DataResult<Boolean> {
         val id = account.first()?.id ?: return DataResult.Error("Account not found")
         updateIsSyncingAccount(value = true)
-        return when (val result = remote.getAccount(id = id)) {
+        return when (val result = remote.fetchAccount(id = id)) {
             is NetworkResult.Failure -> DataResult.Error(message = result.exception.localizedMessage)
             is NetworkResult.Success -> {
                 val previous = account.firstOrNull()
