@@ -101,17 +101,17 @@ fun IssueScreenEditSection(
             modifier =
                 Modifier
                     .background(MaterialTheme.colorScheme.surface)
-                    .fillMaxWidth(),
+                    .fillMaxWidth()
+                    .clickable(
+                        onClick =
+                        onClickOpenLabels,
+                    ),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
                 modifier =
                     Modifier
-                        .padding(16.dp)
-                        .clickable(
-                            onClick =
-                            onClickOpenLabels,
-                        ),
+                        .padding(16.dp),
                 text = "Labels",
             )
             LazyRow(
