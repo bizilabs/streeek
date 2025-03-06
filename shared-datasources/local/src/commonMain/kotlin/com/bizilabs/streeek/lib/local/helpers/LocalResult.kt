@@ -20,7 +20,6 @@ suspend fun <T> safeTransaction(
             val data = block()
             LocalResult.Success(data = data)
         } catch (e: Exception) {
-            // Timber.e(t = e, message = "Error For Safe Transaction")
             LocalResult.Error(message = e.message ?: "error")
         }
     }
