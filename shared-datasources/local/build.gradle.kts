@@ -9,14 +9,16 @@ kotlin {
         commonMain {
             dependencies {
                 implementation(libs.androidx.room.runtime)
+                implementation(libs.bundles.androidx.datastore)
             }
 
-            kotlin.srcDir("build/generated/ksp/metadata")
+            kotlin.srcDir("build/generated/ksp/metadata/commoMain/kotlin")
         }
     }
 }
 
 dependencies {
+    add("kspAndroid", libs.androidx.room.compiler)
     add("kspCommonMainMetadata", libs.androidx.room.compiler)
 }
 

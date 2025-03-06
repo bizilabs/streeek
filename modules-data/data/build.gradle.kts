@@ -10,7 +10,7 @@ android {
 dependencies {
     // modules
     implementation(projects.sharedDatasources.remote)
-    implementation(projects.modulesSources.local)
+    implementation(projects.sharedDatasources.local)
     implementation(projects.modulesData.domain)
     // paging
     implementation(libs.androidx.paging.runtime)
