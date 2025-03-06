@@ -34,6 +34,10 @@ androidx-security-crypto = "1.0.0"
 androidx-paging = "3.3.2"
 androidx-activity = "1.9.2"
 
+# paging
+paging-androidx = "3.3.0"
+paging-cashapp = "3.3.0-alpha02-0.5.1"
+
 # compose
 compose-bom = "2024.11.00"
 compose-tv-foundation = "1.0.0-alpha11"
@@ -109,6 +113,11 @@ androidx-datastore-proto = { module = "androidx.datastore:datastore-core", versi
 # androidx-paging
 androidx-paging-runtime = { module = "androidx.paging:paging-runtime", version.ref = "androidx-paging" }
 androidx-paging-compose = { module = "androidx.paging:paging-compose", version.ref = "androidx-paging" }
+
+paging-cashapp-common = { module = "app.cash.paging:paging-common", version.ref = "paging-cashapp"  }
+paging-cashapp-testing = { module = "app.cash.paging:paging-testing", version.ref = "paging-cashapp"  }
+paging-cashapp-uikit = { module = "app.cash.paging:paging-runtime-uikit", version.ref = "paging-cashapp"  }
+paging-cashapp-compose-common = { module = "app.cash.paging:paging-compose-common", version.ref = "paging-cashapp"  }
 
 # koin
 koin-bom = { module = "io.insert-koin:koin-bom", version.ref = "koin-bom" }

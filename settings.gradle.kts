@@ -70,7 +70,11 @@ include(":modules-features:reviews")
 
 // KMP module folders
 include(":shared-datasources")
+include(":shared-data")
 
 // KMP data sources modules
 include(":shared-datasources:remote")
 include(":shared-datasources:local")
+
+// KMP data modules
+include(":shared-data:domain")
