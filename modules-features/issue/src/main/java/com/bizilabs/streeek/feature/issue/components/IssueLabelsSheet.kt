@@ -105,7 +105,7 @@ fun IssueScreenLabelsSheet(
                     is FetchListState.Success -> {
                         LazyColumn(modifier = Modifier.fillMaxWidth()) {
                             items(result.list) {
-                                val selected = state.labels.contains(it)
+                                val selected = (state.editIssue?.labels ?: emptyList()).union(state.labels).toList().contains(it)
                                 Card(
                                     onClick = { onClickAddLabel(it) },
                                     colors =
