@@ -18,7 +18,6 @@ kotlin {
 }
 
 dependencies {
-    add("kspAndroid", libs.androidx.room.compiler)
     add("kspCommonMainMetadata", libs.androidx.room.compiler)
 }
 
