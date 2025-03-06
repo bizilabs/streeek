@@ -1,6 +1,7 @@
 package com.bizilabs.streeek.feature.issue.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -104,7 +105,13 @@ fun IssueScreenEditSection(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
-                modifier = Modifier.padding(16.dp),
+                modifier =
+                    Modifier
+                        .padding(16.dp)
+                        .clickable(
+                            onClick =
+                            onClickOpenLabels,
+                        ),
                 text = "Labels",
             )
             LazyRow(
