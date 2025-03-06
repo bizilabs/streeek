@@ -36,9 +36,6 @@ include("modules-data")
 include("modules-sources")
 include("modules-features")
 
-// sources modules
-// include(":modules-sources:local")
-
 // data modules
 include(":modules-data:data")
 include(":modules-data:domain")
