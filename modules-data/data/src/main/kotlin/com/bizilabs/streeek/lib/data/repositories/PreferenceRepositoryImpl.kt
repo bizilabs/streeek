@@ -2,12 +2,10 @@ package com.bizilabs.streeek.lib.data.repositories
 
 import com.bizilabs.streeek.lib.domain.repositories.PreferenceRepository
 import com.bizilabs.streeek.lib.local.sources.preference.LocalPreferenceSource
-import com.bizilabs.streeek.lib.remote.sources.preferences.RemotePreferencesSource
 import kotlinx.coroutines.flow.Flow
 
 class PreferenceRepositoryImpl(
     private val localSource: LocalPreferenceSource,
-    private val remoteSource: RemotePreferencesSource,
 ) : PreferenceRepository {
     override val typography: Flow<String>
         get() = localSource.typography
@@ -20,6 +18,9 @@ class PreferenceRepositoryImpl(
 
     override val userHasOnBoarded: Flow<Boolean>
         get() = localSource.userHasOnBoarded
+
+    override val dismissTime: Flow<String>
+        get() = localSource.dismissTime
 
     override suspend fun updateNetworkConnection(hasNetworkConnection: Boolean) {
         localSource.updateNetworkConnection(hasNetworkConnection = hasNetworkConnection)
@@ -35,5 +36,9 @@ class PreferenceRepositoryImpl(
 
     override suspend fun updateUserHasOnBoarded(hasOnBoarded: Boolean) {
         localSource.updateUserHasOnBoarded(hasOnBoarded = hasOnBoarded)
+    }
+
+    override suspend fun updateDismissTime() {
+        localSource.updateDismissTime()
     }
 }

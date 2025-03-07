@@ -7,6 +7,7 @@ interface PreferenceRepository {
     val isSyncingContributions: Flow<Boolean>
     val hasNetworkConnection: Flow<Boolean>
     val userHasOnBoarded: Flow<Boolean>
+    val dismissTime: Flow<String>
 
     suspend fun setIsSyncingContributions(isSyncing: Boolean)
 
@@ -15,4 +16,6 @@ interface PreferenceRepository {
     suspend fun updateNetworkConnection(hasNetworkConnection: Boolean)
 
     suspend fun updateUserHasOnBoarded(hasOnBoarded: Boolean)
+
+    suspend fun updateDismissTime()
 }
