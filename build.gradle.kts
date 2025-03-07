@@ -34,9 +34,12 @@ allprojects {
             reporter(ReporterType.JSON)
         }
         filter {
-            exclude("**/generated/**")
-            exclude("**/build/**")
-            exclude("**/shared_datasources/**")
+            exclude {
+                projectDir.toURI().relativize(it.file.toURI()).path.contains("/generated/")
+            }
+            exclude {
+                projectDir.toURI().relativize(it.file.toURI()).path.contains("/build/")
+            }
         }
     }
 }
