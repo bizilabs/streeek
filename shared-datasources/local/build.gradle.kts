@@ -12,19 +12,16 @@ kotlin {
                 implementation(libs.bundles.androidx.datastore)
             }
 
-            kotlin.srcDir("build/generated/ksp/metadata/commoMain/kotlin")
+            kotlin.srcDir("build/generated/ksp/metadata/commonMain/kotlin")
         }
     }
 }
 
 dependencies {
-    add("kspCommonMainMetadata", libs.androidx.room.compiler)
-}
-
-tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>>().configureEach {
-    if (name != "kspCommonMainKotlinMetadata") {
-        dependsOn("kspCommonMainKotlinMetadata")
-    }
+    add("kspAndroid", libs.androidx.room.compiler)
+    add("kspIosSimulatorArm64", libs.androidx.room.compiler)
+    add("kspIosX64", libs.androidx.room.compiler)
+    add("kspIosArm64", libs.androidx.room.compiler)
 }
 
 tasks.named("runKtlintCheckOverCommonMainSourceSet") {
@@ -32,7 +29,7 @@ tasks.named("runKtlintCheckOverCommonMainSourceSet") {
 }
 
 android {
-    namespace = "com.bizilabs.streeek.lib.local"
+    namespace = "com.bizilabs.streeek.shared.lib.local"
 }
 
 room {
