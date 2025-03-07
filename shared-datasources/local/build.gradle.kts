@@ -24,12 +24,8 @@ dependencies {
     add("kspIosArm64", libs.androidx.room.compiler)
 }
 
-tasks.named("runKtlintCheckOverCommonMainSourceSet") {
-    mustRunAfter("kspCommonMainKotlinMetadata")
-}
-
 android {
-    namespace = "com.bizilabs.streeek.shared.lib.local"
+    namespace = "com.bizilabs.streeek.lib.local"
 }
 
 room {
