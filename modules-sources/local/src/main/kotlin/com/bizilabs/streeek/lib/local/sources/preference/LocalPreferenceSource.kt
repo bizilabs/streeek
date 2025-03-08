@@ -53,8 +53,9 @@ class LocalPreferenceSourceImpl(
         get() =
             source.get(
                 Keys.hasUserEnabled,
-                default = Clock.System.now().minus(3.days)
-                    .toLocalDateTime(TimeZone.currentSystemDefault()).toString(),
+                default =
+                    Clock.System.now().minus(3.days)
+                        .toLocalDateTime(TimeZone.currentSystemDefault()).toString(),
             )
 
     override suspend fun setIsSyncingContributions(isSyncing: Boolean) {
