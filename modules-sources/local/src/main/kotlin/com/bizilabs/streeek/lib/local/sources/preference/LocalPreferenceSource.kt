@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
+import kotlin.time.Duration.Companion.days
 
 interface LocalPreferenceSource {
     val typography: Flow<String>
@@ -52,7 +53,8 @@ class LocalPreferenceSourceImpl(
         get() =
             source.get(
                 Keys.hasUserEnabled,
-                default = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).toString(),
+                default = Clock.System.now().minus(3.days)
+                    .toLocalDateTime(TimeZone.currentSystemDefault()).toString(),
             )
 
     override suspend fun setIsSyncingContributions(isSyncing: Boolean) {
