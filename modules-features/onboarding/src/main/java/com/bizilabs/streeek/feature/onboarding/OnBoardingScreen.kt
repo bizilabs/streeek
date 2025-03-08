@@ -20,7 +20,6 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -69,7 +68,6 @@ object OnBoardingScreen : Screen {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OnBoardingScreenContent(
     state: OnBoardingScreenState,
@@ -77,6 +75,7 @@ fun OnBoardingScreenContent(
     navigate: (Screen) -> Unit,
 ) {
     if (state.navigateToHome) navigate(rememberScreen(SharedScreen.Tabs))
+    if (state.navigateToSetup) navigate(rememberScreen(SharedScreen.Setup))
     if (state.navigateToAuthentication) navigate(rememberScreen(SharedScreen.Authentication))
 
     val coroutineScope = rememberCoroutineScope()

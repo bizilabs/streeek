@@ -2,6 +2,7 @@ package com.bizilabs.streeek.feature.onboarding
 
 import cafe.adriel.voyager.core.model.StateScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
+import com.bizilabs.streeek.lib.domain.repositories.AccountRepository
 import com.bizilabs.streeek.lib.domain.repositories.AuthenticationRepository
 import com.bizilabs.streeek.lib.domain.repositories.PreferenceRepository
 import com.bizilabs.streeek.lib.resources.SafiResources
@@ -16,6 +17,7 @@ val FeatureModuleOnBoarding =
             OnBoardingScreenModel(
                 preferenceRepository = get(),
                 authenticationRepository = get(),
+                accountRepository = get(),
             )
         }
     }
@@ -49,20 +51,24 @@ data class OnBoardingScreenState(
     val items: List<OnBoardingScreenItem> = onboardingItems,
     val navigateToAuthentication: Boolean = false,
     val navigateToHome: Boolean = false,
+    val navigateToSetup: Boolean = false,
 )
 
 class OnBoardingScreenModel(
     private val preferenceRepository: PreferenceRepository,
     private val authenticationRepository: AuthenticationRepository,
+    private val accountRepository: AccountRepository,
 ) : StateScreenModel<OnBoardingScreenState>(OnBoardingScreenState()) {
     fun onClickFinish() {
         screenModelScope.launch {
             preferenceRepository.updateUserHasOnBoarded(hasOnBoarded = true)
             val authentication = authenticationRepository.authenticated.first()
+            val account = accountRepository.account.first()
             mutableState.update {
                 it.copy(
                     navigateToAuthentication = !authentication,
                     navigateToHome = authentication,
+                    navigateToSetup = account == null,
                 )
             }
         }
