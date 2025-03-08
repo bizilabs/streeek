@@ -368,6 +368,9 @@ fun JoinScreenContent(
                                                         }
                                                     }
                                                 },
+                                                appendSuccess = {
+                                                    Spacer(modifier = Modifier.height(80.dp))
+                                                },
                                             ) { inviteDetails ->
                                                 AccountTeamInviteComponent(
                                                     modifier = Modifier,
