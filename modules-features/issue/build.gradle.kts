@@ -13,4 +13,6 @@ dependencies {
     implementation(libs.bundles.coil)
     // richtexteditor
     implementation(libs.richtexteditor)
+    // compose markdown
+    implementation(libs.compose.markdown)
 }

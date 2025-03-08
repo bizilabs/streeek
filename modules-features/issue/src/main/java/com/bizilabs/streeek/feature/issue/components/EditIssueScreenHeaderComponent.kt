@@ -37,7 +37,7 @@ fun EditIssueScreenHeaderComponent(
                 title = {
                     Text(
                         modifier = Modifier.fillMaxWidth(),
-                        text = stringResource(SafiStringLabels.editIssue),
+                        text = stringResource(SafiStringLabels.EditFeedback),
                         style = MaterialTheme.typography.titleSmall,
                         fontWeight = FontWeight.Bold,
                         textAlign = TextAlign.Start,

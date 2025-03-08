@@ -9,16 +9,17 @@ object SafiStringLabels {
     val DeleteAccount = R.string.label_delete_account
     val Notifications = R.string.label_notifications
     val Issues = R.string.label_issues
+    val Feedback = R.string.label_feedback
     val NoNotifications = R.string.label_no_notifications
     val NoIssuesFound = R.string.no_issues_found
     val OnBoardingTitle1 = R.string.label_onboarding_title_1
     val OnBoardingTitle2 = R.string.label_onboarding_title_2
     val OnBoardingTitle3 = R.string.label_onboarding_title_3
     val Teams = R.string.teams
-    val newIssue = R.string.new_issue
-    val editIssue = R.string.edit_issue
-    val title = R.string.title
-    val description = R.string.description
+    val NewFeedback = R.string.new_feedback
+    val EditFeedback = R.string.edit_feedback
+    val Title = R.string.title
+    val Description = R.string.description
 }
 
 object SafiStringMessages {

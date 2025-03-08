@@ -23,7 +23,7 @@ fun SafiSearchBar(
     query: String,
     onQueryChanged: (String) -> Unit,
     onClose: () -> Unit,
-    placeholder: String = "Search issue...",
+    placeholder: String = "Search...",
     modifier: Modifier = Modifier,
 ) {
     val focusRequester = remember { FocusRequester() }

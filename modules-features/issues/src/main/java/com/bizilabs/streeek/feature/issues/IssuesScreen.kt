@@ -125,6 +125,7 @@ fun IssuesScreenContent(
                 title = {
                     if (isSearching) {
                         SafiSearchBar(
+                            placeholder = "Search Feedback...",
                             query = searchQuery,
                             onQueryChanged = { newQuery ->
                                 searchQuery = newQuery
@@ -139,7 +140,7 @@ fun IssuesScreenContent(
                     } else {
                         SafiTopBarHeader(
                             modifier = Modifier.padding(start = 16.dp),
-                            title = stringResource(SafiStrings.Labels.Issues),
+                            title = stringResource(SafiStrings.Labels.Feedback),
                         )
                     }
                 },

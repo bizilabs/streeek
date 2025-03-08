@@ -89,7 +89,7 @@ fun IssueEditScreenContent(
                 Modifier
                     .fillMaxSize()
                     .padding(innerPadding),
-            targetState = state.number,
+            targetState = state.issueNumber,
             label = "animate issue",
         ) { id ->
             Timber.d("Id: -->$id")

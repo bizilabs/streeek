@@ -22,7 +22,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 data class IssueScreenState(
-    val number: Long? = null,
+    val issueNumber: Long? = null,
     val hasLoadedFromNavigation: Boolean = false,
     val title: String = "",
     val description: String = "",
@@ -31,7 +31,7 @@ data class IssueScreenState(
     val labelsState: FetchListState<LabelDomain> = FetchListState.Loading,
     val issueState: FetchState<IssueDomain> = FetchState.Loading,
     val dialogState: DialogState? = null,
-    val isIssueAuther: Boolean? = false,
+    val isIssueAuthor: Boolean? = false,
     val editIssue: IssueDomain? = null,
     val currentUsername: String? = null,
 ) {
@@ -83,7 +83,7 @@ class IssueScreenModel(
     }
 
     private fun getIssue() {
-        val id = state.value.number ?: return
+        val id = state.value.issueNumber ?: return
         screenModelScope.launch {
             mutableState.update { it.copy(issueState = FetchState.Loading) }
             val update =
@@ -92,7 +92,7 @@ class IssueScreenModel(
                     is DataResult.Success -> {
                         mutableState.update {
                             it.copy(
-                                isIssueAuther = state.value.currentUsername == result.data.user.name,
+                                isIssueAuthor = state.value.currentUsername == result.data.user.name,
                                 editIssue = result.data,
                             )
                         }
@@ -123,7 +123,7 @@ class IssueScreenModel(
 
                     is DataResult.Success -> {
                         val number = result.data.number
-                        mutableState.update { it.copy(number = number) }
+                        mutableState.update { it.copy(issueNumber = number) }
                         stateNumber.update { number }
                         getIssue()
                         DialogState.Success(
@@ -166,7 +166,7 @@ class IssueScreenModel(
 
                     is DataResult.Success -> {
                         val number = result.data.number
-                        mutableState.update { it.copy(number = number) }
+                        mutableState.update { it.copy(issueNumber = number) }
                         stateNumber.update { number }
 
                         getIssue()
@@ -190,7 +190,7 @@ class IssueScreenModel(
 
     fun onValueChangeId(id: Long?) {
         if (state.value.hasLoadedFromNavigation.not()) {
-            mutableState.update { it.copy(number = id, hasLoadedFromNavigation = true) }
+            mutableState.update { it.copy(issueNumber = id, hasLoadedFromNavigation = true) }
             stateNumber.update { id }
             getIssue()
         }

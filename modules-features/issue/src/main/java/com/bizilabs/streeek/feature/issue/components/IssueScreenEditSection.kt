@@ -52,7 +52,7 @@ fun IssueScreenEditSection(
     ) {
         // Title Label
         Text(
-            text = stringResource(SafiStringLabels.title),
+            text = stringResource(SafiStringLabels.Title),
             style = MaterialTheme.typography.labelLarge,
             color = MaterialTheme.colorScheme.onSurface,
             modifier = Modifier.padding(bottom = 4.dp),
@@ -74,7 +74,7 @@ fun IssueScreenEditSection(
 
         // Description Label
         Text(
-            text = stringResource(SafiStringLabels.description),
+            text = stringResource(SafiStringLabels.Description),
             style = MaterialTheme.typography.labelLarge,
             color = MaterialTheme.colorScheme.onSurface,
             modifier = Modifier.padding(bottom = 4.dp),

@@ -50,7 +50,7 @@ fun IssueScreenCreateSection(
             onValueChange = onValueChangeTitle,
             shape = RectangleShape,
             placeholder = {
-                Text(text = stringResource(SafiStringLabels.title))
+                Text(text = stringResource(SafiStringLabels.Title))
             },
             colors =
                 TextFieldDefaults.colors(
