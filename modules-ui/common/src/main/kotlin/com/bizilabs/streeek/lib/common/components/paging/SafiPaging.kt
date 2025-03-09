@@ -1,6 +1,8 @@
 package com.bizilabs.streeek.lib.common.components.paging
 
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -35,6 +37,7 @@ fun <T : Any> getPagingData(data: List<T> = emptyList()): PagingData<T> =
 fun <T : Any> SafiPagingComponent(
     data: LazyPagingItems<T>,
     modifier: Modifier = Modifier,
+    lazyListState: LazyListState = rememberLazyListState(),
     prependError: @Composable ((Throwable) -> Unit)? = null,
     prependSuccess: @Composable (Boolean) -> Unit = {},
     refreshLoading: @Composable () -> Unit = {
@@ -52,6 +55,7 @@ fun <T : Any> SafiPagingComponent(
         modifier = modifier,
         states = data.loadState,
         count = data.itemCount,
+        lazyListState = lazyListState,
         prependError = prependError,
         prependSuccess = prependSuccess,
         refreshLoading = refreshLoading,
