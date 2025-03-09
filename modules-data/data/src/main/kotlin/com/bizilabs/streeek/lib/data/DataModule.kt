@@ -62,7 +62,7 @@ val dataModule =
             )
         }
         single<PreferenceRepository> {
-            PreferenceRepositoryImpl(localSource = get(), remoteSource = get())
+            PreferenceRepositoryImpl(localSource = get())
         }
         single<TeamRepository> {
             TeamRepositoryImpl(

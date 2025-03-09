@@ -23,6 +23,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDate
+import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import org.koin.dsl.module
@@ -121,13 +122,36 @@ class FeedScreenModel(
     }
 
     fun checkNotificationPermission() {
-        val granted =
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                context.permissionIsGranted(permission = Manifest.permission.POST_NOTIFICATIONS)
-            } else {
-                true
+        screenModelScope.launch {
+            val granted =
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    context.permissionIsGranted(permission = Manifest.permission.POST_NOTIFICATIONS)
+                } else {
+                    true
+                }
+
+            preferenceRepository.dismissTime.collectLatest { time ->
+                val currentTime =
+                    Clock.System.now()
+                        .toLocalDateTime(TimeZone.currentSystemDefault())
+                val dismissedTime = LocalDateTime.parse(time)
+                val difference = currentTime.compareTo(dismissedTime)
+
+                when {
+                    !granted && difference > 3 -> {
+                        mutableState.update { it.copy(isPermissionGranted = false) }
+                    }
+
+                    !granted && difference < 3 -> {
+                        mutableState.update { it.copy(isPermissionGranted = true) }
+                    }
+
+                    granted -> {
+                        mutableState.update { it.copy(isPermissionGranted = true) }
+                    }
+                }
             }
-        mutableState.update { it.copy(isPermissionGranted = granted) }
+        }
     }
 
     private fun observeDates() {
@@ -168,8 +192,9 @@ class FeedScreenModel(
         mutableState.update { it.copy(isMonthView = it.isMonthView.not()) }
     }
 
-    // Dismiss Dialog and Prevent asking permission for app lifecycle , till killed.
     fun onDismissNotificationModal() {
-        mutableState.update { it.copy(isPermissionGranted = true) }
+        screenModelScope.launch {
+            preferenceRepository.updateDismissTime()
+        }
     }
 }
