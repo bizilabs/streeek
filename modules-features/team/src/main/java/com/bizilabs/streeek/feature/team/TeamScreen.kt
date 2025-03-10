@@ -11,12 +11,13 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.icons.outlined.Notifications
+import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material.icons.rounded.Error
 import androidx.compose.material.icons.rounded.People
 import androidx.compose.material3.Button
@@ -61,6 +62,7 @@ import com.bizilabs.streeek.lib.common.navigation.SharedScreen
 import com.bizilabs.streeek.lib.design.components.SafiBottomDialog
 import com.bizilabs.streeek.lib.design.components.SafiBottomSheetPicker
 import com.bizilabs.streeek.lib.design.components.SafiCenteredColumn
+import com.bizilabs.streeek.lib.design.components.SafiCircleDecoratorComponent
 import com.bizilabs.streeek.lib.design.components.SafiDropdownComponent
 import com.bizilabs.streeek.lib.design.components.SafiInfoSection
 import com.bizilabs.streeek.lib.design.components.SafiRefreshBox
@@ -235,6 +237,7 @@ fun TeamScreenContent(
             TeamScreenHeaderComponent(
                 onClickBack = onClickBack,
                 state = state,
+                requestsAreEmpty = requests.itemSnapshotList.isEmpty(),
                 onClickMenuAction = onClickMenuAction,
                 onClickRequests = onClickRequests,
             )
@@ -279,6 +282,7 @@ fun TeamScreenContent(
 private fun TeamScreenHeaderComponent(
     state: TeamScreenState,
     onClickBack: () -> Unit,
+    requestsAreEmpty: Boolean,
     onClickMenuAction: (TeamMenuAction) -> Unit,
     onClickRequests: () -> Unit,
 ) {
@@ -329,11 +333,22 @@ private fun TeamScreenHeaderComponent(
                 if (state.fetchState is FetchState.Success) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         AnimatedVisibility(state.fetchState.value.details.role.isAdmin) {
-                            IconButton(onClick = onClickRequests) {
-                                Icon(
-                                    imageVector = Icons.Outlined.Notifications,
-                                    contentDescription = "Notifications",
-                                )
+                            Box(
+                                modifier = Modifier,
+                            ) {
+                                IconButton(onClick = onClickRequests) {
+                                    Icon(
+                                        imageVector = Icons.Outlined.Person,
+                                        contentDescription = "People",
+                                    )
+                                }
+                                if (!requestsAreEmpty) {
+                                    SafiCircleDecoratorComponent(
+                                        modifier = Modifier.offset(38.dp, 16.dp),
+                                        dotIndicatorColor = MaterialTheme.colorScheme.primary,
+                                        circleRadius = 4,
+                                    )
+                                }
                             }
                         }
                         Box(

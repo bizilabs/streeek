@@ -10,13 +10,17 @@ import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun SafiCircleDecoratorComponent(dotIndicatorColor: Color = MaterialTheme.colorScheme.primary.copy(0.8f)) {
+fun SafiCircleDecoratorComponent(
+    modifier: Modifier = Modifier,
+    dotIndicatorColor: Color = MaterialTheme.colorScheme.primary.copy(0.8f),
+    circleRadius: Int = 2,
+) {
     Canvas(
-        modifier = Modifier.wrapContentSize(),
+        modifier = modifier.wrapContentSize(),
     ) {
         drawCircle(
             color = dotIndicatorColor,
-            radius = 2.dp.toPx(),
+            radius = circleRadius.dp.toPx(),
             alpha = 1f,
             style = Fill,
         )
