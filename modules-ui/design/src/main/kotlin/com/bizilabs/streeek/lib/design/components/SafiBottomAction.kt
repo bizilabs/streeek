@@ -135,7 +135,10 @@ private fun SafiBottomActionPreview() {
         Scaffold(
             snackbarHost = {
                 SafiBottomAction(
-                    modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 16.dp),
                     title = "Enable Notifications",
                     description = "We can't seem to send you notifications. Please enable them for a better experience",
                     icon = Icons.Rounded.Notifications,
@@ -147,7 +150,10 @@ private fun SafiBottomActionPreview() {
                 Spacer(modifier = Modifier.weight(1f))
                 Card(
                     modifier =
-                        Modifier.fillMaxWidth().padding(8.dp).height(200.dp)
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(8.dp)
+                            .height(200.dp)
                             .padding(bottom = 100.dp),
                 ) { }
             }
