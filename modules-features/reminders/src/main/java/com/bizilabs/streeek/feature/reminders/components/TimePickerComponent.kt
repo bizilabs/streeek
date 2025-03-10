@@ -15,8 +15,11 @@ import androidx.compose.material3.TimePickerDefaults
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.bizilabs.streeek.lib.design.components.SafiButton
 import com.bizilabs.streeek.lib.design.components.SafiOutlinedButton
 import com.bizilabs.streeek.lib.design.theme.SafiTheme
@@ -29,6 +32,9 @@ fun TimePickerComponent(
     onDismiss: (Int, Int) -> Unit,
 ) {
     val currentTime = SystemLocalDateTime
+
+    val screenWidth = LocalConfiguration.current.screenWidthDp
+    val fontSize = (screenWidth * 0.015).coerceIn(12.0, 20.0).sp // Adjust font size based on screen width
 
     val timePickerState =
         rememberTimePickerState(
@@ -65,13 +71,13 @@ fun TimePickerComponent(
                     modifier = Modifier.weight(1f),
                     onClick = { onDismiss(timePickerState.hour, timePickerState.minute) },
                 ) {
-                    Text("dismiss")
+                    Text("Dismiss", style = TextStyle(fontSize = fontSize))
                 }
                 SafiButton(
                     modifier = Modifier.weight(1f),
                     onClick = { onConfirm(timePickerState.hour, timePickerState.minute) },
                 ) {
-                    Text("confirm")
+                    Text("Confirm", style = TextStyle(fontSize = fontSize))
                 }
             }
         }
