@@ -34,7 +34,6 @@ rootProject.name = "streeek"
 include("modules-ui")
 include("modules-app")
 include("modules-data")
-include("modules-sources")
 include("modules-features")
 
 // data modules
