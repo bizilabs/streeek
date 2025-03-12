@@ -20,74 +20,75 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          #!/bin/bash
-          
-          # Required number of approvals
+        #!/bin/bash
+
+        # Required number of approvals
           REQUIRED_APPROVALS=2
-          
-          # Extract pull request number and repository information
+  
+        # Extract pull request number and repository information
           PR_NUMBER=$(jq -r .pull_request.number < $GITHUB_EVENT_PATH)
           OWNER=$(jq -r .repository.owner.login < $GITHUB_EVENT_PATH)
           REPO=$(jq -r .repository.name < $GITHUB_EVENT_PATH)
-          
+  
           echo "Processing Pull Request #$PR_NUMBER in $OWNER/$REPO"
-          
-          # Function to check if PR is in draft state
+  
+        # Function to check if PR is in draft state
           is_pr_draft() {
-            DRAFT_STATE=$(curl -s -H "Authorization: Bearer $GITHUB_TOKEN" \
-              -H "Accept: application/vnd.github+json" \
-              "https://api.github.com/repos/$OWNER/$REPO/pulls/$PR_NUMBER" |
-              jq -r '.draft')
-          
-            if [ "$DRAFT_STATE" == "true" ]; then
-              echo "Pull Request #$PR_NUMBER is in draft state. Exiting."
-              exit 1
-            fi
+          DRAFT_STATE=$(curl -s -H "Authorization: Bearer $GITHUB_TOKEN" \
+          -H "Accept: application/vnd.github+json" \
+          "https://api.github.com/repos/$OWNER/$REPO/pulls/$PR_NUMBER" |
+          jq -r '.draft')
+
+          if [ "$DRAFT_STATE" == "true" ]; then
+          echo "Pull Request #$PR_NUMBER is in draft state. Exiting."
+          exit 0
+          fi
           }
-          
-          # Function to check if workflows are still running
+
+        # Function to check if workflows are still running
           are_workflows_running() {
-            RUNNING_WORKFLOWS=$(curl -s -H "Authorization: Bearer $GITHUB_TOKEN" \
-              -H "Accept: application/vnd.github+json" \
-              "https://api.github.com/repos/$OWNER/$REPO/actions/runs?event=pull_request&status=in_progress" |
-              jq -r '.workflow_runs | length')
-          
-            if [ "$RUNNING_WORKFLOWS" -gt 0 ]; then
-              echo "There are still $RUNNING_WORKFLOWS running workflows. Retrying in 30 seconds..."
-              return 0
-            else
-              echo "No running workflows found. Proceeding with merge."
-              return 1
-            fi
+          RUNNING_WORKFLOWS=$(curl -s -H "Authorization: Bearer $GITHUB_TOKEN" \
+          -H "Accept: application/vnd.github+json" \
+          "https://api.github.com/repos/$OWNER/$REPO/actions/runs?event=pull_request&status=in_progress" |
+          jq -r '.workflow_runs | length')
+
+          if [ "$RUNNING_WORKFLOWS" -gt 0 ]; then
+          echo "There are still $RUNNING_WORKFLOWS running workflows. Retrying in 30 seconds..."
+          return 0
+          else
+          echo "No running workflows found. Proceeding with merge."
+          return 1
+          fi
           }
-          
-          # Function to check approval count
+
+        # Function to check approval count
           get_approval_count() {
-            REVIEWS=$(curl -s -H "Authorization: Bearer $GITHUB_TOKEN" \
-              -H "Accept: application/vnd.github+json" \
-              "https://api.github.com/repos/$OWNER/$REPO/pulls/$PR_NUMBER/reviews")
-          
-            echo "$REVIEWS" | jq '[.[] | select(.state == "APPROVED")] | length'
+          REVIEWS=$(curl -s -H "Authorization: Bearer $GITHUB_TOKEN" \
+          -H "Accept: application/vnd.github+json" \
+          "https://api.github.com/repos/$OWNER/$REPO/pulls/$PR_NUMBER/reviews")
+
+          echo "$REVIEWS" | jq '[.[] | select(.state == "APPROVED")] | length'
           }
-          
-          # Ensure PR is not a draft
+
+      # Ensure PR is not a draft
           is_pr_draft
-          
+  
           APPROVAL_COUNT=$(get_approval_count)
           echo "Approvals: $APPROVAL_COUNT / $REQUIRED_APPROVALS"
-          
+  
           if [ "$APPROVAL_COUNT" -lt "$REQUIRED_APPROVALS" ]; then
-            echo "Not enough approvals to merge. Exiting."
-            exit 1
+          echo "Not enough approvals to merge. Exiting."
+          exit 0
           fi
-          
+  
           while are_workflows_running; do
-            sleep 30
+          sleep 30
           done
-          
+  
           echo "Merging Pull Request #$PR_NUMBER"
+
           curl -X PUT -s -H "Authorization: Bearer $GITHUB_TOKEN" \
-            -H "Accept: application/vnd.github+json" \
-            -H "X-GitHub-Api-Version: 2022-11-28" \
-            "https://api.github.com/repos/$OWNER/$REPO/pulls/$PR_NUMBER/merge" \
-            -d '{"merge_method": "rebase"}'
+          -H "Accept: application/vnd.github+json" \
+          -H "X-GitHub-Api-Version: 2022-11-28" \
+          "https://api.github.com/repos/$OWNER/$REPO/pulls/$PR_NUMBER/merge" \
+          -d '{"merge_method": "rebase"}'
