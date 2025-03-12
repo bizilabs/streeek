@@ -20,7 +20,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-        #!/bin/bash
+          #!/bin/bash
 
         # Required number of approvals
           REQUIRED_APPROVALS=2
