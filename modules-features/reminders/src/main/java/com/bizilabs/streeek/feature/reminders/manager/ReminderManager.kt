@@ -5,7 +5,7 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import com.bizilabs.streeek.feature.reminders.receivers.ReminderReceiver
-import com.bizilabs.streeek.lib.domain.managers.notifications.NotificationCode
+import com.bizilabs.streeek.lib.domain.managers.Notifications
 import com.bizilabs.streeek.lib.domain.models.ReminderDomain
 import kotlinx.datetime.DayOfWeek
 import java.util.Calendar
@@ -67,7 +67,7 @@ internal class ReminderManagerImpl(
             createPendingIntent(
                 label = label,
                 day = day,
-                requestCode = NotificationCode.REMINDER.code,
+                requestCode = Notifications.Codes.REMINDERS,
             )
         alarmManager.set(
             AlarmManager.RTC_WAKEUP,
@@ -132,7 +132,7 @@ internal class ReminderManagerImpl(
         return createPendingIntent(
             label = reminder.label,
             day = dayOfWeek.value,
-            requestCode = NotificationCode.REMINDER.code,
+            requestCode = Notifications.Codes.REMINDERS,
         )
     }
 

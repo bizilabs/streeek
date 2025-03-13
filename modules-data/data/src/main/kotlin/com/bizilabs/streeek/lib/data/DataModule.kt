@@ -1,5 +1,7 @@
 package com.bizilabs.streeek.lib.data
 
+import com.bizilabs.streeek.lib.data.managers.NotificationManagerImpl
+import com.bizilabs.streeek.lib.data.monitors.NetworkMonitorImpl
 import com.bizilabs.streeek.lib.data.repositories.AccountRepositoryImpl
 import com.bizilabs.streeek.lib.data.repositories.AuthenticationRepositoryImpl
 import com.bizilabs.streeek.lib.data.repositories.ContributionRepositoryImpl
@@ -15,8 +17,18 @@ import com.bizilabs.streeek.lib.data.repositories.TeamInvitationCodeRepositoryIm
 import com.bizilabs.streeek.lib.data.repositories.TeamRepositoryImpl
 import com.bizilabs.streeek.lib.data.repositories.UserRepositoryImpl
 import com.bizilabs.streeek.lib.data.repositories.VersionRepositoryImpl
-import com.bizilabs.streeek.lib.data.repositories.team.TeamMemberInvitationRepositoryImpl
+import com.bizilabs.streeek.lib.data.repositories.WorkersRepositoryImpl
+import com.bizilabs.streeek.lib.data.repositories.team.TeamInviteRepositoryImpl
 import com.bizilabs.streeek.lib.data.repositories.team.TeamRequestRepositoryImpl
+import com.bizilabs.streeek.lib.data.workers.ReminderWorker
+import com.bizilabs.streeek.lib.data.workers.SaveFCMTokenWork
+import com.bizilabs.streeek.lib.data.workers.SyncAccountWork
+import com.bizilabs.streeek.lib.data.workers.SyncContributionsWork
+import com.bizilabs.streeek.lib.data.workers.SyncDailyContributionsWork
+import com.bizilabs.streeek.lib.data.workers.SyncLeaderboardWork
+import com.bizilabs.streeek.lib.data.workers.SyncLevelsWork
+import com.bizilabs.streeek.lib.data.workers.SyncTeamsWork
+import com.bizilabs.streeek.lib.domain.managers.NotificationManager
 import com.bizilabs.streeek.lib.domain.monitors.NetworkMonitor
 import com.bizilabs.streeek.lib.domain.repositories.AccountRepository
 import com.bizilabs.streeek.lib.domain.repositories.AuthenticationRepository
@@ -34,10 +46,12 @@ import com.bizilabs.streeek.lib.domain.repositories.TeamInvitationCodeRepository
 import com.bizilabs.streeek.lib.domain.repositories.TeamRepository
 import com.bizilabs.streeek.lib.domain.repositories.UserRepository
 import com.bizilabs.streeek.lib.domain.repositories.VersionRepository
-import com.bizilabs.streeek.lib.domain.repositories.team.TeamMemberInvitationRepository
+import com.bizilabs.streeek.lib.domain.repositories.WorkersRepository
+import com.bizilabs.streeek.lib.domain.repositories.team.TeamInviteRepository
 import com.bizilabs.streeek.lib.domain.repositories.team.TeamRequestRepository
 import com.bizilabs.streeek.lib.local.LocalModule
 import com.bizilabs.streeek.lib.remote.RemoteModule
+import org.koin.androidx.workmanager.dsl.workerOf
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
@@ -52,6 +66,7 @@ val dataModule =
                 remote = get(),
                 local = get(),
                 contributionsLocalSource = get(),
+                notificationManager = get(),
             )
         }
         single<ContributionRepository> {
@@ -111,9 +126,9 @@ val dataModule =
             )
         }
         single<ReminderRepository> { ReminderRepositoryImpl(localSource = get()) }
-        single<NetworkMonitor> { NetworkMonitor(context = get(), repository = get()) }
-        single<TeamMemberInvitationRepository> {
-            TeamMemberInvitationRepositoryImpl(
+        single<NetworkMonitor> { NetworkMonitorImpl(context = get(), repository = get()) }
+        single<TeamInviteRepository> {
+            TeamInviteRepositoryImpl(
                 invitationRemoteSource = get(),
                 accountLocalSource = get(),
             )
@@ -124,4 +139,14 @@ val dataModule =
                 accountLocalSource = get(),
             )
         }
+        single<WorkersRepository> { WorkersRepositoryImpl(context = get()) }
+        single<NotificationManager> { NotificationManagerImpl(context = get()) }
+        workerOf(::SyncTeamsWork)
+        workerOf(::SyncLevelsWork)
+        workerOf(::SyncAccountWork)
+        workerOf(::SaveFCMTokenWork)
+        workerOf(::SyncLeaderboardWork)
+        workerOf(::SyncContributionsWork)
+        workerOf(::SyncDailyContributionsWork)
+        workerOf(::ReminderWorker)
     }

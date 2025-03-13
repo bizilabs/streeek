@@ -6,7 +6,7 @@ import android.media.MediaPlayer
 import android.os.Build
 import cafe.adriel.voyager.core.model.StateScreenModel
 import com.bizilabs.streeek.feature.reminders.manager.ReminderManager
-import com.bizilabs.streeek.lib.domain.workers.stopReminderWork
+import com.bizilabs.streeek.lib.domain.repositories.WorkersRepository
 import kotlinx.coroutines.flow.update
 import timber.log.Timber
 
@@ -21,6 +21,7 @@ data class ReminderScreenState(
 class ReminderScreenModel(
     private val context: Context,
     private val manager: ReminderManager,
+    private val repository: WorkersRepository,
 ) : StateScreenModel<ReminderScreenState>(ReminderScreenState()) {
     fun updateValues(
         label: String,
@@ -62,7 +63,7 @@ class ReminderScreenModel(
     }
 
     private fun stopPlayingReminderTone() {
-        context.stopReminderWork()
+        repository.runReminder(isStarting = false)
         try {
             val player =
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {

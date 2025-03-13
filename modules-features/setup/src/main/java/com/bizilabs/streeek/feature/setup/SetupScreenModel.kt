@@ -1,6 +1,5 @@
 package com.bizilabs.streeek.feature.setup
 
-import android.content.Context
 import cafe.adriel.voyager.core.model.StateScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
 import com.bizilabs.streeek.lib.common.models.FetchState
@@ -9,9 +8,21 @@ import com.bizilabs.streeek.lib.domain.models.AccountDomain
 import com.bizilabs.streeek.lib.domain.models.UserDomain
 import com.bizilabs.streeek.lib.domain.repositories.AccountRepository
 import com.bizilabs.streeek.lib.domain.repositories.UserRepository
-import com.bizilabs.streeek.lib.domain.workers.startSyncContributionsWork
+import com.bizilabs.streeek.lib.domain.repositories.WorkersRepository
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import org.koin.dsl.module
+
+val FeatureSetup =
+    module {
+        factory {
+            SetupScreenModel(
+                userRepository = get(),
+                accountRepository = get(),
+                workersRepository = get(),
+            )
+        }
+    }
 
 data class SetupScreenState(
     val userState: FetchState<UserDomain> = FetchState.Loading,
@@ -19,9 +30,9 @@ data class SetupScreenState(
 )
 
 class SetupScreenModel(
-    private val context: Context,
     private val userRepository: UserRepository,
     private val accountRepository: AccountRepository,
+    private val workersRepository: WorkersRepository,
 ) : StateScreenModel<SetupScreenState>(SetupScreenState()) {
     init {
         getUser()
@@ -87,7 +98,7 @@ class SetupScreenModel(
     }
 
     private fun syncContributions() {
-        context.startSyncContributionsWork()
+        workersRepository.runSyncContributions()
     }
 
     fun onClickGetUserRetry() {

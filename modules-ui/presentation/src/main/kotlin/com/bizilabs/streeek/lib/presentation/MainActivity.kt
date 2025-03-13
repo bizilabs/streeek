@@ -56,6 +56,6 @@ class MainActivity : BaseActivity() {
         super.onDestroy()
         // Clean up resources
         inAppUpdateManager.cleanup()
-        networkMonitor.unregister()
+        networkMonitor.deregister()
     }
 }

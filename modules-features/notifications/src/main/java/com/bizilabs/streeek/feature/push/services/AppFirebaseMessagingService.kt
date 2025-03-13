@@ -1,14 +1,18 @@
 package com.bizilabs.streeek.feature.push.services
 
-import com.bizilabs.streeek.lib.domain.managers.notifications.AppNotificationChannel
-import com.bizilabs.streeek.lib.domain.managers.notifications.notify
+import com.bizilabs.streeek.lib.domain.managers.NotificationChannel
+import com.bizilabs.streeek.lib.domain.managers.NotificationData
+import com.bizilabs.streeek.lib.domain.managers.NotificationManager
+import com.bizilabs.streeek.lib.domain.managers.Notifications
 import com.bizilabs.streeek.lib.domain.models.notifications.asNotificationResult
-import com.bizilabs.streeek.lib.domain.workers.startProcessingNotificationWork
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
+import org.koin.android.ext.android.inject
 import timber.log.Timber
 
 class AppFirebaseMessagingService : FirebaseMessagingService() {
+    val manager: NotificationManager by inject()
+
     override fun onNewToken(token: String) {
         super.onNewToken(token)
         Timber.tag("FCM").d("New token: $token")
@@ -26,16 +30,21 @@ class AppFirebaseMessagingService : FirebaseMessagingService() {
 
         if (title != null && body != null && result != null) {
             val channel = getChannelFromType(result.type)
-            notify(title = title, body = body, channel = channel, imageUrl = imageUrl)
-            startProcessingNotificationWork(result = result)
+            manager.send(
+                NotificationData(
+                    title = title,
+                    message = body,
+                    channel = channel,
+                    imageUri = imageUrl.toString(),
+                ),
+            )
         }
     }
 
-    private fun getChannelFromType(type: String): AppNotificationChannel {
+    private fun getChannelFromType(type: String): NotificationChannel {
         return when (type) {
-            "GENERAL" -> AppNotificationChannel.GENERAL
-            "TEAM_REQUESTS" -> AppNotificationChannel.TEAM_REQUESTS
-            else -> AppNotificationChannel.GENERAL
+            "TEAM_REQUESTS" -> Notifications.Channels.teamRequests
+            else -> Notifications.Channels.general
         }
     }
 }

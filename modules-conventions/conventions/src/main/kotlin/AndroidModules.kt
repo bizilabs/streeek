@@ -7,7 +7,7 @@ object AndroidModules {
     }
 
     object Data {
-        const val domain = ":modules-data:domain"
+        const val domain = ":shared-data:domain"
         const val data = ":modules-data:data"
     }
 

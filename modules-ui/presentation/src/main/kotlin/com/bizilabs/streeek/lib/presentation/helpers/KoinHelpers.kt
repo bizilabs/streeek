@@ -14,21 +14,12 @@ import com.bizilabs.streeek.feature.points.FeaturePoints
 import com.bizilabs.streeek.feature.profile.profileModule
 import com.bizilabs.streeek.feature.reminders.FeatureModuleReminders
 import com.bizilabs.streeek.feature.reviews.ReviewModule
-import com.bizilabs.streeek.feature.setup.setupModule
+import com.bizilabs.streeek.feature.setup.FeatureSetup
 import com.bizilabs.streeek.feature.tabs.FeatureTabsModule
 import com.bizilabs.streeek.feature.team.FeatureTeamModule
 import com.bizilabs.streeek.feature.updater.AppUpdaterModule
-import com.bizilabs.streeek.lib.domain.workers.ReminderWorker
-import com.bizilabs.streeek.lib.domain.workers.SaveFCMTokenWork
-import com.bizilabs.streeek.lib.domain.workers.SyncAccountWork
-import com.bizilabs.streeek.lib.domain.workers.SyncContributionsWork
-import com.bizilabs.streeek.lib.domain.workers.SyncDailyContributionsWork
-import com.bizilabs.streeek.lib.domain.workers.SyncLeaderboardWork
-import com.bizilabs.streeek.lib.domain.workers.SyncLevelsWork
-import com.bizilabs.streeek.lib.domain.workers.SyncTeamsWork
 import com.bizilabs.streeek.lib.presentation.MainViewModel
 import org.koin.android.ext.koin.androidContext
-import org.koin.androidx.workmanager.dsl.workerOf
 import org.koin.androidx.workmanager.koin.workManagerFactory
 import org.koin.core.context.loadKoinModules
 import org.koin.core.context.startKoin
@@ -51,7 +42,7 @@ val PresentationModule =
         includes(
             landingModule,
             authenticationModule,
-            setupModule,
+            FeatureSetup,
             FeatureTabsModule,
             profileModule,
             FeatureTeamModule,
@@ -67,12 +58,4 @@ val PresentationModule =
             FeatureModuleReminders,
             ReviewModule,
         )
-        workerOf(::SyncTeamsWork)
-        workerOf(::SyncLevelsWork)
-        workerOf(::SyncAccountWork)
-        workerOf(::SaveFCMTokenWork)
-        workerOf(::SyncLeaderboardWork)
-        workerOf(::SyncContributionsWork)
-        workerOf(::SyncDailyContributionsWork)
-        workerOf(::ReminderWorker)
     }

@@ -1,18 +1,20 @@
 package com.bizilabs.streeek.feature.landing
 
+import android.content.Intent
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.LocalActivity
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.platform.LocalContext
 import cafe.adriel.voyager.core.registry.rememberScreen
 import cafe.adriel.voyager.core.screen.Screen
 import com.bizilabs.streeek.lib.common.navigation.SharedScreen
+import com.bizilabs.streeek.lib.domain.models.notifications.NotificationResult
 import com.bizilabs.streeek.lib.domain.models.notifications.asNotificationResult
 import timber.log.Timber
 
 @Composable
 fun getNavigationDestinationFromURI(): List<Screen> {
     Timber.d("NotificationResult -> getting nav destinations from intent")
-    val intent = (LocalContext.current as? ComponentActivity)?.intent ?: return emptyList()
+    val intent = (LocalActivity.current as? ComponentActivity)?.intent ?: return emptyList()
     val result = intent.asNotificationResult() ?: return emptyList()
     Timber.d("NotificationResult -> $result")
     val uri = result.uri
@@ -21,6 +23,11 @@ fun getNavigationDestinationFromURI(): List<Screen> {
     val action = map["action"]
     if (action == null || !(action.equals("navigate", true))) return emptyList()
     return getNavigationDestination(map = map)
+}
+
+fun Intent.asNotificationResult(): NotificationResult? {
+    val result = getStringExtra("notification_result") ?: return null
+    return result.asNotificationResult()
 }
 
 private fun String.asIntentExtraArguments(): Map<String, String> {

@@ -36,9 +36,10 @@ import com.bizilabs.streeek.lib.domain.repositories.AccountRepository
 import com.bizilabs.streeek.lib.domain.repositories.TauntRepository
 import com.bizilabs.streeek.lib.domain.repositories.TeamInvitationCodeRepository
 import com.bizilabs.streeek.lib.domain.repositories.TeamRepository
-import com.bizilabs.streeek.lib.domain.repositories.team.TeamMemberInvitationRepository
+import com.bizilabs.streeek.lib.domain.repositories.WorkerType
+import com.bizilabs.streeek.lib.domain.repositories.WorkersRepository
+import com.bizilabs.streeek.lib.domain.repositories.team.TeamInviteRepository
 import com.bizilabs.streeek.lib.domain.repositories.team.TeamRequestRepository
-import com.bizilabs.streeek.lib.domain.workers.startImmediateSyncTeamsWork
 import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -60,10 +61,11 @@ val FeatureTeamModule =
                 context = get(),
                 teamRepository = get(),
                 teamInvitationCodeRepository = get(),
-                teamMemberInvitationRepository = get(),
+                teamInviteRepository = get(),
                 teamRequestRepository = get(),
                 tauntRepository = get(),
                 accountRepository = get(),
+                workersRepository = get(),
             )
         }
     }
@@ -238,10 +240,11 @@ class TeamScreenModel(
     private val context: Context,
     private val teamRepository: TeamRepository,
     private val teamInvitationCodeRepository: TeamInvitationCodeRepository,
-    private val teamMemberInvitationRepository: TeamMemberInvitationRepository,
+    private val teamInviteRepository: TeamInviteRepository,
     private val teamRequestRepository: TeamRequestRepository,
     private val tauntRepository: TauntRepository,
     private val accountRepository: AccountRepository,
+    private val workersRepository: WorkersRepository,
 ) : StateScreenModel<TeamScreenState>(TeamScreenState()) {
     private var _pages = MutableStateFlow(getPagingDataLoading<TeamMemberDomain>())
     val pages: Flow<PagingData<TeamMemberDomain>> = _pages.asStateFlow().cachedIn(screenModelScope)
@@ -662,7 +665,7 @@ class TeamScreenModel(
     }
 
     fun onRefreshTeams() {
-        context.startImmediateSyncTeamsWork()
+        workersRepository.runSyncTeams(type = WorkerType.Once)
     }
 
     fun onClickRequests() {
@@ -819,7 +822,7 @@ class TeamScreenModel(
     private fun observeAccountsNotInTeam() {
         val id = state.value.teamId ?: return
         _accountsNotInTeam =
-            teamMemberInvitationRepository.getAccountsNotInTeam(teamId = id)
+            teamInviteRepository.getAccountsNotInTeam(teamId = id)
                 .cachedIn(screenModelScope)
     }
 
@@ -836,7 +839,7 @@ class TeamScreenModel(
         }
         screenModelScope.launch {
             val result =
-                teamMemberInvitationRepository.sendAccountInvitation(
+                teamInviteRepository.sendAccountInvitation(
                     teamId,
                     accountNotInTeamDomain.accountId,
                 )
@@ -899,7 +902,7 @@ class TeamScreenModel(
         }
         screenModelScope.launch {
             val result =
-                teamMemberInvitationRepository.sendMultipleAccountInvitation(
+                teamInviteRepository.sendMultipleAccountInvitation(
                     teamId = teamId,
                     inviteeIds = selectedAccountsIds,
                 )
@@ -955,7 +958,7 @@ class TeamScreenModel(
     fun searchAccounts(searchParam: String) {
         val teamId = state.value.teamId ?: return
         _accountsNotInTeam =
-            teamMemberInvitationRepository.searchForAccountNotInTeam(searchParam, teamId)
+            teamInviteRepository.searchForAccountNotInTeam(searchParam, teamId)
     }
 
     fun onClickClearSearch() {
@@ -965,7 +968,7 @@ class TeamScreenModel(
 
     private fun observeTeamAccountInvites() {
         val id = state.value.teamId ?: return
-        _teamAccountInvites = teamMemberInvitationRepository.getTeamAccountInvites(teamId = id)
+        _teamAccountInvites = teamInviteRepository.getTeamAccountInvites(teamId = id)
     }
 
     fun onClickWithdrawAccount(teamAccountInviteDomain: TeamAccountInvitesDomain) {
@@ -980,7 +983,7 @@ class TeamScreenModel(
         }
         screenModelScope.launch {
             val result =
-                teamMemberInvitationRepository.deleteAccountInvitation(
+                teamInviteRepository.deleteAccountInvitation(
                     teamAccountInviteDomain.inviteId,
                 )
 

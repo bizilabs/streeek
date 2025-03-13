@@ -10,7 +10,7 @@ import com.bizilabs.streeek.lib.domain.helpers.DataResult
 import com.bizilabs.streeek.lib.domain.models.TeamAndMembersDomain
 import com.bizilabs.streeek.lib.domain.models.team.AccountTeamInvitesDomain
 import com.bizilabs.streeek.lib.domain.repositories.TeamRepository
-import com.bizilabs.streeek.lib.domain.repositories.team.TeamMemberInvitationRepository
+import com.bizilabs.streeek.lib.domain.repositories.team.TeamInviteRepository
 import com.bizilabs.streeek.lib.domain.repositories.team.TeamRequestRepository
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -27,7 +27,7 @@ val FeatureJoin =
             JoinScreenModel(
                 teamRepository = get(),
                 teamRequestRepository = get(),
-                teamMemberInvitationRepository = get(),
+                teamInviteRepository = get(),
             )
         }
     }
@@ -86,7 +86,7 @@ data class JoinScreenState(
 class JoinScreenModel(
     private val teamRepository: TeamRepository,
     private val teamRequestRepository: TeamRequestRepository,
-    private val teamMemberInvitationRepository: TeamMemberInvitationRepository,
+    private val teamInviteRepository: TeamInviteRepository,
 ) : StateScreenModel<JoinScreenState>(JoinScreenState()) {
     val teams = teamRepository.getTeamsAndMembers()
 
@@ -212,7 +212,7 @@ class JoinScreenModel(
     }
 
     private fun observeAccountInvites() {
-        _accountInvites = teamMemberInvitationRepository.getAllAccountInvites()
+        _accountInvites = teamInviteRepository.getAllAccountInvites()
     }
 
     private fun getSingleInviteState() = state.value.singleInviteState.toMutableMap()
@@ -232,7 +232,7 @@ class JoinScreenModel(
             }
 
             val result =
-                teamMemberInvitationRepository.processAccountInvite(
+                teamInviteRepository.processAccountInvite(
                     inviteId = accountTeamInvitesDomain.invite.inviteId,
                     status = teamInviteAction.value,
                 )

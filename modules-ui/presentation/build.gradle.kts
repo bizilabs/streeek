@@ -13,7 +13,8 @@ dependencies {
     // modules
     implementation(projects.modulesUi.common)
     implementation(projects.modulesData.data)
-    implementation(projects.modulesData.domain)
+//    implementation(projects.modulesData.domain)
+    implementation(projects.sharedData.domain)
 
     // features
     implementation(projects.modulesFeatures.landing)

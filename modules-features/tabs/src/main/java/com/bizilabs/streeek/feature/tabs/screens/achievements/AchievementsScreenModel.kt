@@ -1,7 +1,6 @@
 package com.bizilabs.streeek.feature.tabs.screens.achievements
 
 import android.app.Activity
-import android.content.Context
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.EmojiEvents
 import androidx.compose.material.icons.filled.Stairs
@@ -15,7 +14,8 @@ import com.bizilabs.streeek.lib.domain.models.AccountDomain
 import com.bizilabs.streeek.lib.domain.models.LevelDomain
 import com.bizilabs.streeek.lib.domain.repositories.AccountRepository
 import com.bizilabs.streeek.lib.domain.repositories.LevelRepository
-import com.bizilabs.streeek.lib.domain.workers.startImmediateAccountSyncWork
+import com.bizilabs.streeek.lib.domain.repositories.WorkerType
+import com.bizilabs.streeek.lib.domain.repositories.WorkersRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
@@ -29,10 +29,10 @@ internal val AchievementsModule =
     module {
         factory<AchievementsScreenModel> {
             AchievementsScreenModel(
-                context = get(),
                 accountRepository = get(),
                 levelRepository = get(),
                 reviewManagerHelper = get(),
+                workersRepository = get(),
             )
         }
     }
@@ -69,10 +69,10 @@ data class AchievementScreenState(
 }
 
 class AchievementsScreenModel(
-    private val context: Context,
     private val accountRepository: AccountRepository,
     private val levelRepository: LevelRepository,
     private val reviewManagerHelper: ReviewManagerHelper,
+    private val workersRepository: WorkersRepository,
 ) : StateScreenModel<AchievementScreenState>(AchievementScreenState()) {
     init {
         initiateAccountSync()
@@ -124,7 +124,7 @@ class AchievementsScreenModel(
     }
 
     fun onClickRefreshProfile() {
-        context.startImmediateAccountSyncWork()
+        workersRepository.runSyncAccount(type = WorkerType.Once)
     }
 
     fun requestReview(activity: Activity) {

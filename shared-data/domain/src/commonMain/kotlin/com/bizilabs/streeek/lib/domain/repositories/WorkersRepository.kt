@@ -9,7 +9,7 @@ sealed interface WorkerType {
 }
 
 interface WorkersRepository {
-    fun runSaveToken(token: String)
+    fun runSaveToken()
 
     fun runSyncAccount(type: WorkerType)
 
@@ -22,4 +22,6 @@ interface WorkersRepository {
     fun runSyncLevels(type: WorkerType)
 
     fun runSyncTeams(type: WorkerType)
+
+    fun runReminder(isStarting: Boolean)
 }

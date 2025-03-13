@@ -11,8 +11,9 @@ import com.bizilabs.streeek.lib.domain.helpers.DateFormats
 import com.bizilabs.streeek.lib.domain.helpers.asJson
 import com.bizilabs.streeek.lib.domain.helpers.asString
 import com.bizilabs.streeek.lib.domain.helpers.buildUri
-import com.bizilabs.streeek.lib.domain.managers.notifications.AppNotificationChannel
-import com.bizilabs.streeek.lib.domain.managers.notifications.notify
+import com.bizilabs.streeek.lib.domain.managers.NotificationData
+import com.bizilabs.streeek.lib.domain.managers.NotificationManager
+import com.bizilabs.streeek.lib.domain.managers.Notifications
 import com.bizilabs.streeek.lib.domain.models.AccountDomain
 import com.bizilabs.streeek.lib.domain.models.notifications.LevelledUpMessages
 import com.bizilabs.streeek.lib.domain.models.notifications.NotificationResult
@@ -33,6 +34,7 @@ class AccountRepositoryImpl(
     private val remote: AccountRemoteSource,
     private val local: AccountLocalSource,
     private val contributionsLocalSource: ContributionsLocalSource,
+    private val notificationManager: NotificationManager,
 ) : AccountRepository {
     override val account: Flow<AccountDomain?>
         get() = local.account.mapLatest { it?.toDomain() }
@@ -140,11 +142,13 @@ class AccountRepositoryImpl(
                 clickIntent,
                 PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
             )
-        context.notify(
-            title = message.title.replace("{level_name}", currentLevel.name),
-            body = message.body,
-            channel = AppNotificationChannel.LEADERBOARD,
-            clickIntent = clickPendingIntent,
+        notificationManager.send(
+            notification =
+                NotificationData(
+                    title = message.title.replace("{level_name}", currentLevel.name),
+                    message = message.body,
+                    channel = Notifications.Channels.updates,
+                ),
         )
     }
 

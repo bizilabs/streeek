@@ -1,6 +1,5 @@
 package com.bizilabs.streeek.feature.tabs.screens.teams
 
-import android.content.Context
 import cafe.adriel.voyager.core.model.StateScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
 import com.bizilabs.streeek.lib.common.models.FetchState
@@ -9,8 +8,9 @@ import com.bizilabs.streeek.lib.domain.helpers.DataResult
 import com.bizilabs.streeek.lib.domain.models.TeamAndMembersDomain
 import com.bizilabs.streeek.lib.domain.models.TeamDetailsDomain
 import com.bizilabs.streeek.lib.domain.repositories.TeamRepository
+import com.bizilabs.streeek.lib.domain.repositories.WorkerType
+import com.bizilabs.streeek.lib.domain.repositories.WorkersRepository
 import com.bizilabs.streeek.lib.domain.repositories.team.TeamRequestRepository
-import com.bizilabs.streeek.lib.domain.workers.startImmediateSyncTeamsWork
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
@@ -20,7 +20,11 @@ import org.koin.dsl.module
 internal val TeamsListModule =
     module {
         factory<TeamsListScreenModel> {
-            TeamsListScreenModel(context = get(), teamRepository = get(), teamRequestRepository = get())
+            TeamsListScreenModel(
+                teamRepository = get(),
+                teamRequestRepository = get(),
+                workersRepository = get(),
+            )
         }
     }
 
@@ -42,9 +46,9 @@ data class TeamsListScreenState(
 )
 
 class TeamsListScreenModel(
-    private val context: Context,
     private val teamRepository: TeamRepository,
     private val teamRequestRepository: TeamRequestRepository,
+    private val workersRepository: WorkersRepository,
 ) : StateScreenModel<TeamsListScreenState>(TeamsListScreenState()) {
     val availableTeams = teamRepository.getTeamsAndMembers()
 
@@ -95,7 +99,7 @@ class TeamsListScreenModel(
     }
 
     fun onClickMenuRefreshTeam() {
-        context.startImmediateSyncTeamsWork()
+        workersRepository.runSyncTeams(type = WorkerType.Once)
     }
 
     fun onClickTeamRequest(teamAndMembers: TeamAndMembersDomain) {

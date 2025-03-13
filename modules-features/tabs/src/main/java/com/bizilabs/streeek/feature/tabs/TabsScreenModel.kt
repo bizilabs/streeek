@@ -1,6 +1,5 @@
 package com.bizilabs.streeek.feature.tabs
 
-import android.content.Context
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.EmojiEvents
 import androidx.compose.material.icons.outlined.Explore
@@ -20,21 +19,15 @@ import com.bizilabs.streeek.feature.tabs.screens.leaderboard.LeaderboardModule
 import com.bizilabs.streeek.feature.tabs.screens.notifications.ModuleNotifications
 import com.bizilabs.streeek.feature.tabs.screens.teams.TeamsListModule
 import com.bizilabs.streeek.lib.domain.helpers.tryOrNull
-import com.bizilabs.streeek.lib.domain.workers.startPeriodicAccountSyncWork
-import com.bizilabs.streeek.lib.domain.workers.startPeriodicDailySyncContributionsWork
-import com.bizilabs.streeek.lib.domain.workers.startPeriodicLeaderboardSyncWork
-import com.bizilabs.streeek.lib.domain.workers.startPeriodicLevelsSyncWork
-import com.bizilabs.streeek.lib.domain.workers.startPeriodicTeamsSyncWork
-import com.bizilabs.streeek.lib.domain.workers.startSaveFCMTokenWork
-import com.bizilabs.streeek.lib.domain.workers.stopReminderWork
+import com.bizilabs.streeek.lib.domain.repositories.WorkerType
+import com.bizilabs.streeek.lib.domain.repositories.WorkersRepository
 import kotlinx.coroutines.flow.update
 import org.koin.dsl.module
+import kotlin.time.Duration.Companion.minutes
 
 val FeatureTabsModule =
     module {
-        factory {
-            TabsScreenModel(context = get())
-        }
+        factory { TabsScreenModel(workersRepository = get()) }
         includes(
             LeaderboardModule,
             FeedModule,
@@ -80,21 +73,20 @@ data class TabsScreenState(
 )
 
 class TabsScreenModel(
-    private val context: Context,
+    private val workersRepository: WorkersRepository,
 ) : StateScreenModel<TabsScreenState>(TabsScreenState()) {
     init {
         startWorkers()
     }
 
     private fun startWorkers() {
-        with(context) {
-            stopReminderWork()
-            startSaveFCMTokenWork()
-            startPeriodicTeamsSyncWork()
-            startPeriodicLevelsSyncWork()
-            startPeriodicAccountSyncWork()
-            startPeriodicLeaderboardSyncWork()
-            startPeriodicDailySyncContributionsWork()
+        with(workersRepository) {
+            runSaveToken()
+            runSyncTeams(type = WorkerType.Periodic(duration = 30.minutes))
+            runSyncLevels(type = WorkerType.Periodic(duration = 30.minutes))
+            runSyncAccount(type = WorkerType.Periodic(duration = 30.minutes))
+            runSyncLeaderboard(type = WorkerType.Periodic(duration = 30.minutes))
+            runSyncDailyContributions()
         }
     }
 

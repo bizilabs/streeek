@@ -10,15 +10,15 @@ import com.bizilabs.streeek.lib.domain.models.team.AccountTeamInvitesDomain
 import com.bizilabs.streeek.lib.domain.models.team.AccountsNotInTeamDomain
 import com.bizilabs.streeek.lib.domain.models.team.DeleteAccountInvitationDomain
 import com.bizilabs.streeek.lib.domain.models.team.TeamAccountInvitesDomain
-import com.bizilabs.streeek.lib.domain.repositories.team.TeamMemberInvitationRepository
+import com.bizilabs.streeek.lib.domain.repositories.team.TeamInviteRepository
 import com.bizilabs.streeek.lib.local.sources.account.AccountLocalSource
 import com.bizilabs.streeek.lib.remote.sources.team.invitations.TeamMemberInvitationRemoteSource
 import kotlinx.coroutines.flow.Flow
 
-class TeamMemberInvitationRepositoryImpl(
+class TeamInviteRepositoryImpl(
     private val invitationRemoteSource: TeamMemberInvitationRemoteSource,
     accountLocalSource: AccountLocalSource,
-) : TeamMemberInvitationRepository, AccountHelper(source = accountLocalSource) {
+) : TeamInviteRepository, AccountHelper(source = accountLocalSource) {
     override fun getAccountsNotInTeam(teamId: Long): Flow<PagingData<AccountsNotInTeamDomain>> =
         genericPager(
             getResults = { page ->

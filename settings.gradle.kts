@@ -38,7 +38,7 @@ include("modules-features")
 
 // data modules
 include(":modules-data:data")
-include(":modules-data:domain")
+// include(":modules-data:domain")
 
 // ui modules
 include(":modules-ui:presentation")

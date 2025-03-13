@@ -27,6 +27,12 @@ val FeatureModuleReminders =
         factory<ReminderListScreenModel> {
             ReminderListScreenModel(manager = get(), context = get(), repository = get())
         }
-        factory<ReminderScreenModel> { ReminderScreenModel(manager = get(), context = get()) }
+        factory<ReminderScreenModel> {
+            ReminderScreenModel(
+                manager = get(),
+                context = get(),
+                repository = get(),
+            )
+        }
         factory<ReminderManager> { ReminderManagerImpl(context = get()) }
     }

@@ -11,9 +11,15 @@ dependencies {
     // modules
     implementation(projects.sharedDatasources.remote)
     implementation(projects.sharedDatasources.local)
-    implementation(projects.modulesData.domain)
+    implementation(projects.sharedData.domain)
+    implementation(projects.modulesUi.resources)
+    // work-manager
+    implementation(libs.androidx.work.runtime)
     // paging
     implementation(libs.androidx.paging.runtime)
     // uri
     implementation(libs.uri)
+    // firebase
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.bundles.firebase)
 }

@@ -12,7 +12,7 @@ import com.bizilabs.streeek.lib.domain.models.ContributionDomain
 import com.bizilabs.streeek.lib.domain.repositories.AccountRepository
 import com.bizilabs.streeek.lib.domain.repositories.ContributionRepository
 import com.bizilabs.streeek.lib.domain.repositories.PreferenceRepository
-import com.bizilabs.streeek.lib.domain.workers.startImmediateDailySyncContributionsWork
+import com.bizilabs.streeek.lib.domain.repositories.WorkersRepository
 import com.kizitonwose.calendar.core.now
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -36,6 +36,7 @@ internal val FeedModule =
                 accountRepository = get(),
                 preferenceRepository = get(),
                 contributionRepository = get(),
+                workersRepository = get(),
             )
         }
     }
@@ -94,6 +95,7 @@ class FeedScreenModel(
     private val accountRepository: AccountRepository,
     private val preferenceRepository: PreferenceRepository,
     private val contributionRepository: ContributionRepository,
+    private val workersRepository: WorkersRepository,
 ) : StateScreenModel<FeedScreenState>(FeedScreenState()) {
     private val _date =
         MutableStateFlow(Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date)
@@ -185,7 +187,7 @@ class FeedScreenModel(
     }
 
     fun onRefreshContributions() {
-        context.startImmediateDailySyncContributionsWork()
+        workersRepository.runSyncDailyContributions()
     }
 
     fun onClickToggleMonthView() {

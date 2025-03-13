@@ -1,6 +1,5 @@
 package com.bizilabs.streeek.feature.tabs.screens.leaderboard
 
-import android.content.Context
 import cafe.adriel.voyager.core.model.StateScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
 import com.bizilabs.streeek.lib.design.components.DialogState
@@ -11,7 +10,8 @@ import com.bizilabs.streeek.lib.domain.models.LeaderboardDomain
 import com.bizilabs.streeek.lib.domain.repositories.AccountRepository
 import com.bizilabs.streeek.lib.domain.repositories.LeaderboardRepository
 import com.bizilabs.streeek.lib.domain.repositories.TauntRepository
-import com.bizilabs.streeek.lib.domain.workers.startImmediateSyncLeaderboardWork
+import com.bizilabs.streeek.lib.domain.repositories.WorkerType
+import com.bizilabs.streeek.lib.domain.repositories.WorkersRepository
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
@@ -26,10 +26,10 @@ internal val LeaderboardModule =
     module {
         factory<LeaderboardListScreenModel> {
             LeaderboardListScreenModel(
-                context = get(),
                 accountRepository = get(),
                 leaderboardRepository = get(),
                 tauntRepository = get(),
+                workersRepository = get(),
             )
         }
     }
@@ -53,10 +53,10 @@ data class LeaderboardListScreenState(
 }
 
 class LeaderboardListScreenModel(
-    private val context: Context,
     private val accountRepository: AccountRepository,
     private val leaderboardRepository: LeaderboardRepository,
     private val tauntRepository: TauntRepository,
+    private val workersRepository: WorkersRepository,
 ) : StateScreenModel<LeaderboardListScreenState>(LeaderboardListScreenState()) {
     private val selectedLeaderboard =
         combine(
@@ -132,7 +132,7 @@ class LeaderboardListScreenModel(
     }
 
     fun onTriggerRefreshLeaderboards() {
-        context.startImmediateSyncLeaderboardWork()
+        workersRepository.runSyncLeaderboard(type = WorkerType.Once)
     }
 
     fun onClickDismissDialog() {
