@@ -59,7 +59,7 @@ class WorkersRepositoryImpl(
         }
     }
 
-    override fun runReminder(isStarting: Boolean)  {
+    override fun runReminder(isStarting: Boolean) {
         when (isStarting) {
             true -> context.startReminderWork()
             false -> context.stopReminderWork()
