@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Notifications
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -29,6 +28,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import cafe.adriel.voyager.core.screen.Screen
@@ -38,6 +38,7 @@ import com.bizilabs.streeek.feature.tabs.screens.notifications.components.Notifi
 import com.bizilabs.streeek.lib.common.components.paging.SafiPagingComponent
 import com.bizilabs.streeek.lib.design.components.SafiCenteredRow
 import com.bizilabs.streeek.lib.design.components.SafiInfoSection
+import com.bizilabs.streeek.lib.design.components.SafiRefreshBox
 import com.bizilabs.streeek.lib.design.components.SafiTopBarHeader
 import com.bizilabs.streeek.lib.domain.models.NotificationDomain
 import com.bizilabs.streeek.lib.domain.models.team.MemberAccountRequestDomain
@@ -163,28 +164,34 @@ fun NotificationsScreenHeader(
     }
 }
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NotificationsScreenSection(
     notifications: LazyPagingItems<NotificationDomain>,
     onClickNotification: (NotificationDomain) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    SafiPagingComponent(
+    SafiRefreshBox(
         modifier = modifier,
-        data = notifications,
-        refreshEmpty = {
-            SafiInfoSection(
-                icon = Icons.Rounded.Notifications,
-                title = stringResource(SafiStrings.Labels.NoNotifications),
-                description = stringResource(SafiStrings.Messages.NoNotifications),
-            ) {
-            }
-        },
-    ) { notification ->
-        NotificationItemComponent(
-            notification = notification,
-            onClickNotification = onClickNotification,
-        )
+        isRefreshing = notifications.loadState.refresh is LoadState.Loading,
+        onRefresh = { notifications.refresh() },
+    ) {
+        SafiPagingComponent(
+            modifier = modifier,
+            data = notifications,
+            refreshEmpty = {
+                SafiInfoSection(
+                    icon = Icons.Rounded.Notifications,
+                    title = stringResource(SafiStrings.Labels.NoNotifications),
+                    description = stringResource(SafiStrings.Messages.NoNotifications),
+                ) {
+                }
+            },
+        ) { notification ->
+            NotificationItemComponent(
+                notification = notification,
+                onClickNotification = onClickNotification,
+            )
+        }
     }
 }
