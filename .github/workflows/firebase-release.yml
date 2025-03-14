@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - theo/improments/add-beta-variant-to-shared
 
 concurrency:
   group: ${{ github.workflow }} - ${{ github.ref }}
@@ -61,10 +62,10 @@ jobs:
         env:
           BUILD_TOOLS_VERSION: ${{ env.BUILD_TOOL_VERSION }}
 
-      - name: Deploy to Firebase
-        uses: wzieba/Firebase-Distribution-Github-Action@v1
-        with:
-          appId: ${{ secrets.FIREBASE_APP_ID }}
-          serviceCredentialsFileContent: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
-          groups: internal
-          file: modules-app/streeek/build/outputs/apk/beta/streeek-beta-unsigned-signed.apk
+#      - name: Deploy to Firebase
+#        uses: wzieba/Firebase-Distribution-Github-Action@v1
+#        with:
+#          appId: ${{ secrets.FIREBASE_APP_ID }}
+#          serviceCredentialsFileContent: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+#          groups: internal
+#          file: modules-app/streeek/build/outputs/apk/beta/streeek-beta-unsigned-signed.apk
