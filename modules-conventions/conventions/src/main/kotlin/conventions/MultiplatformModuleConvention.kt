@@ -31,15 +31,9 @@ private fun KotlinMultiplatformExtension.configureIOS() {
 }
 
 private fun KotlinMultiplatformExtension.configureAndroid() {
-    @OptIn(ExperimentalKotlinGradlePluginApi::class)
     androidTarget {
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_11)
-            freeCompilerArgs.set(
-                listOf(
-                    "-Xstring-concat=inline"
-                )
-            )
         }
     }
 }
@@ -61,9 +55,21 @@ private fun LibraryExtension.configureAndroidLibrary() {
     buildTypes {
         getByName("release") {
             isMinifyEnabled = true
+            setProguardFiles(
+                listOf(
+                    getDefaultProguardFile("proguard-android-optimize.txt"),
+                    "proguard-rules.pro",
+                ),
+            )
         }
         create("beta") {
             isMinifyEnabled = true
+            setProguardFiles(
+                listOf(
+                    getDefaultProguardFile("proguard-android-optimize.txt"),
+                    "proguard-rules.pro",
+                ),
+            )
         }
     }
     compileOptions {
