@@ -35,11 +35,16 @@ private fun KotlinMultiplatformExtension.configureAndroid() {
     androidTarget {
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_11)
+            freeCompilerArgs.set(
+                listOf(
+                    "-Xstring-concat=inline"
+                )
+            )
         }
     }
 }
 
-private fun KotlinMultiplatformExtension.sources(block: NamedDomainObjectContainer<KotlinSourceSet>.()-> Unit) {
+private fun KotlinMultiplatformExtension.sources(block: NamedDomainObjectContainer<KotlinSourceSet>.() -> Unit) {
     sourceSets.block()
 }
 
