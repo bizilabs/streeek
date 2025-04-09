@@ -55,7 +55,7 @@ Here's how you can help:
 
 ## ✨ Streeekers
 
-Shoutout to our amazing Streeekers...the minds and hearts keeping Streeek alive with their contributions!💥
+Meet our amazing Streeekers...the minds and hearts keeping Streeek alive with their contributions!💥
 
 <!-- readme: contributors -start -->
 <!-- readme: contributors -end -->
