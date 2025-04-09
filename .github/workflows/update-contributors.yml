@@ -11,6 +11,7 @@ jobs:
     # Grant write access for the workflow to update repo with Streeekers
     permissions:
       contents: write
+      pull-requests: write
 
     steps:
       - name: Update Contributors List
