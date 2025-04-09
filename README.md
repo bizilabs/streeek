@@ -52,3 +52,10 @@ Here's how you can help:
 - 🌟 Star        : Give it a star at the top right. It means a lot!
 - 😎 Contribute  : Found a bug or have a new feature idea? Create an issue [here](https://github.com/bizilabs/streeek/issues/new).
 - 💬 Feedback    : Have suggestions and you're not sure? Open an issue or start a discussion.
+
+## ✨ Streeekers
+
+Shoutout to our amazing Streeekers...the minds and hearts keeping Streeek alive with their contributions!💥
+
+<!-- readme: contributors -start -->
+<!-- readme: contributors -end -->

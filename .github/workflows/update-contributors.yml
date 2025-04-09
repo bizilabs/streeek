@@ -1,0 +1,23 @@
+name: Update Contributors in README
+
+on:
+  push:
+    branches: [main]
+
+  # Temporary: Allow manual workflow run for PR testing
+  # ToDo Remove after merge
+  workflow_dispatch:
+
+jobs:
+  update-contributors:
+    runs-on: ubuntu-latest
+
+    # Grant write access for the workflow to update repo with Streeekers
+    permissions:
+      contents:
+
+    steps:
+      - name: Update Contributors List
+        uses: akhilmhdh/contributors-readme-action@v2.3.5
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
