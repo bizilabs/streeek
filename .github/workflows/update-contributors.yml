@@ -1,5 +1,6 @@
 name: Update Contributors in README
 
+# Trigger workflow on merge to main
 on:
   push:
     branches: [main]
