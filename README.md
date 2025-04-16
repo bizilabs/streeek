@@ -58,4 +58,64 @@ Here's how you can help:
 Meet our amazing Streeekers...the minds and hearts keeping Streeek alive with their contributions!💥
 
 <!-- readme: contributors -start -->
+<table>
+<tr>
+    <td align="center">
+        <a href="https://github.com/MamboBryan">
+            <img src="https://avatars.githubusercontent.com/u/40160345?v=4" width="100;" alt="MamboBryan"/>
+            <br />
+            <sub><b>MamboBryan</b></sub>
+        </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/kibettheophilus">
+            <img src="https://avatars.githubusercontent.com/u/61080898?v=4" width="100;" alt="kibettheophilus"/>
+            <br />
+            <sub><b>Kibet Theo</b></sub>
+        </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/janewaitara">
+            <img src="https://avatars.githubusercontent.com/u/32500878?v=4" width="100;" alt="janewaitara"/>
+            <br />
+            <sub><b>Jane Waitara</b></sub>
+        </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/bensalcie">
+            <img src="https://avatars.githubusercontent.com/u/17502827?v=4" width="100;" alt="bensalcie"/>
+            <br />
+            <sub><b>Ben Salcie</b></sub>
+        </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/Anniekobia">
+            <img src="https://avatars.githubusercontent.com/u/22634271?v=4" width="100;" alt="Anniekobia"/>
+            <br />
+            <sub><b>Annie Kobia</b></sub>
+        </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/ericwafula">
+            <img src="https://avatars.githubusercontent.com/u/82439687?v=4" width="100;" alt="ericwafula"/>
+            <br />
+            <sub><b>Eric Wafula</b></sub>
+        </a>
+    </td></tr>
+<tr>
+    <td align="center">
+        <a href="https://github.com/selemondev">
+            <img src="https://avatars.githubusercontent.com/u/106826371?v=4" width="100;" alt="selemondev"/>
+            <br />
+            <sub><b>Selemon Brahanu</b></sub>
+        </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/muth0mi">
+            <img src="https://avatars.githubusercontent.com/u/18559830?v=4" width="100;" alt="muth0mi"/>
+            <br />
+            <sub><b>Oliver Muthomi</b></sub>
+        </a>
+    </td></tr>
+</table>
 <!-- readme: contributors -end -->
